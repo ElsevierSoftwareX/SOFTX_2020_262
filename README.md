@@ -8,19 +8,19 @@ ESP3 is designed for single-beam and split-beam echosounder data. The software i
 
 ESP3 is currently under active development (particularly in terms of broadband processing) so keep an eye on this project page. More features and algorithms regularly show up.
 
-**[See the wiki for more information on what ESP3 does.](https://bitbucket.org/echoanalysis/esp3/wiki/Home)**
+**[See the wiki for more information on what ESP3 does.](https://bitbucket.org/yladroit/esp3/wiki/Home)**
 
 # How do I download it and get it to run on my data?
 
-ESP3 is written in **MATLAB** so the source code can be run from a standard MATLAB environment provided you have the appropriate version (R2016a or later) and toolboxes.
+ESP3 is written in **MATLAB** so the source code can be run from a standard MATLAB environment provided you have the appropriate version (R2019b or later) and toolboxes.
 
 **For non-MATLAB users** on a Windows 64bits platform, a compiled version of the latest stable release is also available.
 
-**[See the wiki for detailed information on how to download and install ESP3 either in its MATLAB or compiled version.](https://bitbucket.org/echoanalysis/esp3/wiki/Home)**
+**[See the wiki for detailed information on how to download and install ESP3 either in its MATLAB or compiled version.](https://bitbucket.org/yladroit/esp3/wiki/Home)**
 
 # How can I learn to use it?
 
-**[See the wiki for manuals (user, technical, tutorials) currently in development.](https://bitbucket.org/echoanalysis/esp3/wiki/Home)**
+**[See the wiki for manuals (user, technical, tutorials) currently in development.](https://bitbucket.org/yladroit/esp3/wiki/Home)**
 
 # Can I contribute to the development of ESP3?
 
