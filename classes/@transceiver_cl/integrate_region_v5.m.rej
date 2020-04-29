@@ -1,0 +1,10 @@
+diff a/classes/@transceiver_cl/integrate_region_v5.m b/classes/@transceiver_cl/integrate_region_v5.m	(rejected hunks)
+@@ -61,7 +61,7 @@
+ addParameter(p,'keep_bottom',0,@isnumeric);
+ addParameter(p,'keep_all',0,@isnumeric);
+ addParameter(p,'sv_thr',-999,@isnumeric);
+-addParameter(p,'block_len',get_block_len(100,'cpu'),@(x) x>0);
++addParameter(p,'block_len',get_block_len(500,'cpu'),@(x) x>0);
+ addParameter(p,'load_bar_comp',[]);
+ 
+ parse(p,trans_obj,region,varargin{:});
