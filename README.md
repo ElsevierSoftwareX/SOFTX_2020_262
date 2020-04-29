@@ -1,4 +1,4 @@
-![EchoAnalysis_tot.png](https://bitbucket.org/echoanalysis/esp3/raw/a9a9ac794420eaa8d1ac09ec57735aceaec4aa83/icons/EchoAnalysis_tot.png)
+![EchoAnalysis_tot.png](https://bitbucket.org/yladroit/esp3/raw/master/icons/EchoAnalysis_tot.png)
 
 # What is ESP3?
 
