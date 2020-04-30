@@ -96,7 +96,8 @@ classdef params_cl
             for jj=1:length(props)
                 params_out.(props{jj})=[param_start.(props{jj})(:)' param_end.(props{jj})(:)'];
             end
-            params_out.PingNumber = [params_start.PingNumber params_end.PingNumber+nb_p];
+            
+            params_out.PingNumber = [param_start.PingNumber param_end.PingNumber+nb_p];
             
         end
         function param_str=param2str(param_obj,idx_ping)

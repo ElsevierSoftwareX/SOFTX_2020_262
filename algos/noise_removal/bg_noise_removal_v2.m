@@ -69,6 +69,7 @@ idx_r=1:numel(range_t);
 
 for ui=1:num_ite
     idx_pings=idx_pings_tot((ui-1)*block_size+1:nanmin(ui*block_size,numel(idx_pings_tot)));
+    sub_bot=trans_obj.get_bottom_range(idx_pings);
     
     lambda=c./FreqCenter;
     
@@ -80,8 +81,20 @@ for ui=1:num_ite
     end
     
     pow(bad_data_mask)=nan;
-    %pow(:,bad_trans_vec)=nan;
+    pow(pow==0)=nan;
+    pow(range_t<0.1*nanmax(range_t),:)=nan;
     
+    [nb_samples,nb_pings]=size(pow);
+    
+    [I,J]=find(~isnan(pow));
+   
+    J_d=[J ; J ];
+    I_d=[I ; ceil(0.9*I)];
+    
+    idx_d=I_d+nb_samples*(J_d-1);
+    reg_n=false(nb_samples,nb_pings);
+    reg_n(idx_d)=true;
+ 
     v_filt_m=nanmax(p.Results.v_filt,3*nanmax(diff(range_t)));
     
     v_filt=ceil(nanmin(v_filt_m,size(pow,1))/nanmax(diff(range_t)));
@@ -92,11 +105,8 @@ for ui=1:num_ite
     
     pow_filt=filter2_perso(ones(v_filt,h_filt),pow);
     
-    % idx_valid=(pow>0);
-    % idx_valid=filter2_perso(ones(h_filt,w_filt),idx_valid);
-    % pow_filt(idx_valid==0)=nan;
-    pow_filt(pow_filt==0)=nan;
-    [noise_db,~]=nanmin(10*log10(pow_filt(range_t>nanmean(range_t)/2,:)),[],1);
+    pow_filt(pow_filt==0|~reg_n)=nan;
+    [noise_db,~]=nanmin(10*log10(pow_filt),[],1);
     
     pow_noise_db=bsxfun(@times,noise_db,ones(size(pow,1),1));
     pow_noise_db(pow<0)=nan;
