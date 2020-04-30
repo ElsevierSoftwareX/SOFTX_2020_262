@@ -37,6 +37,11 @@ classdef params_cl
         end
         
         function obj_red=reduce_params(obj)
+            if isempty(obj.PingNumber)
+                obj_red=obj;
+                return;
+            end
+            
             obj_red=params_cl();
             [params_groups,...
                 obj_red.BandWidth,...

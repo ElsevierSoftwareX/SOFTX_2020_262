@@ -73,27 +73,30 @@ classdef transceiver_cl < handle
              if isempty(trans_obj.TransducerImpedance)
                  trans_obj.TransducerImpedance=cell(size(trans_obj.Time));
              end
-            
+            trans_obj.Params=trans_obj.Params.reduce_params();
             trans_obj.Bottom = p.Results.Bottom;
             trans_obj.set_pulse_Teff();
             trans_obj.set_pulse_comp_Teff();
-            trans_obj.set_absorption([]);
         end
         
         function p_out = get_params_value(trans_obj,param_name,idx)
             nb_pings = numel(trans_obj.Time);
+            
             if isempty(idx)
                 idx=1:nb_pings;
             end
             
-            idx(idx<1|idx>nb_pings) = [];
-
-            mat_diff=idx-double(trans_obj.Params.PingNumber');
-            mat_diff(mat_diff<0)=inf;
-
-            [~,id]=nanmin(mat_diff,[],1);
-            p_out = trans_obj.Params.(param_name)(id);
-            
+            if numel(trans_obj.Params.(param_name))==nb_pings
+                p_out = trans_obj.Params.(param_name)(idx);
+            else
+                idx(idx<1|idx>nb_pings) = [];
+                
+                mat_diff=idx-double(trans_obj.Params.PingNumber');
+                mat_diff(mat_diff<0)=inf;
+                
+                [~,id]=nanmin(mat_diff,[],1);
+                p_out = trans_obj.Params.(param_name)(id);
+            end
         end
         
         

@@ -448,7 +448,8 @@ if ~isequal(Filename_cell, 0)
                 
                 for i =1:length(trans_obj)
                     gps_data_ping=gps_data.resample_gps_data(trans_obj(i).Time);
-                    attitude=attitude_full.resample_attitude_nav_data(trans_obj(i).Time);     
+                    attitude=attitude_full.resample_attitude_nav_data(trans_obj(i).Time);   
+                    trans_obj(i).Params=trans_obj(i).Params.reduce_params();
                     trans_obj(i).GPSDataPing=gps_data_ping;
                     trans_obj(i).AttitudeNavPing=attitude;
                     trans_obj(i).set_pulse_Teff();

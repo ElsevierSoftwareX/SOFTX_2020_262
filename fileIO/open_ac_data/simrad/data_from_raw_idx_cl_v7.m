@@ -646,7 +646,15 @@ if~isempty(envdata_def)
 end
 
 id_rem=[];
+
+
 for i =1:nb_trans
+    
+    trans_obj(i).Params=trans_obj(i).Params.reduce_params();
+     
+    if ~any(trans_obj(i).Params.Frequency~=0)
+        trans_obj(i).Params.Frequency = (trans_obj(i).Params.FrequencyStart+trans_obj(i).Params.FrequencyEnd)/2;
+    end    
     
     if ~any(trans_obj(i).Params.Absorption~=0)
         alpha= seawater_absorption(trans_obj(i).Params.Frequency(1)/1e3, (envdata.Salinity), (envdata.Temperature), (envdata.Depth),'fandg')/1e3;
@@ -662,8 +670,7 @@ for i =1:nb_trans
     
     [~,range_t]=trans_obj(i).compute_soundspeed_and_range(envdata);   
     trans_obj(i).set_transceiver_range(range_t);
-    trans_obj(i).set_absorption(envdata);
-      
+    trans_obj(i).set_absorption(envdata);     
     % initialize bottom object, with right dimensions but no information
     trans_obj(i).Bottom = [];
 end

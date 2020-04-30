@@ -288,8 +288,6 @@ for i_cell=1:length(Filename_cell)
             'Mode','CW',...
             'Config',config_obj,...
             'Params',params_obj);
-        
-        transceiver(ic).set_absorption(envdata);
     end
     layers(i_cell)=layer_cl('Filename',{Filename},'Filetype','ASL','Transceivers',transceiver,'EnvData',envdata,'AttitudeNav',att);
     

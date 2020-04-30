@@ -81,7 +81,7 @@ end
 
 function range_t=get_linear_range(trans_obj,c)
 
-t = trans_obj.get_params_value('SampleInterval',1);
+t = trans_obj.Params.SampleInterval(1);
 
 dR=double(c .* t / 2);
 
