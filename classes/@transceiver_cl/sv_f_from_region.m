@@ -17,7 +17,7 @@ if ismember('svdenoised',trans_obj.Data.Fieldname)
 end
 
 if ~isempty(p.Results.load_bar_comp)
-    p.Results.load_bar_comp.progress_bar.setText(sprintf('Processing Sv(f) estimation at %.0fkHz',trans_obj.Params.Frequency(1)/1e3));
+    p.Results.load_bar_comp.progress_bar.setText(sprintf('Processing Sv(f) estimation at %.0fkHz',trans_obj.Config.Frequency/1e3));
 end
 
 switch trans_obj.Mode
@@ -80,7 +80,7 @@ switch trans_obj.Mode
         output_reg=trans_obj.integrate_region(reg_obj,'keep_bottom',1,'keep_all',0);
         pings=round((output_reg.Ping_S+output_reg.Ping_E)/2);
         r_tot=trans_obj.get_transceiver_range(ceil(nanmean((output_reg.Sample_S+output_reg.Sample_E)/2,2)));
-        f_vec=trans_obj.Params.Frequency(pings(1));
+        f_vec=trans_obj.get_params_value('Frequency',pings(1));
         Sv_f=nan(length(pings),length(r_tot),length(f_vec));
         Sv_f(:,:,1)=pow2db_perso(output_reg.Sv_mean_lin');
         

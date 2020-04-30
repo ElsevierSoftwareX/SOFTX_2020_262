@@ -69,6 +69,9 @@ trans_file_ID.Config=trans_obj.Config;
 trans_file_ID.Filters=trans_obj.Filters;
 trans_file_ID.Algo=trans_obj.Algo;
 trans_file_ID.Mode=trans_obj.Mode;
+trans_file_ID.TransducerDepth=trans_obj.TransducerDepth(idx_file);
+trans_file_ID.TransducerImpedance=trans_obj.TransducerImpedance(idx_file);
+
 trans_file_ID.GPSDataPing=trans_obj.GPSDataPing.get_GPSDData_idx_section(idx_file);
 trans_file_ID.AttitudeNavPing=trans_obj.AttitudeNavPing.get_AttitudeNav_idx_section(idx_file);
 trans_file_ID.Alpha=trans_obj.Alpha;

@@ -612,39 +612,11 @@ NMEA.time(idx_rem_nmea)=[];
 
 %Complete Params if necessary
 
-for idx=1:nb_trans
-    
-    idx_nonnan=find(trans_obj(idx).Params.PulseLength~=0);
-    
-    time_s=trans_obj(idx).Params.Time;
-    
-    for i=1:length(idx_nonnan)
-        if i==length(idx_nonnan)
-            idx_rep=idx_nonnan(i):length(trans_obj(idx).Params.TransmitPower);
-        else
-            idx_rep=idx_nonnan(i):(idx_nonnan(i+1)-1);
-        end
-        
-        for jj=1:length(prop_params)
-            
-            if iscell(trans_obj(idx).Params.(prop_params{jj}))
-                trans_obj(idx).Params.(prop_params{jj})(idx_rep)=trans_obj(idx).Params.(prop_params{jj})(idx_nonnan(i));
-            else
-                trans_obj(idx).Params.(prop_params{jj})(idx_rep)=trans_obj(idx).Params.(prop_params{jj})(idx_nonnan(i));
-            end
-            
-        end
-        
-    end
-    
-    if any(trans_obj(idx).Params.Frequency==0)
-        trans_obj(idx).Params.Frequency(trans_obj(idx).Params.Frequency==0)=trans_obj(idx).Config.Frequency;
-    end
-    if any(trans_obj(idx).Params.FrequencyStart==0)
-        trans_obj(idx).Params.FrequencyStart(trans_obj(idx).Params.FrequencyStart==0)=trans_obj(idx).Params.Frequency(trans_obj(idx).Params.FrequencyStart==0);
-        trans_obj(idx).Params.FrequencyEnd(trans_obj(idx).Params.FrequencyEnd==0)=trans_obj(idx).Params.Frequency(trans_obj(idx).Params.FrequencyEnd==0);
-    end
-    trans_obj(idx).Params.Time=time_s;
+for idx=1:nb_trans    
+    idx_nan=trans_obj(idx).Params.PulseLength==0;    
+    for jj=1:length(prop_params)
+        trans_obj(idx).Params.(prop_params{jj})(idx_nan)=[];        
+    end   
 end
 
 
@@ -680,6 +652,7 @@ for i =1:nb_trans
         alpha= seawater_absorption(trans_obj(i).Params.Frequency(1)/1e3, (envdata.Salinity), (envdata.Temperature), (envdata.Depth),'fandg')/1e3;
         trans_obj(i).Params.Absorption(:)=alpha;
     end
+    
     trans_obj(i).set_transceiver_time(data.pings(i).time);
     if gps_only==0
         trans_obj(i).set_transceiver_time(data.pings(i).time);

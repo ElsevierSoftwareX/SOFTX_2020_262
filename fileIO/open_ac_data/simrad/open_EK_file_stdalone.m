@@ -284,7 +284,7 @@ if ~isequal(Filename_cell, 0)
                 for it=1:length(trans_obj)
                     prop_params=properties(trans_obj(it).Params);
                     for iprop=1:length(prop_params)
-                        if~any(ismember(prop_params{iprop},{'Time'}))
+                        if~any(ismember(prop_params{iprop},{'Time' 'PingNumber'}))
                             ppp=unique(trans_obj(it).Params.(prop_params{iprop}));
                             if ~iscell(ppp)
                                 ppp=ppp(~isnan(ppp));
@@ -403,10 +403,10 @@ if ~isequal(Filename_cell, 0)
                 end
                 if ~isempty(cal)
                     for n=1:length(trans_obj)
-                        idx_cal=find(trans_obj(n).Params.Frequency(1)==cal.F);
+                        idx_cal=find(trans_obj(n).get_params_value('Frequency',1)==cal.F);
                         if ~isempty(idx_cal)
                             
-                            tau = trans_obj(n).Params.PulseLength(1);
+                            tau = trans_obj(n).get_params_value('PulseLength',1);
                             idx = find(trans_obj(n).Config.PulseLength == tau);
                             
                             if (~isempty(idx))
@@ -434,6 +434,8 @@ if ~isequal(Filename_cell, 0)
                         trans_depth_resampled=trans_depth(idx);
                         trans_depth_resampled(idx_rem)=0;
                         trans_obj(itrans).TransducerDepth=trans_depth_resampled;
+                    else
+                        trans_obj(itrans).TransducerDepth = zeros(size(trans_obj(itrans).Time));
                     end
                 end
                 

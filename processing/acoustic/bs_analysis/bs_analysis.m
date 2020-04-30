@@ -80,7 +80,7 @@ sp = trans.Data.get_datamat('sp');
 sp(sp==-999)=nan;
 sv(sv==-999)=nan;
 [nb_samples,nb_pings] = size(sv);
-time_r = (0:nb_samples-1) * trans.Params.SampleInterval(1);
+time_r = (0:nb_samples-1) * trans.get_params_value('SampleInterval',1);
 %eq_beam_angle = trans.Config.EquivalentBeamAngle;
 
 acrossangle = trans.Data.get_datamat('acrossangle');
@@ -102,7 +102,7 @@ algo = trans.Algo(idx_algo_bot);
 
 [PulseLength,~] = trans.get_pulse_length(1);
 [amp_est, across_est, along_est] = detec_bottom_bathymetric(sp, alongphi, acrossphi, ...
-    trans.get_transceiver_range(), 1/trans.Params.SampleInterval(1), PulseLength, algo.Varargin.thr_bottom, -12, algo.Varargin.r_min);
+    trans.get_transceiver_range(), 1/trans.get_params_value('SampleInterval',1), PulseLength, algo.Varargin.thr_bottom, -12, algo.Varargin.r_min);
 z_max = nanmax(amp_est.range) * cos(t_angle);
 
 ext_len = floor(z_max*(tan(t_angle+bw_mean) - tan(t_angle-bw_mean)) / dr/4);

@@ -50,8 +50,8 @@ for uui=1:numel(layer.Frequencies)
         continue;
     end
     
-    f_start_tot=union(f_start_tot,nanmin(layer.Transceivers(uui).Params.FrequencyStart(1),layer.Transceivers(uui).Params.FrequencyEnd(1)));
-    f_end_tot=union(f_end_tot,nanmax(layer.Transceivers(uui).Params.FrequencyStart(1),layer.Transceivers(uui).Params.FrequencyEnd(1)));
+    f_start_tot=union(f_start_tot,nanmin(layer.Transceivers(uui).get_params_value('FrequencyStart',1),layer.Transceivers(uui).get_params_value('FrequencyEnd',1)));
+    f_end_tot=union(f_end_tot,nanmax(layer.Transceivers(uui).get_params_value('FrequencyStart',1),layer.Transceivers(uui).get_params_value('FrequencyEnd',1)));
     
     
     

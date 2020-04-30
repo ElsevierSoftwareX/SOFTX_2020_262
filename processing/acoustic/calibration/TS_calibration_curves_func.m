@@ -85,7 +85,7 @@ for uui=select
     t_mode_d=nanmean(trans_depth(new_region.Idx_pings));
     
     Freq=trans_obj.Config.Frequency;
-    Freq_c=(trans_obj.Params.FrequencyStart(1)+trans_obj.Params.FrequencyEnd(1))/2;
+    Freq_c=(trans_obj.get_params_value('FrequencyStart',1)+trans_obj.get_params_value('FrequencyEnd',1))/2;
     
     range_sph=mode(ceil(double(trans_obj.get_transceiver_range(new_region.Idx_r))*10/2)*2/10);
     
@@ -102,7 +102,7 @@ for uui=select
     
     c = seawater_svel_un95(s, t, d);
     
-    if trans_obj.Params.FrequencyStart(1)>=120000|| trans_obj.Params.FrequencyEnd(1)>=120000&&strcmp(att_model,'Doonan et al (2003)')
+    if trans_obj.get_params_value('FrequencyStart',1)>=120000|| trans_obj.get_params_value('FrequencyEnd',1)>=120000&&strcmp(att_model,'Doonan et al (2003)')
         att_model='Francois & Garrison (1982)';
     end
     
@@ -389,7 +389,7 @@ for uui=select
             end
             
             set(load_bar_comp.progress_bar, 'Minimum',0, 'Maximum',length(idx_pings), 'Value',0);
-            load_bar_comp.progress_bar.setText(sprintf('Processing TS estimation Frequency %.0fkHz',trans_obj.Params.Frequency(1)/1e3));
+            load_bar_comp.progress_bar.setText(sprintf('Processing TS estimation Frequency %.0fkHz',trans_obj.Config.Frequency/1e3));
             
             idx_rem=[];
             f_corr=nan(1,numel(idx_pings));
@@ -490,7 +490,7 @@ for uui=select
             
             
             set(load_bar_comp.progress_bar, 'Minimum',0, 'Maximum',length(idx_pings), 'Value',0);
-            load_bar_comp.progress_bar.setText(sprintf('Processing EQA estimation Frequency %.0fkHz',trans_obj.Params.Frequency(1)/1e3));
+            load_bar_comp.progress_bar.setText(sprintf('Processing EQA estimation Frequency %.0fkHz',trans_obj.Config.Frequency/1e3));
             
             idx_rem=[];
             f_corr=nan(1,numel(idx_pings));
@@ -529,7 +529,7 @@ for uui=select
             exitflag=nan(1,size(f_vec,1));
             
             set(load_bar_comp.progress_bar, 'Minimum',0, 'Maximum',size(f_vec,1), 'Value',0);
-            load_bar_comp.progress_bar.setText(sprintf('Processing BeamWidth estimation Frequency %.0fkHz',layer.Transceivers(uui).Params.Frequency(1)/1e3));
+            load_bar_comp.progress_bar.setText(sprintf('Processing BeamWidth estimation Frequency %.0fkHz',layer.Transceivers(uui).Config.Frequency/1e3));
             
             
             for tt=1:size(f_vec,1)

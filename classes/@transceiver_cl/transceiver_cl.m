@@ -88,7 +88,7 @@ classdef transceiver_cl < handle
             
             idx(idx<1|idx>nb_pings) = [];
 
-            mat_diff=idx-trans_obj.Params.PingNumber';
+            mat_diff=idx-double(trans_obj.Params.PingNumber');
             mat_diff(mat_diff<0)=inf;
 
             [~,id]=nanmin(mat_diff,[],1);
@@ -154,11 +154,11 @@ classdef transceiver_cl < handle
             % bottom at the last sample
             new_bot_sple(isnan(new_bot_sple(:))&tag(:)==1) = length(samples);
             
-            if ~isempty(obj.Bottom)
-                old_bot_sple=obj.Bottom.Sample_idx;
-            else
-                old_bot_sple=[];
-            end
+%             if ~isempty(obj.Bottom)
+%                 old_bot_sple=obj.Bottom.Sample_idx;
+%             else
+%                 old_bot_sple=[];
+%             end
             
 %             if all(size(new_bot_sple)==size(old_bot_sple))
 %                 idx_pings_mod=find((new_bot_sple~=old_bot_sple)&~(isnan(new_bot_sple)&isnan(old_bot_sple)));
@@ -245,11 +245,11 @@ classdef transceiver_cl < handle
            
             switch trans_obj.Mode
                 case 'FM'
-                    f_c=(trans_obj.Params.FrequencyStart+trans_obj.Params.FrequencyEnd)/2;                    
+                    f_c=(trans_obj.get_params_value('FrequencyStart',[])+trans_obj.get_params_value('FrequencyEnd',[]))/2;                    
                 case 'CW'
-                    f_c=trans_obj.Params.Frequency;
+                    f_c=trans_obj.get_params_value('Frequency',[]);
                 otherwise
-                    f_c=trans_obj.Params.Frequency;
+                    f_c=trans_obj.get_params_value('Frequency',[]);
             end
             
         end
@@ -353,7 +353,7 @@ classdef transceiver_cl < handle
                 s=trans_obj.get_transceiver_samples(idx_r);
             end
             
-            si=trans_obj.Params.SampleInterval(1);
+            si=trans_obj.get_params_value('SampleInterval',1);
             
             time_r=(s-1)./si;
             

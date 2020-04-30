@@ -166,7 +166,7 @@ for ii = 1:length(layer_to_proc)
             layer = layer_to_proc(ii);
         case {2}
             % file may still need to be opened
-            layer = open_EK_file_stdalone(layer_to_proc{ii},'PathToMemmap',app_path.data_temp,'load_bar_comp',load_bar_comp);
+            layer = open_file_standalone(layer_to_proc{ii},{},'PathToMemmap',app_path.data_temp,'load_bar_comp',load_bar_comp);
             load_bar_comp.progress_bar.setText('Updating Database with GPS Data');
             [~,idx_freq] = layer.get_trans(curr_disp);
             layer.add_ping_data_to_db(idx_freq,0);

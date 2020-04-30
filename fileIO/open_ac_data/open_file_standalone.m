@@ -149,6 +149,13 @@ for iftype=1:numel(ftype_cell_unique)
             
             if p.Results.GPSOnly==0
                 
+                
+                nb_trans = numel(new_layers_tmp_tot(uil).Transceivers);
+                
+                for uit = 1:nb_trans
+                    new_layers_tmp_tot(uil).Transceivers(uit).Params = new_layers_tmp_tot(uil).Transceivers(uit).Params.reduce_params();    
+                end
+                
                 if ~isempty(p.Results.EnvData)
                     new_layers_tmp_tot(uil).set_EnvData(p.Results.EnvData);
                     

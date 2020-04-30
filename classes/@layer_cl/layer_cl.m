@@ -195,8 +195,8 @@ classdef layer_cl < matlab.mixin.Copyable
             fmax=-Inf;
             
             for it=1:length(layer.Frequencies)
-                fmin=nanmin(fmin,nanmin([layer.Transceivers(it).get_params_value('FrequencyStart',[]);layer.Transceivers(it).get_params_value('FrequencyEnd',[])]));
-                fmax=nanmax(fmax,nanmax([layer.Transceivers(it).get_params_value('FrequencyStart',[]);layer.Transceivers(it).get_params_value('FrequencyEnd',[])]));
+                fmin=nanmin(fmin,nanmin([layer.Transceivers(it).get_params_value('FrequencyStart',[]) layer.Transceivers(it).get_params_value('FrequencyEnd',[])]));
+                fmax=nanmax(fmax,nanmax([layer.Transceivers(it).get_params_value('FrequencyStart',[]) layer.Transceivers(it).get_params_value('FrequencyEnd',[])]));
             end
             fLim=[fmin fmax];
         end

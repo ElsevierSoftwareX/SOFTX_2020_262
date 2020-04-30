@@ -247,7 +247,7 @@ drawnow
 for ii = 1:length(Filename)
     try
         % read file
-        new_layer = open_EK_file_stdalone(Filename{ii},'GPSOnly',1,'load_bar_comp',load_bar_comp);
+        new_layer = open_file_standalone(Filename{ii},{},'GPSOnly',1,'load_bar_comp',load_bar_comp);
         
         % extract and decimate time vector
         time = new_layer.GPSData.Time;

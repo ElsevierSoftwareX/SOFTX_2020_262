@@ -47,20 +47,18 @@ try
         %pause(dpause);
         return;
     end
-    
-    trans=trans_obj;
-    
-    Range=trans.get_transceiver_range();
-    Bottom=trans.Bottom;
-    Time=trans.Time;
-    Number=trans.get_transceiver_pings();
-    Samples=trans.get_transceiver_samples();
+
+    Range_trans=trans_obj.get_transceiver_range();
+    Bottom=trans_obj.Bottom;
+    Time_trans=trans_obj.Time;
+    Number=trans_obj.get_transceiver_pings();
+    Samples=trans_obj.get_transceiver_samples();
     
     
-    Depth_corr=trans.get_transducer_depth();
+    Depth_corr=trans_obj.get_transducer_depth();
     
-    Lat=trans.GPSDataPing.Lat;
-    Long=trans.GPSDataPing.Long;
+    Lat=trans_obj.GPSDataPing.Lat;
+    Long=trans_obj.GPSDataPing.Long;
     
     
     ax_main=axes_panel_comp.main_axes;
@@ -95,8 +93,8 @@ try
     
     
     
-    nb_pings=length(Time);
-    nb_samples=length(Range);
+    nb_pings=length(Time_trans);
+    nb_samples=length(Range_trans);
     
     
     xdata_red=linspace(x_lim(1),x_lim(2),nb_pings_red);
@@ -228,8 +226,7 @@ try
         vert_val(vert_val<cax(1))=cax(1);
         
         
-        
-        t_n=Time(idx_ping);
+        t_n=Time_trans(idx_ping);
         
         i_str='';
         
@@ -246,9 +243,9 @@ try
         
 
         if Depth_corr(idx_ping)~=0
-            xy_string=sprintf('Range: %.2fm Range Corr: %.2fm\n  Sample: %.0f Ping #:%.0f of  %.0f',Range(idx_r),Range(idx_r)+Depth_corr(idx_ping),Samples(idx_r),Number(idx_ping),Number(end));
+            xy_string=sprintf('Range: %.2fm Range Corr: %.2fm\n  Sample: %.0f Ping #:%.0f of  %.0f',Range_trans(idx_r),Range_trans(idx_r)+Depth_corr(idx_ping),Samples(idx_r),Number(idx_ping),Number(end));
         else
-            xy_string=sprintf('Range: %.2fm\n  Sample: %.0f Ping #%.0f of  %.0f',Range(idx_r),Samples(idx_r),Number(idx_ping),Number(end));
+            xy_string=sprintf('Range: %.2fm\n  Sample: %.0f Ping #%.0f of  %.0f',Range_trans(idx_r),Samples(idx_r),Number(idx_ping),Number(end));
         end
         
         if ~isempty(Lat)&&nansum(Lat+Long)>0
@@ -264,7 +261,7 @@ try
             pos_weigtht='Bold';
             
         end
-        time_str=datestr(Time(idx_ping),'yyyy-mm-dd HH:MM:SS');
+        time_str=datestr(Time_trans(idx_ping),'yyyy-mm-dd HH:MM:SS');
         
         switch lower(deblank(curr_disp.Fieldname))
             case{'alongangle','acrossangle'}
@@ -279,13 +276,10 @@ try
         
         iFile=trans_obj.Data.FileId(idx_ping);
         [~,file_curr,~]=fileparts(layer.Filename{iFile});
-        
-        time_params=trans_obj.Params.Time;
-        [~,idx_params]=min(abs(time_params-Time(idx_ping)));
-        
+
         summary_str=sprintf('%s. Mode: %s Freq: %.0f kHz Power: %.0fW Pulse: %.3fms',file_curr,trans_obj.Mode,curr_disp.Freq/1000,...
-            trans_obj.Params.TransmitPower(idx_params),...
-            trans_obj.Params.PulseLength(idx_params)*1e3);
+            trans_obj.get_params_value('TransmitPower',idx_ping),...
+            trans_obj.get_params_value('PulseLength',idx_ping)*1e3);
         
         
         set(info_panel_comp.i_str,'String',i_str);
@@ -314,7 +308,7 @@ try
             set(axh,'ylim',bot_y_val);
         end
         
-        depth=trans.get_bottom_range(idx_ping);
+        depth=trans_obj.get_bottom_range(idx_ping);
         if ~isnan(depth)
             str=sprintf('%.2fm',depth);
         else
