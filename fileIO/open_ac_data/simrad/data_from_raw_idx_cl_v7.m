@@ -27,7 +27,7 @@ trans_obj=transceiver_cl.empty();
 envdata_def=p.Results.env_data;
 
 envdata=env_data_cl();
-    
+
 NMEA={};
 mru0_att=attitude_nav_cl.empty();
 
@@ -331,8 +331,10 @@ for idg=1:nb_dg
                         end
                         
                         trans_obj(idx).Params.Time(i_ping(idx))=dgTime;
-                        trans_obj(idx).TransducerImpedance=cell(trans_obj(idx).Config.NbQuadrants,nb_pings(idx));
                         
+                        if i_ping(idx)==1
+                            trans_obj(idx).TransducerImpedance=cell(trans_obj(idx).Config.NbQuadrants,nb_pings(idx));
+                        end
                         
                         for jj=1:length(prop_params)
                             if ~isempty(params_cl_init(idx).(prop_params{jj}))
@@ -480,19 +482,19 @@ for idg=1:nb_dg
                             end
                             id=find(trans_obj(idx).Params.PulseLength>0,1,'last');
                             Np=2*round(trans_obj(idx).Params.PulseLength(id)/trans_obj(idx).Params.SampleInterval(id));
-%                             idx_reshuffle=[3 4 1 2];
-%                             polarity=[-1 1 -1 1];
+                            %                             idx_reshuffle=[3 4 1 2];
+                            %                             polarity=[-1 1 -1 1];
                             for isig=1:nb_cplx_per_samples/2
-%                                 switch trans_obj(idx).Config.TransducerSerialNumber
-%                                     case '28332'
-%                                         if polarity(idx)>=1
-%                                             data_tmp{idx}.(sprintf('comp_sig_%1d',idx_reshuffle(isig)))(1:sampleCount,block_i(idx))=(temp(1+2*(isig-1),:)+1i*temp(2+2*(isig-1),:));
-%                                         else
-%                                             data_tmp{idx}.(sprintf('comp_sig_%1d',idx_reshuffle(isig)))(1:sampleCount,block_i(idx))=conj(temp(1+2*(isig-1),:)+1i*temp(2+2*(isig-1),:));   
-%                                         end
-%                                     otherwise
-%                                         data_tmp{idx}.(sprintf('comp_sig_%1d',isig))(1:sampleCount,block_i(idx))=temp(1+2*(isig-1),:)+1i*temp(2+2*(isig-1),:);
-%                                 end
+                                %                                 switch trans_obj(idx).Config.TransducerSerialNumber
+                                %                                     case '28332'
+                                %                                         if polarity(idx)>=1
+                                %                                             data_tmp{idx}.(sprintf('comp_sig_%1d',idx_reshuffle(isig)))(1:sampleCount,block_i(idx))=(temp(1+2*(isig-1),:)+1i*temp(2+2*(isig-1),:));
+                                %                                         else
+                                %                                             data_tmp{idx}.(sprintf('comp_sig_%1d',idx_reshuffle(isig)))(1:sampleCount,block_i(idx))=conj(temp(1+2*(isig-1),:)+1i*temp(2+2*(isig-1),:));
+                                %                                         end
+                                %                                     otherwise
+                                %                                         data_tmp{idx}.(sprintf('comp_sig_%1d',isig))(1:sampleCount,block_i(idx))=temp(1+2*(isig-1),:)+1i*temp(2+2*(isig-1),:);
+                                %                                 end
                                 data_tmp{idx}.(sprintf('comp_sig_%1d',isig))(1:sampleCount,block_i(idx))=temp(1+2*(isig-1),:)+1i*temp(2+2*(isig-1),:);
                                 
                                 tmp_real=temp(1+2*(isig-1),1:Np);
@@ -507,10 +509,14 @@ for idg=1:nb_dg
                     chan=idx_raw_obj.chan_dg(idg);
                     idx=find(chan==channels);
                     
+                    
+                    
                     if isempty(idx)||i_ping(idx)>nb_pings(idx)
                         continue;
                     end
-                    
+                    if i_ping(idx)==1
+                        trans_obj(idx).TransducerImpedance=cell(1,nb_pings(idx));
+                    end
                     %fseek(fid,idx_raw_obj.pos_dg(idg),'bof');
                     fseek(fid,idx_raw_obj.pos_dg(idg)-pos+HEADER_LEN,'cof');
                     data.pings(idx).time(i_ping(idx))=idx_raw_obj.time_dg(idg);
@@ -532,6 +538,7 @@ for idg=1:nb_dg
                         if i_ping(idx)==1
                             mode{idx}='CW';
                             [trans_obj(idx).Config,trans_obj(idx).Params]=config_from_ek60(data.pings(idx),config_EK60(idx_freq(idx)));
+                            
                         end
                         
                         data_tmp{idx}.power(1:numel(power_tmp),block_i(idx))=power_tmp;
@@ -539,9 +546,6 @@ for idg=1:nb_dg
                             data_tmp{idx}.AcrossPhi(1:size(angles,2),block_i(idx))=angles(1,:);
                             data_tmp{idx}.AlongPhi(1:size(angles,2),block_i(idx))=angles(2,:);
                         end
-                        
-                        
-                        
                         
                     else
                         if i_ping(idx)>1
@@ -564,9 +568,10 @@ for idg=1:nb_dg
                     'Nb_pings',   nb_pings(idx),...
                     'BlockId' , block_id{idx},...
                     'MemapName',  curr_data_name_t{idx});
+                
             end
             
-            if block_i(idx)==block_len||i_ping(idx)==nb_pings(idx)   
+            if block_i(idx)==block_len||i_ping(idx)==nb_pings(idx)
                 idx_pings=(block_len*(block_nb(idx)-1)+1):i_ping(idx);
                 mode{idx}=write_data(data.pings(idx).datatype,trans_obj(idx),data_tmp{idx},gps_only,(1:nb_samples_per_block{idx}(block_nb(idx))),idx_pings);
                 block_i(idx)=0;
@@ -612,11 +617,11 @@ NMEA.time(idx_rem_nmea)=[];
 
 %Complete Params if necessary
 
-for idx=1:nb_trans    
-    idx_nan=trans_obj(idx).Params.PulseLength==0;    
+for idx=1:nb_trans
+    idx_nan=trans_obj(idx).Params.PulseLength==0;
     for jj=1:length(prop_params)
-        trans_obj(idx).Params.(prop_params{jj})(idx_nan)=[];        
-    end   
+        trans_obj(idx).Params.(prop_params{jj})(idx_nan)=[];
+    end
 end
 
 
@@ -632,7 +637,7 @@ switch ftype
         envdata.SoundSpeed=data.pings(1).soundvelocity(1);
 end
 
-if~isempty(envdata_def)   
+if~isempty(envdata_def)
     props=properties(envdata_def);
     for ipp=1:numel(props)
         if isnumeric(envdata_def.(props{ipp}))
@@ -651,10 +656,10 @@ id_rem=[];
 for i =1:nb_trans
     
     trans_obj(i).Params=trans_obj(i).Params.reduce_params();
-     
+    
     if ~any(trans_obj(i).Params.Frequency~=0)
         trans_obj(i).Params.Frequency = (trans_obj(i).Params.FrequencyStart+trans_obj(i).Params.FrequencyEnd)/2;
-    end    
+    end
     
     if ~any(trans_obj(i).Params.Absorption~=0)
         alpha= seawater_absorption(trans_obj(i).Params.Frequency(1)/1e3, (envdata.Salinity), (envdata.Temperature), (envdata.Depth),'fandg')/1e3;
@@ -668,9 +673,9 @@ for i =1:nb_trans
         trans_obj(i).set_transceiver_time([data.pings(i).time dgTime]);
     end
     
-    [~,range_t]=trans_obj(i).compute_soundspeed_and_range(envdata);   
+    [~,range_t]=trans_obj(i).compute_soundspeed_and_range(envdata);
     trans_obj(i).set_transceiver_range(range_t);
-    trans_obj(i).set_absorption(envdata);     
+    trans_obj(i).set_absorption(envdata);
     % initialize bottom object, with right dimensions but no information
     trans_obj(i).Bottom = [];
 end

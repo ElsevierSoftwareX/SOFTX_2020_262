@@ -63,11 +63,11 @@ end
 
 disp_perso(main_figure,'Updating Display');
 
-if new==1   
+if new==1
     update_algo_panels(main_figure,{});
     
     update_denoise_tab(main_figure);
-  
+    
     update_processing_tab(main_figure);
     update_map_tab(main_figure);
     update_st_tracks_tab(main_figure);
@@ -103,20 +103,21 @@ catch
 end
 curr_disp=get_esp3_prop('curr_disp');
 if new==1
-    init_sec_link_props(main_figure);     
+    init_sec_link_props(main_figure);
 end
 upped=update_axis(main_figure,new,'main_or_mini',curr_disp.SecChannelIDs,'force_update',force_update);
 
 set_alpha_map(main_figure,'main_or_mini',union({'main','mini'},curr_disp.SecChannelIDs(upped>0),'stable'));
-
-opt_panel.SelectedTab=sel_tab;
+if ~isempty(sel_tab)
+    opt_panel.SelectedTab=sel_tab;
+end
 set_axes_position(main_figure);
 update_cmap(main_figure);
 init_link_prop(main_figure);
 
 if new==1
     secondary_freq=getappdata(main_figure,'Secondary_freq');
-    if ~isempty(secondary_freq)        
+    if ~isempty(secondary_freq)
         if ~isempty(secondary_freq.axes)
             if strcmpi(secondary_freq.axes(1).UserData.geometry_y,'depth')
                 ylim=get(secondary_freq.axes(1),'Ylim');
@@ -135,7 +136,7 @@ display_regions(main_figure);
 display_survdata_lines(main_figure);
 
 order_stacks_fig(main_figure);
-order_axes(main_figure); 
+order_axes(main_figure);
 
 update_info_panel([],[],1);
 

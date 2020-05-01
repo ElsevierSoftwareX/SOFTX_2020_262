@@ -8,23 +8,23 @@ if isempty(idx_pings)
     idx_pings=1:nansum(nb_pings);
 end
 
-for i=1:length(nb_pings)
-    if i==1
+for ip=1:length(nb_pings)
+    if ip==1
         ipings=1:nb_pings(1);
     else
-        ping_start=nansum(nb_pings(1:i-1))+1;
-        ping_end=nansum(nb_pings(1:i));
+        ping_start=nansum(nb_pings(1:ip-1))+1;
+        ping_end=nansum(nb_pings(1:ip));
         ipings=ping_start:ping_end;
     end
     if isempty(idx_r)
-        idx_r_c=(1:nb_samples(i))';
+        idx_r_c=(1:nb_samples(ip))';
     else
         idx_r_c=idx_r;
     end
-    [~,idx_pings_cell{i},idx_ping_tmp]=intersect(ipings,idx_pings);
-    [~,idx_r_cell{i},idx_r_tmp]=intersect((1:nb_samples(i))',idx_r_c);
+    [~,idx_pings_cell{ip},idx_ping_tmp]=intersect(ipings,idx_pings);
+    [~,idx_r_cell{ip},idx_r_tmp]=intersect((1:nb_samples(ip))',idx_r_c);
     
-    data_cell{i}=data(idx_r_tmp,idx_ping_tmp);
+    data_cell{ip}=data(idx_r_tmp,idx_ping_tmp);
     
 end
     

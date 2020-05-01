@@ -15,6 +15,7 @@ if ~isempty(p.Results.UiContextMenuName)
     tab_handle.UIContextMenu=tab_menu;
 end
 
-tab_handle.Parent.SelectedTab=tab_handle;
-
+if ~isempty(tab_handle)
+    tab_handle.Parent.SelectedTab=tab_handle;
+end
 % format_color_gui(main_figure_handle,curr_disp.Font,curr_disp.Cmap);

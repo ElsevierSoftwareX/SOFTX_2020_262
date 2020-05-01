@@ -47,12 +47,7 @@ end
 trans_file_ID=transceiver_cl();
 trans_file_ID.Data=trans_obj.Data.get_data_idx_file(fileID);
 
-fields=fieldnames(trans_file_ID.Data.SubData(1).Memap{1}.Data);
-nb_samples=size(trans_file_ID.Data.SubData(1).Memap{1}.Data.(fields{1}),1);
-
-trans_file_ID.Data.Nb_samples=nb_samples;
-
-trans_file_ID.Range=trans_obj.Range(1:nb_samples);
+trans_file_ID.Range=trans_obj.Range(1:nanmax(trans_file_ID.Data.Nb_samples));
 trans_file_ID.Time=trans_obj.Time(idx_file);
 trans_file_ID.Bottom=trans_obj.Bottom.get_bottom_idx_section(idx_file);
 
@@ -70,6 +65,7 @@ trans_file_ID.Filters=trans_obj.Filters;
 trans_file_ID.Algo=trans_obj.Algo;
 trans_file_ID.Mode=trans_obj.Mode;
 trans_file_ID.TransducerDepth=trans_obj.TransducerDepth(idx_file);
+%trans_file_ID.TransducerImpedance = cell(1,numel(idx_file));
 trans_file_ID.TransducerImpedance=trans_obj.TransducerImpedance(idx_file);
 
 trans_file_ID.GPSDataPing=trans_obj.GPSDataPing.get_GPSDData_idx_section(idx_file);

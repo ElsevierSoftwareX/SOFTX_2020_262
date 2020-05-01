@@ -13,6 +13,7 @@ if ~any(idx_field)&&contains(lower(field),'khz')
 end
 
 default_value=default_values(idx_field);
+
 if found==0
     data_obj.init_sub_data(field,default_value);
     [idx,~]=find_field_idx(data_obj,field);

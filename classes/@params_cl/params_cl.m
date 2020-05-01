@@ -191,14 +191,22 @@ classdef params_cl
             params_section=params_obj;
             
             props=properties(params_obj);
-            
+            id_sec=ismember(idx,params_obj.PingNumber);
+            if any(id_sec)
+                id_num=find(id_sec);
+            else
+                id_sec=numel(params_obj.PingNumber);
+                id_num=1;
+            end
+             
             for iprop=1:length(props)
                 if ~strcmpi(props{iprop},'PingNumber')
-                params_section.(props{iprop})= params_obj.(props{iprop})(ismember(idx,params_obj.PingNumber));
+                        params_section.(props{iprop})= params_obj.(props{iprop})(id_sec);
+
                 end   
             end
-            params_section.PingNumber=find(ismember(idx,params_obj.PingNumber));
-            
+            params_section.PingNumber=find(id_num);
+   
         end
         
         
