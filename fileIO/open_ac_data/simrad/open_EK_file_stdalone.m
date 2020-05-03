@@ -397,7 +397,12 @@ if ~isequal(Filename_cell, 0)
             if GPSOnly(uu)==0
                 for i =1:length(trans_obj)
                     if trans_obj(i).need_escorr()
-                        trans_obj(i).correctTriangleWave('EsOffset',p.Results.EsOffset,...
+                        es_offset=p.Results.EsOffset;
+                        if (isempty(es_offset)||isnan(es_offset)||~isnumeric(es_offset))&&isfile(fullfile(path_f,'survey_options.xml'))
+                            survey_options_obj=parse_survey_options_xml(fullfile(path_f,'survey_options.xml'));
+                            es_offset = survey_options_obj.Es60_correction;
+                        end
+                        trans_obj(i).correctTriangleWave('EsOffset',es_offset,...
                             'load_bar_comp',p.Results.load_bar_comp);
                     end
                 end

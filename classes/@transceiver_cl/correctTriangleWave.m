@@ -23,6 +23,11 @@ else
     bsize=nanmax(bsize,nb_pings);
 end
 mean_err=p.Results.EsOffset;
+
+if isempty(mean_err)||isnan(mean_err)||~isnumeric(mean_err)
+    mean_err=trans_obj.Config.EsOffset;
+end
+
 u=0;
 % initialize progress bar
 if ~isempty(p.Results.load_bar_comp)
@@ -46,6 +51,7 @@ while u<ceil(nb_pings/bsize)
     power=get_subdatamat(trans_obj.Data,1:nb_samples,idx_pings,'field','power');
     
     [power_corr_db,mean_err]=correctES60(10*log10(power),mean_err,u-1);
+    
     if mean_err~=0
         trans_obj.Data.replace_sub_data_v2('power',10.^(power_corr_db/10),[],idx_pings);
     end

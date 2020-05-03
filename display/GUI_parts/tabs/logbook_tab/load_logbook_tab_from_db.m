@@ -226,9 +226,15 @@ try
             map_menu=uimenu(rc_menu,'Label','Map');
             mod_survey_menu=uimenu(rc_menu,'Label','Edit SurveyData');
             
-            uimenu(rc_menu,'Label','Open Script Builder with selected file(s)','Callback',{@generate_xml_callback,surv_data_tab,main_figure});
-            uimenu(rc_menu,'Label','Open highlighted file(s)','Callback',{@open_files_callback,surv_data_tab,main_figure,'high'});
-            uimenu(rc_menu,'Label','Open selected file(s)','Callback',{@open_files_callback,surv_data_tab,main_figure,'sel'});
+            open_menu=uimenu(rc_menu,'Label','Open');  
+            uimenu(open_menu,'Label','Open highlighted file(s)','Callback',{@open_files_callback,surv_data_tab,main_figure,'high'});
+            uimenu(open_menu,'Label','Open selected file(s)','Callback',{@open_files_callback,surv_data_tab,main_figure,'sel'});
+            uimenu(open_menu,'Label','Open Script Builder with selected file(s)','Callback',{@generate_xml_callback,surv_data_tab,main_figure});
+            
+            copy_menu=uimenu(rc_menu,'Label','Copy');
+            uimenu(copy_menu,'Label','Copy highlighted file(s) to other folder','Callback',{@copy_to_other_cback,surv_data_tab,main_figure,'high'});
+            uimenu(copy_menu,'Label','Copy selected file(s) to other folder','Callback',{@copy_to_other_cback,surv_data_tab,main_figure,'sel'});
+            
             uimenu(select_menu,'Label','Select all','Callback',{@selection_callback,surv_data_tab},'Tag','se');
             uimenu(select_menu,'Label','Deselect all','Callback',{@selection_callback,surv_data_tab},'Tag','de');
             uimenu(select_menu,'Label','Invert Selection','Callback',{@selection_callback,surv_data_tab},'Tag','inv');
@@ -278,6 +284,51 @@ dbconn.close();
 disp('Logbook connection closed');
 delete(src);
 end
+
+function copy_to_other_cback(src,evt,surv_data_tab,main_figure,sel_or_high)
+surv_data_table=getappdata(surv_data_tab,'surv_data_table');
+data_ori=get(surv_data_table.table_main,'Data');
+
+switch sel_or_high
+    case 'sel'
+        selected_files=unique(data_ori([data_ori{:,1}],2));
+    case 'high'
+        selected_files=unique(surv_data_table.table_main.UserData.highlighted_files);
+end
+
+path_f=getappdata(surv_data_tab,'path_data');
+files=fullfile(path_f,selected_files);
+
+path_tmp = uigetdir(path_f,...
+    'Copy to folder');
+if isequal(path_tmp,0)
+    return;
+end
+show_status_bar(main_figure);
+load_bar_comp = getappdata(main_figure,'Loading_bar');
+
+set(load_bar_comp.progress_bar, 'Minimum',0, 'Maximum',numel(files), 'Value',0);
+
+for ui=1:numel(files)
+    load_bar_comp.progress_bar.setText(sprintf('Copying %s',files{ui}));
+    [status,msg,~] = copyfile(files{ui}, path_tmp, 'f');
+%     switch ispc
+%         case 1
+%             [status,~] = system(sprintf('copy %s %s',files{ui},path_tmp),'-echo');
+%         case 0
+%             [status,~] = system(sprintf('cp %s %s',files{ui},path_tmp),'-echo');
+%     end
+    
+    if ~status
+        warndlg_perso(main_figure,'Error copying file',sprintf('Error copying %s: \n%s',files{ui},msg));
+        %warndlg_perso(main_figure,'Error copying file',sprintf('Error copying %s',files{ui}));
+    end
+    set(load_bar_comp.progress_bar,'Value',ui);
+end
+
+hide_status_bar(main_figure);
+end
+
 
 %%
 function display_files_tracks_cback(src,evt,surv_data_tab,main_figure,f_save)

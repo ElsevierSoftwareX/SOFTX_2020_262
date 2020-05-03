@@ -797,7 +797,8 @@ loadEcho(main_figure);
         grid(ax_bp,'on');
         colormap(ax_bp,cmap)
         shading(ax_bp,'flat');
-        colorbar(ax_bp);
+        cb=colorbar(ax_bp);
+        cb.UIContextMenu=[];
         xlabel(ax_bp,'Port/stbd angle (\circ)')
         ylabel(ax_bp,'Fore/aft angle (\circ)')
         zlabel(ax_bp,'TS (dB re 1m^2)')

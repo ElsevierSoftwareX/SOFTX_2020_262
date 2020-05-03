@@ -4,7 +4,7 @@ block_len=get_block_len(100,'cpu');
 
 trans_obj.Data.replace_sub_data_v2('singletarget',-999,[],[]);
     
-if ~isempty(ST)
+if ~isempty(ST)&&~isempty(ST.Ping_number)
     idx_r=nanmin(ST.idx_r):nanmax(ST.idx_r);
     idx_pings_st=nanmin(ST.Ping_number):nanmax(ST.Ping_number);
     

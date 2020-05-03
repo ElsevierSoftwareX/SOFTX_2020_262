@@ -98,7 +98,7 @@ classdef algo_panel_cl < dynamicprops
             end 
             str_disp=obj.algo.Input_params.to_string();
             ip=0;
-            ic_add=0;
+            %ic_add=0;
             for ui=1:numel(param_names)
                 addprop(obj,param_names{ui});
                 if isempty(results.input_struct_h) || ~isfield(results.input_struct_h,param_names{ui})
@@ -137,7 +137,8 @@ classdef algo_panel_cl < dynamicprops
                                 'String',str_disp{ui},'Position',p_tmp,...
                                 'callback',@update_algo_input_param_fcn,...
                                 'tooltipstring',obj.algo.Input_params(ui).Tooltipstring,'Tag',param_names{ui});
-                            ip=ip-1;
+                            ip = ip-1;
+
                     end
                 else
                     obj.(param_names{ui})=results.input_struct_h.(param_names{ui});

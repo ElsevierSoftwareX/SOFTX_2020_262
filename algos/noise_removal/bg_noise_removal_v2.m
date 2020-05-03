@@ -69,7 +69,7 @@ idx_r=1:numel(range_t);
 
 for ui=1:num_ite
     idx_pings=idx_pings_tot((ui-1)*block_size+1:nanmin(ui*block_size,numel(idx_pings_tot)));
-    sub_bot=trans_obj.get_bottom_range(idx_pings);
+    %sub_bot=trans_obj.get_bottom_range(idx_pings);
     
     lambda=c./FreqCenter;
     
@@ -89,7 +89,7 @@ for ui=1:num_ite
     [I,J]=find(~isnan(pow));
    
     J_d=[J ; J ];
-    I_d=[I ; ceil(0.9*I)];
+    I_d=[I ; ceil(0.8*I)];
     
     idx_d=I_d+nb_samples*(J_d-1);
     reg_n=false(nb_samples,nb_pings);
@@ -104,8 +104,9 @@ for ui=1:num_ite
     SNR_thr=p.Results.SNRThr;
     
     pow_filt=filter2_perso(ones(v_filt,h_filt),pow);
+    reg_n_filt=filter2_perso(ones(v_filt,h_filt),reg_n);
     
-    pow_filt(pow_filt==0|~reg_n)=nan;
+    pow_filt(pow_filt==0|~(reg_n_filt==1))=nan;
     [noise_db,~]=nanmin(10*log10(pow_filt),[],1);
     
     pow_noise_db=bsxfun(@times,noise_db,ones(size(pow,1),1));

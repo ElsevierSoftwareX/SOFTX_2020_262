@@ -11,8 +11,6 @@ uimenu(context_menu,'Label','Remove track','Callback',{@rm_tracks_cback,main_fig
 uimenu(context_menu,'Label','Create bad data region around track','Callback',{@create_regs_from_tracks_callback,'Bad Data',main_figure,track_plot.UserData});
 uimenu(context_menu,'Label','Create data region around track','Callback',{@create_regs_from_tracks_callback,'Data',main_figure,track_plot.UserData});
 
-
-
 end
 
 

@@ -172,6 +172,10 @@ for iftype=1:numel(ftype_cell_unique)
                     if ~isnan(survey_options_obj.Soundspeed)
                         new_layers_tmp_tot(uil).EnvData.SoundSpeed=survey_options_obj.Soundspeed;
                     end
+                    for uit=1:numel(new_layers_tmp_tot(uil).Transceivers)
+                       new_layers_tmp_tot(uil).Transceivers(uit).Config.EsOffset = survey_options_obj.Es60_correction;
+                    end
+                    
                     new_layers_tmp_tot(uil).load_svp('','constant');
                     new_layers_tmp_tot(uil).load_ctd('','constant');
                 end

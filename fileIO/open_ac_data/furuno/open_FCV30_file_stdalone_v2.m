@@ -99,6 +99,8 @@ nb_config=length(id_config);
 layers(nb_config)=layer_cl();
 ilay=0;
 
+
+
 for iconfig=id_config
     ilay=ilay+1;
     str_disp=sprintf('Opening File %d/%d',ilay,length(id_config));

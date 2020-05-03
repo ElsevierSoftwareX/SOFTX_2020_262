@@ -41,6 +41,7 @@ set([echo_int_tab_comp.h_ax,echo_int_tab_comp.v_ax,echo_int_tab_comp.main_ax],..
     'GridLineStyle','--',...
     'GridColor',col_grid,'FontWeight','bold');
 echo_int_tab_comp.cbar=colorbar(echo_int_tab_comp.main_ax,'Position',[0.95 0.05 0.02 0.8],'PickableParts','none');
+echo_int_tab_comp.cbar.UIContextMenu=[];
 
 linkaxes([echo_int_tab_comp.main_ax echo_int_tab_comp.v_ax],'y');
 linkaxes([echo_int_tab_comp.main_ax echo_int_tab_comp.h_ax],'x');
@@ -53,7 +54,10 @@ echo_int_tab_comp.v_plot=plot(echo_int_tab_comp.v_ax,[0 0],[0 0]);
 echo_int_tab_comp.h_plot=plot(echo_int_tab_comp.h_ax,[0 0],[0 0]);
 set(echo_int_tab_comp.main_plot,'facealpha','flat','edgecolor','none','AlphaDataMapping','none');
 echo_int_tab_comp.main_plot.AlphaData=zeros(size(echo_int));
-% cax=curr_disp.getCaxField('sv');
+
+create_context_menu_int_plot(echo_int_tab_comp.main_plot);
+
+        % cax=curr_disp.getCaxField('sv');
 % caxis(echo_int_tab_comp.main_ax,cax);
 
 %%%%%%Option Panel on the left side%%%%
@@ -281,6 +285,7 @@ end
 disp_done_figure(main_figure,'Echo-integration finished and exported... Done')
 hide_status_bar(main_figure);
 end
+
 
 function resize_echo_int_cback(~,~,main_figure)
 echo_int_tab_comp=getappdata(main_figure,'EchoInt_tab');

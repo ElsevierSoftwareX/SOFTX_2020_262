@@ -103,8 +103,8 @@ if isempty(ax)
     box(ax,'on');
     view(ax,3)
     caxis(ax,cax);
-    colorbar(ax,'PickableParts','none');
-    
+    cb=colorbar(ax,'PickableParts','none');
+    cb.UIContextMenu=[];
     %axis(ax,'ij');
    %axis(ax,'equal')
     data_struct=data_struct_new;

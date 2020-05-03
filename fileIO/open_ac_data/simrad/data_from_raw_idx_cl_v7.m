@@ -220,6 +220,7 @@ nb_dg=length(idx_raw_obj.type_dg);
 % idg_time=idx_raw_obj.time_dg();
 % [~,idg_sort]=sort(idg_time);
 
+
 for idg=1:nb_dg
     pos=ftell(fid);
     
@@ -233,8 +234,8 @@ for idg=1:nb_dg
     %     end
     
     dgTime=idx_raw_obj.time_dg(idg);
-    if ~isempty(load_bar_comp)
-        set(load_bar_comp.progress_bar, 'Minimum',0, 'Maximum',nb_dg, 'Value',idg);
+    if ~isempty(load_bar_comp)&&rem(idg,50)==0
+        set(load_bar_comp.progress_bar,'Value',idg);
     end
     
     switch  idx_raw_obj.type_dg{idg}
@@ -323,7 +324,7 @@ for idg=1:nb_dg
                                     if ismember(fields_params{jj},prop_params)
                                         params_cl_init(idx).(fields_params{jj})=params_temp.(fields_params{jj});
                                     else
-                                        if ~isdeployed()
+                                        if ~isdeployed()&&~ismember(fields_params{jj},{'ChannelID'})
                                             fprintf('New parameter in Parameters XML: %s\n', fields_params{jj});
                                         end
                                     end
@@ -345,7 +346,7 @@ for idg=1:nb_dg
                                 end
                             else
                                 if ~isdeployed()
-                                    fprintf('Parameter not found in Parameters XML: %s\n', prop_params{jj});
+                                    fprintf('Parameter not found in Parameters XML: %s for channel %s\n', prop_params{jj},params_temp.ChannelID);
                                 end
                             end
                         end
@@ -659,6 +660,14 @@ for i =1:nb_trans
     
     if ~any(trans_obj(i).Params.Frequency~=0)
         trans_obj(i).Params.Frequency = (trans_obj(i).Params.FrequencyStart+trans_obj(i).Params.FrequencyEnd)/2;
+    end
+    
+    if ~any(trans_obj(i).Params.FrequencyStart~=0)
+        trans_obj(i).Params.FrequencyStart = trans_obj(i).Params.Frequency;
+    end
+    
+    if ~any(trans_obj(i).Params.FrequencyEnd~=0)
+        trans_obj(i).Params.FrequencyEnd = trans_obj(i).Params.Frequency;
     end
     
     if ~any(trans_obj(i).Params.Absorption~=0)

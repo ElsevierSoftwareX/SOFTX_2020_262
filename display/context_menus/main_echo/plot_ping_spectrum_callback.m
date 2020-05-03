@@ -49,8 +49,8 @@ for uui=idx_sort
         caxis(curr_disp.getCaxField('sp')); colormap(cmap);
         title(sprintf('TS(f) for %.0f kHz, Ping %i, Frequency resolution %.1fkHz',layer.Frequencies(uui)/1e3,idx_ping,df));
          
-        colorbar(ax,'PickableParts','none');
-        
+        cb=colorbar(ax,'PickableParts','none');
+        cb.UIContextMenu=[];
         set(ax,'YColor',col_lab);
         set(ax,'XColor',col_lab);
         set(ax,'Color',col_ax,'GridColor',col_grid);

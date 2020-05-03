@@ -62,6 +62,7 @@ ydata=trans_obj.get_transceiver_samples();
 
 rr=trans_obj.get_transceiver_range();
 
+
 %xdata=double(get(axes_panel_comp.main_echo,'XData'));
 %ydata=double(get(axes_panel_comp.main_echo,'YData'));
 x_lim=get(ah,'xlim');
@@ -70,7 +71,7 @@ cp = ah.CurrentPoint;
 xinit = cp(1,1);
 yinit = cp(1,2);
 
-if xinit<x_lim(1)||xinit>x_lim(end)||yinit<y_lim(1)||yinit>y_lim(end)
+if xinit<x_lim(1)||xinit>x_lim(end)||yinit<y_lim(1)||yinit>y_lim(end)||isempty(rr)
     return;
 end
 
@@ -100,7 +101,7 @@ replace_interaction(main_figure,'interaction','WindowButtonUpFcn','id',2,'intera
 
     function wbmcb(~,~)
         cp = ah.CurrentPoint;
-        
+        xx = nanmin(nanmax(ceil(cp(1,1)),1),numel(rr));
         u=u+1;
         
         switch mode
@@ -130,7 +131,12 @@ replace_interaction(main_figure,'interaction','WindowButtonUpFcn','id',2,'intera
         
         x_box=([x_min x_max  x_max x_min x_min]);
         y_box=([y_max y_max y_min y_min y_max]);
-        str_txt=sprintf('%.2f m',rr(nanmin(ceil(cp(1,2)),numel(rr))));
+        
+        if cp(1,2)<0
+            return;
+        end
+        
+        str_txt=sprintf('%.2f m',rr(xx));
         
         if isvalid(hp)
             set(hp,'XData',x_box,'YData',y_box,'Tag','reg_temp');

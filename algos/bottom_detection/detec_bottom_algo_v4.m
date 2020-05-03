@@ -411,9 +411,11 @@ switch lower(p.Results.interp_method)
     case 'none'
         
     otherwise
-        F=griddedInterpolant(idx_pings_tot(~isnan(bot_idx_tot)),bot_idx_tot(~isnan(bot_idx_tot)),lower(p.Results.interp_method),'none');
-        bot_idx_tot=F(idx_pings_tot);
-        bot_idx_tot=ceil(bot_idx_tot);
+        if nansum(~isnan(bot_idx_tot))>=2
+            F=griddedInterpolant(idx_pings_tot(~isnan(bot_idx_tot)),bot_idx_tot(~isnan(bot_idx_tot)),lower(p.Results.interp_method),'none');
+            bot_idx_tot=F(idx_pings_tot);
+            bot_idx_tot=ceil(bot_idx_tot);
+        end
 end
 
 output_struct.bottom = bot_idx_tot;

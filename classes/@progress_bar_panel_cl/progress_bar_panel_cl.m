@@ -75,14 +75,25 @@ classdef progress_bar_panel_cl < handle
         end
         
         function set(obj,varargin)
+             
             if ~rem(numel(varargin),2)==0
                 return;
             end
-           
-            for i=1:2:numel(varargin)
-                obj.(varargin{i})=varargin{i+1};
+              
+            old_ratio=floor((obj.Value-obj.Minimum)/(obj.Maximum-obj.Minimum)*100);
+            
+            var=varargin(1:2:end);
+            var_val=varargin(2:2:end);
+
+            for i=1:numel(var)
+                obj.(var{i})=var_val{i};
             end
-            update_progress_bar(obj);
+            
+            new_ratio=floor((obj.Value-obj.Minimum)/(obj.Maximum-obj.Minimum)*100);
+            
+            if old_ratio~=new_ratio
+                update_progress_bar(obj);
+            end
         end
         
 
@@ -102,10 +113,7 @@ classdef progress_bar_panel_cl < handle
         function  update_progress_bar(obj)  
             ratio=floor((obj.Value-obj.Minimum)/(obj.Maximum-obj.Minimum)*100);
             
-            if ratio==round(obj.progpatch.XData(2)*100)
-                return;
-            end    
-
+            
             obj.progpatch.XData=[0 ratio/100 ratio/100 0];
             obj.progpatch.CData=[1 1-ratio/100 1-ratio/100 1];
             str_disp=sprintf('%.0f%%',ratio);

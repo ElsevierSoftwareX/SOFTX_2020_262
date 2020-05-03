@@ -49,12 +49,14 @@ try
         et=surv_data{end}.EndTime;
     end
     
-    if abs(st-fst)>1/(24*60*60)
+    if abs(fet-et)>1/(24*60*60) && abs(st-fst)>1/(24*60*60)
         surv_data{1}.StartTime=fst;
-        dbconn.exec(sprintf('UPDATE logbook SET StartTime = "%s"  WHERE Filename = "%s%s" AND StartTime = "%s"',datestr(fst,'yyyy-mm-dd HH:MM:SS'),filename_s,end_file,data_logbook{i,4}));
-    end
-    
-    if abs(fet-et)>1/(24*60*60)
+        surv_data{end}.EndTime=fet;
+        dbconn.exec(sprintf('UPDATE logbook SET StartTime = "%s",EndTime = "%s"   WHERE Filename = "%s%s" AND StartTime = "%s"',datestr(fst,'yyyy-mm-dd HH:MM:SS'),datestr(fet,'yyyy-mm-dd HH:MM:SS'),filename_s,end_file,data_logbook{i,4}))        
+    elseif abs(st-fst)>1/(24*60*60)
+        surv_data{1}.StartTime=fst;
+        dbconn.exec(sprintf('UPDATE logbook SET StartTime = "%s"   WHERE Filename = "%s%s" AND StartTime = "%s"',datestr(fst,'yyyy-mm-dd HH:MM:SS'),filename_s,end_file,data_logbook{i,4}))  
+    elseif abs(fet-et)>1/(24*60*60)
         surv_data{end}.EndTime=fet;
         dbconn.exec(sprintf('UPDATE logbook SET EndTime = "%s" WHERE Filename = "%s%s" AND EndTime = "%s"',datestr(fet,'yyyy-mm-dd HH:MM:SS'),filename_s,end_file,data_logbook{i,5}));
     end

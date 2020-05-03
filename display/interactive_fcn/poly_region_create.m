@@ -87,9 +87,14 @@ replace_interaction(main_figure,'interaction','WindowButtonDownFcn','id',1,'inte
    function wbmcb_ext(~,~)
        
         cp=ah.CurrentPoint;
+        
+        if cp(1,2)<0
+            return;
+        end
+        
         xinit(u)=cp(1,1);
-        yinit(u)=cp(1,2);
-
+        yinit(u)=nanmin(nanmax(ceil(cp(1,2)),1),numel(rr));
+            
         
         if isvalid(hp)
             set(hp,'XData',xinit,'YData',yinit);
@@ -98,9 +103,9 @@ replace_interaction(main_figure,'interaction','WindowButtonDownFcn','id',1,'inte
         end
         
         if isvalid(txt)
-            set(txt,'position',[cp(1,1) cp(1,2) 0],'string',sprintf('%.2f m',rr(nanmin(ceil(cp(1,2)),numel(rr)))));
+            set(txt,'position',[cp(1,1) yinit(u) 0],'string',sprintf('%.2f m',rr(yinit(u))));
         else
-            txt=text(ah,cp(1,1),cp(1,2),sprintf('%.2f m',rr(nanmin(ceil(cp(1,2)),numel(rr)))),'color',col_line,'Tag','reg_temp');
+            txt=text(ah,cp(1,1),yinit(u),sprintf('%.2f m',rr(yinit(u))),'color',col_line,'Tag','reg_temp');
         end
    end
 

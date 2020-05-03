@@ -203,12 +203,16 @@ mat_size=size(var_disp);
 if  ~any(mat_size==1)
     reg_plot=pcolor(ax_in,repmat(x_disp,size(y_disp,1),1),y_disp,var_disp);
     set(reg_plot,'alphadata',alphadata,'facealpha','flat','edgecolor','none','AlphaDataMapping','none');
+    create_context_menu_int_plot(reg_plot)
+
 end
 ymin=nanmin(y_disp(~isinf(y_disp)));
 ymax=nanmax(y_disp(~isinf(y_disp)));
 
 xmin=nanmin(x_disp);
 xmax=nanmax(x_disp);
+
+
 
 % ticks and grid
 
@@ -219,8 +223,8 @@ grid(ax_in,'on');
 
 % colour
 caxis(ax_in,cax);
-colorbar(ax_in,'Position',[0.92 0.25 0.03 0.65],'PickableParts','none');
-
+cb=colorbar(ax_in,'Position',[0.92 0.25 0.03 0.65],'PickableParts','none');
+cb.UIContextMenu=[];
 [cmap,col_ax,~,col_grid,~,~,~]=init_cmap(cmap_name);
 colormap(ax_in,cmap);
 set(ax_in,'GridColor',col_grid,'Color',col_ax);
@@ -353,5 +357,8 @@ set(ax_in,'Ylim',[ymin-reg_obj.Cell_h/2 ymax+reg_obj.Cell_h/2]);
             
     end
 
+
 end
+
+
 

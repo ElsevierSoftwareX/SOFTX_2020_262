@@ -67,7 +67,8 @@ show_status_bar(main_figure);
         ylabel(ax,sprintf('Ping Number %.0f',pings(1)));
         xlabel(ax,sprintf('%.1fkHz',f_val/1e3));
         set(ax,'Xlim',sort([f_vec(1)/1e3 f_vec(end)/1e3]),'Ylim',[pings(1) pings(end)],'Zlim',[range(1) range(end)]);
-        colorbar(ax,'PickableParts','none');
+        cb=colorbar(ax,'PickableParts','none');
+        cb.UIContextMenu=[];
         uicontrol(fig,'Style','slider','Min',nanmin(f_vec)/1e3,'Max',nanmax(f_vec)/1e3,'Value',f_val/1e3,'SliderStep',[0.01 0.1],...
              'units','normalized','Position',[0.2 0.05 0.6 0.02],'Callback',{@change_freq_cback_2,Sv_f_per,f_vec,X,hx,ax,'f'});
        grid(ax,'on');

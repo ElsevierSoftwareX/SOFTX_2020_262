@@ -99,7 +99,7 @@ end
 
 
 for idg=1:length(idx_dg)
-    if ~isempty(load_bar_comp)
+    if ~isempty(load_bar_comp)&&rem(idg,50)==0
             set(load_bar_comp.progress_bar, 'Value',idg);        
     end
     curr_pos=ftell(fid);

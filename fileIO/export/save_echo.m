@@ -43,8 +43,8 @@ set(new_axes,'units','norm','XAxisLocation','bottom','XTickLabelRotation',90,'ou
 
 layers_Str=list_layers(layer,'nb_char',80);
 title(new_axes,sprintf('%s : %s',deblank(trans_obj.Config.ChannelID),layers_Str{1}),'interpreter','none');
-colorbar(new_axes);
-
+cb=colorbar(new_axes);
+cb.UIContextMenu=[];
 format_color_gui(new_fig,curr_disp.Font,curr_disp.Cmap,1);
 
 text_obj=findobj(new_fig,'-property','Fontsize');
@@ -62,7 +62,7 @@ switch fileN
          print(new_fig,'-clipboard','-dbitmap');
          %hgexport(new_fig,'-clipboard');
          delete(new_fig);
-         disp_done_figure(main_figure,'Echogramm copied to clipboard...');
+         disp_done_figure(main_figure,'Echogram copied to clipboard...');
     otherwise
         if isempty(path_echo)
             [path_echo,~,~]=fileparts(layer.Filename{1});
