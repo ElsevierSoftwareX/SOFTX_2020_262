@@ -99,7 +99,7 @@ display_survdata_lines(main_figure);
 set_alpha_map(main_figure,'main_or_mini',cids);
 
 
-order_stacks_fig(main_figure);
+order_stacks_fig(main_figure,curr_disp);
 update_info_panel([],[],1);
 drawnow;
 

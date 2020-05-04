@@ -65,7 +65,7 @@ if ~isempty(regions)
     curr_disp.setActive_reg_ID({});
 
     set_alpha_map(main_figure,'main_or_mini',union({'main','mini'},curr_disp.ChannelID));
-    order_stacks_fig(main_figure);
+    order_stacks_fig(main_figure,curr_disp);
 end
 
 end

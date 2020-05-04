@@ -84,6 +84,6 @@ if ~isempty(layer.Curves)
         update_curves_and_table(main_figure,'ts_f',uid);
     end
 end
-order_stacks_fig(main_figure);
+order_stacks_fig(main_figure,[]);
 
 end

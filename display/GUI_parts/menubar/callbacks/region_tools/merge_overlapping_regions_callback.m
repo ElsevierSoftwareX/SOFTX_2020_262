@@ -62,7 +62,7 @@ if ~isempty(trans_obj.Regions)
     
    
     
-    order_stacks_fig(main_figure);
+    order_stacks_fig(main_figure,curr_disp);
     
 end
 

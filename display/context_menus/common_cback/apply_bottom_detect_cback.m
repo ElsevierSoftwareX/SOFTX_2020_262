@@ -77,6 +77,6 @@ add_undo_bottom_action(main_figure,trans_obj,old_bot,bot);
 set_current_layer(layer);
 set_alpha_map(main_figure,'update_bt',0);
 display_bottom(main_figure);
-order_stacks_fig(main_figure);
+order_stacks_fig(main_figure,curr_disp);
 
 end

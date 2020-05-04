@@ -40,7 +40,7 @@ if ~isempty(layer)
     clear_regions(main_figure,{},cids_up);
     display_regions(main_figure,cids_up);
     set_alpha_map(main_figure,'main_or_mini',cids_up,'update_bt',0);
-    order_stacks_fig(main_figure);
+    order_stacks_fig(main_figure,curr_disp);
     
     set_current_layer(layer);
 end

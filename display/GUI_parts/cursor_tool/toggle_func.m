@@ -39,7 +39,7 @@ function toggle_func(src, ~,main_figure)
 %profile on;
 %cursor_mode_tool_comp=getappdata(main_figure,'Cursor_mode_tool');
 axes_panel_comp=getappdata(main_figure,'Axes_panel');
-%curr_disp=get_esp3_prop('curr_disp');
+curr_disp=get_esp3_prop('curr_disp');
 
 
 switch class(src)
@@ -149,7 +149,7 @@ switch state
         create_context_menu_bottom(main_figure,axes_panel_comp.bottom_plot);
         
 end
-order_stacks_fig(main_figure);
+order_stacks_fig(main_figure,curr_disp);
 %profile off;
 %profile viewer;
 end

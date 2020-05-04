@@ -122,7 +122,7 @@ switch algo_name
         
         set_alpha_map(main_figure,'update_bt',0);
         display_bottom(main_figure);
-        order_stacks_fig(main_figure);
+        order_stacks_fig(main_figure,curr_disp);
         
     case 'Denoise'
         layer.apply_algo(algo_name,'idx_chan',idx_chan,'load_bar_comp',load_bar_comp);
@@ -214,5 +214,5 @@ switch algo_name
         xlim(ax2,[1 numel(E2)]);
         
 end
-order_stacks_fig(main_figure);
+order_stacks_fig(main_figure,curr_disp);
 end

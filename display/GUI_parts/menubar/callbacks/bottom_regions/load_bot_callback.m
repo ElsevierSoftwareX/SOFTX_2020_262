@@ -12,5 +12,5 @@ layer.CVS_BottomRegions(app_path.cvs_root,'BotCVS',1,'RegCVS',0);
 set_current_layer(layer);
 display_bottom(main_figure);
 set_alpha_map(main_figure,'main_or_mini',union({'main','mini'},layer.ChannelID));
-order_stacks_fig(main_figure);
+order_stacks_fig(main_figure,[]);
 end

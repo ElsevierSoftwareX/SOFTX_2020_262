@@ -501,7 +501,7 @@ end
 % create the map here
 % box.lim_axes.LatitudeLimits
 % box.lim_axes.LatitudeLimits
-hfig = map_input.display_map_input_cl('main_figure',main_figure,'field',str_field,'LatLim',[],'LongLim',[],'Colormap',cmap,'coloredCircle',cc,'echomaps',folders);
+hfig = map_input.display_map_input_cl('main_figure',main_figure,'field',str_field,'LatLim',box.lim_axes.LatitudeLimits,'LongLim',box.lim_axes.LongitudeLimits,'Colormap',cmap,'coloredCircle',cc,'echomaps',folders);
 
 hfigs_new = [hfigs hfig];
 setappdata(main_figure,'ExternalFigures',hfigs_new);

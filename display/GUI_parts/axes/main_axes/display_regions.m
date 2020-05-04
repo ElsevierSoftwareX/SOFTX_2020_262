@@ -225,7 +225,7 @@ for iax=1:length(main_axes_tot)
         end
     end
 
-    order_stacks_fig(main_figure)
+    order_stacks_fig(main_figure,curr_disp)
     
 end
 

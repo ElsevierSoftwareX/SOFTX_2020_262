@@ -127,7 +127,7 @@ if ~isempty(layer)
     
     update_axis(main_figure,0,'main_or_mini',union({'main','mini'},curr_disp.ChannelID,'stable'),'force_update',1);
     set_alpha_map(main_figure,'update_bt',0);
-    order_stacks_fig(main_figure);
+    order_stacks_fig(main_figure,curr_disp);
 end
 end
 

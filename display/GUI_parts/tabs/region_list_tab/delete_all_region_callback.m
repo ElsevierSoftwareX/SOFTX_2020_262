@@ -62,7 +62,7 @@ switch choice
 
                
             curr_disp.setActive_reg_ID({});
-            order_stacks_fig(main_figure);
+            order_stacks_fig(main_figure,curr_disp);
             curr_disp.Reg_changed_flag=1;
             
         else

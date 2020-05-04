@@ -126,7 +126,7 @@ switch main_figure.SelectionType
         curr_disp.setActive_reg_ID(reg_curr.Unique_ID);
         update_multi_freq_disp_tab(main_figure,'sv_f',0);
         update_multi_freq_disp_tab(main_figure,'ts_f',0);
-        order_stacks_fig(main_figure);
+        order_stacks_fig(main_figure,curr_disp);
 
     case 'open'
         regCellInt=trans_obj.integrate_region(reg_curr);

@@ -135,7 +135,7 @@ display_lines(main_figure);
 display_regions(main_figure);
 display_survdata_lines(main_figure);
 
-order_stacks_fig(main_figure);
+order_stacks_fig(main_figure,curr_disp);
 order_axes(main_figure);
 
 update_info_panel([],[],1);

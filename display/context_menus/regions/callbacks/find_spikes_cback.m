@@ -23,6 +23,6 @@ hide_status_bar(main_figure);
 
 set_alpha_map(main_figure,'update_under_bot',0,'update_cmap',0);
 
-order_stacks_fig(main_figure);
+order_stacks_fig(main_figure,curr_disp);
 
 end

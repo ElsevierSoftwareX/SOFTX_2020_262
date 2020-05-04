@@ -126,6 +126,6 @@ end
 
 set_current_layer(layer);
 
-order_stacks_fig(main_figure);
+order_stacks_fig(main_figure,curr_disp);
 
 end

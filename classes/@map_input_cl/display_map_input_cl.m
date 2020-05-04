@@ -72,6 +72,7 @@ for ui=1:numel(obj_tot)
     if p.Results.oneMap>0
         snap=[1 1];
     end
+    
     nb_snap=size(snap,1);
     
     nb_row=ceil(nb_snap/3);
@@ -210,7 +211,6 @@ for ui=1:numel(obj_tot)
             if p.Results.oneMap==0
                 title(n_ax(usnap),sprintf('%s Snapshot %d',obj.Voyage{idx_snap(1)},snap(usnap,1)),'Interpreter','none');
             else
-                
                 title(n_ax(usnap),sprintf('%s',obj.Voyage{idx_snap(1)}),'Interpreter','none');
             end
             

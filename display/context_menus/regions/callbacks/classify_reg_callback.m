@@ -65,6 +65,6 @@ set_current_layer(layer);
 update_echo_int_tab(main_figure,0);
 update_reglist_tab(main_figure,1);
 display_regions(main_figure,'both');
-order_stacks_fig(main_figure);
+order_stacks_fig(main_figure,curr_disp);
 hide_status_bar(main_figure);
 end
