@@ -57,6 +57,7 @@ end
                 new_vert(:,2)=[ydata(end)-dy_patch ydata(end)-dy_patch ydata(end) ydata(end)];
             end
         end
+        
         patch_obj.Vertices=new_vert;
         x0=x1;
         y0=y1;

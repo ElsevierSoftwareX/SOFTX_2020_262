@@ -144,7 +144,6 @@ switch algo_name
         set_alpha_map(main_figure,'update_cmap',0,'update_under_bot',0);
         display_bottom(main_figure);
         
-        
     case 'SchoolDetection'
         
         old_regs=trans_obj.Regions;

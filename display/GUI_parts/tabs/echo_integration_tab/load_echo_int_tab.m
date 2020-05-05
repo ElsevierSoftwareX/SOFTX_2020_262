@@ -249,6 +249,12 @@ layer=get_current_layer();
 if isempty(layer)
     return;
 end
+idx_main=find(idx_main_freq==layer_obj.EchoIntStruct.idx_freq_out);
+
+if isempty(idx_main)||isempty(layer_obj.EchoIntStruct.output_2D)
+    warndlg_perso(main_figure,'Nothing to export','No echo-integration results to export. Re-run the echo-integration...');
+    return;
+end
 
 [path_tmp,fileN,~]=fileparts(layer.Filename{1});
 
@@ -261,7 +267,7 @@ end
 load_bar_comp=show_status_bar(main_figure);
 load_bar_comp.progress_bar.setText('Exporting Sliced transect...');
 
-idx_main=idx_main_freq==layer_obj.EchoIntStruct.idx_freq_out;
+
 
 if ~isempty(layer_obj.EchoIntStruct.reg_descr_table)
     output_f=[fullfile(path_tmp,fileN) '_regions_descr.csv'];
@@ -280,7 +286,6 @@ for it=1:numel(layer_obj.EchoIntStruct.output_2D{idx_main})
         writetable(reg_output_table,output_f);
     end
 end
-
 
 disp_done_figure(main_figure,'Echo-integration finished and exported... Done')
 hide_status_bar(main_figure);

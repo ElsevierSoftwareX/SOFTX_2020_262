@@ -117,7 +117,7 @@ try
         set(p.Results.load_bar_comp.progress_bar, 'Minimum',0, 'Maximum',100, 'Value',0);
     end
     
-
+    
 catch err
     print_errors_and_warnings(1,'error',err);
 end

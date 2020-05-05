@@ -167,9 +167,9 @@ switch curr_disp.EchoType
         axes_panel_comp.bad_transmits=image(1:size(echo_init,1),1:size(echo_init,2),zeros(size(echo_init),'uint8'),'parent',axes_panel_comp.main_axes,'AlphaData',0,'tag','bad_transmits','AlphaDataMapping','direct');
 end
 
-
 pt_int.enterFcn =  @(figHandle, currentPoint)...
 replace_interaction(figHandle,'interaction','WindowButtonMotionFcn','id',1,'interaction_fcn',{@update_info_panel,0});
+
 % pt_int.enterFcn=@(figHandle, currentPoint) disp('Entering');
 % pt_int.traverseFcn = [];
 % % 

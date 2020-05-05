@@ -65,7 +65,9 @@ switch main_figure.SelectionType
         enterFcn =  @(obj_h, currentPoint)...
             set(obj_h, 'Pointer', 'fleur');
         iptSetPointerBehavior(obj,enterFcn);
-        replace_interaction(main_figure,'interaction','KeyPressFcn','id',1);
+        
+        replace_interaction(main_figure,'interaction','KeyPressFcn','id',1,'Pointer', 'fleur');
+        
         curr_disp.UIupdate=0;
 
         switch obj.Type
@@ -98,7 +100,13 @@ switch main_figure.SelectionType
         end
         
         samples=trans_obj.get_transceiver_samples();
+        
+        if isempty(r_min)
+            return;
+        end
+        
         [~,idx_r_min]=nanmin(abs(r_min-samples)); 
+        
         if reg_curr.Idx_pings(1)==idx_p_min&&reg_curr.Idx_r(1)==idx_r_min
            return; 
         end

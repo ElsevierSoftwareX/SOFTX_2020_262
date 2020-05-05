@@ -37,7 +37,6 @@
 %% Function
 function keyboard_func(src,callbackdata,main_figure)
 
-replace_interaction(src,'interaction','KeyPressFcn','id',1);
 
 cursor_mode_tool_comp=getappdata(main_figure,'Cursor_mode_tool');
     
@@ -383,8 +382,7 @@ try
 catch err
     warning('Error in Keyboard_func while pressing %s',callbackdata.Key);
     print_errors_and_warnings(1,'error',err);
-    hide_status_bar(main_figure);
-    
+    hide_status_bar(main_figure); 
 end
 
 

@@ -204,7 +204,8 @@ if  ~any(mat_size==1)
     reg_plot=pcolor(ax_in,repmat(x_disp,size(y_disp,1),1),y_disp,var_disp);
     set(reg_plot,'alphadata',alphadata,'facealpha','flat','edgecolor','none','AlphaDataMapping','none');
     create_context_menu_int_plot(reg_plot)
-
+    uimenu(reg_plot.UIContextMenu,'Label','Hide vertical profile','Callback',{@hide_axes_cback,'vert'},'Checked','off');
+    uimenu(reg_plot.UIContextMenu,'Label','Hide horizontal profile','Callback',{@hide_axes_cback,'horz'},'Checked','off');
 end
 ymin=nanmin(y_disp(~isinf(y_disp)));
 ymax=nanmax(y_disp(~isinf(y_disp)));
@@ -308,6 +309,39 @@ set(ax_in,'Ylim',[ymin-reg_obj.Cell_h/2 ymax+reg_obj.Cell_h/2]);
 
 %% nest functions
 
+    function hide_axes_cback(src,evt,ax_str)
+       switch ax_str 
+           case 'horz'
+               ax= ax_horz;
+               ax_s=ax_vert;
+               id= 4;
+               cbar_h=1;
+           case 'vert'
+               ax= ax_vert;
+               ax_s= ax_horz;
+               id = 3;
+               cbar_h=0;
+           otherwise
+          return;
+       end
+       
+       switch src.Checked
+           case 'off'
+               src.Checked = 'on';
+               dd=0.15;           
+           case 'on'
+               src.Checked = 'off';
+               dd=-0.15  ;  
+       end
+       
+       ax.Position(id) = ax.Position(id)-dd;
+       ax_in.Position(id-2) =ax_in.Position(id-2)-dd;
+       ax_in.Position(id) =ax_in.Position(id)+dd;
+       ax_s.Position(id-2) =ax_s.Position(id-2)-dd;
+       ax_s.Position(id) =ax_s.Position(id)+dd;
+       cb.Position(id) = cb.Position(id)+cbar_h*dd;
+       cb.Position(id-2) = cb.Position(id-2)-cbar_h*dd;
+    end
 % Figure close request callback for region display
     function delete_axes(src,~)
         if ~isdeployed

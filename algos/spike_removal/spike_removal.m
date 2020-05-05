@@ -21,6 +21,7 @@ nb_spikes=0;
 if isempty(p.Results.reg_obj)
     idx_r_tot=1:length(trans_obj.get_transceiver_range());
     idx_pings_tot=1:length(trans_obj.get_transceiver_pings());
+    trans_obj.Data.replace_sub_data_v2('spikesmask',0,idx_r_tot,idx_pings_tot);
 else
     idx_pings_tot=p.Results.reg_obj.Idx_pings;
     idx_r_tot=p.Results.reg_obj.Idx_r;
@@ -42,8 +43,6 @@ end
 
 range_tot=trans_obj.get_transceiver_range(idx_r_tot);
 
-
-
 Np=floor(p.Results.v_filt/nanmean(diff(range_tot)));
 
 block_size=nanmin(ceil(p.Results.block_len/numel(idx_r_tot)),numel(idx_pings_tot));
@@ -55,22 +54,32 @@ if ~isempty(p.Results.load_bar_comp)
     set(p.Results.load_bar_comp.progress_bar, 'Minimum',0, 'Maximum',num_ite, 'Value',0);
 end
 tag=trans_obj.Bottom.Tag;
+
+if p.Results.denoised
+    field='spdenoised';
+else
+    field = 'sp';
+end
+
+if ~ismember(field,trans_obj.Data.Fieldname)
+    field='sp';
+end
+
 for ui=1:num_ite
     idx_pings=idx_pings_tot((ui-1)*block_size+1:nanmin(ui*block_size,numel(idx_pings_tot)));
     
-    if p.Results.denoised==1
-        sv_spikes=trans_obj.Data.get_subdatamat(idx_r_tot,idx_pings,'field','spdenoised');
-        if isempty(sv_spikes)
-            sv_spikes=trans_obj.Data.get_subdatamat(idx_r_tot,idx_pings,'field','sp');
-        end
-    else
-        sv_spikes=trans_obj.Data.get_subdatamat(idx_r_tot,idx_pings,'field','sp');
-    end
+
+    reg_temp=region_cl('Name','Temp','Idx_r',idx_r_tot,'Idx_pings',idx_pings);
     
-    below_bot=idx_r_tot(:)>idx_bot(idx_pings);
-    sv_spikes(below_bot)=-999;
+    [sp_spikes,idx_r,idx_pings,bad_data_mask,bad_trans_vec,inter_mask,below_bot_mask,~]=trans_obj.get_data_from_region(reg_temp,'field',field,...
+        'intersect_only',1,...
+        'regs',p.Results.reg_obj);
     
-    sv_filtered=pow2db_perso(filter2_perso(ones(2*Np,1),db2pow(sv_spikes)));
+    mask=bad_data_mask|below_bot_mask|~inter_mask;
+    
+    sp_spikes(mask)=-999;
+    
+    sv_filtered=pow2db_perso(filter2_perso(ones(2*Np,1),db2pow(sp_spikes)));
     
     Fx=nan(size(sv_filtered));
     [~,nb_pings]=size(sv_filtered);
@@ -81,30 +90,29 @@ for ui=1:num_ite
     Fx2(:,1:nb_pings-2)=-(sv_filtered(:,3:nb_pings)-sv_filtered(:,1:nb_pings-2));
     Fx2(:,3:nb_pings)=nanmin(Fx2(:,3:nb_pings),(sv_filtered(:,3:nb_pings)-sv_filtered(:,1:nb_pings-2)));
     
-    mask=Fx>p.Results.thr_spikes&sv_spikes>p.Results.thr_sp|Fx2>p.Results.thr_spikes&sv_spikes>p.Results.thr_sp;
+    mask=Fx>p.Results.thr_spikes&sp_spikes>p.Results.thr_sp|Fx2>p.Results.thr_spikes&sp_spikes>p.Results.thr_sp;
 
     mask=floor(filter2_perso(ones(Np,1),mask))==1;
     mask=ceil(filter2_perso(ones(2*Np,1),mask))==1;
     nb_spikes=nb_spikes+nansum(mask(:));
     
 % 
-%     sv_spikes_ori=sv_spikes;
-%     sv_spikes(mask)=-Inf;
+%     sp_spikes_ori=sp_spikes;
+%     sp_spikes(mask)=-Inf;
 %     
 %     figure();
 %     ax1=subplot(1,3,1);
-%     imagesc(sv_spikes_ori,'alphadata',double(sv_spikes_ori>p.Results.thr_sp))
+%     imagesc(sp_spikes_ori,'alphadata',double(sp_spikes_ori>p.Results.thr_sp))
 %     caxis([p.Results.thr_sp p.Results.thr_sp+35]);
 %     
 %     ax=subplot(1,3,2);
 %     imagesc(ax,Fx,'alphadata',mask);
 %     
 %     ax2=subplot(1,3,3);
-%     imagesc(sv_spikes,'alphadata',double(sv_spikes>p.Results.thr_sp))
+%     imagesc(sp_spikes,'alphadata',double(sp_spikes>p.Results.thr_sp))
 %     caxis([p.Results.thr_sp p.Results.thr_sp+35]);
 %     linkaxes([ax1 ax2 ax ],'xy');
      
-
     trans_obj.Data.replace_sub_data_v2('spikesmask',mask,idx_r_tot,idx_pings);
 %     
     if p.Results.flag_bad_pings<100

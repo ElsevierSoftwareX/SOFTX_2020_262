@@ -69,7 +69,7 @@ for ui=1:num_ite
     [Sv,idx_r,idx_pings,bad_data_mask,bad_trans_vec,inter_mask,below_bot_mask,~]=get_data_from_region(trans_obj,reg_temp,'field','sv',...
         'intersect_only',1,...
         'regs',reg_obj);
-    Sv(below_bot_mask)=nan;
+    Sv(below_bot_mask|isinf(Sv))=nan;
     Sv(:,bad_trans_vec)=nan;
     Sv_mean_db=nanmean(Sv);
     Sv_mean_db_tot=nanmean(Sv_mean_db);
@@ -79,3 +79,15 @@ for ui=1:num_ite
 end
 output_struct.idx_noise_sector=idx_noise_sector;
 output_struct.done = true;
+
+tag = trans_obj.Bottom.Tag;
+if isempty(p.Results.reg_obj)
+    tag = ones(size(tag));
+else
+    tag = trans_obj.Bottom.Tag;
+end
+tag(output_struct.idx_noise_sector) = 0;
+
+trans_obj.Bottom.Tag = tag;
+
+

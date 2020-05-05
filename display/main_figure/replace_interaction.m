@@ -63,7 +63,12 @@ if ~isdeployed()
     if isempty(p.Results.interaction_fcn)
         fprintf('Removing interaction: %s %d\n',p.Results.interaction,p.Results.id);
     else
-        fprintf('Replacing interaction: %s %d\n',p.Results.interaction,p.Results.id);
+        if iscell(p.Results.interaction_fcn)
+            sst =  char(p.Results.interaction_fcn{1});
+        else
+            sst = char(p.Results.interaction_fcn);
+        end
+        fprintf('Replacing interaction: %s %d to %s\n',p.Results.interaction,p.Results.id,sst);
     end  
 end
 

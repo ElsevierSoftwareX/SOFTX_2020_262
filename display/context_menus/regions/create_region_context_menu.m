@@ -120,8 +120,8 @@ uimenu(algo_menu,'Label','Spikes removal','Callback',{@find_spikes_cback,select_
 uimenu(algo_menu,'Label','School Detection','Callback',{@apply_school_detect_cback,select_plot,main_figure});
 uimenu(algo_menu,'Label','Single Targets Detection','Callback',{@apply_st_detect_cback,select_plot,main_figure});
 uimenu(algo_menu,'Label','Target Tracking','Callback',{@apply_track_target_cback,select_plot,main_figure});
+uimenu(algo_menu,'Label','Dropouts detection','Callback',{@find_bt_cback,select_plot,main_figure,'dropouts'});
 
-uimenu(context_menu,'Label','Find Dropouts','Callback',{@find_bt_cback,select_plot,main_figure,'dropouts'});
 uimenu(context_menu,'Label','Shift Bottom ...','Callback',{@shift_bottom_callback,select_plot,main_figure});
 if isreg==0 
     uimenu(context_menu,'Label','Clear Spikes','Callback',{@clear_spikes_cback,select_plot,main_figure});

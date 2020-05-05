@@ -75,8 +75,10 @@ classdef transceiver_cl < handle
              end
             trans_obj.Params=trans_obj.Params.reduce_params();
             trans_obj.Bottom = p.Results.Bottom;
-            trans_obj.set_pulse_Teff();
-            trans_obj.set_pulse_comp_Teff();
+            if ~isempty(trans_obj.Params.PingNumber)
+                trans_obj.set_pulse_Teff();
+                trans_obj.set_pulse_comp_Teff();
+            end
         end
         
         function p_out = get_params_value(trans_obj,param_name,idx)

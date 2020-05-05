@@ -60,7 +60,9 @@ for i=1:length(fig)
             continue;
         end
         text_obj=findobj(fig(i),'-property','FontName');
-        set(text_obj,'FontName',font_choice);
+        if ~isempty(text_obj)
+            set(text_obj,'FontName',font_choice);
+        end
     end
 
     % size_obj=findobj(fig,'-property','FontSize');
