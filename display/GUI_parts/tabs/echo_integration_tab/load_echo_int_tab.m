@@ -1,3 +1,4 @@
+
 function load_echo_int_tab(main_figure,parent_tab_group)
 % import javax.swing.*
 % import java.awt.*
@@ -203,7 +204,7 @@ try
     else
         idx_sec=idx_main;
     end
-        tic
+        
         layer_obj.multi_freq_slice_transect2D(...
         'idx_main_freq',idx_main,...
         'idx_sec_freq',idx_sec,...
@@ -211,7 +212,7 @@ try
         'regs',region_cl.empty(),...
         'survey_options',survey_options_obj,...
         'load_bar_comp',getappdata(main_figure,'Loading_bar'));
-    toc
+    
     
 catch err
     print_errors_and_warnings(1,'error',err);

@@ -90,13 +90,16 @@ end
 
 if ~isempty(idx_main)&&~isempty(layer_obj.EchoIntStruct.output_2D{idx_main})
     echo_int_tab_comp.tog_ref.String =layer_obj.EchoIntStruct.output_2D_type{idx_main};
+
+    idx_ref=find(strcmpi(echo_int_tab_comp.tog_ref.String{echo_int_tab_comp.tog_ref.Value},layer_obj.EchoIntStruct.output_2D_type{idx_main}));
     
-    idx_ref=1;
+    if isempty(idx_ref)
+        idx_ref=1;
+        echo_int_tab_comp.tog_ref.Value = 1;
+    end
     
-    echo_int_tab_comp.tog_ref.Value=idx_ref;
     ref=layer_obj.EchoIntStruct.output_2D_type{idx_main}{idx_ref};
-    
-    
+
     out=layer_obj.EchoIntStruct.output_2D{idx_main}{idx_ref};
     
     s_eint=gather(size(out.eint));
@@ -104,6 +107,7 @@ if ~isempty(idx_main)&&~isempty(layer_obj.EchoIntStruct.output_2D{idx_main})
     if any(s_eint==1)
         return;
     end
+    
     %{'Ping Number' 'Distance' 'Time' 'Lat' 'Long'}
     x_disp_t=echo_int_tab_comp.tog_xaxis.String{echo_int_tab_comp.tog_xaxis.Value};
     switch x_disp_t
