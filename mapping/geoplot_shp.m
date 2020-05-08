@@ -72,8 +72,8 @@ for uishp=1:numel(geo_data_shp)
             tmp_plot.LatitudeDataMode='manual';
             h_in=[h_in tmp_plot];
             
-%             switch type
-%                 
+            switch type
+                
 %                 case 'stratum'
 %                     if isfield(geo_data_shp{uishp}(i_feat),'Stratum')
 %                         if isnumeric(geo_data_shp{uishp}(i_feat).Stratum)
@@ -81,24 +81,24 @@ for uishp=1:numel(geo_data_shp)
 %                         else
 %                             str=geo_data_shp{uishp}(i_feat).Stratum;
 %                         end
-%                         temp_txt=text(ax,nanmean(bbox(:,2)),nanmean(bbox(:,2)),str,...
+%                         temp_txt=text(ax,nanmean(bbox(:,2)),nanmean(bbox(:,1)),str,...
 %                             'Fontsize',12,'Fontweight','bold','Interpreter','None','VerticalAlignment','bottom','Clipping','on','Color',color);
 %                     end
-%                 case 'transect'
-%                     if isfield(geo_data_shp{uishp}(i_feat),'Transect')
-%                         if isnumeric(geo_data_shp{uishp}(i_feat).Transect)
-%                             str=num2str(geo_data_shp{uishp}(i_feat).Transect);
-%                         else
-%                             str=geo_data_shp{uishp}(i_feat).Transect;
-%                         end
-%                         temp_txt=text(ax,nanmean(bbox(:,1)),nanmean(bbox(:,2)),str,...
-%                             'Fontsize',10,'Fontweight','normal','Interpreter','None','VerticalAlignment','bottom','Clipping','on','Color',color);
-%                     end
-%                 otherwise
-%                     temp_txt=[];
-%             end
-%             
-%             h_in=[h_in temp_txt];
+                case 'transects'
+                    if isfield(geo_data_shp{uishp}(i_feat),'Transect')
+                        if isnumeric(geo_data_shp{uishp}(i_feat).Transect)
+                            str=num2str(geo_data_shp{uishp}(i_feat).Transect);
+                        else
+                            str=geo_data_shp{uishp}(i_feat).Transect;
+                        end
+                        temp_txt=text(ax,nanmean(bbox(:,2)),nanmean(bbox(:,1)),str,...
+                            'Fontsize',6,'Fontweight','normal','Interpreter','None','VerticalAlignment','bottom','Clipping','on','Color',color);
+                    end
+                otherwise
+                    temp_txt=[];
+            end
+%                         
+        h_in=[h_in temp_txt];
         catch err
             fprintf('Error displaying shapefile %s \n',new_shp_f{uishp});
             print_errors_and_warnings(1,'error',err);

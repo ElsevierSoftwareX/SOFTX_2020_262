@@ -27,8 +27,6 @@ else
     idx_r_tot=p.Results.reg_obj.Idx_r;
 end
 ouptut_struct.done=false;
-idx_bot=trans_obj.get_bottom_idx();
- 
 
 range_tot=trans_obj.get_transceiver_range(idx_r_tot);
 
@@ -75,20 +73,23 @@ for ui=1:num_ite
         'intersect_only',1,...
         'regs',p.Results.reg_obj);
     
-    mask=bad_data_mask|below_bot_mask|~inter_mask;
-    
+    if ~isempty(p.Results.reg_obj)
+        mask=bad_data_mask|below_bot_mask|~inter_mask;
+    else
+        mask=bad_data_mask|below_bot_mask;
+    end
     sp_spikes(mask)=-999;
     
-    sv_filtered=pow2db_perso(filter2_perso(ones(2*Np,1),db2pow(sp_spikes)));
+    sp_filtered=pow2db_perso(filter2_perso(ones(2*Np,1),db2pow(sp_spikes)));
     
-    Fx=nan(size(sv_filtered));
-    [~,nb_pings]=size(sv_filtered);
-    Fx(:,1:nb_pings-1)=-(sv_filtered(:,2:nb_pings)-sv_filtered(:,1:nb_pings-1));
-    Fx(:,2:nb_pings)=nanmin(Fx(:,2:nb_pings),(sv_filtered(:,2:nb_pings)-sv_filtered(:,1:nb_pings-1)));
+    Fx=nan(size(sp_filtered));
+    [~,nb_pings]=size(sp_filtered);
+    Fx(:,1:nb_pings-1)=-(sp_filtered(:,2:nb_pings)-sp_filtered(:,1:nb_pings-1));
+    Fx(:,2:nb_pings)=nanmin(Fx(:,2:nb_pings),(sp_filtered(:,2:nb_pings)-sp_filtered(:,1:nb_pings-1)));
     
-    Fx2=nan(size(sv_filtered));
-    Fx2(:,1:nb_pings-2)=-(sv_filtered(:,3:nb_pings)-sv_filtered(:,1:nb_pings-2));
-    Fx2(:,3:nb_pings)=nanmin(Fx2(:,3:nb_pings),(sv_filtered(:,3:nb_pings)-sv_filtered(:,1:nb_pings-2)));
+    Fx2=nan(size(sp_filtered));
+    Fx2(:,1:nb_pings-2)=-(sp_filtered(:,3:nb_pings)-sp_filtered(:,1:nb_pings-2));
+    Fx2(:,3:nb_pings)=nanmin(Fx2(:,3:nb_pings),(sp_filtered(:,3:nb_pings)-sp_filtered(:,1:nb_pings-2)));
     
     mask=Fx>p.Results.thr_spikes&sp_spikes>p.Results.thr_sp|Fx2>p.Results.thr_spikes&sp_spikes>p.Results.thr_sp;
 

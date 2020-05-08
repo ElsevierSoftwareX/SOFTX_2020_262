@@ -11,7 +11,7 @@ end
 
 t_start=nan(1,numel(layers_in));
 for i=1:numel(layers_in)
-    [t_start(i),~]=layers_in(i).get_time_bounds()   ;
+    [t_start(i),~]=layers_in(i).get_time_bounds();
 end
 [~,idx_sort]=sort(t_start);
 layers_in=layers_in(idx_sort);

@@ -30,14 +30,16 @@ while ~isempty(id_lays_out_cell)
     id_lays_out_cell(idx_temp)=[];
 end
 
-
 for icell=1:length(cell_out)
-   tmp=cellfun(@(x) intersect(cell_out{icell},x),cell_out,'UniformOutput',0);
-   idx_inter=find(cellfun(@(x) ~isempty(x),tmp));
-   if length(idx_inter)>=2
-        cell_out{icell}=union(cell_out{idx_inter});
-        cell_out{idx_inter(idx_inter~=icell)}=[];
-   end
+    tmp=cellfun(@(x) intersect(cell_out{icell},x),cell_out,'UniformOutput',0);
+    idx_inter=find(cellfun(@(x) ~isempty(x),tmp));
+    if length(idx_inter)>=2
+        cell_out{icell}=unique([cell_out{idx_inter}]);
+        idx = find(idx_inter~=icell);
+        for ifi =idx
+            cell_out{idx_inter(ifi)}=[];
+        end
+    end
 end
 
 cell_out(cellfun(@isempty,cell_out))=[];

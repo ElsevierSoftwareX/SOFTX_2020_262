@@ -152,16 +152,15 @@ if ~any(~isnan(var_disp))
 end
 
 %% X and Y disp
+
 switch reg_obj.Cell_w_unit
     case 'pings'
         x_disp=output_reg.Ping_S;
     case 'meters'
         x_disp=(output_reg.Dist_S+output_reg.Dist_E)/2;
      case 'seconds'
-        x_disp=((output_reg.Time_S+output_reg.Time_E)/2-output_reg.Time_S(1))*24*60*60;       
+        x_disp=(output_reg.Time_S+output_reg.Time_E)/2;       
 end
-
-
 
 
 
@@ -213,8 +212,6 @@ ymax=nanmax(y_disp(~isinf(y_disp)));
 xmin=nanmin(x_disp);
 xmax=nanmax(x_disp);
 
-
-
 % ticks and grid
 
 ax_in.XTick=unique(x_disp(~isnan(x_disp)));
@@ -251,20 +248,22 @@ plot(ax_horz,x_disp,horz_plot,'r');
 
 % grid, labels, ticks, etc
 grid(ax_horz,'on');
-xlabel(ax_horz,sprintf('%s',reg_obj.Cell_w_unit))
 ylabel(ax_horz,ylab)
 %ax_horz.XTick=get(ax_in,'XTick');
-ax_horz.XTickLabelRotation=45;
+ax_horz.XTickLabelRotation=90;
 
 switch reg_obj.Cell_w_unit
     case 'meters'
         ax_horz.XAxis.TickLabelFormat='%.0fm';
-    case {'pings' 'seconds'}
+    case 'pings'
         ax_horz.XAxis.TickLabelFormat='%.0f';
+    case 'seconds'
+        ax_horz.XTickLabels=cellfun(@(x) datestr(x,'HH:MM:SS'),num2cell(ax_horz.XTick),'un',0);
 end
 
 ax_horz.XAxis.ExponentMode='manual';
 ax_horz.XAxis.Exponent=0;
+ax_horz.XAxis.TickDirection='out';
 %% side display
 
 % axes
@@ -279,32 +278,32 @@ xlabel(ax_vert,ylab)
 
 switch reg_obj.Reference
     case 'Surface'
-        ylabel(ax_vert,'Depth (m)');
+        ylabel(ax_vert,'Depth');
         axis(ax_in,'ij');
         axis(ax_vert,'ij');
     case 'Bottom'
-        ylabel(ax_vert,'Distance Above bottom(m)');
+        ylabel(ax_vert,'Distance Above bottom');
     case 'Transducer'
-        ylabel(ax_vert,'Distance from transducer face(m)');
+        ylabel(ax_vert,'Distance from transducer face');
         axis(ax_in,'ij');
         axis(ax_vert,'ij');
     case 'Line'
-        ylabel(ax_vert,'Distance From line (m)');
+        ylabel(ax_vert,'Distance From line');
         axis(ax_in,'ij');
         axis(ax_vert,'ij');
 end
 
 grid(ax_vert,'on');
-%ax_vert.YTick=get(ax_in,'YTick');
-ax_vert.YAxis.TickLabelFormat='%.0gm';
 
+ax_vert.YAxis.TickLabelFormat='%.0gm';
+ax_vert.YAxis.TickDirection='out';
 %% link axes of main display and bottom/side plots
 linkaxes([ax_in ax_vert],'y');
 linkaxes([ax_in ax_horz],'x');
 
 
 %% final adjust axes
-set(ax_in,'Xlim',[xmin-reg_obj.Cell_w/2 xmax+reg_obj.Cell_w/2]);
+set(ax_in,'Xlim',[xmin-mode(diff(x_disp)/2) xmax+mode(diff(x_disp)/2)]);
 set(ax_in,'Ylim',[ymin-reg_obj.Cell_h/2 ymax+reg_obj.Cell_h/2]);
 
 %% nest functions
