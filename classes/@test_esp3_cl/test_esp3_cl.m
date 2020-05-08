@@ -155,7 +155,7 @@ classdef test_esp3_cl < matlab.unittest.TestCase
              end
              
              testCase.verifyEqual(all(same(:)),true, ...
-                 [sprintf('The following results were dsimilar results to previous calibration runs:\n') sprintf('%s\n',fnames{nansum(~same(1:2),2)>0})]);
+                 [sprintf('The following results were disimilar results to previous calibration runs:\n') sprintf('%s\n',fnames{nansum(~same(1:2),2)>0})]);
              
              for it=1:numel(layer.Transceivers)
                  for uif=1:numel(fnames)
