@@ -63,7 +63,7 @@ classdef test_esp3_cl < matlab.unittest.TestCase
             
             
             testCase.verifyEqual(numel(surv_objs_out)==numel(scripts_to_run), true, ...
-                sprintf('It looks like not all scripts were able to be run....'));
+                sprintf('It looks like not all scripts were able to be run.... You should now run the "compare_scripts_results" test'));
         end
         
         function compare_scripts_results(testCase)
@@ -213,7 +213,7 @@ classdef test_esp3_cl < matlab.unittest.TestCase
             for ial=1:numel(al_names)
                 for uj=1:numel(idx_lays)
                     if any(~sucess{uj,ial})
-                        fprintf('Could not apply %s to %s\n',al_names{ial},fff{uj});
+                        fprintf('Could not apply %s to %s\n',al_names{ial},strjoin(layers(idx_lays(uj)).Filename,' and '));
                     end
                 end
             end

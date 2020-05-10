@@ -190,7 +190,7 @@ switch algo_name
         layer.apply_algo(algo_name,'idx_chan',idx_chan,'load_bar_comp',load_bar_comp);
         hide_status_bar(main_figure);
         
-        h_fig = new_echo_figure([],'Tag','E1/E2');
+        h_fig = new_echo_figure(main_figure,'Tag','E1/E2');
         
         ax1 =  axes(h_fig,'nextplot','add','OuterPosition',[0.05 0.55 0.9 0.45]);
         E1 = trans_obj.Bottom.E1;

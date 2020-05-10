@@ -118,7 +118,7 @@ for ui=1:num_ite
 %     
     if p.Results.flag_bad_pings<100
         
-        tag(idx_pings(nansum(mask)./nansum(below_bot==0)*100>p.Results.flag_bad_pings))=0;
+        tag(idx_pings(nansum(mask)./nansum(below_bot_mask==0)*100>p.Results.flag_bad_pings))=0;
         
 
         trans_obj.Bottom.Tag = tag;
