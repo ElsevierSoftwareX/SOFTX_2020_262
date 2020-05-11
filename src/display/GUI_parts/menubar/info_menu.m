@@ -25,13 +25,13 @@ set(hjLabel, 'MouseClickedCallback', @(h,e)web('https://sourceforge.net/projects
 hjLabel.setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.HAND_CURSOR));
 hjLabel.setToolTipText('https://sourceforge.net/projects/esp3/');
 
-labelStr = '<html>Source and help: <a href="https://bitbucket.org/echoanalysis/esp3/wiki/Home">ESP3 on Bitbucket</u></html>';
+labelStr = '<html>Source and help: <a href="https://bitbucket.org/yladroit/esp3/wiki/Home">ESP3 on Bitbucket</u></html>';
 jLabel = javaObjectEDT('javax.swing.JLabel', labelStr);
 [hjLabel,~] = javacomponent(jLabel, [10,100,480,20], dialog_fig);
 hjLabel.setBackground(java.awt.Color(bgcolor{:}));
- set(hjLabel, 'MouseClickedCallback', @(h,e)web('https://bitbucket.org/echoanalysis/esp3/wiki/Home','-browser'))
+ set(hjLabel, 'MouseClickedCallback', @(h,e)web('https://bitbucket.org/yladroit/esp3/wiki/Home','-browser'))
  hjLabel.setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.HAND_CURSOR));
- hjLabel.setToolTipText('https://bitbucket.org/echoanalysis/esp3/wiki/Home');
+ hjLabel.setToolTipText('https://bitbucket.org/yladroit/esp3/wiki/Home');
 
 labelStr = ['<html><u>'...
 'Contacts:</u></html>'];

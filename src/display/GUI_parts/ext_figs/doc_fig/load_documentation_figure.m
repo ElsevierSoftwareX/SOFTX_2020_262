@@ -10,7 +10,7 @@ function load_documentation_figure(main_figure)
 jObject = com.mathworks.mlwidgets.html.HTMLBrowserPanel;
 [doc_fig_comp.browser,doc_fig_comp.browser_container] = javacomponent(jObject, [], doc_fig);
 set(doc_fig_comp.browser_container, 'Units','norm', 'Pos',[0,0,1,1]);
-adress=sprintf('%s/html/ESP3_User_Guide.htm',whereisEcho());
+adress=sprintf('%s/docs/ESP3_User_Guide.htm',whereisEcho());
 doc_fig_comp.browser.setCurrentLocation(adress);
 doc_fig.Visible='on';
 
