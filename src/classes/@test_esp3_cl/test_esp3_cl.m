@@ -15,7 +15,7 @@ classdef test_esp3_cl < matlab.unittest.TestCase
     methods (Test)
         function open_test_files(testCase)
             
-            file_path= fullfile(test_case.esp3_obj.app_path.test_folder,'files');
+            file_path= fullfile(testCase.esp3_obj.app_path.test_folder.Path_to_folder,'files');
             
             if isfolder(fullfile(file_path,'echoanalysisfiles'))
                 fprintf('Deleting echoanalysisfiles folder for tests files\n');
@@ -51,9 +51,9 @@ classdef test_esp3_cl < matlab.unittest.TestCase
         end
         
         function run_scripts(testCase)
-            script_path= fullfile(test_case.esp3_obj.app_path.test_folder,'scripts');
+            script_path= fullfile(testCase.esp3_obj.app_path.test_folder.Path_to_folder,'scripts');
             
-            PathToResults = fullfile(test_case.esp3_obj.app_path.test_folder,'esp3_results');
+            PathToResults = fullfile(testCase.esp3_obj.app_path.test_folder.Path_to_folder,'esp3_results');
             
             f=dir(fullfile(script_path,'*.xml'));
             scripts_to_run = {f([f(:).isdir]==0).name};
@@ -68,8 +68,8 @@ classdef test_esp3_cl < matlab.unittest.TestCase
         
         function compare_scripts_results(testCase)
             
-            Path_esp3 = fullfile(test_case.esp3_obj.app_path.test_folder,'results');
-            Path_ref = fullfile(test_case.esp3_obj.app_path.test_folder,'reference_results');
+            Path_esp3 = fullfile(testCase.esp3_obj.app_path.test_folder.Path_to_folder,'results');
+            Path_ref = fullfile(testCase.esp3_obj.app_path.test_folder.Path_to_folder,'reference_results');
             
             f=dir(fullfile(Path_ref,'*_mbs_output.txt'));
             files = {f([f(:).isdir]==0).name};
@@ -107,7 +107,7 @@ classdef test_esp3_cl < matlab.unittest.TestCase
         
         function compare_cw_calibration_results(testCase)
             
-            cal_file = fullfile(test_case.esp3_obj.app_path.test_folder,'cw_calibration','tan1610-D20160826-T224922.raw');
+            cal_file = fullfile(testCase.esp3_obj.app_path.test_folder.Path_to_folder,'cw_calibration','tan1610-D20160826-T224922.raw');
             if isfile(cal_file)
                 open_file([],[],cal_file,testCase.esp3_obj.main_figure);
                 
@@ -163,7 +163,7 @@ classdef test_esp3_cl < matlab.unittest.TestCase
         end
         
         function test_algos(testCase)
-            file_path= fullfile(test_case.esp3_obj.app_path.test_folder,'files');
+            file_path= fullfile(testCase.esp3_obj.app_path.test_folder.Path_to_folder,'files');
             
             [files,~]=list_ac_files(file_path,1);
             

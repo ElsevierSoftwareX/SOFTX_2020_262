@@ -84,11 +84,9 @@ PROF = false & ~isdeployed();
 DEBUG = false &~isdeployed();
 
 %% Software main path
-main_path = whereisEcho();
-
 if ~isdeployed
-    update_path(main_path);
-    update_java_path(main_path);
+    update_path();
+    update_java_path();
 end
 
 %% Remove Javaframe warning
@@ -188,3 +186,32 @@ esp3_obj=esp3_cl('nb_esp3_instances',nb_esp3_instances,'files_to_load',files_to_
 % profile off;
 % profile viewer;
 end
+
+function update_path()
+main_path = whereisEcho();
+addpath(main_path);
+path_src=fullfile(main_path,'src');
+addpath(genpath(path_src));
+end
+
+function update_java_path()
+main_path = whereisEcho();
+if ~isdeployed()
+    jpath=fullfile(main_path,'java');
+    jars=dir(jpath);
+    java_dyn_path=javaclasspath('-dynamic');
+    
+    for ij=length(jars):-1:1
+        if ~jars(ij).isdir
+            [~,~,fileext]=fileparts(jars(ij).name);
+            if ~any(strcmp(java_dyn_path,fullfile(jpath,jars(ij).name)))&&isfile(fullfile(jpath,jars(ij).name))
+                if strcmpi(fileext,'.jar')
+                    javaaddpath(fullfile(jpath,jars(ij).name));
+                    fprintf('%s added to java path\n',jars(ij).name);
+                end
+            end
+        end
+    end
+end
+end
+
