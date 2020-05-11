@@ -175,8 +175,6 @@ for it = 1:numel(table_list)
                 temp_table = [temp_table;tmp];
             end
             
-            
-            
         otherwise
             % query load schema for table
             sql_query = sprintf('SELECT * FROM %s',table_list{it});

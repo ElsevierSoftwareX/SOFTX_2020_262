@@ -4,7 +4,7 @@ esp3_obj=getappdata(groot,'esp3_obj');
 
 if ~isempty(esp3_obj)
     app_path=get_esp3_prop('app_path');
-    data_root_def=app_path.data_root;
+    data_root_def=app_path.data_root.Path_to_folder;
 else
    data_root_def=''; 
 end

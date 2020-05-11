@@ -8,7 +8,7 @@ switch type
             warning(err.message);
         else
             arrayfun(@(x) fprintf(x,'%s: WARNING: %s\n',datestr(now,'HH:MM:SS'),err),fids,'un',0);
-            warning(err);
+                warning(err);
             
         end
     case 'error'

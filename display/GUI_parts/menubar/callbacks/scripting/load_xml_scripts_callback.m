@@ -39,7 +39,7 @@ function load_xml_scripts_callback(~,~,main_figure)
 
 app_path=get_esp3_prop('app_path');
 %profile on;
-[xml_surveys_input,xml_files]=get_xml_scripts(app_path.scripts);
+[xml_surveys_input,xml_files]=get_xml_scripts(app_path.scripts.Path_to_folder);
 % profile off;
 % profile viewer
 if isempty(xml_surveys_input)

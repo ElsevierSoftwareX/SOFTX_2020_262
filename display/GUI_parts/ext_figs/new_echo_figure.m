@@ -1,5 +1,6 @@
 function fig_handle=new_echo_figure(main_figure,varargin)
 
+
 def_pos=[0.2 0.2 0.6 0.6];
 
 size_max = get(groot, 'MonitorPositions');
@@ -51,6 +52,7 @@ addParameter(p,'UiFigureBool',false,@islogical);
 
 parse(p,main_figure,varargin{:});
 
+
 if p.Results.Keep_old==0
     hfigs=clean_echo_figures(main_figure,'Tag',p.Results.Tag);
 else
@@ -61,7 +63,7 @@ switch lower(p.Results.Units)
     case 'pixels'
         pos_final=p.Results.Position+[size_max(end,1:2) 0 0];
         pos_u='pixels';
-    case 'normalized'
+    case {'normalized' 'norm'}
         pos_u=units;
         pos_final=p.Results.Position.*[size_max(end,3:4) size_max(end,3:4)]+[size_max(end,1:2) 0 0];
     otherwise

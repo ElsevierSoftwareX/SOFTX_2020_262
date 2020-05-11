@@ -26,7 +26,7 @@ file_tab_comp.FileChooser = handle(javaObjectEDT(javaComponentName),'CallbackPro
 
 file_tab_comp.FileChooser.setApproveButtonText(java.lang.String('Open'));
 file_tab_comp.FileChooser.setPreferredSize(java.awt.Dimension(pos(3)/2,pos(4)*0.95));
-file_tab_comp.FileChooser.setCurrentDirectory(java.io.File(app_path.data));
+file_tab_comp.FileChooser.setCurrentDirectory(java.io.File(app_path.data.Path_to_folder));
 file_tab_comp.FileChooser.setMultiSelectionEnabled(true);
 file_tab_comp.FileChooser.setDragEnabled(true);
 
@@ -71,10 +71,9 @@ file_tab_comp.map_axes=geoaxes('Parent',file_tab_comp.file_tab,...
 
 format_geoaxes(file_tab_comp.map_axes);
 
-
 %axtoolbar(file_tab_comp.map_axes,{'restoreview'},'Visible','on');
 
-init_map_from_folder(file_tab_comp.map_axes,app_path.data);
+init_map_from_folder(file_tab_comp.map_axes,app_path.data.Path_to_folder);
 
 file_tab_comp.tracks_plots=plot(file_tab_comp.map_axes,[],[]);
 

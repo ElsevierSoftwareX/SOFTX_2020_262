@@ -101,13 +101,13 @@ classdef esp3_cl < handle
                 
                 %% Create temporary data folder
                 try
-                    if ~isfolder(obj.app_path.data_temp)
-                        mkdir(obj.app_path.data_temp);
+                    if ~isfolder(obj.app_path.data_temp.Path_to_folder)
+                        mkdir(obj.app_path.data_temp.Path_to_folder);
                         disp_perso(obj.main_figure,'Data Temp Folder Created')
-                        disp_perso(obj.main_figure,obj.app_path.data_temp)
+                        disp_perso(obj.main_figure,obj.app_path.data_temp.Path_to_folder)
                     end
                 catch
-                    disp_perso(obj.main_figure,'creating new config_path.xml file with standard path and options')
+                    disp_perso(obj.main_figure,'Creating new config_path.xml file with standard path and options')
                     [~,path_config_file,~]=get_config_files();
                     delete(path_config_file);
                     [obj.app_path,~,~,~] = load_config_from_xml(1,0,0);
@@ -116,7 +116,7 @@ classdef esp3_cl < handle
                 %% Managing existing files in temporary data folder
                 if ~p.Results.nodisplay
                     if nb_esp3_instances==1
-                        files_in_temp=dir(fullfile(obj.app_path.data_temp,'*.bin'));
+                        files_in_temp=dir(fullfile(obj.app_path.data_temp.Path_to_folder,'*.bin'));
                         idx_old=1:numel(files_in_temp);%check all temp files...
                         if ~isempty(idx_old)
                             
@@ -138,8 +138,8 @@ classdef esp3_cl < handle
                             
                             if delete_files == 1
                                 for i = 1:numel(idx_old)
-                                    if exist(fullfile(obj.app_path.data_temp,files_in_temp(idx_old(i)).name),'file') == 2
-                                        delete(fullfile(obj.app_path.data_temp,files_in_temp(idx_old(i)).name));
+                                    if exist(fullfile(obj.app_path.data_temp.Path_to_folder,files_in_temp(idx_old(i)).name),'file') == 2
+                                        delete(fullfile(obj.app_path.data_temp.Path_to_folder,files_in_temp(idx_old(i)).name));
                                     end
                                 end
                             end

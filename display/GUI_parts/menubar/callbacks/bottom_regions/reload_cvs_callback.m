@@ -52,7 +52,7 @@ for i=1:length(layers)
     for uui=1:length(layers(i).Frequencies)
         layers(i).Transceivers(uui).rm_region_origin('esp2');
     end
-    layers(i).CVS_BottomRegions(app_path.cvs_root)
+    layers(i).CVS_BottomRegions(app_path.cvs_root.Path_to_folder)
 end
 
 set_esp3_prop('layers',layers);

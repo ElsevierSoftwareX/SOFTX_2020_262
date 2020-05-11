@@ -38,6 +38,9 @@
 function change_layer_callback(~,~,main_figure,id)
 
 layers=get_esp3_prop('layers');
+if isempty(layers)
+    return;
+end
 layer=get_current_layer();
 
 if isempty(layer)||~isvalid(layer)

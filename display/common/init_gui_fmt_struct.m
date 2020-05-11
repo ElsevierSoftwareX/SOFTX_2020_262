@@ -23,6 +23,7 @@ if isempty(varargin)
 else
     units=varargin{1};
 end
+
 switch units
     case{ 'characters','char'}
         gui_fmt.x_sep=0.5;

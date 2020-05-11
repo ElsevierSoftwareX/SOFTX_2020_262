@@ -33,15 +33,13 @@ end
 % calculate histogram and find the bin with maximum number of values.
 % This is our nominal value
 bin = min(11,round(nb_pings/5));
+
 [pdf_RD,x_RD] = pdf_perso(RingDownMean,'bin',2*bin);
 [~,idx_max] = nanmax(pdf_RD);
 RingDownNominal = x_RD(idx_max);
 
 % flag as good all values that are different from the nonimal value by less than twice the threshold
 idx_ringdown_1 = abs(RingDownMean-RingDownNominal) <= rd_thr*2;
-
-
-
 
 
 %% SECOND ANALYSIS

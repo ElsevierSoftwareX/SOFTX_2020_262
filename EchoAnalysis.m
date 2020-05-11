@@ -183,9 +183,7 @@ if ~isdeployed()&&isappdata(groot,'esp3_obj')
     end
 end
 
-
 esp3_obj=esp3_cl('nb_esp3_instances',nb_esp3_instances,'files_to_load',files_to_load,'SaveEcho',p.Results.SaveEcho);
-
 
 % profile off;
 % profile viewer;

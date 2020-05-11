@@ -11,7 +11,7 @@ for ifold=1:numel(folders)
 end
 
 if ~isempty(h_in)
-    tag_shp={h_in(isvalid(h_in)).Tag};
+    tag_shp=arrayfun(@(x) x.Tag,h_in(isvalid(h_in)),'UniformOutput',false);
 else
     tag_shp={};
 end
@@ -92,7 +92,7 @@ for uishp=1:numel(geo_data_shp)
                             str=geo_data_shp{uishp}(i_feat).Transect;
                         end
                         temp_txt=text(ax,nanmean(bbox(:,2)),nanmean(bbox(:,1)),str,...
-                            'Fontsize',6,'Fontweight','normal','Interpreter','None','VerticalAlignment','bottom','Clipping','on','Color',color);
+                            'Fontsize',6,'Fontweight','normal','Interpreter','None','VerticalAlignment','bottom','Clipping','on','Color',color,'tag',new_shp_f{uishp});
                     end
                 otherwise
                     temp_txt=[];

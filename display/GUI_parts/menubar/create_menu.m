@@ -200,10 +200,9 @@ reg_tools=uimenu(main_menu.tools,'Label','Regions Tools');
 uimenu(reg_tools,'Label','Create WC Region','Callback',{@create_reg_dlbox,main_figure});
 uimenu(reg_tools,'Label','Display Mean Depth of current region','Callback',{@plot_mean_aggregation_depth_callback,main_figure});
 
-
-if ~isdeployed
-    uimenu(reg_tools,'Label','Slice Transect','CallBack',{@save_sliced_transect_to_xls_callback,main_figure,0});
-end
+% if ~isdeployed
+%     uimenu(reg_tools,'Label','Slice Transect','CallBack',{@save_sliced_transect_to_xls_callback,main_figure,0});
+% end
 
 towbody_tools=uimenu(main_menu.tools,'Label','Towed-body Tools');
 uimenu(towbody_tools,'Label','Correct position based on cable angle and towbody depth','Callback',{@correct_pos_angle_depth_cback,main_figure});
@@ -267,7 +266,7 @@ end
 function display_survey_results_cback(src,evt,main_figure)
 app_path=get_esp3_prop('app_path');
 
-[Filenames,PathToFile]=uigetfile({fullfile(app_path.results,'*_output.txt;*_output.mat')}, 'Pick a survey_ouptput file','MultiSelect','on');
+[Filenames,PathToFile]=uigetfile({fullfile(app_path.results.Path_to_folder,'*_output.txt;*_output.mat')}, 'Pick a survey_ouptput file','MultiSelect','on');
 
 if ~isequal(Filenames, 0)
     
@@ -477,14 +476,14 @@ files_in_temp=dir(app_path.data_temp);
 
 idx_delete=[];
 for uu=1:length(files_in_temp)
-    if nansum(strcmpi(fullfile(app_path.data_temp,files_in_temp(uu).name),temp_files_in_use))==0&&files_in_temp(uu).isdir==0
+    if nansum(strcmpi(fullfile(app_path.data_temp.Path_to_folder,files_in_temp(uu).name),temp_files_in_use))==0&&files_in_temp(uu).isdir==0
         idx_delete=[idx_delete uu];
     end
 end
 
 for i=1:length(idx_delete)
-    if isfile(fullfile(app_path.data_temp,files_in_temp(idx_delete(i)).name))
-        delete(fullfile(app_path.data_temp,files_in_temp(idx_delete(i)).name));
+    if isfile(fullfile(app_path.data_temp.Path_to_folder,files_in_temp(idx_delete(i)).name))
+        delete(fullfile(app_path.data_temp.Path_to_folder,files_in_temp(idx_delete(i)).name));
     end
 end
 

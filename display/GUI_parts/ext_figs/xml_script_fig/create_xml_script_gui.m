@@ -495,7 +495,7 @@ xml_scrip_h.logbook_table.UIContextMenu =rc_menu;
 
 if ~isempty(p.Results.main_figure)
     app_path=get_esp3_prop('app_path');
-    p_scripts=app_path.scripts;
+    p_scripts=app_path.scripts.Path_to_folder;
 else
     p_scripts=pwd;
 end
@@ -563,7 +563,7 @@ xml_scrip_h=getappdata(xml_scrip_fig,'xml_scrip_h');
 survey_input_obj=getappdata(xml_scrip_fig,'survey_input_obj');
 
     app_path=get_esp3_prop('app_path');
-    p_scripts=app_path.scripts;
+    p_scripts=app_path.scripts.Path_to_folder;
 
 algos_lists=xml_scrip_h.process_list();
 ialin=0;

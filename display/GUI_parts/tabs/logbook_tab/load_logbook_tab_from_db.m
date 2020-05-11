@@ -58,7 +58,7 @@ try
     
     if isempty(layer)||new_logbook>0
         if isempty(p.Results.filename)||~exist(p.Results.filename,'file')
-            [~,path_f]= uigetfile({fullfile(app_path.data,'echo_logbook.db')}, 'Pick a logbook file','MultiSelect','off');
+            [~,path_f]= uigetfile({fullfile(app_path.data.Path_to_folder,'echo_logbook.db')}, 'Pick a logbook file','MultiSelect','off');
             if path_f==0
                 return;
             end

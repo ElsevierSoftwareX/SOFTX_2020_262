@@ -67,6 +67,7 @@ classdef raw_idx_cl
                 id=idx_obj.chan_dg==channels(i);
                 nb_samples_tmp=idx_obj.nb_samples(id);
                 nb_samples{i}=accumarray(ceil((1:numel(nb_samples_tmp))/block_size)',nb_samples_tmp',[nb_blocks(i) 1],@nanmax)';
+                nb_samples{i}(nb_samples{i}==0)=1;
             end
             
         end

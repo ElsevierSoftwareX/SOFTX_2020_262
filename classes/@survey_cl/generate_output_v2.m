@@ -58,7 +58,7 @@ str_strat = sprintf('Integration process for script %s started at %s\n',surv_obj
 print_errors_and_warnings(fid_error,'',str_strat);
 load_bar_comp = p.Results.load_bar_comp;
 
-str_fname = generate_valid_filename(surv_input_obj.Infos.Title);
+str_fname = fullfile(p.Results.PathToResults,surv_input_obj.Infos.Title);
 
 war_num = 0;
 err_num = 0;
@@ -370,8 +370,7 @@ for isn = 1:length(snaps)
             if  surv_input_obj.Options.ExportSlicedTransects>0               
                 for iout = 1:numel(output_2D_type)
                     if ~isempty(output_2D{iout})  
-                        outputFileXLS = fullfile(p.Results.PathToResults,...
-                            [generate_valid_filename(sprintf('%s_transect_snap_%d_type_%s_strat_%s_trans_%d_%d_%s',str_fname,snap_num,type_t,strat_name,trans_num,ir,output_2D_type{iout})) '.csv']);
+                        outputFileXLS = generate_valid_filename(sprintf('%s_transect_snap_%d_type_%s_strat_%s_trans_%d_%d_%s%s',str_fname,snap_num,type_t,strat_name,trans_num,ir,output_2D_type{iout},'.csv'));
                     end
                 end
                 if ~isempty(output_2D{iout})
@@ -441,8 +440,7 @@ for isn = 1:length(snaps)
                 
                 if  surv_input_obj.Options.ExportRegions>0
 
-                    outputFileXLS = fullfile(p.Results.PathToResults,...
-                        [generate_valid_filename(sprintf('%s_region_snap_%d_type_%s_strat_%s_trans_%d_%d_%s_%d_%s',str_fname,snap_num,type_t,strat_name,trans_num,ir,reg_curr.Reference,reg_curr.ID,reg_curr.Tag)) '.csv']);
+                    outputFileXLS = generate_valid_filename(sprintf('%s_region_snap_%d_type_%s_strat_%s_trans_%d_%d_%s_%d_%s%s',str_fname,snap_num,type_t,strat_name,trans_num,ir,reg_curr.Reference,reg_curr.ID,reg_curr.Tag,'.csv'));
 
                     if ~isempty(regCellInt_r)
                         if exist(outputFileXLS,'file')>0
@@ -706,7 +704,7 @@ surv_obj.SurvOutput = surv_out_obj;
 surv_obj.clean_output();
 
 if surv_input_obj.Options.ExportRegions>0&&~isempty(reg_descr_table)
-    outputFileXLS = fullfile(p.Results.PathToResults,[str_fname '_reg_descriptors.csv']);
+    outputFileXLS = generate_valid_filename(sprintf('%s%s',str_fname,'_reg_descriptors.csv'));
     if exist(outputFileXLS,'file')>1
         delete(outputFileXLS);
     end

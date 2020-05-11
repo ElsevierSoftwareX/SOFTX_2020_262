@@ -28,7 +28,7 @@ end
 path_node = docNode.createElement('AppPath');
 fields=fieldnames(app_path);
 for ifi=1:length(fields)
-    path_node.setAttribute(fields{ifi},app_path.(fields{ifi}));
+    path_node.setAttribute(fields{ifi},app_path.(fields{ifi}).Path_to_folder);
 end
 config_file.appendChild(path_node);
 

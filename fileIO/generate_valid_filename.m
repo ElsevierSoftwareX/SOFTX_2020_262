@@ -1,6 +1,12 @@
-function fname=generate_valid_filename(str)
+function fname=generate_valid_filename(fstr)
 
-fname=regexprep(str,'\W','_');
-fname=strrep(fname,'__','_');
+[path_f,f_name,ext]=fileparts(fstr);
+
+
+f_name=regexprep(f_name,'\W','_');
+f_name=strrep(f_name,'__','_');
+
+fname=fullfile(path_f,[f_name ext]);
+
 
 end

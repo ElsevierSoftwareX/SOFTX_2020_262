@@ -132,11 +132,11 @@ app_path=get_esp3_prop('app_path');
 curr_mbs=selected_scripts{1};
 
 if~strcmp(curr_mbs,'')
-    [fileNames,outDir]=get_mbs_from_esp2(app_path.cvs_root,'MbsId',curr_mbs,'Rev',[]);
+    [fileNames,outDir]=get_mbs_from_esp2(app_path.cvs_root.Path_to_folder,'MbsId',curr_mbs,'Rev',[]);
 end
 
 mbs=mbs_cl();
-mbs.readMbsScript(app_path.data_root,fileNames{1});
+mbs.readMbsScript(app_path.data_root.Path_to_folder,fileNames{1});
 rmdir(outDir,'s');
 surv_obj=survey_cl();
 surv_obj.SurvInput=mbs.mbs_to_survey_obj('type','raw');
@@ -144,7 +144,7 @@ surv_obj.SurvInput=mbs.mbs_to_survey_obj('type','raw');
 
 [filename, pathname] = uiputfile('*.xml',...
     'Save survey XML file',...
-    fullfile(app_path.scripts,[surv_obj.SurvInput.Infos.Voyage '.xml']));
+    fullfile(app_path.scripts.Path_to_folder,[surv_obj.SurvInput.Infos.Voyage '.xml']));
 
 if isequal(filename,0) || isequal(pathname,0)
     return;
@@ -160,11 +160,11 @@ app_path=get_esp3_prop('app_path');
 curr_mbs=selected_scripts{1};
 
 if~strcmp(curr_mbs,'')
-    [fileNames,outDir]=get_mbs_from_esp2(app_path.cvs_root,'MbsId',curr_mbs,'Rev',[]);
+    [fileNames,outDir]=get_mbs_from_esp2(app_path.cvs_root.Path_to_folder,'MbsId',curr_mbs,'Rev',[]);
 end
 
 mbs=mbs_cl();
-mbs.readMbsScript(app_path.data_root,fileNames{1});
+mbs.readMbsScript(app_path.data_root.Path_to_folder,fileNames{1});
 rmdir(outDir,'s');
 surv_obj=survey_cl();
 surv_obj.SurvInput=mbs.mbs_to_survey_obj('type','raw');
@@ -189,7 +189,7 @@ function open_xml_scripts_callback(src,~,hObject,main_figure,flag)
 selected_scripts=getappdata(hObject,'SelectedScripts');
 app_path=get_esp3_prop('app_path');
 %layers=get_esp3_prop('layers');
-selected_scripts_full=cellfun(@(x) fullfile(app_path.scripts,x),selected_scripts,'UniformOutput',0);
+selected_scripts_full=cellfun(@(x) fullfile(app_path.scripts.Path_to_folder,x),selected_scripts,'UniformOutput',0);
 
 surv_obj = survey_cl();
 surv_obj.SurvInput = parse_survey_xml(selected_scripts_full{end});
@@ -201,7 +201,7 @@ end
 function delete_script_callback(src,~,hObject,main_figure)
 selected_scripts=getappdata(hObject,'SelectedScripts');
 app_path=get_esp3_prop('app_path');
-selected_scripts=cellfun(@(x) fullfile(app_path.scripts,x),selected_scripts,'UniformOutput',0);
+selected_scripts=cellfun(@(x) fullfile(app_path.scripts.Path_to_folder,x),selected_scripts,'UniformOutput',0);
 for i=1:numel(selected_scripts)
     try
         if isfile(selected_scripts{i})
@@ -241,15 +241,15 @@ switch flag
     case 'mbs'
         [layers,~]=process_surveys(selected_scripts,...
             'discard_loaded_layers',discard_lay,...
-            'PathToMemmap',app_path.data_temp,...
+            'PathToMemmap',app_path.data_temp.Path_to_folder,...
             'layers',layers,'origin','mbs',...
-            'cvs_root',app_path.cvs_root,...
-            'data_root',app_path.data_root,'tag',src.Tag,'gui_main_handle',main_figure,'update_display_at_loading',update_display);
+            'cvs_root',app_path.cvs_root.Path_to_folder,...
+            'data_root',app_path.data_root.Path_to_folder,'tag',src.Tag,'gui_main_handle',main_figure,'update_display_at_loading',update_display);
     case 'xml'
-        selected_scripts_full=cellfun(@(x) fullfile(app_path.scripts,x),selected_scripts,'UniformOutput',0);
+        selected_scripts_full=cellfun(@(x) fullfile(app_path.scripts.Path_to_folder,x),selected_scripts,'UniformOutput',0);
         [layers,~]=process_surveys(selected_scripts_full,...
             'discard_loaded_layers',discard_lay,...
-            'PathToMemmap',app_path.data_temp,'layers',layers,...
+            'PathToMemmap',app_path.data_temp.Path_to_folder,'layers',layers,...
             'origin','xml','gui_main_handle',main_figure,'update_display_at_loading',update_display);
 end
 
@@ -271,7 +271,7 @@ app_path=get_esp3_prop('app_path');
 selected_scripts=getappdata(hObject,'SelectedScripts');
 surv_obj=survey_cl();
 for uis=1:numel(selected_scripts)
-    surv_obj.SurvInput=parse_survey_xml(fullfile(app_path.scripts,selected_scripts{uis}));
+    surv_obj.SurvInput=parse_survey_xml(fullfile(app_path.scripts.Path_to_folder,selected_scripts{uis}));
     
     if isempty(surv_obj.SurvInput)
         print_errors_and_warnings([],'warning','Could not parse the File describing the survey...');
@@ -293,7 +293,7 @@ app_path=get_esp3_prop('app_path');
 switch flag
     case 'mbs'
         if~strcmp(selected_scripts,'')
-            [fileNames,outDir]=get_mbs_from_esp2(app_path.cvs_root,'MbsId',selected_scripts{end},'Rev',[]);
+            [fileNames,outDir]=get_mbs_from_esp2(app_path.cvs_root.Path_to_folder,'MbsId',selected_scripts{end},'Rev',[]);
             pause(1);
             for ifi=1:numel(fileNames)
             open_txt_file(fileNames{end})
@@ -304,8 +304,8 @@ switch flag
         end
         
     case 'xml'
-        if isfile(fullfile(app_path.scripts,selected_scripts{end}))
-           open_txt_file(fullfile(app_path.scripts,selected_scripts{end}));
+        if isfile(fullfile(app_path.scripts.Path_to_folder,selected_scripts{end}))
+           open_txt_file(fullfile(app_path.scripts.Path_to_folder,selected_scripts{end}));
         else
             fprintf('Could not find script %s\n',selected_scripts{end});
         end

@@ -84,6 +84,7 @@ uimenu(analysis_menu,'Label','Display Pdf of values','Callback',{@disp_hist_regi
 
 if isreg>0
     uimenu(analysis_menu,'Label','Classify region','Callback',{@classify_reg_callback,main_figure});
+    uimenu(analysis_menu,'Label','Display Mean Depth of current region','Callback',{@plot_mean_aggregation_depth_callback,main_figure});
 
     export_menu=uimenu(context_menu,'Label','Export');
     uimenu(export_menu,'Label','Export integrated region to .xlsx','Callback',{@export_regions_callback,main_figure});
@@ -98,7 +99,6 @@ end
 
 uimenu(analysis_menu,'Label','Spectral Analysis (noise)','Callback',{@noise_analysis_callback,select_plot,main_figure});
 
-
 freq_analysis_menu=uimenu(context_menu,'Label','Frequency Analysis');
 uimenu(freq_analysis_menu,'Label','Display TS Frequency response','Callback',{@freq_response_reg_callback,select_plot,main_figure,'sp',0});
 uimenu(freq_analysis_menu,'Label','Display Sv Frequency response','Callback',{@freq_response_reg_callback,select_plot,main_figure,'sv',0});
@@ -109,11 +109,9 @@ if strcmp(trans_obj.Mode,'FM')
     uimenu(freq_analysis_menu,'Label','Create Frequency Matrix TS','Callback',{@freq_response_sp_mat_callback,select_plot,main_figure});
 end
 
-
 algo_menu=uimenu(context_menu,'Label','Apply Algorithm ...');
 uimenu(algo_menu,'Label','Bottom Detection V1','Callback',{@apply_bottom_detect_cback,select_plot,main_figure,'v1'});
 uimenu(algo_menu,'Label','Bottom Detection V2','Callback',{@apply_bottom_detect_cback,select_plot,main_figure,'v2'});
-
 uimenu(algo_menu,'Label','Bottom Features','Callback',{@apply_bottomfeatures_cback,select_plot,main_figure});
 uimenu(algo_menu,'Label','Bad Pings Detection','Callback',{@find_bt_cback,select_plot,main_figure,'v2'});
 uimenu(algo_menu,'Label','Spikes removal','Callback',{@find_spikes_cback,select_plot,main_figure});
@@ -123,6 +121,7 @@ uimenu(algo_menu,'Label','Target Tracking','Callback',{@apply_track_target_cback
 uimenu(algo_menu,'Label','Dropouts detection','Callback',{@find_bt_cback,select_plot,main_figure,'dropouts'});
 
 uimenu(context_menu,'Label','Shift Bottom ...','Callback',{@shift_bottom_callback,select_plot,main_figure});
+
 if isreg==0 
     uimenu(context_menu,'Label','Clear Spikes','Callback',{@clear_spikes_cback,select_plot,main_figure});
 end

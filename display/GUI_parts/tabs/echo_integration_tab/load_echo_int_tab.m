@@ -267,26 +267,7 @@ end
 
 load_bar_comp=show_status_bar(main_figure);
 load_bar_comp.progress_bar.setText('Exporting Sliced transect...');
-
-
-
-if ~isempty(layer_obj.EchoIntStruct.reg_descr_table)
-    output_f=[fullfile(path_tmp,fileN) '_regions_descr.csv'];
-    if exist(output_f,'file')>1
-        delete(output_f);
-    end
-    writetable(layer_obj.EchoIntStruct.reg_descr_table,output_f);
-end
-str_freq=num2str(layer_obj.Frequencies(idx_main_freq));
-
-for it=1:numel(layer_obj.EchoIntStruct.output_2D{idx_main})
-    if ~isempty(layer_obj.EchoIntStruct.output_2D{idx_main}{it})
-        fname=generate_valid_filename([fileN '_' layer_obj.EchoIntStruct.output_2D_type{idx_main}{it} '_' str_freq '_sliced_transect.csv']);
-        output_f=fullfile(path_tmp,fname);
-        reg_output_table=reg_output_to_table(layer_obj.EchoIntStruct.output_2D{idx_main}{it});
-        writetable(reg_output_table,output_f);
-    end
-end
+layer_obj.export_slice_transect_to_xls('use_int',1,'idx_main_freq',idx_main,'output_f',fullfile(path_tmp,fileN));
 
 disp_done_figure(main_figure,'Echo-integration finished and exported... Done')
 hide_status_bar(main_figure);

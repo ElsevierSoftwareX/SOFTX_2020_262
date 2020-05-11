@@ -103,7 +103,7 @@ for i = 1:length(Script)
         if isempty(app_path)
             [PathToFile,~,~] = fileparts(Script{i});
         else
-            PathToFile = app_path.results;
+            PathToFile = app_path.results.Path_to_folder;
         end
     end
     if ~isfolder(PathToFile)

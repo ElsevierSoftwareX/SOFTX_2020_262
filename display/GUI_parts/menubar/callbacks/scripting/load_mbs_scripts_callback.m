@@ -3,7 +3,7 @@ function load_mbs_scripts_callback(~,~,hObject)
 
 app_path=get_esp3_prop('app_path');
 
-[mbs_files,outDir]=get_mbs_from_esp2(app_path.cvs_root);
+[mbs_files,outDir]=get_mbs_from_esp2(app_path.cvs_root.Path_to_folder);
 
 if isempty(mbs_files)
     return;
