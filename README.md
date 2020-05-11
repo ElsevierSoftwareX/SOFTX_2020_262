@@ -6,7 +6,7 @@ ESP3 includes standard data processing procedures such as calibration and echo-i
 
 ESP3 is currently under active development (particularly in terms of broadband processing).
 
-**[See the wiki for more information on ESP3 features.](https://bitbucket.org/yladroit/esp3/wiki/Home)**
+**[See the wiki for more information on ESP3 features.]( https://bitbucket.org/yladroit/esp3/wiki ) **
 
 ---
 
@@ -53,7 +53,7 @@ A compiled version of the latest stable release is available for install on a Wi
 
 ### Prerequisites
 
-* Download and install the (free) [Matlab Compiler Runtime R2017b (9.3)](https://au.mathworks.com/products/compiler/matlab-runtime.html). 
+* Download and install the (free) [Matlab Compiler Runtime R2019b (9.7)](https://au.mathworks.com/products/compiler/matlab-runtime.html). 
 
 ### Installing
 

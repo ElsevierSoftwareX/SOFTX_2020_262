@@ -11,9 +11,10 @@ ax = axes(hfig,'nextplot','add','XGrid','on','YGrid','on','box','on');
 
 
 strats = [];
+strat_sum = cell(1,numel(surv_obj));
 for isur = 1:length(surv_obj)
-    strat_sum = surv_obj(isur).SurvOutput.stratumSum;
-    strats = unique(union(strats,strat_sum.stratum));
+    strat_sum{isur} = surv_obj(isur).SurvOutput.stratumSum;
+    strats = unique(union(strats,strat_sum{isur}.stratum));
 end
 
 icol = 0;
@@ -24,7 +25,7 @@ for isur = 1:length(surv_obj)
     struct_to_store = surv_obj(isur).SurvOutput.stratumSum;
     struct_to_store.Title = cell(1,numel(struct_to_store.snapshot));
     struct_to_store.Title(:) = {surv_obj(isur).SurvInput.Infos.Title};
-    snaps = unique(strat_sum.snapshot);
+    snaps = unique(strat_sum{isur}.snapshot);
     T=struct2table(structfun(@transpose,struct_to_store,'UniformOutput',false),'AsArray',0);
     snap_table=[snap_table;T];
     for ii = 1:numel(snaps)
@@ -36,11 +37,11 @@ for isur = 1:length(surv_obj)
             abscf_std{ii} = nan(1,numel(strats));
             snap_strat{ii} = strats;
         for jj = 1:length(strats)
-            idx = (strat_sum.snapshot == snaps(ii)&strcmp(strat_sum.stratum,strats{jj}));
+            idx = (strat_sum{isur}.snapshot == snaps(ii)&strcmp(strat_sum{isur}.stratum,strats{jj}));
 
             if any(idx)
-                abscf_mean{ii}(jj) = strat_sum.abscf_wmean(idx);
-                abscf_std{ii}(jj) = sqrt(strat_sum.abscf_var(idx));
+                abscf_mean{ii}(jj) = strat_sum{isur}.abscf_wmean(idx);
+                abscf_std{ii}(jj) = sqrt(strat_sum{isur}.abscf_var(idx));
             end
         end    
         errorbar(ax,abscf_mean{ii},abscf_std{ii},'marker','s','color',plot_color{icol});
