@@ -687,7 +687,7 @@ sum_str=sprintf(['\n Files loading process for script %s finished with:\n' ...
 
 print_errors_and_warnings(fid_error,'',sum_str);
 
-str_end=sprintf('Files Loading process for script %s finished at %s\n\n',surv_input_obj.Infos.Title,datestr(now));
+str_end=sprintf('Files Loading process for script %s finished at %s\n',surv_input_obj.Infos.Title,datestr(now));
 print_errors_and_warnings(fid_error,'',str_end);
 
 

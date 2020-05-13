@@ -30,6 +30,7 @@ classdef algo_panel_cl < dynamicprops
              params_class=obj.algo.Input_params.get_range_class();
              nb_cell_params=sum(strcmpi(params_class,'cell'));
              nb_bool_params=sum(strcmpi(params_class,'logical'));
+             
              if nb_cell_params>0
                  nb_c_min=2;
              else
@@ -41,18 +42,20 @@ classdef algo_panel_cl < dynamicprops
              end
              
              if isempty(results.save_as_cback_fcn)
-                 nb_r_max =6;
+                 nb_r_max =6;    
              else
                  nb_r_max =5;
              end
+             
+             nb_r_max_tot=7;
              
              nb_c=nanmax(ceil((nb_params-nb_bool_params+1)/nb_r_max),nb_c_min);
             
             gui_fmt=init_gui_fmt_struct();
             gui_fmt.txt_w=gui_fmt.txt_w*1.2;
-            pos=create_pos_3(7,nb_c,gui_fmt.x_sep,gui_fmt.y_sep,gui_fmt.txt_w,gui_fmt.box_w,gui_fmt.box_h);
+            pos=create_pos_3(nb_r_max_tot,nb_c,gui_fmt.x_sep,gui_fmt.y_sep,gui_fmt.txt_w,gui_fmt.box_w,gui_fmt.box_h);
             
-            p_button=pos{7,1}{1};
+            p_button=pos{nb_r_max_tot,1}{1};
             p_button(3)=gui_fmt.button_w;
   
             if isempty(results.container)

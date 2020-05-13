@@ -39,7 +39,7 @@ function initialize_display(esp3_obj)
 main_figure=esp3_obj.main_figure;
 curr_disp=esp3_obj.curr_disp;
 
-pan_height=get_top_panel_height(7.5);
+pan_height=get_top_panel_height(7);
 load_loading_bar_panel_v2(main_figure);
 load_info_panel(main_figure);
 

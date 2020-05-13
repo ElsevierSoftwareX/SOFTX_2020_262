@@ -21,7 +21,7 @@ classdef path_elt_cl < handle
                 try
                     mkdir(path_to_folder);
                 catch
-                    if ~contains(p.Results.Path_fieldname,'cvs')
+                    if ~contains(p.Results.Path_description,'CVS')
                         disp_perso([],sprintf('Could not create folder %s',path_to_folder));
                         path_to_folder=whereisEcho();
                     end
