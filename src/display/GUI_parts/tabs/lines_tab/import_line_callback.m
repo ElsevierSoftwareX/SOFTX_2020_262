@@ -34,7 +34,7 @@ for i=1:length(Filename)
     layer.add_lines(line);
 end
 
-set_current_layer(layer);
+
 
 update_lines_tab(main_figure)
 display_lines(main_figure);

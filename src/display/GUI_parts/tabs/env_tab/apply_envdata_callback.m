@@ -42,7 +42,7 @@ if ~isempty(layer)
     set_alpha_map(main_figure,'main_or_mini',cids_up,'update_bt',0);
     order_stacks_fig(main_figure,curr_disp);
     
-    set_current_layer(layer);
+    
 end
 
 update_environnement_tab(main_figure,1);

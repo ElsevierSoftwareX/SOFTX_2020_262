@@ -124,8 +124,6 @@ if ~isempty(IDs)
     curr_disp.Reg_changed_flag=1;
 end
 
-set_current_layer(layer);
-
 order_stacks_fig(main_figure,curr_disp);
 
 end

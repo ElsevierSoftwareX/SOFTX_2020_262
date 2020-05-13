@@ -106,7 +106,6 @@ for i=1:length(ah)
     end
 end
 
-set_current_layer(layer);
 
 
 end

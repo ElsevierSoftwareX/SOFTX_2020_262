@@ -60,7 +60,6 @@ layer.apply_algo('Classification','load_bar_comp',load_bar_comp,...
     'reg_obj',reg_obj);
 
 setappdata(main_figure,'ExternalFigures',hfigs);
-set_current_layer(layer);
 
 update_echo_int_tab(main_figure,0);
 update_reglist_tab(main_figure,1);

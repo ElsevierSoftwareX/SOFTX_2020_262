@@ -268,6 +268,5 @@ update_map_tab(main_figure);
 update_grid(main_figure);
 update_grid_mini_ax(main_figure);
 
-set_current_layer(layer);
 
 end

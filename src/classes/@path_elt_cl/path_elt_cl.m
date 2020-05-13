@@ -21,8 +21,8 @@ classdef path_elt_cl < handle
                 try
                     mkdir(path_to_folder);
                 catch
-                    disp_perso([],sprintf('Could not create folder %s',path_to_folder));
-                    if isdeployed()
+                    if ~contains(p.Results.Path_fieldname,'cvs')
+                        disp_perso([],sprintf('Could not create folder %s',path_to_folder));
                         path_to_folder=whereisEcho();
                     end
                 end
@@ -39,13 +39,12 @@ classdef path_elt_cl < handle
                 try
                     mkdir(pp);
                 catch
-                    disp_perso([],sprintf('Could not create folder %s',pp));
+                    if ~isdeployed()
+                        disp_perso([],sprintf('Could not create folder %s',pp));
+                    end
                 end
             end
-            
-            if isfolder(pp)||~isdeployed()
-                obj.Path_to_folder = pp;
-            end
+            obj.Path_to_folder = pp;      
         end
         
     end

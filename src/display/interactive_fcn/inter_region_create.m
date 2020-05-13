@@ -70,7 +70,7 @@ y_lim=get(ah,'ylim');
 cp = ah.CurrentPoint;
 xinit = cp(1,1);
 yinit = cp(1,2);
-
+xx = nanmin(ceil(cp(1,2)),numel(rr));
 if xinit<x_lim(1)||xinit>x_lim(end)||yinit<y_lim(1)||yinit>y_lim(end)||isempty(rr)
     return;
 end
@@ -92,8 +92,8 @@ x_box=xinit;
 y_box=yinit;
 
 
-hp=line(ah,x_box,y_box,'color',col_line,'linewidth',1,'Tag','reg_temp');
-txt=text(ah,cp(1,1),cp(1,2),sprintf('%.2f m',rr(nanmin(ceil(cp(1,2)),numel(rr)))),'color',col_line,'Tag','reg_temp');
+hp=patch(ah,'XData',xinit,'YData',yinit,'FaceColor',col_line,'FaceAlpha',0.4,'EdgeColor',col_line,'linewidth',0.5,'Tag','reg_temp');
+txt=text(ah,cp(1,1),cp(1,2),sprintf('%.2f m',rr(xx)),'color',col_line,'Tag','reg_temp');
 
 replace_interaction(main_figure,'interaction','WindowButtonMotionFcn','id',2,'interaction_fcn',@wbmcb);
 replace_interaction(main_figure,'interaction','WindowButtonUpFcn','id',2,'interaction_fcn',@wbucb);
@@ -101,7 +101,7 @@ replace_interaction(main_figure,'interaction','WindowButtonUpFcn','id',2,'intera
 
     function wbmcb(~,~)
         cp = ah.CurrentPoint;
-        xx = nanmin(nanmax(ceil(cp(1,1)),1),numel(rr));
+        xx = nanmin(ceil(cp(1,2)),numel(rr));
         u=u+1;
         
         switch mode
@@ -141,7 +141,7 @@ replace_interaction(main_figure,'interaction','WindowButtonUpFcn','id',2,'intera
         if isvalid(hp)
             set(hp,'XData',x_box,'YData',y_box,'Tag','reg_temp');
         else
-            hp=plot(ah,x_box,x_box,'color',col_line,'linewidth',1,'Tag','reg_temp');
+            hp=patch(ah,'XData',x_box,'YData',y_box,'FaceColor',col_line,'FaceAlpha',0.4,'EdgeColor',col_line,'linewidth',0.5,'Tag','reg_temp');
         end
         
         if isvalid(txt)

@@ -138,8 +138,7 @@ end
             trans_obj.rm_st_from_idx(idx_r,idx_p);
         end
          delete(hp);
-        
-        set_current_layer(layer);
+       
         
         curr_disp.setField('singletarget');
         

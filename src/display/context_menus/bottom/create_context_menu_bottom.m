@@ -81,12 +81,9 @@ trans_obj.Bottom=bottom_cl();
 curr_disp.Bot_changed_flag=1;
 
 
-set_current_layer(layer);
-
 bot=trans_obj.Bottom;
 curr_disp.Bot_changed_flag=1;
 
-set_current_layer(layer);
 
 add_undo_bottom_action(main_figure,trans_obj,old_bot,bot);
 
@@ -302,7 +299,7 @@ trans_obj.filter_bottom('FilterWidth',w_filter);
 
 curr_disp.Bot_changed_flag=1;
 
-set_current_layer(layer);
+
 display_bottom(main_figure);
 set_alpha_map(main_figure,'update_bt',0);
 

@@ -40,7 +40,6 @@ end
 gps_data.Time=gps_data.Time+dt/24;
 layer.replace_gps_data_layer(gps_data);
 layer.add_ping_data_to_db([],1);
-set_current_layer(layer);
 
 update_grid(main_figure);
 update_grid_mini_ax(main_figure);

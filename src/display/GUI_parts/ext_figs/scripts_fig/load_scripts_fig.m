@@ -257,7 +257,7 @@ end
 if ~isempty(layers)
     layer=layers(end);
     set_esp3_prop('layers',layers);
-    set_current_layer(layer);
+    
     
     loadEcho(main_figure);
 end

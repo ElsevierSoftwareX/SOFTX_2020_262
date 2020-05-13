@@ -56,7 +56,7 @@ regions=create_regions_from_evr(fullfile(PathToFile,Filename),trans_obj.get_tran
 
 if ~isempty(regions)
     trans_obj.add_region(regions);
-    set_current_layer(layer);
+    
     display_bottom(main_figure);
     
     

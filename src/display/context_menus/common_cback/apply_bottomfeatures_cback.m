@@ -27,9 +27,6 @@ trans_obj.apply_algo(alg_name,'load_bar_comp',load_bar_comp,'reg_obj',new_region
 hide_status_bar(main_figure);
 
 
-set_current_layer(layer);
-
-set_current_layer(layer);
 set_alpha_map(main_figure,'update_bt',0);
 display_bottom(main_figure);
 order_stacks_fig(main_figure,curr_disp);

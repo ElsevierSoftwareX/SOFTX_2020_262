@@ -207,7 +207,6 @@ end
         
         curr_disp.Bot_changed_flag=1;
         
-        set_current_layer(layer);
         
         if val>0 
             add_undo_bottom_action(main_figure,trans_obj,old_bot,bot)

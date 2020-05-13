@@ -63,6 +63,5 @@ for ui = 1:numel(algo_panel)
     layer.add_algo(algo_panel(ui).algo,'idx_chan',idx_chan);
 end
 
-set_current_layer(layer);
 
 end

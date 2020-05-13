@@ -57,7 +57,7 @@ for up=1:numel(path_lay)
     
     layers(idx_lay_up).update_echo_logbook_dbfile('SurveyName',survey_data_out.SurveyName,'Voyage',survey_data_out.Voyage,'main_figure',main_figure);
 end
-set_current_layer(layer);
+
 
 update_tree_layer_tab(main_figure);
 load_info_panel(main_figure);

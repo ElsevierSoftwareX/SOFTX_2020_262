@@ -58,7 +58,8 @@ for ui=1:numel(sliced_output)
         idx_in_tot=idx_in_tot&eint>0;
         
         if any(idx_tag(idx_in_tot))
-            print_errors_and_warnings([],'warning','Found overlapping regions while tagging sliced transect...') ;
+            disp_perso([],'WARNING: Found overlapping regions while tagging sliced transect...');
+            disp_perso([],'Ignore this warning if you are not using a integration using tagged cells');
         end
         
         idx_tag(idx_in_tot)=true;

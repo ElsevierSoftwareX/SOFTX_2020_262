@@ -115,7 +115,7 @@ switch algo_name
         layer.apply_algo(algo_name,'idx_chan',idx_chan,'load_bar_comp',load_bar_comp);
         hide_status_bar(main_figure);
         
-        set_current_layer(layer);
+       
         
         bot=trans_obj.Bottom;
         add_undo_bottom_action(main_figure,trans_obj,old_bot,bot);
@@ -180,7 +180,7 @@ switch algo_name
         if~isempty(layer.Curves)
             layer.Curves(contains({layer.Curves(:).Unique_ID},'track'))=[];
         end
-        set_current_layer(layer);
+        
         display_tracks(main_figure);
         update_multi_freq_disp_tab(main_figure,'ts_f',1);
         update_st_tracks_tab(main_figure,'histo',1,'st',0);

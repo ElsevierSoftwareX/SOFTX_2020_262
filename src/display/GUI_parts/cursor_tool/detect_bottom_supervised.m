@@ -182,7 +182,7 @@ wbmcb([],[])
         
         if val>0
             
-            set_current_layer(layer);
+            
             
             add_undo_bottom_action(main_figure,trans_obj,old_bot,bot);
             

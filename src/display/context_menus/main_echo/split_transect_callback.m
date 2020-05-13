@@ -69,7 +69,6 @@ layer.set_survey_data(new_surveydata);
 
 layer.update_echo_logbook_dbfile('main_figure',main_figure);
 
-set_current_layer(layer);
 update_tree_layer_tab(main_figure);
 display_survdata_lines(main_figure);
 update_axis(main_figure,1,'main_or_mini','mini');

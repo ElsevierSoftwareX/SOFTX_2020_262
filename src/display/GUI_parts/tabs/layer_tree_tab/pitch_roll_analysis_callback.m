@@ -206,7 +206,7 @@ function pitch_roll_analysis_callback(src,~,main_figure,IDs)
     axis(ax_5,'square');
     
     set_esp3_prop('layers',layers);
-    set_current_layer(layer);
+    
     
     
  

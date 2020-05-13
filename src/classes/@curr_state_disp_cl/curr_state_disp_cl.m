@@ -80,7 +80,7 @@ classdef curr_state_disp_cl <handle
             addParameter(p,'Grid_x',[100 10 10],@isnumeric);
             addParameter(p,'Grid_y',10,@isnumeric);
             addParameter(p,'Move_dy_dx',[0.2 .4],@isnumeric);
-            addParameter(p,'Disp_dy_dx',[0.25 1],@isnumeric);
+            addParameter(p,'Disp_dy_dx',[0.2 0.2],@isnumeric);
             addParameter(p,'CursorMode','Normal',@ischar);
             addParameter(p,'CurrLayerID','',@ischar);
             addParameter(p,'NbLayers',0,@isnumeric);

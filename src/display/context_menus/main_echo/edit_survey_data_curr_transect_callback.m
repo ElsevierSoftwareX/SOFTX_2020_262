@@ -29,7 +29,6 @@ for idd=ids
     layer_cl.empty.update_echo_logbook_dbfile('Filename',layer.Filename{idd},'SurveyData',surv,'main_figure',main_figure);
 end
 layer.load_echo_logbook_db();
-set_current_layer(layer);
 
 update_tree_layer_tab(main_figure);
 display_survdata_lines(main_figure);

@@ -228,7 +228,7 @@ hp=plot(ah,xdata,yinit-1/2,'color',line_col,'linewidth',1,'Tag','bottom_temp');
         trans_obj.Bottom=bot;
         curr_disp.Bot_changed_flag=1; 
         
-        set_current_layer(layer);
+        
         
         add_undo_bottom_action(main_figure,trans_obj,old_bot,bot);
 

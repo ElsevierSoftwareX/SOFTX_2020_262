@@ -63,7 +63,6 @@ trans_obj.Bottom=bot;
 
 curr_disp.Bot_changed_flag=1;
 
-set_current_layer(layer);
 
 add_undo_bottom_action(main_figure,trans_obj,old_bot,bot);
 

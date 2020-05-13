@@ -451,8 +451,6 @@ end
 update_map_tab(main_figure);
 
 
-set_current_layer(layer);
-
 set_alpha_map(main_figure);
 
 end

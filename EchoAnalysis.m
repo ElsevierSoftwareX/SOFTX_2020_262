@@ -191,6 +191,7 @@ function update_path()
 main_path = whereisEcho();
 addpath(main_path);
 path_src=fullfile(main_path,'src');
+addpath(path_src);
 addpath(genpath(path_src));
 end
 

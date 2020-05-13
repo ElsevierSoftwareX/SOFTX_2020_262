@@ -18,6 +18,13 @@ u=findobj(ah,'Type','line','-not',...
     '-or','Tag','reg_temp'});
 delete(u);
 
+u=findobj(ah,'Type','patch','-not',...
+    {'Tag','reg_temp',...
+    '-or','Tag','disp_area',...
+    '-or','Tag','zoom_area'});
+
+delete(u);
+
 u=findobj(ah,'Type','text','-and','Tag','');
 
 delete(u);

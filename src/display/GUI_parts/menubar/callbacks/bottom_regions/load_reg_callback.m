@@ -47,7 +47,7 @@ app_path=get_esp3_prop('app_path');
 
 layer.CVS_BottomRegions(app_path.cvs_root.Path_to_folder,'BotCVS',0,'RegCVS',1);
 
-set_current_layer(layer);
+
 
 display_regions(main_figure,'all');
 curr_disp=get_esp3_prop('curr_disp');

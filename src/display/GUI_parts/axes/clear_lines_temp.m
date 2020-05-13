@@ -11,4 +11,5 @@ u=findobj(ah,...
     '-or','Tag','zoom_box_temp'});
 delete(u);
 
+
 end

@@ -195,9 +195,9 @@ end
            return;
         end
         
-        set_current_layer(layer);
+        
         layer.add_lines(line_obj);
-        set_current_layer(layer);
+        
         update_lines_tab(main_figure);
         display_lines(main_figure);
     end

@@ -28,7 +28,6 @@ switch field
         set_alpha_map(main_figure,'update_cmap',0,'update_under_bot',0);
 end
 
-set_current_layer(layer);
 
 
 

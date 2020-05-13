@@ -123,7 +123,7 @@ if ~isempty(layer)
     update_calibration_tab(main_figure);
     
     
-    set_current_layer(layer);
+    
     
     update_axis(main_figure,0,'main_or_mini',union({'main','mini'},curr_disp.ChannelID,'stable'),'force_update',1);
     set_alpha_map(main_figure,'update_bt',0);

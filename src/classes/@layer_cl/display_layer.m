@@ -98,8 +98,7 @@ nb_samples=length(idx_r);
 nb_pings=length(idx_ping);
 
 [dr,dp]=get_dr_dp(ax,nb_samples,nb_pings,curr_disp.EchoQuality,echo_h.Type);
-screensize = getpixelposition(ax);
-outputSize=screensize(3:4)/4;
+
 % profile on;
 
 idx_r_red_ori=(idx_r(1:dr:end));
@@ -118,11 +117,11 @@ if update_echo>0
 %     ip_size_max=(ceil(sqrt(size_tot))*sqrt(screen_ratio)-numel(numel(idx_ping_red_ori)))/2;
 %     ir_size_max=(ceil(sqrt(size_tot))/sqrt(screen_ratio)-numel(numel(idx_r_red_ori)))/2;
 %     
-    i_p=nanmax(ceil(numel(idx_ping_red_ori)*curr_disp.Disp_dy_dx(2)),outputSize(2));
+    i_p=ceil(numel(idx_ping_red_ori)*curr_disp.Disp_dy_dx(2));
     %i_p=nanmax(ip_size_max,200)
     buffer_p=0:dp:i_p*dp;
     
-    i_r=nanmax(ceil(numel(idx_r_red_ori)*curr_disp.Disp_dy_dx(1)),outputSize(1));
+    i_r=ceil(numel(idx_r_red_ori)*curr_disp.Disp_dy_dx(1));
     %i_r=nanmax(ir_size_max,200)
     buffer_r=0:dr:i_r*dr;
     

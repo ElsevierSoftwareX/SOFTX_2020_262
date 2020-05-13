@@ -18,7 +18,7 @@ curr_ss=envdata.SoundSpeed;
 curr_abs=10/1e3;
 
 %%%%%%Environnement%%%%%%
-pos=create_pos_3(6,2,gui_fmt.x_sep,gui_fmt.y_sep,gui_fmt.txt_w,gui_fmt.box_w,gui_fmt.box_h);
+pos=create_pos_3(7,2,gui_fmt.x_sep,gui_fmt.y_sep,gui_fmt.txt_w,gui_fmt.box_w,gui_fmt.box_h);
 
 env_tab_comp.env_group=uipanel(env_tab_comp.env_tab,'Position',[0 0.0 0.4 1],'units','norm');
 
@@ -32,11 +32,11 @@ env_tab_comp.depth=uicontrol(env_tab_comp.env_group,gui_fmt.edtStyle,'position',
 
 uicontrol(env_tab_comp.env_group,gui_fmt.txtStyle,'String','SS(m/s)','Position',pos{5,1}{1});
 env_tab_comp.soundspeed=uicontrol(env_tab_comp.env_group,gui_fmt.edtStyle,'position',pos{5,1}{2},'string',num2str(curr_ss,'%2f'),'callback',{@update_envcal_values,main_figure});
-env_tab_comp.soundspeed_over=uicontrol(env_tab_comp.env_group,gui_fmt.chckboxStyle,'position',pos{5,1}{2}+[gui_fmt.box_w+gui_fmt.x_sep 0 0 0],'callback',{@update_envcal_values,main_figure});
+env_tab_comp.soundspeed_over=uicontrol(env_tab_comp.env_group,gui_fmt.chckboxStyle,'position',pos{5,1}{2}+[gui_fmt.box_w+gui_fmt.x_sep 0 0 0],'tooltipstring','Override soundspeed computation','callback',{@update_envcal_values,main_figure});
 
 uicontrol(env_tab_comp.env_group,gui_fmt.txtStyle,'String','Att.(dB/km)','Position',pos{6,1}{1});
 env_tab_comp.att=uicontrol(env_tab_comp.env_group,gui_fmt.edtStyle,'position',pos{6,1}{2},'string',num2str(curr_abs*1e3,'%.2f'),'callback',{@update_envcal_values,main_figure});
-env_tab_comp.att_over=uicontrol(env_tab_comp.env_group,gui_fmt.chckboxStyle,'position',pos{6,1}{2}+[gui_fmt.box_w+gui_fmt.x_sep 0 0 0],'callback',{@update_envcal_values,main_figure});
+env_tab_comp.att_over=uicontrol(env_tab_comp.env_group,gui_fmt.chckboxStyle,'position',pos{6,1}{2}+[gui_fmt.box_w+gui_fmt.x_sep 0 0 0],'tooltipstring','Override absorption computation','callback',{@update_envcal_values,main_figure});
 
 uicontrol(env_tab_comp.env_group,gui_fmt.txtStyle,'String',sprintf('Temp.(%cC)',char(hex2dec('00BA'))),'Position',pos{3,1}{1});
 env_tab_comp.temp=uicontrol(env_tab_comp.env_group,gui_fmt.edtStyle,'position',pos{3,1}{2},'string',num2str(curr_temp,'%.2f'),'callback',{@update_envcal_values,main_figure});
@@ -44,14 +44,14 @@ env_tab_comp.temp=uicontrol(env_tab_comp.env_group,gui_fmt.edtStyle,'position',p
 uicontrol(env_tab_comp.env_group,gui_fmt.txtStyle,'String','Salinity.(PSU)','Position',pos{4,1}{1});
 env_tab_comp.sal=uicontrol(env_tab_comp.env_group,gui_fmt.edtStyle,'position',pos{4,1}{2},'string',num2str(curr_sal,'%.2f'),'callback',{@update_envcal_values,main_figure});
 
-env_tab_comp.string_cal=uicontrol(env_tab_comp.env_group,gui_fmt.txtStyle,'position',pos{1,2}{1}+[0 -2*(gui_fmt.txt_h) gui_fmt.box_w*3 2*(gui_fmt.txt_h)],...
+env_tab_comp.string_cal=uicontrol(env_tab_comp.env_group,gui_fmt.txtStyle,'position',pos{1,2}{1}+[0 -3*(gui_fmt.txt_h) gui_fmt.box_w*3 3*(gui_fmt.txt_h)],...
     'string','','HorizontalAlignment','left');
 
-p_button=pos{3,2}{1}+[gui_fmt.box_w+gui_fmt.x_sep 0 0 0];
-p_button(3)=gui_fmt.button_w*2;
+p_button=pos{7,1}{1};
+p_button(3)=gui_fmt.txt_w+gui_fmt.x_sep+gui_fmt.box_w;
 uicontrol(env_tab_comp.env_group,gui_fmt.pushbtnStyle,'String','Apply','callback',{@apply_envdata_callback,main_figure},'position',p_button,'tooltipstring','Apply Environnemental values');
 
-p_button=pos{4,2}{1}+[gui_fmt.box_w+gui_fmt.x_sep 0 0 0];
+p_button=pos{7,2}{1}+[gui_fmt.box_w+gui_fmt.x_sep 0 0 0];
 p_button(3)=gui_fmt.button_w;
 uicontrol(env_tab_comp.env_group,gui_fmt.pushbtnStyle,'String','Save','callback',{@save_envdata_profiles_callback,main_figure},'position',p_button,'tooltipstring','Save Profiles');
 uicontrol(env_tab_comp.env_group,gui_fmt.pushbtnStyle,'String','Reload','callback',{@reload_envdata_profiles_callback,main_figure},'position',p_button+[gui_fmt.button_w 0 0 0],'tooltipstring','Reload Profiles');

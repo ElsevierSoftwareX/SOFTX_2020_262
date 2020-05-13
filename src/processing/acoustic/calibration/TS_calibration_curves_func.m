@@ -280,9 +280,18 @@ for uui=select
             
             % Fit the simrad beam pattern to the data. We get estimated beamwidth,
             % offsets, and peak value from this.
-            [offset_fa,faBW,offset_ps,psBW,~,peak_ts,exitflag] = ...
-            fit_beampattern(Sp_sph(idx_keep),AcrossAngle_sph(idx_keep),AlongAngle_sph(idx_keep),maxdBDiff2/2, (faBW+psBW)/2);
-            
+            switch trans_obj.Config.BeamType
+                case 1
+                    [offset_fa,faBW,offset_ps,psBW,~,peak_ts,exitflag] = ...
+                        fit_beampattern(Sp_sph(idx_keep),AcrossAngle_sph(idx_keep),AlongAngle_sph(idx_keep),maxdBDiff2/2, (faBW+psBW)/2);
+                case 0
+                    offset_fa = trans_obj.Config.AngleOffsetAlongship;
+                    faBW = trans_obj.Config.BeamWidthAlongship;
+                    offset_ps = trans_obj.Config.AngleOffsetAthwartship;
+                    psBW = trans_obj.Config.BeamWidthAthwartship;
+                    peak_ts = nanmax(Sp_sph(idx_keep));
+                    exitflag=1;
+            end
             
             % If a beam pattern couldn't be fitted, give up with some diagonistics.
             if exitflag ~= 1
@@ -308,10 +317,19 @@ for uui=select
             [phi, ~] = simradAnglesToSpherical(AlongAngle_sph, AcrossAngle_sph);
             compensation = simradBeamCompensation(faBW, psBW, AlongAngle_sph, AcrossAngle_sph);
             % Filter outliers based on the beam compensated corrected data
-            idx_keep = idx_keep&abs(Sp_sph+compensation-peak_ts)<=maxdBDiff2;
             
             
+            
+            switch trans_obj.Config.BeamType
+                case 1
+                    idx_keep = idx_keep&abs(Sp_sph+compensation-peak_ts)<=maxdBDiff2;
+                case 0
+                    idx_keep = idx_keep&abs(Sp_sph+compensation-peak_ts)<=maxdBDiff2/2;
+            end
+
     end
+    
+    
     
     idx_keep_sec=idx_keep&abs(phi)<=on_axis;
     
@@ -635,31 +653,26 @@ for uui=select
                     fprintf(fid(ifi),['So the calibrated G_o = ' num2str(old_cal.G0-outby(k)/2) ' dB (' onAxisMethod{k} ' method)\n']);
                 end
             end
-            
-            
-            
-            fig_bp=plot_bp(AcrossAngle_sph,AlongAngle_sph,Sp_sph+outby(1),idx_keep);
-            
-            
-            if~isempty(path_out)&&~isempty(fig_bp)
-                print(fig_bp,fullfile(path_out,['bp_contour_plot' freq_str '.png']),'-dpng','-r300');
-            end
-            
-            
             for ifi=1:length(fid)
                 fprintf(fid(ifi),['Mean sphere range = ' num2str(mean(trans_obj.ST.Target_range(idx_keep_sec))) ...
                     ' m, std = ' num2str(std(trans_obj.ST.Target_range(idx_keep_sec))) ' m\n']);
             end
-            % Do a plot of the compensated and uncompensated echoes at a selection of
-            % angles, similar to what one can get from the Simrad calibration program
             
-            
-            fig=plotBeamSlices(AcrossAngle_sph(idx_keep),AlongAngle_sph(idx_keep),Sp_sph(idx_keep),outby(1),(faBW + psBW)/2, faBW, psBW, peak_ts, 1/2);
-            
-            if~isempty(path_out)&&~isempty(fig)
-                print(fig,fullfile(path_out,['slices' freq_str '.png']),'-dpng','-r300');
+            if trans_obj.Config.BeamType>0
+                fig_bp=plot_bp(AcrossAngle_sph,AlongAngle_sph,Sp_sph+outby(1),idx_keep);
+                if~isempty(path_out)&&~isempty(fig_bp)
+                    print(fig_bp,fullfile(path_out,['bp_contour_plot' freq_str '.png']),'-dpng','-r300');
+                end
+                
+                % Do a plot of the compensated and uncompensated echoes at a selection of
+                % angles, similar to what one can get from the Simrad calibration program
+                
+                fig=plotBeamSlices(AcrossAngle_sph(idx_keep),AlongAngle_sph(idx_keep),Sp_sph(idx_keep),outby(1),(faBW + psBW)/2, faBW, psBW, peak_ts, 1/2);
+                
+                if~isempty(path_out)&&~isempty(fig)
+                    print(fig,fullfile(path_out,['slices' freq_str '.png']),'-dpng','-r300');
+                end
             end
-            
             % The Sa correction is a value that corrects for the received pulse having
             % less energy in it than that nominal, transmitted pulse. The formula for
             % Sv  includes a term -10log10(Teff) (where Teff is the
@@ -752,7 +765,6 @@ for uui=select
     end
 end
 
-set_current_layer(layer);
 hide_status_bar(main_figure);
 loadEcho(main_figure);
 

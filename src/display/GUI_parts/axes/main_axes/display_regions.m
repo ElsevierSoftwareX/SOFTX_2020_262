@@ -103,15 +103,6 @@ for iax=1:length(main_axes_tot)
             
             poly=reg_curr.Poly;
             
-            x_reg_rect=([reg_curr.Idx_pings(1)-1 reg_curr.Idx_pings(end) reg_curr.Idx_pings(end) reg_curr.Idx_pings(1)-1 reg_curr.Idx_pings(1)-1]);
-            y_reg_rect=([reg_curr.Idx_r(end) reg_curr.Idx_r(end) reg_curr.Idx_r(1)-1 reg_curr.Idx_r(1)-1 reg_curr.Idx_r(end)]);
-            poly_rect=polyshape(x_reg_rect,y_reg_rect,'Simplify',false);
-            
-            poly=intersect(poly_rect,polybuffer(poly,1,'JointType','square'));
-            new_vert=unique(floor(poly.Vertices),'rows','stable');
-            
-            poly=polyshape(new_vert,'Simplify',true);
-            
             switch main_axes.UserData.geometry_y
                 case'samples'
                     %                     reg_trans_depth=zeros(size(reg_curr.Idx_pings));

@@ -24,6 +24,6 @@ end
 
 curr_disp.setCax(cax);
 
-set_current_layer(layer);
+
 
 end

@@ -58,8 +58,8 @@ for ui=1:numel(idx_to_classify)
             try
                 output=eval(node.Condition);
             catch
-                warning('Failed on evaluation of condition %s...',node.Condition);
-                continue;
+                print_errors_and_warnings([],'warning',sprintf('Failed on evaluation of condition %s...',node.Condition));
+                return;
             end
             if output>=1
                 ID_goto=node.true_target;
@@ -70,8 +70,8 @@ for ui=1:numel(idx_to_classify)
             tag((idx_to_classify(ui)))=node.Class;
             classified((idx_to_classify(ui)))=true;
         else
-            warning('Cannot use this tree...');
-            continue;
+            print_errors_and_warnings([],'warning',sprintf('Problem with the classification tree %s...',tree_obj.Title));
+            return;
         end
     end
     

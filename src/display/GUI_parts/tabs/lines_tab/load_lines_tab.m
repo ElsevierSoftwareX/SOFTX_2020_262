@@ -151,7 +151,7 @@ if ~isempty(layer.Lines)
         set(lines_tab_comp.tog_line,'value',1)
         set(lines_tab_comp.tog_line,'string',{'--'});
     end
-    set_current_layer(layer);
+    
     update_lines_tab(main_figure);
     display_lines(main_figure);
 else
@@ -170,7 +170,7 @@ if ~isempty(layer.Lines)
             layer.Lines(get(lines_tab_comp.tog_line,'value')).Dist_diff=str2double(get(src,'string'));
         end
     end
-    set_current_layer(layer);
+    
     update_lines_tab(main_figure)
     display_lines(main_figure);
 else
@@ -205,7 +205,7 @@ if ~isempty(layer.Lines)
             layer.Lines(get(lines_tab_comp.tog_line,'value')).change_time(UTC_diff);
         end
     end
-    set_current_layer(layer);
+    
     update_lines_tab(main_figure)
     display_lines(main_figure);
 else
@@ -224,7 +224,7 @@ if ~isempty(layer.Lines)
             layer.Lines(get(lines_tab_comp.tog_line,'value')).change_range(str2double(get(src,'string')))
         end
     end
-    set_current_layer(layer);
+    
     update_lines_tab(main_figure)
     display_lines(main_figure);
 else

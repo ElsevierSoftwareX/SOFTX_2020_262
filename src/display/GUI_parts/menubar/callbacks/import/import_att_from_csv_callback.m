@@ -20,7 +20,6 @@ attitude_full=attitude_nav_cl.load_att_from_file(fullfile(PathToFile,Filename));
 
 layer.add_attitude(attitude_full);
 
-set_current_layer(layer);
 
 display_attitude_cback([],[],main_figure);
 

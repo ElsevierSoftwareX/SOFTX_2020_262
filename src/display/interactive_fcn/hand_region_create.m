@@ -62,8 +62,7 @@ rr=trans_obj.get_transceiver_range();
 
 cp = ah.CurrentPoint;
 u=1;
-xinit=nan(1,1e4);
-yinit=nan(1,1e4);
+
 xinit(1) = cp(1,1);
 yinit(1)=cp(1,2);
 
@@ -79,7 +78,7 @@ end
 
 %set(main_figure,'KeyPressFcn',{@check_esc});
 
-hp=line(ah,xinit,yinit,'color',col_line,'linewidth',1,'Tag','reg_temp');
+hp=patch(ah,'XData',xinit,'YData',yinit,'FaceColor',col_line,'FaceAlpha',0.4,'EdgeColor',col_line,'linewidth',0.5,'Tag','reg_temp');
 txt=text(ah,cp(1,1),cp(1,2),sprintf('%.2f m',rr(nanmin(ceil(cp(1,2)),numel(rr)))),'color',col_line,'Tag','reg_temp');
 
 replace_interaction(main_figure,'interaction','WindowButtonMotionFcn','id',2,'interaction_fcn',@wbmcb);
@@ -100,7 +99,7 @@ replace_interaction(main_figure,'interaction','WindowButtonUpFcn','id',2,'intera
         if isvalid(hp)
             set(hp,'XData',xinit,'YData',yinit);
         else
-            hp=plot(ah,xinit,yinit,'color',col_line,'linewidth',1,'Tag','reg_temp');
+           hp=patch(ah,'XData',xinit,'YData',yinit,'FaceColor',col_line,'FaceAlpha',0.4,'EdgeColor',col_line,'linewidth',0.5,'Tag','reg_temp');
         end
         
         
@@ -129,10 +128,10 @@ replace_interaction(main_figure,'interaction','WindowButtonUpFcn','id',2,'intera
         
         poly_r=nan(size(yinit));
         poly_pings=nan(size(xinit));
+        
         for i=1:length(xinit)
             [~,poly_pings(i)]=nanmin(abs(xinit(i)-double(x_data_disp)));
-            [~,poly_r(i)]=nanmin(abs(yinit(i)-double(ydata)));
-            
+            [~,poly_r(i)]=nanmin(abs(yinit(i)-double(ydata)));     
         end
         clear_lines(ah)
         delete(txt);
@@ -141,6 +140,7 @@ replace_interaction(main_figure,'interaction','WindowButtonUpFcn','id',2,'intera
         if length(poly_pings)<=2
             return;
         end
+        
         poly_pings=round([poly_pings poly_pings(1)]);
         poly_r=round([poly_r poly_r(1)]);
         

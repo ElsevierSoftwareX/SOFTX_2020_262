@@ -61,8 +61,6 @@ clear_lines(ah);
 
 cp = ah.CurrentPoint;
 
-xinit=nan(1,1e4);
-yinit=nan(1,1e4);
 xinit(1) = cp(1,1);
 yinit(1)=cp(1,2);
 u=2;
@@ -76,7 +74,7 @@ if xinit(1)<x_lim(1)||xinit(1)>xdata(end)||yinit(1)<y_lim(1)||yinit(1)>y_lim(end
     return;
 end
 rr=trans_obj.get_transceiver_range();
-hp=plot(ah,xinit,yinit,'color',col_line,'linewidth',1,'Tag','reg_temp');
+hp=patch(ah,'XData',xinit,'YData',yinit,'FaceColor',col_line,'FaceAlpha',0.4,'EdgeColor',col_line,'linewidth',0.5,'Tag','reg_temp');
 txt=text(ah,cp(1,1),cp(1,2),sprintf('%.2f m',rr(nanmin(ceil(cp(1,2)),numel(rr)))),'color',col_line,'Tag','reg_temp');
 
 
@@ -99,7 +97,7 @@ replace_interaction(main_figure,'interaction','WindowButtonDownFcn','id',1,'inte
         if isvalid(hp)
             set(hp,'XData',xinit,'YData',yinit);
         else
-            hp=plot(ah,xinit,yinit,'color',col_line,'linewidth',1,'Tag','reg_temp');
+            hp=patch(ah,'XData',xinit,'YData',yinit,'FaceColor',col_line,'FaceAlpha',0.4,'EdgeColor',col_line,'linewidth',0.5,'Tag','reg_temp');
         end
         
         if isvalid(txt)

@@ -35,6 +35,5 @@ if ~isempty(idx_algo_xml)
         end
     end
 end
-set_current_layer(layer);
 
 end
