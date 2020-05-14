@@ -71,10 +71,9 @@ cax=[0 1];
 
 second_group_start = 4;
 gui_fmt=init_gui_fmt_struct();
-gui_fmt.txt_w=gui_fmt.txt_w/1.9;
+gui_fmt.txt_w=gui_fmt.txt_w/2;
 
 pos=create_pos_3(2,nb_col,gui_fmt.x_sep,gui_fmt.y_sep,gui_fmt.txt_w,gui_fmt.box_w,gui_fmt.box_h);
-
 
 uicontrol(display_tab_comp.top_button_group,gui_fmt.txtStyle,'String','TS(dB)','Position',pos{1,second_group_start}{1});
 display_tab_comp.TS=uicontrol(display_tab_comp.top_button_group,gui_fmt.edtStyle,'position',pos{1,second_group_start}{2},...

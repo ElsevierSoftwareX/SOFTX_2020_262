@@ -17,8 +17,8 @@ inf_h=inf_h_1+inf_h_2;
 try
     set(load_bar_comp.panel,'Position',[0 0 pix_pos(3) inf_h_1]);
     set(info_panel_comp.info_panel,'Position',[0 inf_h_1 pix_pos(3) inf_h_2]);
-    set(opt_panel,'Position',[0 pix_pos(4)-pan_height 0.5*pix_pos(3) pan_height]);
-    set(algo_panel,'Position',[0.5*pix_pos(3) pix_pos(4)-pan_height 0.5*pix_pos(3) pan_height]);
+    set(opt_panel,'Position',[0 pix_pos(4)-pan_height 0.4*pix_pos(3) pan_height]);
+    set(algo_panel,'Position',[0.4*pix_pos(3) pix_pos(4)-pan_height 0.6*pix_pos(3) pan_height]);
     set(echo_tab_panel,'Position',[0 inf_h pix_pos(3) pix_pos(4)-pan_height-inf_h]);
 end
 
