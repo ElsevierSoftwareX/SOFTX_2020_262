@@ -339,7 +339,7 @@ for isn = 1:length(snaps)
                 if ~isempty(cells_tmp)
                    idx_tag_keep = ismember(output_2D{iout}.Tags,cells_tmp);
                    output_2D{iout}.eint(~idx_tag_keep) = 0;
-                   output_2D{iout}.Sv_mean_lin(~idx_tag_keep) = 0;
+                   output_2D{iout}.sv_mean(~idx_tag_keep) = 0;
                    output_2D{iout}.Sv_dB_std(~idx_tag_keep) = 0;
                    output_2D{iout}.ABC(~idx_tag_keep) = 0;
                    output_2D{iout}.NASC(~idx_tag_keep) = 0;
@@ -540,12 +540,12 @@ for isn = 1:length(snaps)
                 %% Region vbscf (6th Mbs Output Block)
                 surv_out_obj.regionSumVbscf.time_end{i_reg} = regCellInt_r.Time_E;
                 surv_out_obj.regionSumVbscf.time_start{i_reg} = regCellInt_r.Time_S;
-                surv_out_obj.regionSumVbscf.num_h_slices(i_reg) = size(regCellInt_r.Sv_mean_lin,1);% num_h_slices
-                surv_out_obj.regionSumVbscf.num_v_slices(i_reg) = size(regCellInt_r.Sv_mean_lin,2); % num_v_slices
+                surv_out_obj.regionSumVbscf.num_h_slices(i_reg) = size(regCellInt_r.sv_mean,1);% num_h_slices
+                surv_out_obj.regionSumVbscf.num_v_slices(i_reg) = size(regCellInt_r.sv_mean,2); % num_v_slices
                 tmp = surv_out_obj.regionSum.vbscf(i_reg);
                 tmp(isnan(tmp)) = 0;
                 surv_out_obj.regionSumVbscf.region_vbscf(i_reg) = tmp; % Vbscf Region
-                surv_out_obj.regionSumVbscf.vbscf_values{i_reg} = regCellInt_r.Sv_mean_lin; %
+                surv_out_obj.regionSumVbscf.vbscf_values{i_reg} = regCellInt_r.sv_mean; %
                 
                 %% Region echo integral for Transect Summary
                      

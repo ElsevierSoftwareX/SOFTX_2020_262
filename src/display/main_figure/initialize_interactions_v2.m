@@ -52,7 +52,7 @@ interactions.WindowButtonDownFcn(1)=iptaddcallback(main_figure,'WindowButtonDown
 % Initialize Keyboard interactions in the figure
 interactions.KeyPressFcn(1)=iptaddcallback(main_figure,'KeyPressFcn',{@keyboard_func,main_figure});
 
-interactions.KeyReleaseFcn(1)=iptaddcallback(main_figure,'KeyPressFcn',{@reactivate_keyboard_func,main_figure});
+%interactions.KeyReleaseFcn(1)=iptaddcallback(main_figure,'KeyPressFcn',{@reactivate_keyboard_func,main_figure});
 
 % Set wheel mouse scroll cback
 interactions.WindowScrollWheelFcn(1)=iptaddcallback(main_figure,'WindowScrollWheelFcn',{@scroll_fcn_callback,main_figure});

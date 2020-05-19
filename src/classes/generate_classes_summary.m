@@ -1,4 +1,4 @@
-clear all;
+
 p = mfilename('fullpath');
 [path_classes,~,~]=fileparts(p);
 file_summary=fullfile(path_classes,'class_summary.txt');
@@ -22,7 +22,7 @@ for ii=1:length(fid)
             fprintf(fid{ii},'- %s\n',curr_props{ip});
         end
         fprintf(fid{ii},'\n');
-        fprintf(fid{ii},'METHODS :\n');
+        fprintf(fid{ii},'METHODS :\n'); 
         for im=1:length(curr_methods)
             fprintf(fid{ii},'- %s\n',curr_methods{im});
         end

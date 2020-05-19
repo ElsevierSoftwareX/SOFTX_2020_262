@@ -161,10 +161,11 @@ update_display(main_figure,flag,f_update);
 waitfor(curr_disp,'UIupdate',0);
 
 axes_panel_comp=getappdata(main_figure,'Axes_panel');
-if ~ismember(axes_panel_comp.axes_panel.Parent.SelectedTab.Tag,{'axes_panel' 'echoint_tab'})
-    axes_panel_comp.axes_panel.Parent.SelectedTab=axes_panel_comp.axes_panel;
+if isa(axes_panel_comp.axes_panel,'matlab.ui.container.Tab')
+    if ~ismember(axes_panel_comp.axes_panel.Parent.SelectedTab.Tag,{'axes_panel' 'echoint_tab'})     
+        axes_panel_comp.axes_panel.Parent.SelectedTab=axes_panel_comp.axes_panel;
+    end
 end
-
 
 enable_listeners(main_figure);
 initialize_interactions_v2(main_figure);

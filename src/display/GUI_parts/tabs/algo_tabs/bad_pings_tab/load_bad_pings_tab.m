@@ -16,11 +16,12 @@ panel_comp=load_algo_panel('main_figure',main_figure,...
 gui_fmt=init_gui_fmt_struct();
 gui_fmt.txt_w=gui_fmt.txt_w*1.2;
 pos=create_pos_3(7,2,gui_fmt.x_sep,gui_fmt.y_sep,gui_fmt.txt_w,gui_fmt.box_w,gui_fmt.box_h);
-p_button=pos{6,2}{1};
+
+p_button=pos{6,1}{1};
 p_button(3)=gui_fmt.button_w;
 
-uicontrol(panel_comp.container,gui_fmt.pushbtnStyle,'String','Reset','pos',p_button+[0 0 0 0],'callback',{@reset_bad_pings_cback,main_figure},'tag','curr');
-uicontrol(panel_comp.container,gui_fmt.pushbtnStyle,'String','Reset all','pos',p_button+[1*gui_fmt.button_w 0 gui_fmt.button_w/2 0],'callback',{@reset_bad_pings_cback,main_figure},'tag','all');
+uicontrol(panel_comp.container,gui_fmt.pushbtnStyle,'String','Reset','pos',p_button+[1*gui_fmt.button_w 0 0 0],'callback',{@reset_bad_pings_cback,main_figure},'tag','curr');
+uicontrol(panel_comp.container,gui_fmt.pushbtnStyle,'String','Reset all','pos',p_button+[2*gui_fmt.button_w 0 gui_fmt.button_w/2 0],'callback',{@reset_bad_pings_cback,main_figure},'tag','all');
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Spike Detection%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 algo_name='SpikesRemoval';
@@ -29,9 +30,9 @@ panel_comp=load_algo_panel('main_figure',main_figure,...
         'algo_name',algo_name,...
         'title','Spikes removal Algorithm');
 
-p_button=pos{5,2}{1};
+p_button=pos{6,1}{1};
 p_button(3)=gui_fmt.button_w;
-uicontrol(panel_comp.container,gui_fmt.pushbtnStyle,'String','Reset','pos',p_button,'callback',{@rm_subdata_cback,main_figure,'spikesmask'});
+uicontrol(panel_comp.container,gui_fmt.pushbtnStyle,'String','Reset','pos',p_button+[1*gui_fmt.button_w 0 0 0],'callback',{@rm_subdata_cback,main_figure,'spikesmask'});
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Dropouts Detection%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 algo_name = 'DropOuts';

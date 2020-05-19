@@ -360,12 +360,12 @@ for ui=idx_ite_x
         % by the average between-sample range
         eint_sparse = accumarray( [y_mat_idx(Mask_reg_min_bot) x_mat_idx(Mask_reg_min_bot)] , Sv_reg_lin(Mask_reg_min_bot) , size(Mask_reg_sub) , @sum , 0 ) * dr;
         sub_output.eint = eint_sparse;
-        sub_output.Sv_dB_std = accumarray( [y_mat_idx(Mask_reg_min_bot) x_mat_idx(Mask_reg_min_bot)] , Sv_reg(Mask_reg_min_bot) , size(Mask_reg_sub) , @std , 0 );
+        sub_output.sd_Sv = accumarray( [y_mat_idx(Mask_reg_min_bot) x_mat_idx(Mask_reg_min_bot)] , Sv_reg(Mask_reg_min_bot) , size(Mask_reg_sub) , @std , 0 );
     else
         eint_sparse=zeros(N_y,N_x);
         sub_output.nb_samples=zeros(N_y,N_x);
         sub_output.eint=zeros(N_y,N_x);
-        sub_output.Sv_dB_std=zeros(N_y,N_x);
+        sub_output.sd_Sv=zeros(N_y,N_x);
         Mask_reg_sub = (sub_output.nb_samples==0);
     end
     
@@ -431,11 +431,11 @@ for ui=idx_ite_x
     
     sub_output.PRC = sub_output.nb_samples*dr./(sub_output.Nb_good_pings.*sub_output.Thickness_tot);
     
-    sub_output.Sv_mean_lin      = eint_sparse./(sub_output.nb_samples*dr);
-    sub_output.Sv_mean_lin(sub_output.nb_samples==0)=0;
+    sub_output.sv_mean      = eint_sparse./(sub_output.nb_samples*dr);
+    sub_output.sv_mean(sub_output.nb_samples==0)=0;
     
     
-    sub_output.ABC = sub_output.Thickness_mean.*sub_output.Sv_mean_lin;
+    sub_output.ABC = sub_output.Thickness_mean.*sub_output.sv_mean;
     sub_output.NASC = 4*pi*1852^2*sub_output.ABC;
     sub_output.Lon_S(sub_output.Lon_S>180) = sub_output.Lon_S(sub_output.Lon_S>180)-360;
     sub_output.Lon_E(sub_output.Lon_E>180) = sub_output.Lon_E(sub_output.Lon_E>180)-360;
@@ -494,16 +494,16 @@ for ifi = 1:length(fields)
 end
 
 if p.Results.keep_all==0
-    [N_y,N_x]=size(output.Sv_mean_lin);
+    [N_y,N_x]=size(output.sv_mean);
     idx_rem = [];
     
-    idx_zeros_start =  find(nansum(output.Sv_mean_lin,2)>0,1);
+    idx_zeros_start =  find(nansum(output.sv_mean,2)>0,1);
     
     if idx_zeros_start>1
         idx_rem = union(idx_rem,1:idx_zeros_start-1);
     end
     
-    idx_zeros_end = find(flipud(nansum(output.Sv_mean_lin,2)>0),1);
+    idx_zeros_end = find(flipud(nansum(output.sv_mean,2)>0),1);
     if idx_zeros_end>1
         idx_rem = union(idx_rem,N_y-((1:idx_zeros_end-1)-1));
     end
@@ -515,12 +515,12 @@ if p.Results.keep_all==0
     end
     
     idx_rem = [];
-    idx_zeros_start = find(nansum(output.Sv_mean_lin,1)>0,1);
+    idx_zeros_start = find(nansum(output.sv_mean,1)>0,1);
     if idx_zeros_start>1
         idx_rem = union(idx_rem,1:idx_zeros_start-1);
     end
     
-    idx_zeros_end = find(fliplr(nansum(output.Sv_mean_lin,2)>0),1);
+    idx_zeros_end = find(fliplr(nansum(output.sv_mean,2)>0),1);
     if idx_zeros_end>1
         idx_rem = union(idx_rem,N_x-((1:idx_zeros_end-1)-1));
     end

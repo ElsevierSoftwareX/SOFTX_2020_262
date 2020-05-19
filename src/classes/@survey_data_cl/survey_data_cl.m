@@ -106,7 +106,7 @@ classdef survey_data_cl < handle
             [types,~]=init_trans_type();
             obj.Type=t_temp;
             if ~ismember(t_temp,types)&&~isempty(t_temp)
-                print_errors_and_warnings([],'warning',sprintf('The type you have defined is not in your types.xml file (%s)',t_temp));
+                disp_perso([],sprintf('The type you have defined is not in your types.xml file (%s)',t_temp));
             end   
         end
         

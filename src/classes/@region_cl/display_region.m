@@ -98,12 +98,12 @@ curr_disp=get_esp3_prop('curr_disp');
 %% getting data to display
 switch field
     case 'fishdensity'
-        var_disp=db2pow_perso((pow2db_perso(output_reg.Sv_mean_lin)-p.Results.TS));
+        var_disp=db2pow_perso((pow2db_perso(output_reg.sv_mean)-p.Results.TS));
         var_lin=(var_disp);
         var_scale='lin';
         ylab='(number/m3)';
     case {'sv' 'sp' 'spdenoised' 'svdenoised'}
-        var_disp=pow2db_perso(output_reg.Sv_mean_lin);
+        var_disp=pow2db_perso(output_reg.sv_mean);
         var_lin=db2pow_perso(var_disp);
         var_scale='db';
         ylab='dB';

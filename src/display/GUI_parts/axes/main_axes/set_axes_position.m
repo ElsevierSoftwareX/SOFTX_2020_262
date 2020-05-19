@@ -36,7 +36,6 @@ hpos=hpos+[vpos(3) 0 -vpos(3) 0];
 pos=pos+[vpos(3) 0 -vpos(3) 0];
 
 
-
 width_colorbar=pos_colorbar(3);
 pos_colorbar(3)=width_colorbar*1/3;
 pos_colorbar(1)=pos_colorbar(1)+width_colorbar*1/3;

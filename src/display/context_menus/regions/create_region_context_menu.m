@@ -52,7 +52,8 @@ switch class(ID)
         select_plot=trans_obj.get_region_from_Unique_ID(ID);
 end
 
-context_menu=uicontextmenu(main_figure,'Tag','RegionContextMenu','UserData',ID);
+curr_fig = ancestor(reg_plot(1),'figure');
+context_menu=uicontextmenu(curr_fig,'Tag','RegionContextMenu','UserData',ID);
 
 for ii=1:length(reg_plot)
     reg_plot(ii).UIContextMenu=context_menu;
@@ -195,7 +196,7 @@ for j=1:numel(numel(IDs))
         freq=frequencies(strcmpi(CIDs,CID));
         
         if ~isempty(output_diff)
-            sv=pow2db_perso(output_diff.Sv_mean_lin(:));
+            sv=pow2db_perso(output_diff.sv_mean(:));
             cax_min=prctile(sv,5);
             cax_max=prctile(sv,95);
             cax=curr_disp.getCaxField('sv');
@@ -208,7 +209,7 @@ for j=1:numel(numel(IDs))
             end
             
             reg_curr(j).display_region(output_diff,'main_figure',main_figure,...
-                'alphadata',double(pow2db_perso(output_reg_1.Sv_mean_lin)>cax(1)),...
+                'alphadata',double(pow2db_perso(output_reg_1.sv_mean)>cax(1)),...
                 'Cax',[cax_min cax_max],...
                 'Name',sprintf('%s, %dkHz-%dkHz',reg_curr(j).print,curr_disp.Freq/1e3,freq/1e3),...
                 'line_obj',line_obj);

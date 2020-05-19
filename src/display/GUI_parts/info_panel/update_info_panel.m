@@ -28,8 +28,8 @@ try
     echo_tab_panel=getappdata(main_figure,'echo_tab_panel');
     
     axes_panel_comp=getappdata(main_figure,'Axes_panel');
-    
-    if isempty(axes_panel_comp)||~strcmpi(echo_tab_panel.SelectedTab.Tag,'axes_panel')||isempty(layer)||~isvalid(layer)        
+    bool = ~isa(axes_panel_comp.axes_panel,'matlab.ui.Figure') && ~strcmpi(echo_tab_panel.SelectedTab.Tag,'axes_panel');
+    if isempty(axes_panel_comp)|| bool ||isempty(layer)||~isvalid(layer)        
         %pause(dpause);
         return;
     end

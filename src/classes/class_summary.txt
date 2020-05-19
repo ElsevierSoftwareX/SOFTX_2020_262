@@ -5,42 +5,41 @@ PROPERTIES :
 - SubData
 - Fieldname
 - Type
-- Samples
-- Range
 - FileId
-- Time
-- Number
+- BlockId
+- Nb_samples
+- Nb_pings
 - MemapName
 
 METHODS :
-- obj ac_data_cl(varargin)
-- varargout add_sub_data(rhs1)
-- L addlistener(sources, eventname, callback)
-- L addlistener(sources, properties, eventname, callback)
-- L addlistener(sources, propertyname, eventname, callback)
-- L addlistener(sources, propertynames, eventname, callback)
-- varargout concatenate_Data(rhs1)
-- delete(obj)
-- TF eq(A, B)
-- varargout find_field_idx(rhs1)
-- HM findobj(H, varargin)
-- prop findprop(object, propname)
-- TF ge(A, B)
-- varargout get_datamat(rhs1)
-- varargout get_nb_pings_per_file(rhs1)
-- varargout get_numbers(rhs1)
-- varargout get_range(rhs1)
-- varargout get_samples(rhs1)
-- varargout get_subdatamat(rhs1)
-- TF gt(A, B)
-- validity isvalid(obj)
-- TF le(A, B)
-- TF lt(A, B)
-- TF ne(A, B)
-- notify(sources, eventname)
-- notify(sources, eventname, eventdata)
-- varargout remove_sub_data(rhs1)
-- varargout replace_sub_data(rhs1)
+- ac_data_cl
+- add_sub_data
+- add_to_sub_data
+- addlistener
+- concatenate_Data
+- delete
+- eq
+- find_field_idx
+- findobj
+- findprop
+- ge
+- get_data_idx_file
+- get_datamat
+- get_nb_pings_per_block
+- get_nb_pings_per_file
+- get_numbers
+- get_samples
+- get_subdatamat
+- gt
+- init_sub_data
+- isvalid
+- le
+- listener
+- lt
+- ne
+- notify
+- remove_sub_data
+- replace_sub_data_v2
 
 
 ---------------------------------------------------------
@@ -49,12 +48,68 @@ CLASS algo_cl:
 PROPERTIES :
 - Name
 - Function
-- Varargin
+- Input_params
 - Varargout
 
 METHODS :
-- obj algo_cl(varargin)
-- delete(obj)
+- addlistener
+- algo_cl
+- copy
+- copy_algo
+- delete
+- eq
+- findobj
+- findprop
+- ge
+- get_algo_param
+- get_str_for_eval
+- gt
+- init_func
+- init_input_params
+- input_params_to_struct
+- isvalid
+- le
+- listener
+- lt
+- ne
+- notify
+- set_input_param_value
+
+
+---------------------------------------------------------
+CLASS algo_param_cl:
+---------------------------------------------------------
+PROPERTIES :
+- Name
+- Value
+- Validation_fcn
+- Default_value
+- Value_range
+- Disp_name
+- Tooltipstring
+- Precision
+- Units
+
+METHODS :
+- addlistener
+- algo_param_cl
+- copy
+- delete
+- eq
+- findobj
+- findprop
+- ge
+- get_name
+- get_range_class
+- gt
+- isvalid
+- le
+- listener
+- lt
+- ne
+- notify
+- set_value
+- to_string
 
 
 ---------------------------------------------------------
@@ -67,33 +122,38 @@ PROPERTIES :
 - Roll
 - Yaw
 - Time
+- NMEA_motion
+- NMEA_heading
 
 METHODS :
-- obj attitude_nav_cl(varargin)
-- attitude_out concatenate_AttitudeNavPing(attitude_1, attitude_2)
-- Static delete(obj)
-- varargout display_att(rhs1)
-- Static obj load_att_from_file(fileN)
-- varargout resample_attitude_nav_data(rhs1)
-- save_attitude_to_file(obj, fileN, idx_pings)
+- attitude_nav_cl
+- concatenate_AttitudeNavPing
+- delete
+- display_att
+- get_AttitudeNav_idx_section
+- load_att_from_file
+- resample_attitude_nav_data
+- save_attitude_to_file
 
 
 ---------------------------------------------------------
 CLASS bottom_cl:
 ---------------------------------------------------------
 PROPERTIES :
+- Fmt_Version
 - Origin
 - Sample_idx
 - Tag
-- Shifted
+- E1
+- E2
 - Version
 
 METHODS :
-- obj bottom_cl(varargin)
-- bot_out concatenate_Bottom(bot_1, bot_2)
-- varargout create_bottom_from_evl(rhs1)
-- delete(obj)
-- samples get_sample(bot_obj)
+- bottom_cl
+- concatenate_Bottom
+- create_bottom_from_evl
+- delete
+- get_bottom_idx_section
 
 
 ---------------------------------------------------------
@@ -117,8 +177,6 @@ PROPERTIES :
 - AngleOffsetAthwartship
 - AngleSensitivityAlongship
 - AngleSensitivityAthwartship
-- Position
-- Angles
 - BeamType
 - BeamWidthAlongship
 - BeamWidthAthwartship
@@ -150,63 +208,93 @@ PROPERTIES :
 - PulseDurationFM
 - ArticleNumber
 - EsOffset
+- RxSampleFrequency
+- Multiplexing
+- NbQuadrants
 
 METHODS :
-- config_str config2str(config_obj)
-- obj config_cl
-- delete(obj)
+- config2str
+- config_cl
+- delete
 
 
 ---------------------------------------------------------
 CLASS curr_state_disp_cl:
 ---------------------------------------------------------
 PROPERTIES :
+- ChannelID
 - Freq
+- SecChannelIDs
+- SecFreqs
+- AllChannels
+- DispSecFreqs
+- DispSecFreqsWithOffset
+- DispSecFreqsOr
 - Fieldname
+- Fieldnames
 - Type
 - Xaxes
+- Xaxes_current
 - Cax
-- Fieldnames
 - Caxes
 - DispBottom
 - DispUnderBottom
+- UnderBotTransparency
 - DispBotHighVis
 - DispTracks
 - DispBadTrans
+- DispSpikes
 - DispReg
 - DispLines
+- DispSurveyLines
 - CursorMode
 - Grid_x
 - Grid_y
 - CurrLayerID
+- GPU_computation
 - NbLayers
 - Cmap
 - Font
 - Bot_changed_flag
+- UIupdate
+- Online
+- Basemap
+- Basemaps
+- Move_dy_dx
+- Disp_dy_dx
+- Active_reg_ID
+- Active_line_ID
 - Reg_changed_flag
+- R_disp
+- V_axes_ratio
+- H_axes_ratio
+- EchoType
+- EchoQuality
 
 METHODS :
-- L addlistener(sources, eventname, callback)
-- L addlistener(sources, properties, eventname, callback)
-- L addlistener(sources, propertyname, eventname, callback)
-- L addlistener(sources, propertynames, eventname, callback)
-- obj curr_state_disp_cl(varargin)
-- delete(obj)
-- TF eq(A, B)
-- HM findobj(H, varargin)
-- prop findprop(object, propname)
-- TF ge(A, B)
-- cax getCaxField(obj, field)
-- TF gt(A, B)
-- validity isvalid(obj)
-- TF le(A, B)
-- TF lt(A, B)
-- TF ne(A, B)
-- notify(sources, eventname)
-- notify(sources, eventname, eventdata)
-- setCax(obj, cax)
-- setField(obj, field)
-- setTypeCax(obj)
+- addlistener
+- curr_state_disp_cl
+- delete
+- eq
+- findobj
+- findprop
+- ge
+- getCaxField
+- get_dx_dy
+- get_pointer
+- gt
+- isvalid
+- le
+- listener
+- lt
+- ne
+- notify
+- setActive_reg_ID
+- setCax
+- setField
+- setType
+- setTypeCax
+- set_dx_dy
 
 
 ---------------------------------------------------------
@@ -215,31 +303,40 @@ CLASS curve_cl:
 PROPERTIES :
 - XData
 - YData
+- SD
 - Tag
 - Xunit
 - Yunit
 - Name
+- Type
+- Unique_ID
 
 METHODS :
-- obj curve_cl(varargin)
-- delete(obj)
+- curve_cl
+- curve_to_csv
+- delete
 
 
 ---------------------------------------------------------
 CLASS decision_tree_cl:
 ---------------------------------------------------------
 PROPERTIES :
+- Title
+- Frequencies
 - Variables
 - Nodes
+- ClassificationType
 
 METHODS :
-- varargout apply_classification_tree(rhs1)
-- obj decision_tree_cl(XMLFileName)
-- delete(obj)
-- IDs get_class_node(obj)
-- IDs get_condition_node(obj)
-- node get_node(obj, id)
-- IDs get_node_ids(obj)
+- apply_classification_tree
+- decision_tree_cl
+- delete
+- get_class_node
+- get_condition_node
+- get_frequencies
+- get_node
+- get_node_ids
+- get_variables
 
 
 ---------------------------------------------------------
@@ -252,6 +349,7 @@ PROPERTIES :
 - SoundSpeed
 - Temperature
 - SVP
+- CTD
 - DropKeelOffset
 - DropKeelOffsetIsManual
 - Latitude
@@ -262,24 +360,61 @@ PROPERTIES :
 - TransducerName
 
 METHODS :
-- L addlistener(sources, eventname, callback)
-- L addlistener(sources, properties, eventname, callback)
-- L addlistener(sources, propertyname, eventname, callback)
-- L addlistener(sources, propertynames, eventname, callback)
-- delete(obj)
-- obj env_data_cl(varargin)
-- TF eq(A, B)
-- HM findobj(H, varargin)
-- prop findprop(object, propname)
-- TF ge(A, B)
-- TF gt(A, B)
-- validity isvalid(obj)
-- TF le(A, B)
-- TF lt(A, B)
-- TF ne(A, B)
-- notify(sources, eventname)
-- notify(sources, eventname, eventdata)
-- obj set_svp(obj, depth, soundspeed)
+- addlistener
+- copy
+- copy_env_data
+- delete
+- env_data_cl
+- eq
+- findobj
+- findprop
+- ge
+- gt
+- isvalid
+- le
+- listener
+- load_ctd
+- load_svp
+- lt
+- ne
+- notify
+- save_ctd
+- save_svp
+- set_ctd
+- set_svp
+- svp_from_ctd
+
+
+---------------------------------------------------------
+CLASS esp3_cl:
+---------------------------------------------------------
+PROPERTIES :
+- main_figure
+- layers
+- current_layer_id
+- app_path
+- process
+- curr_disp
+
+METHODS :
+- add_layers_to_esp3
+- addlistener
+- delete
+- eq
+- esp3_cl
+- findobj
+- findprop
+- ge
+- get_alphamap
+- get_layer
+- gt
+- isvalid
+- le
+- listener
+- lt
+- ne
+- notify
+- set_layer
 
 
 ---------------------------------------------------------
@@ -292,8 +427,8 @@ PROPERTIES :
 - Coefficients
 
 METHODS :
-- delete(obj)
-- obj filter_cl
+- delete
+- filter_cl
 
 
 ---------------------------------------------------------
@@ -304,112 +439,170 @@ PROPERTIES :
 - Long
 - Time
 - Dist
+- Speed
 - NMEA
 
 METHODS :
-- gps_data_out clean_gps_track(gps_data)
-- gps_data_out concatenate_GPSData(gps_data_1, gps_data_2)
-- Static delete(obj)
-- varargout display_speed(rhs1)
-- obj gps_data_cl(varargin)
-- Static obj load_gps_from_file(fileN)
-- varargout resample_gps_data(rhs1)
-- save_gps_to_file(obj, fileN, idx_pings)
+- att_heading_from_gps
+- clean_gps_track
+- concatenate_GPSData
+- delete
+- display_speed
+- get_GPSDData_idx_section
+- get_GPSDData_time_section
+- get_straight_dist_and_time_diff
+- get_tot_dist_and_time_diff
+- gps_data_cl
+- gps_to_geostruct
+- load_gps_from_file
+- resample_gps_data
+- save_gps_to_file
+- speed_from_gps
 
 
 ---------------------------------------------------------
 CLASS layer_cl:
 ---------------------------------------------------------
 PROPERTIES :
-- ID_num
+- Unique_ID
 - Filename
 - Filetype
 - Transceivers
 - OriginCrest
 - Lines
+- ChannelID
 - Frequencies
+- AvailableChannelIDs
+- AvailableFrequencies
 - GPSData
 - AttitudeNav
 - EnvData
 - Curves
+- EchoIntStruct
 - SurveyData
+- Algo
+- NotchFilter
 
 METHODS :
-- varargout CVS_BottomRegions(rhs1)
-- varargout add_attitude(rhs1)
-- varargout add_bottoms_from_bot_xml(rhs1)
-- add_curves(obj, curves)
-- add_lines(obj, lines)
-- varargout add_lines_from_line_xml(rhs1)
-- varargout add_regions_from_reg_xml(rhs1)
-- varargout add_survey_data_db(rhs1)
-- L addlistener(sources, properties, eventname, callback)
-- L addlistener(sources, propertyname, eventname, callback)
-- L addlistener(sources, propertynames, eventname, callback)
-- L addlistener(sources, eventname, callback)
-- varargout apply_classification(rhs1)
-- varargout apply_soundspeed(rhs1)
-- clear_curves(obj)
-- varargout concatenate_layers(rhs1)
-- varargout copy_algo_across(rhs1)
-- varargout copy_region_across(rhs1)
-- varargout create_bot_xml_from_db(rhs1)
-- varargout create_files_line_str(rhs1)
-- varargout create_files_str(rhs1)
-- varargout create_lay_line_xml_node(rhs1)
-- varargout create_motion_comp_subdata(rhs1)
-- varargout create_reg_xml_from_db(rhs1)
-- delete(obj)
-- varargout delete_layers(rhs1)
-- varargout disp_curves(rhs1)
-- varargout display_layer(rhs1)
-- TF eq(A, B)
-- varargout find_freq_idx(rhs1)
-- varargout find_layer_idx(rhs1)
-- varargout find_layer_idx_files(rhs1)
-- varargout find_layer_idx_files_path(rhs1)
-- HM findobj(H, varargin)
-- prop findprop(object, propname)
-- TF ge(A, B)
-- varargout generate_regions_for_other_freqs(rhs1)
-- varargout get(rhs1)
-- idx get_curves_per_tag(obj, tag)
-- tags get_curves_tag(obj)
-- fold_lay get_folder(layer)
-- varargout get_logbook_struct(rhs1)
-- varargout get_nb_regions(rhs1)
-- varargout get_path_files(rhs1)
-- varargout get_survey_data(rhs1)
-- varargout get_time_bound_files(rhs1)
-- varargout get_time_bounds(rhs1)
-- TF gt(A, B)
-- validity isvalid(obj)
-- obj layer_cl(varargin)
-- TF le(A, B)
-- varargout list_files_layers(rhs1)
-- varargout list_layers_survey_data(rhs1)
-- list list_lines(obj)
-- memap_files list_memaps(layers)
-- varargout load_bot_regs(rhs1)
-- varargout load_bottom_regions_from_folder(rhs1)
-- varargout load_echo_logbook_db(rhs1)
-- TF lt(A, B)
-- TF ne(A, B)
-- notify(sources, eventname, eventdata)
-- notify(sources, eventname)
-- varargout prepare_classification(rhs1)
-- varargout replace_gps_data_layer(rhs1)
-- rm_line_id(obj, unique_ID)
-- rm_memaps(layer)
-- rm_region_across_id(layer, ID)
-- varargout save_bot_reg_to_db(rhs1)
-- varargout save_bot_regs(rhs1)
-- varargout set(rhs1)
-- varargout set_survey_data(rhs1)
-- varargout sort_per_survey_data(rhs1)
-- varargout update_echo_logbook_dbfile(rhs1)
-- varargout write_bot_to_bot_xml(rhs1)
-- varargout write_reg_to_reg_xml(rhs1)
+- CVS_BottomRegions
+- add_algo
+- add_attitude
+- add_bottoms_from_bot_xml
+- add_curves
+- add_gps_data_to_db
+- add_lines
+- add_lines_from_line_xml
+- add_ping_data_to_db
+- add_regions_from_reg_xml
+- add_survey_data_db
+- add_trans
+- add_transceiver
+- addlistener
+- apply_algo
+- apply_classification
+- clear_curves
+- concatenate_layers
+- copy
+- copy_algo_across
+- copy_region_across
+- create_bot_xml_from_db
+- create_files_line_str
+- create_files_str
+- create_lay_line_xml_node
+- create_motion_comp_subdata
+- create_reg_xml_from_db
+- create_survey_options_xml
+- delete
+- delete_layers
+- delete_regions_from_uid
+- display_layer
+- eq
+- export_region_echoes_to_xyz
+- export_region_to_xls
+- export_region_values_to_xls
+- export_slice_transect_to_xls
+- find_cid_idx
+- find_freq_idx
+- find_layer_idx
+- find_layer_idx_files
+- find_layer_idx_files_path
+- findobj
+- findprop
+- ge
+- generate_bottoms_for_other_freqs
+- generate_freq_differences
+- generate_regions_for_other_freqs
+- get
+- get_att_data_from_csv
+- get_cal
+- get_curves_per_tag
+- get_curves_per_type
+- get_curves_tag
+- get_env_str
+- get_first_line
+- get_flim
+- get_fm_cal
+- get_folder
+- get_freq_min_max_nom_start_end
+- get_geo_bounds
+- get_gps_data_from_csv
+- get_gps_data_from_db_lay
+- get_layer_reg_uid
+- get_layer_tracks_uid
+- get_lines_per_ID
+- get_lines_per_Tag
+- get_nb_regions
+- get_path_files
+- get_survdata_at_time
+- get_survey_data
+- get_survey_options
+- get_time_bound_files
+- get_time_bounds
+- get_trans
+- gt
+- isvalid
+- layer_cl
+- layer_computeSpSv
+- le
+- list_files_layers
+- list_layers_survey_data
+- list_lines
+- list_memaps
+- listener
+- load_bot_regs
+- load_bottom_regions_from_folder
+- load_ctd
+- load_echo_logbook_db
+- load_ek_bot
+- load_svp
+- lt
+- multi_freq_slice_transect2D
+- ne
+- notch_filter_layer
+- notify
+- produce_pitch_roll_analysis
+- regenerate_ID_num
+- remove_transceiver
+- replace_gps_data_layer
+- rm_curves_per_ID
+- rm_curves_per_ID_and_type
+- rm_line_id
+- rm_memaps
+- rm_region_across_id
+- save_bot_reg_to_db
+- save_bot_regs
+- save_ctd
+- save_svp
+- setNotchFilter
+- set_EnvData
+- set_field_to_region_with_uid
+- set_survey_data
+- set_tag_to_region_with_uid
+- sort_per_survey_data
+- split_layer
+- update_echo_logbook_dbfile
+- write_bot_to_bot_xml
+- write_reg_to_reg_xml
 
 
 ---------------------------------------------------------
@@ -418,41 +611,45 @@ CLASS line_cl:
 PROPERTIES :
 - Name
 - ID
+- Reference
 - Tag
 - Type
 - Range
 - Time
+- Data
 - UTC_diff
 - Dist_diff
 - File_origin
 - Dr
 
 METHODS :
-- L addlistener(sources, eventname, callback)
-- L addlistener(sources, properties, eventname, callback)
-- L addlistener(sources, propertyname, eventname, callback)
-- L addlistener(sources, propertynames, eventname, callback)
-- change_range(obj, dr)
-- change_time(obj, dt)
-- delete(obj)
-- TF eq(A, B)
-- HM findobj(H, varargin)
-- prop findprop(object, propname)
-- TF ge(A, B)
-- TF gt(A, B)
-- validity isvalid(obj)
-- TF le(A, B)
-- obj line_cl(varargin)
-- TF lt(A, B)
-- TF ne(A, B)
-- notify(sources, eventname)
-- notify(sources, eventname, eventdata)
+- addlistener
+- change_range
+- change_time
+- concatenate_lines
+- copy_line
+- delete
+- eq
+- findobj
+- findprop
+- ge
+- get_line_time_section
+- gt
+- isvalid
+- le
+- line_cl
+- listener
+- lt
+- ne
+- notify
+- print
 
 
 ---------------------------------------------------------
 CLASS map_input_cl:
 ---------------------------------------------------------
 PROPERTIES :
+- Title
 - SurveyName
 - Voyage
 - Snapshot
@@ -472,21 +669,19 @@ PROPERTIES :
 - Nb_Tracks
 - LatLim
 - LongLim
-- Proj
 - ValMax
 - Rmax
-- Coast
+- Basemap
 - Depth_Contour
 - PlotType
 - StationCode
 
 METHODS :
-- varargout concatenate_map_input(rhs1)
-- delete(obj)
-- varargout display_map_input_cl(rhs1)
-- varargout get_str(rhs1)
-- obj map_input_cl(varargin)
-- Static obj map_input_cl_from_obj(ext_obj, varargin)
+- delete
+- display_map_input_cl
+- get_str
+- map_input_cl
+- map_input_cl_from_obj
 
 
 ---------------------------------------------------------
@@ -499,30 +694,26 @@ PROPERTIES :
 - OutputFile
 
 METHODS :
-- L addlistener(sources, eventname, callback)
-- L addlistener(sources, properties, eventname, callback)
-- L addlistener(sources, propertyname, eventname, callback)
-- L addlistener(sources, propertynames, eventname, callback)
-- delete(obj)
-- TF eq(A, B)
-- varargout find_mbs(rhs1)
-- HM findobj(H, varargin)
-- prop findprop(object, propname)
-- TF ge(A, B)
-- varargout getStringEorF(rhs1)
-- TF gt(A, B)
-- validity isvalid(obj)
-- TF le(A, B)
-- varargout load_files_regions_from_mbs(rhs1)
-- TF lt(A, B)
-- obj mbs_cl(varargin)
-- varargout mbs_to_survey_obj(rhs1)
-- TF ne(A, B)
-- notify(sources, eventname)
-- notify(sources, eventname, eventdata)
-- varargout print_output(rhs1)
-- varargout readMbsScript(rhs1)
-- varargout readMbsScriptHeaders(rhs1)
+- addlistener
+- delete
+- eq
+- find_mbs
+- findobj
+- findprop
+- ge
+- getStringEorF
+- gt
+- isvalid
+- le
+- listener
+- lt
+- mbs_cl
+- mbs_to_survey_obj
+- ne
+- notify
+- print_output
+- readMbsScript
+- readMbsScriptHeaders
 
 
 ---------------------------------------------------------
@@ -548,8 +739,8 @@ PROPERTIES :
 - shadow_zone_extrapolate_type
 
 METHODS :
-- delete(obj)
-- obj mbs_header_cl
+- delete
+- mbs_header_cl
 
 
 ---------------------------------------------------------
@@ -580,8 +771,8 @@ PROPERTIES :
 - EsError
 
 METHODS :
-- delete(obj)
-- obj mbs_input_cl
+- delete
+- mbs_input_cl
 
 
 ---------------------------------------------------------
@@ -596,7 +787,7 @@ PROPERTIES :
 - slicedTransectSum
 
 METHODS :
-- obj mbs_output_cl(varargin)
+- mbs_output_cl
 
 
 ---------------------------------------------------------
@@ -604,26 +795,54 @@ CLASS params_cl:
 ---------------------------------------------------------
 PROPERTIES :
 - Time
+- PingNumber
 - BandWidth
-- ChannelID
 - ChannelMode
 - Frequency
 - FrequencyEnd
 - FrequencyStart
 - PulseForm
 - PulseLength
-- PulseLengthEff
+- TeffPulseLength
+- TeffCompPulseLength
 - SampleInterval
 - Slope
-- TransducerDepth
 - TransmitPower
 - Absorption
 
 METHODS :
-- params_out concatenate_Params(param_1, param_2)
-- delete(obj)
-- param_str param2str(param_obj, idx_ping)
-- obj params_cl(varargin)
+- concatenate_Params
+- delete
+- get_params_idx_section
+- param2str
+- params_cl
+- reduce_params
+
+
+---------------------------------------------------------
+CLASS path_elt_cl:
+---------------------------------------------------------
+PROPERTIES :
+- Path_to_folder
+- Path_description
+- Path_tooltipstring
+- Path_fieldname
+
+METHODS :
+- addlistener
+- delete
+- eq
+- findobj
+- findprop
+- ge
+- gt
+- isvalid
+- le
+- listener
+- lt
+- ne
+- notify
+- path_elt_cl
 
 
 ---------------------------------------------------------
@@ -634,25 +853,57 @@ PROPERTIES :
 - Algo
 
 METHODS :
-- L addlistener(sources, eventname, callback)
-- L addlistener(sources, properties, eventname, callback)
-- L addlistener(sources, propertyname, eventname, callback)
-- L addlistener(sources, propertynames, eventname, callback)
-- delete(obj)
-- TF eq(A, B)
-- varargout find_process_algo(rhs1)
-- HM findobj(H, varargin)
-- prop findprop(object, propname)
-- TF ge(A, B)
-- TF gt(A, B)
-- validity isvalid(obj)
-- TF le(A, B)
-- TF lt(A, B)
-- TF ne(A, B)
-- notify(sources, eventname)
-- notify(sources, eventname, eventdata)
-- obj process_cl(varargin)
-- varargout set_process_list(rhs1)
+- addlistener
+- delete
+- eq
+- find_process_algo
+- findobj
+- findprop
+- ge
+- gt
+- isvalid
+- le
+- listener
+- lt
+- ne
+- notify
+- process_cl
+- set_process_list
+
+
+---------------------------------------------------------
+CLASS progress_bar_panel_cl:
+---------------------------------------------------------
+PROPERTIES :
+- progpanel
+- progaxes
+- progaxes_txt
+- progpatch
+- progtext
+- proglabel
+- Minimum
+- Maximum
+- Value
+
+METHODS :
+- addlistener
+- delete
+- eq
+- findobj
+- findprop
+- ge
+- gt
+- isvalid
+- le
+- listener
+- lt
+- ne
+- notify
+- progress_bar_panel_cl
+- set
+- setText
+- setVisible
+- update_progress_bar
 
 
 ---------------------------------------------------------
@@ -669,13 +920,14 @@ PROPERTIES :
 - chan_dg
 
 METHODS :
-- obj curve_cl(varargin)
-- delete(obj)
-- nb_nmea_dg get_nb_nmea_dg(idx_obj)
-- nb_pings get_nb_pings_per_channels(idx_obj)
-- nb_samples get_nb_samples_per_channels(idx_obj)
-- time_dg get_time_dg(idx_obj, type)
-- obj raw_idx_cl
+- curve_cl
+- delete
+- get_nb_nmea_dg
+- get_nb_pings_per_channels
+- get_nb_samples_per_block_per_channels
+- get_nb_samples_per_channels
+- get_time_dg
+- raw_idx_cl
 
 
 ---------------------------------------------------------
@@ -689,13 +941,13 @@ PROPERTIES :
 - Version
 - Unique_ID
 - Remove_ST
+- Line_ID
 - Type
 - Idx_pings
 - Idx_r
 - Shape
-- X_cont
-- Y_cont
 - MaskReg
+- Poly
 - Reference
 - Cell_w
 - Cell_w_unit
@@ -703,14 +955,24 @@ PROPERTIES :
 - Cell_h_unit
 
 METHODS :
-- mask create_mask(obj)
-- delete(obj)
-- varargout display_region(rhs1)
-- mask get_mask(obj)
-- varargout merge_regions(rhs1)
-- str print(obj)
-- obj region_cl(varargin)
-- varargout split_region(rhs1)
+- concatenate_regions
+- concatenate_regions_v2
+- delete
+- disp_str
+- display_region
+- display_region_3D
+- get_combined_mask
+- get_combined_poly
+- get_mask
+- get_mask_from_intersection
+- get_region_3D_echoes
+- get_sub_mask
+- merge_regions
+- print
+- region_cl
+- split_region
+- tag_sliced_output
+- tag_str
 
 
 ---------------------------------------------------------
@@ -719,28 +981,32 @@ CLASS sub_ac_data_cl:
 PROPERTIES :
 - Memap
 - Type
+- Fmt
+- ConvFactor
+- Scale
 - Fieldname
+- Units
+- DefaultValue
 
 METHODS :
-- L addlistener(sources, eventname, callback)
-- L addlistener(sources, properties, eventname, callback)
-- L addlistener(sources, propertyname, eventname, callback)
-- L addlistener(sources, propertynames, eventname, callback)
-- varargout concatenate_SubData(rhs1)
-- delete(obj)
-- TF eq(A, B)
-- HM findobj(H, varargin)
-- prop findprop(object, propname)
-- TF ge(A, B)
-- TF gt(A, B)
-- validity isvalid(obj)
-- TF le(A, B)
-- TF lt(A, B)
-- TF ne(A, B)
-- notify(sources, eventname)
-- notify(sources, eventname, eventdata)
-- obj sub_ac_data_cl(field, memapname, data, varargin)
-- Static [sub_ac_data_temp, curr_name] sub_ac_data_from_struct(curr_data, dir_data, fieldnames)
+- addlistener
+- concatenate_SubData
+- delete
+- eq
+- findobj
+- findprop
+- ge
+- get_sub_data_file_id
+- gt
+- isvalid
+- le
+- listener
+- lt
+- ne
+- notify
+- sub_ac_data_cl
+- sub_ac_data_from_files
+- sub_ac_data_from_struct
 
 
 ---------------------------------------------------------
@@ -751,26 +1017,26 @@ PROPERTIES :
 - SurvOutput
 
 METHODS :
-- L addlistener(sources, eventname, callback)
-- L addlistener(sources, properties, eventname, callback)
-- L addlistener(sources, propertyname, eventname, callback)
-- L addlistener(sources, propertynames, eventname, callback)
-- varargout clean_output(rhs1)
-- delete(obj)
-- TF eq(A, B)
-- HM findobj(H, varargin)
-- prop findprop(object, propname)
-- TF ge(A, B)
-- varargout generate_output(rhs1)
-- TF gt(A, B)
-- validity isvalid(obj)
-- TF le(A, B)
-- TF lt(A, B)
-- TF ne(A, B)
-- notify(sources, eventname)
-- notify(sources, eventname, eventdata)
-- varargout print_output(rhs1)
-- obj survey_cl(varargin)
+- addlistener
+- clean_output
+- delete
+- eq
+- findobj
+- findprop
+- ge
+- generate_output_v2
+- gt
+- isvalid
+- le
+- listener
+- lt
+- ne
+- notify
+- plot_survey_strat_result
+- plot_survey_trans_result
+- print_output
+- print_output_xls
+- survey_cl
 
 
 ---------------------------------------------------------
@@ -781,17 +1047,31 @@ PROPERTIES :
 - SurveyName
 - Snapshot
 - Stratum
+- Type
 - Transect
 - Comment
 - StartTime
 - EndTime
 
 METHODS :
-- delete(obj)
-- varargout get_files_from_surv_struct(rhs1)
-- i_str print_survey_data(obj)
-- varargout surv_data_to_logbook_db(rhs1)
-- obj survey_data_cl(varargin)
+- addlistener
+- delete
+- eq
+- findobj
+- findprop
+- ge
+- get_files_from_surv_struct
+- gt
+- isvalid
+- le
+- listener
+- lt
+- ne
+- notify
+- print_survey_data
+- surv_data_to_logbook_db
+- survey_data_cl
+- survey_data_obj_to_ac_db_struct
 
 
 ---------------------------------------------------------
@@ -806,28 +1086,81 @@ PROPERTIES :
 - Snapshots
 
 METHODS :
-- L addlistener(sources, eventname, callback)
-- L addlistener(sources, properties, eventname, callback)
-- L addlistener(sources, propertyname, eventname, callback)
-- L addlistener(sources, propertynames, eventname, callback)
-- varargout check_n_complete_input(rhs1)
-- delete(obj)
-- TF eq(A, B)
-- HM findobj(H, varargin)
-- prop findprop(object, propname)
-- TF ge(A, B)
-- TF gt(A, B)
-- validity isvalid(obj)
-- TF le(A, B)
-- [snapshot_vec, stratum_vec, transect_vec, reg_num_vec, files, regs] list_transects(surv_in_obj)
-- varargout load_files_from_survey_input(rhs1)
-- TF lt(A, B)
-- varargout merge_survey_input_for_integration(rhs1)
-- TF ne(A, B)
-- notify(sources, eventname)
-- notify(sources, eventname, eventdata)
-- surv_input_obj survey_input_cl(varargin)
-- varargout survey_input_to_survey_xml(rhs1)
+- addlistener
+- check_n_complete_input
+- complete_survey_input_cl_from_struct
+- delete
+- eq
+- findobj
+- findprop
+- ge
+- get_start_design_and_radius
+- gt
+- isvalid
+- le
+- list_data_folders
+- list_transects
+- listener
+- load_files_from_survey_input
+- lt
+- merge_survey_input_for_integration
+- ne
+- notify
+- survey_input_cl
+- survey_input_to_survey_xml
+
+
+---------------------------------------------------------
+CLASS survey_options_cl:
+---------------------------------------------------------
+PROPERTIES :
+- Use_exclude_regions
+- Absorption
+- Es60_correction
+- Motion_correction
+- Shadow_zone
+- Shadow_zone_height
+- Vertical_slice_size
+- Vertical_slice_units
+- Horizontal_slice_size
+- IntType
+- IntRef
+- Remove_tracks
+- Remove_ST
+- Export_ST
+- Export_TT
+- Denoised
+- Frequency
+- Channel
+- FrequenciesToLoad
+- ChannelsToLoad
+- CopyBottomFromFrequency
+- CTD_profile
+- SVP_profile
+- Temperature
+- Salinity
+- Soundspeed
+- MeanDepth
+- BadTransThr
+- SaveBot
+- SaveReg
+- DepthMin
+- DepthMax
+- RangeMin
+- RangeMax
+- RefRangeMin
+- RefRangeMax
+- ExportSlicedTransects
+- ExportRegions
+- SvThr
+- RunInt
+
+METHODS :
+- struct
+- survey_option_to_xml_file
+- survey_options_cl
+- survey_options_to_xml_node
+- update_options
 
 
 ---------------------------------------------------------
@@ -836,7 +1169,6 @@ CLASS survey_output_cl:
 PROPERTIES :
 - stratumSum
 - transectSum
-- transectSumTracks
 - slicedTransectSum
 - regionSum
 - regionSumAbscf
@@ -844,29 +1176,163 @@ PROPERTIES :
 - regionsIntegrated
 
 METHODS :
-- L addlistener(sources, eventname, callback)
-- L addlistener(sources, properties, eventname, callback)
-- L addlistener(sources, propertyname, eventname, callback)
-- L addlistener(sources, propertynames, eventname, callback)
-- delete(obj)
-- TF eq(A, B)
-- HM findobj(H, varargin)
-- prop findprop(object, propname)
-- TF ge(A, B)
-- TF gt(A, B)
-- validity isvalid(obj)
-- TF le(A, B)
-- TF lt(A, B)
-- TF ne(A, B)
-- notify(sources, eventname)
-- notify(sources, eventname, eventdata)
-- varargout sprint_regionSum(rhs1)
-- varargout sprint_regionSumAbscf(rhs1)
-- varargout sprint_regionSumVbscf(rhs1)
-- varargout sprint_slicedTransectSum(rhs1)
-- varargout sprint_stratumSum(rhs1)
-- varargout sprint_transectSum(rhs1)
-- obj survey_output_cl(nb_strat, nb_trans, nb_reg)
+- addlistener
+- delete
+- eq
+- findobj
+- findprop
+- ge
+- gt
+- isvalid
+- le
+- listener
+- lt
+- ne
+- notify
+- sprint_regionSum
+- sprint_regionSumAbscf
+- sprint_regionSumVbscf
+- sprint_slicedTransectSum
+- sprint_stratumSum
+- sprint_transectSum
+- survey_output_cl
+
+
+---------------------------------------------------------
+CLASS test_esp3_cl:
+---------------------------------------------------------
+PROPERTIES :
+- esp3_obj
+
+METHODS :
+- addTeardown
+- addlistener
+- applyFixture
+- assertClass
+- assertEmpty
+- assertEqual
+- assertError
+- assertFail
+- assertFalse
+- assertGreaterThan
+- assertGreaterThanOrEqual
+- assertInstanceOf
+- assertLength
+- assertLessThan
+- assertLessThanOrEqual
+- assertMatches
+- assertNotEmpty
+- assertNotEqual
+- assertNotSameHandle
+- assertNumElements
+- assertReturnsTrue
+- assertSameHandle
+- assertSize
+- assertSubstring
+- assertThat
+- assertTrue
+- assertWarning
+- assertWarningFree
+- assumeClass
+- assumeEmpty
+- assumeEqual
+- assumeError
+- assumeFail
+- assumeFalse
+- assumeGreaterThan
+- assumeGreaterThanOrEqual
+- assumeInstanceOf
+- assumeLength
+- assumeLessThan
+- assumeLessThanOrEqual
+- assumeMatches
+- assumeNotEmpty
+- assumeNotEqual
+- assumeNotSameHandle
+- assumeNumElements
+- assumeReturnsTrue
+- assumeSameHandle
+- assumeSize
+- assumeSubstring
+- assumeThat
+- assumeTrue
+- assumeWarning
+- assumeWarningFree
+- compare_cw_calibration_results
+- compare_scripts_results
+- copy
+- delete
+- eq
+- fatalAssertClass
+- fatalAssertEmpty
+- fatalAssertEqual
+- fatalAssertError
+- fatalAssertFail
+- fatalAssertFalse
+- fatalAssertGreaterThan
+- fatalAssertGreaterThanOrEqual
+- fatalAssertInstanceOf
+- fatalAssertLength
+- fatalAssertLessThan
+- fatalAssertLessThanOrEqual
+- fatalAssertMatches
+- fatalAssertNotEmpty
+- fatalAssertNotEqual
+- fatalAssertNotSameHandle
+- fatalAssertNumElements
+- fatalAssertReturnsTrue
+- fatalAssertSameHandle
+- fatalAssertSize
+- fatalAssertSubstring
+- fatalAssertThat
+- fatalAssertTrue
+- fatalAssertWarning
+- fatalAssertWarningFree
+- findobj
+- findprop
+- forInteractiveUse
+- ge
+- getSharedTestFixtures
+- gt
+- isvalid
+- launchESP3
+- le
+- listener
+- log
+- lt
+- ne
+- notify
+- onFailure
+- open_test_files
+- run
+- run_scripts
+- test_algos
+- test_esp3_cl
+- verifyClass
+- verifyEmpty
+- verifyEqual
+- verifyError
+- verifyFail
+- verifyFalse
+- verifyGreaterThan
+- verifyGreaterThanOrEqual
+- verifyInstanceOf
+- verifyLength
+- verifyLessThan
+- verifyLessThanOrEqual
+- verifyMatches
+- verifyNotEmpty
+- verifyNotEqual
+- verifyNotSameHandle
+- verifyNumElements
+- verifyReturnsTrue
+- verifySameHandle
+- verifySize
+- verifySubstring
+- verifyThat
+- verifyTrue
+- verifyWarning
+- verifyWarningFree
 
 
 ---------------------------------------------------------
@@ -874,6 +1340,10 @@ CLASS transceiver_cl:
 ---------------------------------------------------------
 PROPERTIES :
 - Data
+- Range
+- Alpha
+- Alpha_ori
+- Time
 - Bottom
 - ST
 - Tracks
@@ -885,102 +1355,159 @@ PROPERTIES :
 - AttitudeNavPing
 - Algo
 - Mode
-- OffsetLine
+- TransducerImpedance
+- TransducerDepth
 
 METHODS :
-- varargout TS_f_from_region(rhs1)
-- varargout add_algo(rhs1)
-- varargout add_offset_line(rhs1)
-- varargout add_region(rhs1)
-- L addlistener(sources, propertynames, eventname, callback)
-- L addlistener(sources, propertyname, eventname, callback)
-- L addlistener(sources, properties, eventname, callback)
-- L addlistener(sources, eventname, callback)
-- varargout apply_absorption(rhs1)
-- varargout apply_algo(rhs1)
-- varargout apply_cw_cal(rhs1)
-- varargout apply_line_depth(rhs1)
-- varargout apply_soundspeed(rhs1)
-- varargout bottom_to_evl_str(rhs1)
-- varargout computeAngles(rhs1)
-- varargout computeSpSv(rhs1)
-- varargout computeSp_comp(rhs1)
-- varargout concatenate_Transceivers(rhs1)
-- varargout correctTriangleWave(rhs1)
-- varargout create_WC_region(rhs1)
-- varargout create_regions_from_linked_candidates(rhs1)
-- varargout create_track_regs(rhs1)
-- varargout create_trans_bot_xml_node(rhs1)
-- varargout create_trans_reg_xml_node(rhs1)
-- delete(obj)
-- varargout disp_config_params(rhs1)
-- TF eq(A, B)
-- varargout evaluate_algo(rhs1)
-- varargout filter_bottom(rhs1)
-- varargout find_algo_idx(rhs1)
-- [idx, found] find_reg_idx(trans, u_id)
-- [idx, found] find_reg_idx_id(trans, id)
-- [idx, found] find_reg_name_id(obj, name, ID)
-- HM findobj(H, varargin)
-- prop findprop(object, propname)
-- TF ge(A, B)
-- IDs get_IDs(obj)
-- varargout get_badtrans_perc(rhs1)
-- varargout get_bottom_idx(rhs1)
-- varargout get_bottom_range(rhs1)
-- varargout get_cal(rhs1)
-- varargout get_current_gain(rhs1)
-- varargout get_loaded_bot_reg_version(rhs1)
-- [mean_depth, Sa] get_mean_depth_from_region(obj, unique_id)
-- varargout get_phase(rhs1)
-- varargout get_pulse(rhs1)
-- varargout get_pulse_Teff(rhs1)
-- varargout get_pulse_length(rhs1)
-- varargout get_reg_spec(rhs1)
-- varargout get_reg_specs_to_integrate(rhs1)
-- range get_transceiver_range(obj, varargin)
-- TF gt(A, B)
-- varargout integrate_region(rhs1)
-- validity isvalid(obj)
-- TF le(A, B)
-- idx list_regions_ID(obj, ID)
-- idx list_regions_Unique_ID(obj, ID)
-- idx list_regions_name(obj, name)
-- idx list_regions_origin(obj, origin)
-- idx list_regions_tag(obj, tag)
-- idx list_regions_type(obj, type)
-- TF lt(A, B)
-- varargout mask_from_regions(rhs1)
-- varargout mask_from_st(rhs1)
-- TF ne(A, B)
-- varargout need_escorr(rhs1)
-- id new_id(obj)
-- unique_id new_unique_id(obj)
-- notify(sources, eventname, eventdata)
-- notify(sources, eventname)
-- varargout processSv_f_r(rhs1)
-- varargout processSv_f_r_2(rhs1)
-- varargout processTS_f_v2(rhs1)
-- list regions_to_str(obj)
-- varargout replace_gps_data_trans(rhs1)
-- rm_all_region(obj)
-- rm_region_id(obj, unique_ID)
-- rm_region_name(obj, name)
-- rm_region_name_id(obj, name, ID)
-- rm_region_origin(obj, origin)
-- rm_region_type_id(obj, type, ID)
-- rm_regions(obj)
-- rm_tracks(obj)
-- varargout setBadSector(rhs1)
-- varargout setBottom(rhs1)
-- varargout setBottom_from_evl(rhs1)
-- varargout set_ST(rhs1)
-- varargout set_cal(rhs1)
-- set_position(obj, pos_trans, trans_angle)
-- varargout shift_bottom(rhs1)
-- varargout slice_transect(rhs1)
-- varargout slice_transect2D(rhs1)
-- varargout sv_f_from_region(rhs1)
-- obj transceiver_cl(varargin)
+- TS_f_from_region
+- addBadSector
+- add_algo
+- add_region
+- add_st_from_idx
+- addlistener
+- apply_algo
+- apply_cw_cal
+- apply_line_depth
+- bottom_to_evl_str
+- bp_percent2str
+- computeSpSv_v3
+- compute_absorption
+- compute_ping_impedance
+- compute_soundspeed_and_range
+- concatenate_Transceivers
+- correctTriangleWave
+- create_WC_region
+- create_regions_from_linked_candidates
+- create_track_regs
+- create_trans_bot_xml_node
+- create_trans_reg_xml_node
+- delete
+- disp_calibration_env_params
+- disp_config_params
+- eq
+- estimate_shadow_zone
+- evaluate_algo
+- filter_bottom
+- find_algo_idx
+- find_reg_idx
+- find_reg_idx_id
+- find_reg_name
+- find_reg_name_id
+- find_regions_ID
+- find_regions_Unique_ID
+- find_regions_name
+- find_regions_origin
+- find_regions_ref
+- find_regions_tag
+- find_regions_type
+- findobj
+- findprop
+- ge
+- get_3dB_f
+- get_absorption
+- get_algo_per_name
+- get_angles
+- get_badtrans_idx
+- get_badtrans_perc
+- get_badtrans_tag
+- get_blockID
+- get_bottom_depth
+- get_bottom_features
+- get_bottom_idx
+- get_bottom_range
+- get_cal
+- get_center_frequency
+- get_current_gain
+- get_current_sacorr
+- get_data_from_region
+- get_dist
+- get_fileID
+- get_fm_cal
+- get_lat
+- get_loaded_bot_reg_version
+- get_long
+- get_mean_depth_from_region
+- get_params_value
+- get_phase
+- get_position
+- get_pulse
+- get_pulse_Teff
+- get_pulse_comp_Teff
+- get_pulse_length
+- get_reg_IDs
+- get_reg_Unique_IDs
+- get_reg_first_Unique_ID
+- get_reg_spec
+- get_reg_specs_to_integrate
+- get_reg_tags
+- get_region_descriptors
+- get_region_from_Unique_ID
+- get_region_from_name
+- get_shadow_zone_height_est
+- get_slope_est
+- get_soundspeed
+- get_st_sig
+- get_time_range
+- get_trans_reg_uid
+- get_transceiver_depth
+- get_transceiver_from_file_ID
+- get_transceiver_pings
+- get_transceiver_range
+- get_transceiver_samples
+- get_transceiver_time
+- get_transceiver_time_r
+- get_transducer_depth
+- get_transducer_heave
+- get_transducer_pointing_angle
+- gt
+- integrate_region
+- isvalid
+- le
+- listener
+- lt
+- mask_from_regions
+- mask_from_st
+- ne
+- need_escorr
+- new_id
+- notch_filter_transceiver
+- notify
+- processSv_f_r_2
+- processTS_f_v2
+- regions_to_str
+- replace_gps_data_trans
+- reset_transducer_depth
+- rm_ST
+- rm_all_region
+- rm_region_id
+- rm_region_name
+- rm_region_name_id
+- rm_region_name_idx_r_idx_p
+- rm_region_origin
+- rm_region_type_id
+- rm_regions
+- rm_st_from_idx
+- rm_tracks
+- save_st_to_xls
+- save_tt_to_xls
+- setBadSector
+- setBottom_from_evl
+- set_ST
+- set_absorption
+- set_bot_reg_from_lsss_snap
+- set_cal
+- set_position
+- set_pulse_Teff
+- set_pulse_comp_Teff
+- set_sv_diff
+- set_transceiver_range
+- set_transceiver_time
+- set_transducer_depth
+- set_transducer_depth_from_line
+- shift_bottom
+- slice_transect2D_new_int
+- sv_f_from_region
+- transceiver_cl
+- validate_region
 
 

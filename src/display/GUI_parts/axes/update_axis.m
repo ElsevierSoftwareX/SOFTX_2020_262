@@ -56,9 +56,15 @@ for iax=1:length(echo_ax_tot)
                 u=findobj(echo_ax,'Tag','SelectLine','-or','Tag','SelectArea');
                 delete(u);
             end
-           
-            set(axes_panel_comp.axes_panel,'Title',...
-            sprintf('%s: %.0f kHz %s',curr_disp.Type,curr_disp.Freq/1e3,cids{iax}),'UserData',curr_disp.ChannelID)
+            
+            switch class(axes_panel_comp.axes_panel)
+                case 'matlab.ui.container.Tab'
+                    axes_panel_comp.axes_panel.Title = sprintf('%s: %.0f kHz %s',curr_disp.Type,curr_disp.Freq/1e3,cids{iax});     
+                case 'matlab.ui.Figure'
+                    axes_panel_comp.axes_panel.Name = sprintf('%s: %.0f kHz %s',curr_disp.Type,curr_disp.Freq/1e3,cids{iax});
+            end
+            
+            axes_panel_comp.axes_panel.UserData = curr_disp.ChannelID;
             delete(axes_panel_comp.listeners);
             axes_panel_comp.listeners=[];
             clear_lines(axes_panel_comp.main_axes);

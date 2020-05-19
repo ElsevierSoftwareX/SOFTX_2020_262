@@ -8,6 +8,8 @@ set(esp3_tab_comp.browser_container, 'Units','norm', 'Pos',[0,0,1,1]);
 adress=sprintf('%s/docs/index.html',whereisEcho());
 esp3_tab_comp.browser.setCurrentLocation(adress);
 
+
+
 setappdata(main_figure,'esp3_tab',esp3_tab_comp);
 
 end

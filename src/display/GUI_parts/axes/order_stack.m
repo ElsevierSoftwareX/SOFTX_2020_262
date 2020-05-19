@@ -61,7 +61,6 @@ if ~isempty(select_area)
 end
 zoom_area=findobj(echo_ax,'tag','zoom_area','-or','Tag','disp_area');
 
-
 switch echo_ax.Tag
     case 'main'
         if p.Results.bt_on_top==0

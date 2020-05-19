@@ -47,7 +47,7 @@ regSummary=cell(6,3);
 Sa_lin=(nansum(nansum(regIntStruct.eint))./nansum(nanmax(regIntStruct.Nb_good_pings)));
 
 regSummary{1,1}='Sv Mean';
-regSummary{1,2}=pow2db_perso(nanmean(regIntStruct.Sv_mean_lin(:)));
+regSummary{1,2}=pow2db_perso(nanmean(regIntStruct.sv_mean(:)));
 regSummary{1,3}='dB';
 
 regSummary{2,1}='Sa';
@@ -76,7 +76,7 @@ regSummary{7,2}=nanmax(regIntStruct.Depth_max(:))-nanmin(regIntStruct.Depth_min(
 regSummary{7,3}='m';
 
 regSummary{8,1}='Nb Cells';
-regSummary{8,2}=nansum(regIntStruct.Sv_mean_lin(:)>0);
+regSummary{8,2}=nansum(regIntStruct.sv_mean(:)>0);
 regSummary{8,3}='';
 
 

@@ -189,9 +189,9 @@ if ~isempty(idx_main)&&~isempty(layer_obj.EchoIntStruct.output_2D{idx_main})
     legend_str={};
     switch echo_int_tab_comp.tog_type.String{echo_int_tab_comp.tog_type.Value}
         case 'Sv'
-            c_disp=pow2db_perso(out.Sv_mean_lin);
-            v_disp=pow2db_perso(nanmean(out.Sv_mean_lin,2));
-            h_disp=pow2db_perso(nanmean(out.Sv_mean_lin,1));
+            c_disp=pow2db_perso(out.sv_mean);
+            v_disp=pow2db_perso(nanmean(out.sv_mean,2));
+            h_disp=pow2db_perso(nanmean(out.sv_mean,1));
             ty='sv';
             c_disp(isnan(c_disp))=-999;
         case 'PRC'

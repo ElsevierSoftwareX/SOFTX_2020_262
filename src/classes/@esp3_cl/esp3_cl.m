@@ -7,6 +7,7 @@ classdef esp3_cl < handle
         app_path           = app_path_create();
         process            = process_cl.empty();
         curr_disp          = curr_state_disp_cl();
+        
     end
     
     methods
@@ -38,6 +39,11 @@ classdef esp3_cl < handle
                 parse(p,varargin{:});
                 
                 nb_esp3_instances=p.Results.nb_esp3_instances;
+                
+                if ~isdeployed()&&isappdata(groot,'esp3_obj')
+                    old_obj = getappdata(groot,'esp3_obj');
+                    delete(old_obj.main_figure); 
+                end
                 
                 setappdata(groot,'esp3_obj',obj);
                 
@@ -151,27 +157,8 @@ classdef esp3_cl < handle
                     setappdata(obj.main_figure,'SelectArea',select_area);
                     
                     setappdata(obj.main_figure,'ExternalFigures',matlab.ui.Figure.empty())
-                    switch obj.curr_disp.DispBadTrans
-                        case 'off'
-                            alpha_bt=0;
-                        case 'on'
-                            alpha_bt=0.7;
-                    end
-                    switch obj.curr_disp.DispReg
-                        case 'off'
-                            alpha_reg=0;
-                        case 'on'
-                            alpha_reg=0.4;
-                    end
                     
-                    switch obj.curr_disp.DispSpikes
-                        case 'off'
-                            alpha_spikes=0;
-                        case 'on'
-                            alpha_spikes=1;
-                    end
-                    
-                    obj.main_figure.Alphamap=[0 (1-obj.curr_disp.UnderBotTransparency/100) alpha_bt alpha_reg alpha_spikes 1];
+                    obj.main_figure.Alphamap=obj.get_alphamap();
                     
                     %% Initialize the display and the interactions with the user
                     initialize_display(obj);
@@ -208,6 +195,32 @@ classdef esp3_cl < handle
                     rethrow(err);
                 end
             end
+            
+        end
+        
+        function Alphamap = get_alphamap(obj)
+            
+            switch obj.curr_disp.DispBadTrans
+                case 'off'
+                    alpha_bt=0;
+                case 'on'
+                    alpha_bt=0.7;
+            end
+            switch obj.curr_disp.DispReg
+                case 'off'
+                    alpha_reg=0;
+                case 'on'
+                    alpha_reg=0.4;
+            end
+            
+            switch obj.curr_disp.DispSpikes
+                case 'off'
+                    alpha_spikes=0;
+                case 'on'
+                    alpha_spikes=1;
+            end
+            
+            Alphamap=[0 (1-obj.curr_disp.UnderBotTransparency/100) alpha_bt alpha_reg alpha_spikes 1];
             
         end
         

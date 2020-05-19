@@ -104,19 +104,19 @@ for ireg=1:length(regs{idx_main})
     for ir=1:length(idx_freq_out_tot)
         output_reg=regCellInt{ir}{ireg};
         if ~isempty(output_reg)
-            if istall(output_reg.Sv_mean_lin)
-                Sv_mean_lin=gather(output_reg.Sv_mean_lin);
+            if istall(output_reg.sv_mean)
+                sv_mean=gather(output_reg.sv_mean);
             else
-                Sv_mean_lin=output_reg.Sv_mean_lin;
+                sv_mean=output_reg.sv_mean;
             end
-            Sv_mean_lin(Sv_mean_lin==0)=nan;
-            Sv_mean=pow2db_perso(nanmean(Sv_mean_lin(:)));
-            delta_sv=nanstd(pow2db_perso(Sv_mean_lin(:)));
+            sv_mean(sv_mean==0)=nan;
+            Sv_mean=pow2db_perso(nanmean(sv_mean(:)));
+            delta_sv=nanstd(pow2db_perso(sv_mean(:)));
             reg_descriptors.(sprintf('Sv_%.0fkHz',layer_obj.Frequencies(idx_freq_out_tot(ir))/1e3))=Sv_mean;
-            reg_descriptors.(sprintf('Delta_Sv_%.0fkHz',layer_obj.Frequencies(idx_freq_out_tot(ir))/1e3))=delta_sv;
+            reg_descriptors.(sprintf('sd_Sv_%.0fkHz',layer_obj.Frequencies(idx_freq_out_tot(ir))/1e3))=delta_sv;
         else
             reg_descriptors.(sprintf('Sv_%.0fkHz',layer_obj.Frequencies(idx_freq_out_tot(ir))/1e3))=nan;
-            reg_descriptors.(sprintf('Delta_Sv_%.0fkHz',layer_obj.Frequencies(idx_freq_out_tot(ir))/1e3))=nan;
+            reg_descriptors.(sprintf('sd_Sv_%.0fkHz',layer_obj.Frequencies(idx_freq_out_tot(ir))/1e3))=nan;
         end
     end
     reg_descr_table = [reg_descr_table;struct2table(reg_descriptors,'asarray',1)];
@@ -136,34 +136,38 @@ for ir=1:length(idx_freq_other)
             if any(ity_sec)
                 if ~istall(output_2D{idx_main}{ity}.eint)
                     data_size=size(output_2D{idx_main}{ity}.eint);
-                    Sv_mean_lin=output_2D{idx_sec}{ity_sec}.Sv_mean_lin;
-                    Sv_dB_std = output_2D{idx_sec}{ity_sec}.Sv_dB_std;
+                    sv_mean=output_2D{idx_sec}{ity_sec}.sv_mean;
+                    sd_Sv = output_2D{idx_sec}{ity_sec}.sd_Sv;
                     PRC = output_2D{idx_sec}{ity_sec}.PRC;
+                    ABC = output_2D{idx_sec}{ity_sec}.ABC;
                 else
                     data_size=gather(size(output_2D{idx_main}{ity}.eint));
-                    Sv_mean_lin=gather(output_2D{idx_sec}{ity_sec}.Sv_mean_lin);
-                    Sv_dB_std = gather(output_2D{idx_sec}{ity_sec}.Sv_dB_std);
+                    sv_mean=gather(output_2D{idx_sec}{ity_sec}.sv_mean);
+                    sd_Sv = gather(output_2D{idx_sec}{ity_sec}.sd_Sv);
                     PRC = gather(output_2D{idx_sec}{ity_sec}.PRC);
+                    ABC = gather(output_2D{idx_sec}{ity_sec}.ABC);
                 end
                 
-                output_2D{idx_main}{ity}.(sprintf('Sv_mean_lin_%.0fkHz',layer_obj.Frequencies(idx_freq_other(ir))/1e3))=zeros(data_size);
-                output_2D{idx_main}{ity}.(sprintf('Sv_dB_sd_%.0fkHz',layer_obj.Frequencies(idx_freq_other(ir))/1e3))=zeros(data_size);
+                output_2D{idx_main}{ity}.(sprintf('sv_mean_%.0fkHz',layer_obj.Frequencies(idx_freq_other(ir))/1e3))=zeros(data_size);
+                output_2D{idx_main}{ity}.(sprintf('sd_Sv_%.0fkHz',layer_obj.Frequencies(idx_freq_other(ir))/1e3))=zeros(data_size);
                 output_2D{idx_main}{ity}.(sprintf('PRC_%.0fkHz',layer_obj.Frequencies(idx_freq_other(ir))/1e3))=zeros(data_size);
+                output_2D{idx_main}{ity}.(sprintf('ABC_%.0fkHz',layer_obj.Frequencies(idx_freq_other(ir))/1e3))=zeros(data_size);             
+                
                 
                 
                 [mask_in,mask_out] = match_data(gather(output_2D{idx_sec}{ity}.Time_S),output_2D{idx_sec}{ity_sec}.Range_ref_min,output_2D{idx_main}{ity}.Time_S,output_2D{idx_main}{ity}.Range_ref_min);
-                output_2D{idx_main}{ity}.(sprintf('Sv_mean_lin_%.0fkHz',layer_obj.Frequencies(idx_freq_other(ir))/1e3))(mask_out)=Sv_mean_lin(mask_in);
-                output_2D{idx_main}{ity}.(sprintf('Sv_dB_sd_%.0fkHz',layer_obj.Frequencies(idx_freq_other(ir))/1e3))(mask_out)=Sv_dB_std(mask_in);
+                output_2D{idx_main}{ity}.(sprintf('sv_mean_%.0fkHz',layer_obj.Frequencies(idx_freq_other(ir))/1e3))(mask_out)=sv_mean(mask_in);
+                output_2D{idx_main}{ity}.(sprintf('sd_Sv_%.0fkHz',layer_obj.Frequencies(idx_freq_other(ir))/1e3))(mask_out)=sd_Sv(mask_in);
                 output_2D{idx_main}{ity}.(sprintf('PRC_%.0fkHz',layer_obj.Frequencies(idx_freq_other(ir))/1e3))(mask_out)=PRC(mask_in);
-                
-                
+                output_2D{idx_main}{ity}.(sprintf('ABC_%.0fkHz',layer_obj.Frequencies(idx_freq_other(ir))/1e3))(mask_out)=ABC(mask_in);
                 if istall(output_2D{idx_main}{ity}.eint)
-                    output_2D{idx_main}{ity}.(sprintf('Sv_mean_lin_%.0fkHz',layer_obj.Frequencies(idx_freq_other(ir))/1e3))=tall(output_2D{idx_main}{ity}.(sprintf('Sv_mean_lin_%.0fkHz',layer_obj.Frequencies(idx_freq_other(ir))/1e3)));
-                    output_2D{idx_main}{ity}.(sprintf('Sv_dB_sd_%.0fkHz',layer_obj.Frequencies(idx_freq_other(ir))/1e3))=tall(output_2D{idx_main}{ity}.(sprintf('Sv_dB_sd_%.0fkHz',layer_obj.Frequencies(idx_freq_other(ir))/1e3)));
+                    output_2D{idx_main}{ity}.(sprintf('sv_mean_%.0fkHz',layer_obj.Frequencies(idx_freq_other(ir))/1e3))=tall(output_2D{idx_main}{ity}.(sprintf('sv_mean_%.0fkHz',layer_obj.Frequencies(idx_freq_other(ir))/1e3)));
+                    output_2D{idx_main}{ity}.(sprintf('sd_Sv_%.0fkHz',layer_obj.Frequencies(idx_freq_other(ir))/1e3))=tall(output_2D{idx_main}{ity}.(sprintf('sd_Sv_%.0fkHz',layer_obj.Frequencies(idx_freq_other(ir))/1e3)));
                     output_2D{idx_main}{ity}.(sprintf('PRC_%.0fkHz',layer_obj.Frequencies(idx_freq_other(ir))/1e3))=tall(output_2D{idx_main}{ity}.(sprintf('PRC_%.0fkHz',layer_obj.Frequencies(idx_freq_other(ir))/1e3)));
+                    output_2D{idx_main}{ity}.(sprintf('ABC_%.0fkHz',layer_obj.Frequencies(idx_freq_other(ir))/1e3))=tall(output_2D{idx_main}{ity}.(sprintf('ABC_%.0fkHz',layer_obj.Frequencies(idx_freq_other(ir))/1e3)));
                 end
             end
-            %figure();imagesc(pow2db_perso(output_2D_surf_sec.Sv_mean_lin));
+            %figure();imagesc(pow2db_perso(output_2D_surf_sec.sv_mean));
         end
     end
     

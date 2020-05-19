@@ -77,7 +77,7 @@ for ireg=1:numel(reg_primary)
             trans_obj_primary.set_sv_diff(output_diff{ireg,i},secondary_freqs(i));
         end
         
-        sv=pow2db_perso(output_diff{ireg,i}.Sv_mean_lin(:));
+        sv=pow2db_perso(output_diff{ireg,i}.sv_mean(:));
         cax(i,1)=prctile(sv(sv>-999),10)-5;
         cax(i,2)=prctile(sv(sv>-999),90)+5;
     end

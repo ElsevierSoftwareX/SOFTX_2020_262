@@ -217,7 +217,7 @@ ylabel(ax1,'Slope (deg)');
 
 % bottom axes
 ax2 = axes(fig_handle,'nextplot','add','units','normalized','OuterPosition',[0 0 1 0.5]);
-plot((outer_reg.Ping_E+outer_reg.Ping_S)/2,pow2db_perso(outer_reg.Sv_mean_lin),'k')
+plot((outer_reg.Ping_E+outer_reg.Ping_S)/2,pow2db_perso(outer_reg.sv_mean),'k')
 xlabel(ax2,'Ping number')
 ylabel(ax2,'Sv mean(m)')
 grid(ax2,'on');

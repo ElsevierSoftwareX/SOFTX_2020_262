@@ -47,9 +47,9 @@ for u = 1:numel(active_reg)
         writetable(reg_output_table,p.Results.output_f,'Sheet',sprintf('%.0f kHz',layer_obj.Frequencies(idx_freq_sort(ir))/1e3));
         
         % calculate mean and std of Sv
-        output_reg.Sv_mean_lin(output_reg.Sv_mean_lin==0) = NaN;
-        Sv_mean = pow2db_perso(nanmean(output_reg.Sv_mean_lin(:)));
-        delta_sv = nanstd(pow2db_perso(output_reg.Sv_mean_lin(:)));
+        output_reg.sv_mean(output_reg.sv_mean==0) = NaN;
+        Sv_mean = pow2db_perso(nanmean(output_reg.sv_mean(:)));
+        delta_sv = nanstd(pow2db_perso(output_reg.sv_mean(:)));
         
         % add to region descriptor structure
         reg_descriptors.(sprintf('Sv_%.0fkHz',layer_obj.Frequencies(idx_freq_sort(ir))/1e3)) = Sv_mean;

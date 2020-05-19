@@ -37,13 +37,13 @@
 %% Function
 function load_axis_panel(main_figure,axes_panel)
 
-
 if isappdata(main_figure,'Axes_panel')
     axes_panel_comp=getappdata(main_figure,'Axes_panel');
     delete(axes_panel_comp.axes_panel);
     rmappdata(main_figure,'Axes_panel');
     axes_panel_comp=[];
 end
+
 
 axes_panel_comp.axes_panel=axes_panel;
 
@@ -189,7 +189,7 @@ axes_panel_comp.bottom_plot=plot(axes_panel_comp.main_axes,nan,nan,'tag','bottom
 create_context_menu_bottom(main_figure,axes_panel_comp.bottom_plot);
 
 ipt.enterFcn    = @(src, evt) enter_bottom_plot_fcn(src, evt,axes_panel_comp.bottom_plot);
-ipt.exitFcn     = @(src, evt) exit_bottom_plot_fcn(src, evt,axes_panel_comp.bottom_plot,curr_disp);
+ipt.exitFcn     = @(src, evt) exit_bottom_plot_fcn(src, evt,axes_panel_comp.bottom_plot);
 ipt.traverseFcn = [];
 iptSetPointerBehavior(axes_panel_comp.bottom_plot,ipt);
 
@@ -200,14 +200,11 @@ setappdata(main_figure,'Axes_panel',axes_panel_comp);
 
 end
 
-
-function exit_bottom_plot_fcn(src,~,hplot,curr_disp)
+function exit_bottom_plot_fcn(src,~,hplot)
 set(hplot,'linewidth',0.5);
-% setptr(src,curr_disp.get_pointer());
 end
 
 function enter_bottom_plot_fcn(src,evt,hplot)
 set(src, 'Pointer', 'hand');
 set(hplot,'linewidth',2);
-
 end

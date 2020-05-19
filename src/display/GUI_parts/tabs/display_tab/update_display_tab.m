@@ -6,7 +6,6 @@ display_tab_comp=getappdata(main_figure,'Display_tab');
 
 [trans_obj,idx_freq]=layer_obj.get_trans(curr_disp);
 
-
 if isempty(layer_obj.GPSData.Lat)
     Axes_type= {'pings','seconds'};
    else
@@ -34,7 +33,6 @@ set(display_tab_comp.caxis_up,'String',int2str(curr_disp.Cax(2)));
 set(display_tab_comp.caxis_down,'String',int2str(curr_disp.Cax(1)));
 
 %set(findobj(display_tab_comp.display_tab, '-property', 'Enable'), 'Enable', 'on');
-
 
 setappdata(main_figure,'Display_tab',display_tab_comp);
 end

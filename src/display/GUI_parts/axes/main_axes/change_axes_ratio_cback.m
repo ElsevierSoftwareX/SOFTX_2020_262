@@ -6,13 +6,14 @@ if ~strcmpi(curr_disp.CursorMode,'normal')
 end
 
 axes_panel_comp=getappdata(main_figure,'Axes_panel');
-axes_panel_comp.axes_panel;
-switch main_figure.SelectionType
+curr_fig = ancestor(axes_panel_comp.axes_panel,'figure');
+
+switch curr_fig.SelectionType
     case 'normal'
         
         pos_panel=getpixelposition(axes_panel_comp.axes_panel,true);
         pos_ax=getpixelposition(src,true);
-        cp = main_figure.CurrentPoint;
+        cp = curr_fig.CurrentPoint;
         x1 = cp(1,1)-pos_ax(1);
         y1 = pos_panel(2)+pos_panel(4)-cp(1,2);
         switch(hov)
@@ -22,8 +23,8 @@ switch main_figure.SelectionType
                 ptr='left';
         end
         
-        replace_interaction(main_figure,'interaction','WindowButtonMotionFcn','id',2,'interaction_fcn',@wbmcb,'Pointer',ptr);
-        replace_interaction(main_figure,'interaction','WindowButtonUpFcn','id',2,'interaction_fcn',@wbucb,'Pointer',ptr);
+        replace_interaction(curr_fig,'interaction','WindowButtonMotionFcn','id',2,'interaction_fcn',@wbmcb,'Pointer',ptr);
+        replace_interaction(curr_fig,'interaction','WindowButtonUpFcn','id',2,'interaction_fcn',@wbucb,'Pointer',ptr);
     case 'open'
         
         switch(hov)
@@ -42,7 +43,7 @@ switch main_figure.SelectionType
         end
 end
     function wbmcb(~,~)
-        cp = main_figure.CurrentPoint;
+        cp = curr_fig.CurrentPoint;
         pos_ax=getpixelposition(src,true);
         x1 = cp(1,1)-pos_ax(1);
         y1 = pos_panel(2)+pos_panel(4)-cp(1,2);
@@ -62,8 +63,8 @@ end
     end
 
     function wbucb(~,~)
-        replace_interaction(main_figure,'interaction','WindowButtonMotionFcn','id',2);
-        replace_interaction(main_figure,'interaction','WindowButtonUpFcn','id',2);
+        replace_interaction(curr_fig,'interaction','WindowButtonMotionFcn','id',2);
+        replace_interaction(curr_fig,'interaction','WindowButtonUpFcn','id',2);
     end
 
 end

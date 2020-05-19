@@ -86,17 +86,17 @@ if ~strcmpi(class_tree_obj.ClassificationType,p.Results.classification_type)
 end
 
 
-idx_var_freq=find(contains(vars,'sv_'));
-idx_var_freq_sec=find(contains(vars,'delta_sv_'));
+idx_var_freq=find(contains(vars,'Sv_'));
+idx_var_freq_sec=find(contains(vars,'delta_Sv_'));
 
 primary_freqs=nan(1,numel(idx_var_freq));
 secondary_freqs=nan(1,numel(idx_var_freq));
 
 for ii=1:numel(idx_var_freq)
     if ismember(idx_var_freq(ii),idx_var_freq_sec)
-        freqs_tmp=textscan(vars{idx_var_freq(ii)},'delta_sv_%d_%d');
+        freqs_tmp=textscan(vars{idx_var_freq(ii)},'delta_Sv_%d_%d');
     else
-        freqs_tmp=textscan(vars{idx_var_freq(ii)},'sv_%d');
+        freqs_tmp=textscan(vars{idx_var_freq(ii)},'Sv_%');
     end
     primary_freqs(ii)=freqs_tmp{1}*1e3;
     if ismember(idx_var_freq(ii),idx_var_freq_sec)
@@ -147,7 +147,7 @@ switch lower(p.Results.classification_type)
             for ii=1:numel(primary_freqs)
                 i_freq_p=layer.EchoIntStruct.idx_freq_out==idx_primary_freqs(ii);
                 output_reg_p=layer.EchoIntStruct.regCellInt_tot{i_freq_p}{jj};
-                output_struct.school_struct{jj}.(sprintf('sv_%d',primary_freqs(ii)/1e3))=pow2db_perso(nanmean(output_reg_p.Sv_mean_lin(:)));
+                output_struct.school_struct{jj}.(sprintf('Sv_%d',primary_freqs(ii)/1e3))=pow2db_perso(nanmean(output_reg_p.sv_mean(:)));
                 
                 if ~isnan(idx_secondary_freqs(ii))
                     i_freq_s=layer.EchoIntStruct.idx_freq_out==idx_secondary_freqs(ii);
@@ -155,14 +155,14 @@ switch lower(p.Results.classification_type)
                     ns=numel(output_reg_s.nb_samples(:));
                     np=numel(output_reg_p.nb_samples(:));
                     n=nanmin(ns,np);
-                    delta_temp=nanmean(pow2db_perso(output_reg_p.Sv_mean_lin(1:n))-pow2db_perso(output_reg_s.Sv_mean_lin(1:n)));
+                    delta_temp=nanmean(pow2db_perso(output_reg_p.sv_mean(1:n))-pow2db_perso(output_reg_s.sv_mean(1:n)));
                     delta_temp(isnan(delta_temp))=0;
-                    output_struct.school_struct{jj}.(sprintf('delta_sv_%d_%d',primary_freqs(ii)/1e3,secondary_freqs(ii)/1e3))=delta_temp;
-                    output_struct.school_struct{jj}.(sprintf('sv_%d',secondary_freqs(ii)/1e3))=pow2db_perso(nanmean(output_reg_p.Sv_mean_lin(:)));
+                    output_struct.school_struct{jj}.(sprintf('delta_Sv_%d_%d',primary_freqs(ii)/1e3,secondary_freqs(ii)/1e3))=delta_temp;
+                    output_struct.school_struct{jj}.(sprintf('Sv_%d',secondary_freqs(ii)/1e3))=pow2db_perso(nanmean(output_reg_p.sv_mean(:)));
                 end
             end
             
-            output_struct.school_struct{jj}.nb_cell=length(~isnan(output_reg_p.Sv_mean_lin(:)));
+            output_struct.school_struct{jj}.nb_cell=length(~isnan(output_reg_p.sv_mean(:)));
             output_struct.school_struct{jj}.aggregation_depth_mean=nanmean(output_reg_p.Depth_mean(:));
             output_struct.school_struct{jj}.aggregation_depth_min=nanmax(output_reg_p.Depth_mean(:));
             output_struct.school_struct{jj}.bottom_depth=nanmean(trans_obj_primary.get_bottom_range(output_reg_p.Ping_S(1):output_reg_p.Ping_E(end)));
@@ -180,24 +180,23 @@ switch lower(p.Results.classification_type)
             for ip=1:numel(primary_freqs)
                 
                 if idx_primary_freq==idx_primary_freqs(ip)
-                    tmp=pow2db_perso(output_struct.school_struct{ui}.Sv_mean_lin);
+                    tmp=pow2db_perso(output_struct.school_struct{ui}.sv_mean);
                 else
-                    tmp=pow2db_perso(output_struct.school_struct{ui}.(sprintf('Sv_mean_lin_%.0fkHz',primary_freqs(ip)/1e3)));
+                    tmp=pow2db_perso(output_struct.school_struct{ui}.(sprintf('sv_mean_%.0fkHz',primary_freqs(ip)/1e3)));
                 end
-                output_struct.school_struct{ui}.(sprintf('sv_%d',primary_freqs(ip)/1e3))=tmp;
-                
+                output_struct.school_struct{ui}.(sprintf('Sv_%d',primary_freqs(ip)/1e3))=tmp;
                 
                 if ~isnan(secondary_freqs(ip))
                     
                     if idx_primary_freq==idx_secondary_freqs(ip)
-                        tmp_sec=pow2db_perso(output_struct.school_struct{ui}.Sv_mean_lin);
+                        tmp_sec=pow2db_perso(output_struct.school_struct{ui}.sv_mean);
                     else
-                        tmp_sec=pow2db_perso(output_struct.school_struct{ui}.(sprintf('Sv_mean_lin_%.0fkHz',secondary_freqs(ip)/1e3)));
+                        tmp_sec=pow2db_perso(output_struct.school_struct{ui}.(sprintf('sv_mean_%.0fkHz',secondary_freqs(ip)/1e3)));
                     end
                     
                     delta_tmp=tmp-tmp_sec;
-                    output_struct.school_struct{ui}.(sprintf('delta_sv_%d_%d',primary_freqs(ip)/1e3,secondary_freqs(ip)/1e3))=delta_tmp;
-                    output_struct.school_struct{ui}.(sprintf('sv_%d',secondary_freqs(ip)/1e3))=tmp_sec;
+                    output_struct.school_struct{ui}.(sprintf('delta_Sv_%d_%d',primary_freqs(ip)/1e3,secondary_freqs(ip)/1e3))=delta_tmp;
+                    output_struct.school_struct{ui}.(sprintf('Sv_%d',secondary_freqs(ip)/1e3))=tmp_sec;
                 end
             end
         end

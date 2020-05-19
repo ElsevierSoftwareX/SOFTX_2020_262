@@ -3,6 +3,10 @@ function toggle_disp_regions(main_figure)
 curr_disp=get_esp3_prop('curr_disp');
 layer=get_current_layer();
 
+if isempty(layer)
+    return;
+end
+
 [~,main_axes_tot,~,~,~,~]=get_axis_from_cids(main_figure,union({'main' 'mini'},layer.ChannelID));
 for iax=1:length(main_axes_tot)
     main_axes=main_axes_tot(iax);

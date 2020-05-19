@@ -42,8 +42,15 @@ if ~isdeployed
 end
 
 if ~isappdata(main_figure,'Axes_panel')
+    
     echo_tab_panel=getappdata(main_figure,'echo_tab_panel');
     axes_panel=uitab(echo_tab_panel,'BackgroundColor',[1 1 1],'tag','axes_panel');
+    
+%     cur_ver = ver('Matlab');
+%     axes_panel=new_echo_figure(main_figure,'tag','axes_panel','Units','Normalized','Position',[0.1 0.1 0.8 0.8],'UiFigureBool',str2double(cur_ver.Version)>9.7);
+%     axes_panel.Alphamap = main_figure.Alphamap;  
+%     initialize_interactions_v2(axes_panel);
+%     
     load_axis_panel(main_figure,axes_panel);
     display_tab_comp=getappdata(main_figure,'Display_tab');
     load_mini_axes(main_figure,display_tab_comp.display_tab,[0 0 1 0.67]);
@@ -64,10 +71,8 @@ end
 disp_perso(main_figure,'Updating Display');
 
 if new==1
-    update_algo_panels(main_figure,{});
-    
-    update_denoise_tab(main_figure);
-    
+    update_algo_panels(main_figure,{});    
+    update_denoise_tab(main_figure);   
     update_processing_tab(main_figure);
     update_map_tab(main_figure);
     update_st_tracks_tab(main_figure);
@@ -82,7 +87,6 @@ if new==1
     update_multi_freq_tab(main_figure);
     clean_echo_figures(main_figure,'Tag','attitude');
 end
-
 
 update_axis(main_figure,new,'main_or_mini','main','force_update',force_update);
 
@@ -139,7 +143,6 @@ order_stacks_fig(main_figure,curr_disp);
 order_axes(main_figure);
 
 update_info_panel([],[],1);
-
 
 curr_disp=get_esp3_prop('curr_disp');
 disp_perso(main_figure,'');

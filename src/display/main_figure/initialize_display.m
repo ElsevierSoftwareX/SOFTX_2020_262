@@ -39,7 +39,7 @@ function initialize_display(esp3_obj)
 main_figure=esp3_obj.main_figure;
 curr_disp=esp3_obj.curr_disp;
 
-pan_height=get_top_panel_height(7);
+pan_height=get_top_panel_height(7.5);
 load_loading_bar_panel_v2(main_figure);
 load_info_panel(main_figure);
 
@@ -63,17 +63,13 @@ pt_int.traverseFcn = [];
 iptSetPointerBehavior(opt_panel,pt_int);
 iptSetPointerBehavior(algo_panel,pt_int);
 
-
 echo_tab_panel=uitabgroup(main_figure,'Units','pixels','Position',[0 inf_h pix_pos(3) pix_pos(4)-pan_height-inf_h]);
 
-
 load_info_panel(main_figure);
-
 
 setappdata(main_figure,'echo_tab_panel',echo_tab_panel);
 setappdata(main_figure,'option_tab_panel',opt_panel);
 setappdata(main_figure,'algo_tab_panel',algo_panel);
-
 
 create_menu(main_figure);
 load_esp3_panel(main_figure,echo_tab_panel);

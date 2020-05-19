@@ -82,7 +82,7 @@ switch trans_obj.Mode
         r_tot=trans_obj.get_transceiver_range(ceil(nanmean((output_reg.Sample_S+output_reg.Sample_E)/2,2)));
         f_vec=trans_obj.get_params_value('Frequency',pings(1));
         Sv_f=nan(length(pings),length(r_tot),length(f_vec));
-        Sv_f(:,:,1)=pow2db_perso(output_reg.Sv_mean_lin');
+        Sv_f(:,:,1)=pow2db_perso(output_reg.sv_mean');
         
 end
 
