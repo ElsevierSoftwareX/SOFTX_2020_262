@@ -6,6 +6,7 @@ p = inputParser;
 
 addRequired(p,'file_lst',@(x) ischar(x)||iscell(x));
 addParameter(p,'PathToMemmap',def_path_m,@ischar);
+addParameter(p,'already_opened_files',{},@iscell);
 addParameter(p,'Calibration',[]);
 addParameter(p,'Frequencies',[]);
 addParameter(p,'FieldNames',{});
@@ -85,6 +86,17 @@ id_config=(1:length(ini_config_files));
 if ~isempty(fidx)
     id_config=fidx;
 end
+
+[~,id_not_al]=setdiff(ini_config_files(id_config),p.Results.already_opened_files);
+
+if ~isempty(id_not_al)
+    id_config=id_config(id_not_al);
+else
+    layers=[];
+    return;
+end
+
+
 G=20;
 SL=30;
 ME=0;
@@ -98,7 +110,6 @@ nb_config=length(id_config);
 
 layers(nb_config)=layer_cl();
 ilay=0;
-
 
 
 for iconfig=id_config

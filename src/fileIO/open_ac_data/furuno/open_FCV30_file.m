@@ -6,6 +6,7 @@ p = inputParser;
 
 addRequired(p,'file_lst',@(x) iscell(x)||ischar(x));
 addParameter(p,'PathToMemmap',def_path_m,@ischar);
+addParameter(p,'already_opened_files',{},@iscell);
 addParameter(p,'load_bar_comp',[]);
 
 parse(p,file_lst_cell,varargin{:});
@@ -37,10 +38,11 @@ for ic=1:numel(file_lst_cell)
         case '.ini'
             fidx=[];
     end
+    
     try
         new_layers=open_FCV30_file_stdalone_v2(file_lst,...
-            'PathToMemmap',p.Results.PathToMemmap,'load_bar_comp',p.Results.load_bar_comp,'file_idx',fidx);
-        
+            'already_opened_files',p.Results.already_opened_files,...
+            'PathToMemmap',p.Results.PathToMemmap,'load_bar_comp',p.Results.load_bar_comp,'file_idx',fidx);  
     catch err
         warndlg_perso([],'',sprintf('Could not open files %s\n',file_lst));
         print_errors_and_warnings(1,'error',err);

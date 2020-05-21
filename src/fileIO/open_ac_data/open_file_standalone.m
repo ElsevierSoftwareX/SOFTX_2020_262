@@ -12,6 +12,7 @@ addRequired(p,'Filename',@(x) ischar(x)||iscell(x));
 addRequired(p,'ftype',@(x) ischar(x));
 addParameter(p,'PathToMemmap',def_path_m,@ischar);
 addParameter(p,'load_bar_comp',[]);
+addParameter(p,'already_opened_files',{},@iscell);
 addParameter(p,'dfile',0,@isnumeric);
 addParameter(p,'CVSCheck',0);
 addParameter(p,'CVSroot','');
@@ -61,7 +62,10 @@ for iftype=1:numel(ftype_cell_unique)
                     end
                     
                     lays_tmp=open_FCV30_file(Filename_tmp{ifi},...
-                        'PathToMemmap',p.Results.PathToMemmap,'load_bar_comp',p.Results.load_bar_comp);
+                        'already_opened_files',p.Results.already_opened_files,...
+                        'PathToMemmap',p.Results.PathToMemmap,...
+                        'load_bar_comp',p.Results.load_bar_comp);
+                    
                     new_layers_tmp=[new_layers_tmp lays_tmp];
                     if ~isempty(p.Results.load_bar_comp)
                         set(p.Results.load_bar_comp.progress_bar, 'Minimum',0, 'Maximum',length(Filename_tmp),'Value',ifi);
@@ -87,6 +91,7 @@ for iftype=1:numel(ftype_cell_unique)
             case 'ASL'
                 
                 new_layers_tmp=open_asl_files(Filename_tmp,...
+                    'already_opened_files',p.Results.already_opened_files,...
                     'PathToMemmap',p.Results.PathToMemmap,...
                     'Frequencies',p.Results.Frequencies,...
                     'load_bar_comp',p.Results.load_bar_comp,...

@@ -487,8 +487,7 @@ if ~isequal(Filename_cell, 0)
                             end
                     end
                 catch
-                    warndlg_perso([],'XML',sprintf('Could not read Config file for file %s\n',fileN),5)
-                    
+                    warndlg_perso([],'XML',sprintf('Could not read Config for file %s\n',fileN),5)     
                 end
             else
                 if strcmpi(ftype,'ek80')

@@ -140,10 +140,9 @@ for ui=1:numel(obj_tot)
                                 ring_size=obj.Rmax*sqrt(obj.(field){idx_snap(uui)}/obj.ValMax);
                                 
                             case 'linear'
-                                ring_size=obj.Rmax*(obj.(field){idx_snap(uui)}/obj.ValMax);
-                                
+                                ring_size=obj.Rmax*(obj.(field){idx_snap(uui)}/obj.ValMax);   
                         end
-                        
+                        %ring_alpha = ring_size/obj.Rmax;                      
                         idx_rings=find(ring_size>0);
                         
                         %'color',col_snap{rem(usnap,length(col_snap))+1}
@@ -166,7 +165,7 @@ for ui=1:numel(obj_tot)
                                 
                         end
                         s_obj=geoscatter(n_ax(usnap),obj.SliceLat{idx_snap(uui)}(idx_rings),obj.SliceLong{idx_snap(uui)}(idx_rings),pi*ring_size(idx_rings).^2,C,'filled');
-                        set(s_obj,'MarkerFaceAlpha',0.6,'MarkerEdgeAlpha',0.6);
+                        set(s_obj,'MarkerFaceAlpha',0.5,'MarkerEdgeAlpha',0.5);
                         set(s_obj,'ButtonDownFcn',{@disp_line_name_callback,hfig,idx_snap(uui)});
                     end
                     if isempty(obj.Long{idx_snap(uui)})

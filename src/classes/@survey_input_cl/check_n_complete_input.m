@@ -67,6 +67,7 @@ for isn=1:length(snapshots)
         
     if ~isfolder(snapshots{isn}.Folder) && isfolder (fullfile(p.Results.data_root,snapshots{isn}.Folder))
         snapshots{isn}.Folder = fullfile(p.Results.data_root,snapshots{isn}.Folder);
+        surv_input_obj.Snapshots{isn}.Folder=snapshots{isn}.Folder;
     elseif ~isfolder(snapshots{isn}.Folder)
         fprintf('Cannot find folder %s \n',snapshots{isn}.Folder);
         valid=0;

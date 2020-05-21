@@ -1,17 +1,16 @@
 function [answers,cancel]=input_dlg_perso(main_figure,tt_str,cell_input,cell_fmt_input,cell_default_value,varargin)
 
-if ~isempty(main_figure)
-    curr_disp=get_esp3_prop('curr_disp');
-    if ~isempty(curr_disp)
-        font=curr_disp.Font;
-        cmap=curr_disp.Cmap;
-    else
-        font=[];
-        cmap=[];
-    end
+curr_disp = get_esp3_prop('curr_disp');
+if ~isempty(curr_disp)
+    font=curr_disp.Font;
+    cmap=curr_disp.Cmap;
 else
     font=[];
     cmap=[];
+end
+
+if isempty(main_figure)
+    main_figure=get_esp3_prop('main_figure');
 end
 
 opt={'Ok' 'Cancel'};

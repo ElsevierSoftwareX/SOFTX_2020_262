@@ -16,22 +16,18 @@ opt=p.Results.opt;
 
 idef=nanmax(p.Results.default_answer,numel(opt));
 
-
-if ~isempty(main_figure)
-    curr_disp=get_esp3_prop('curr_disp');
-    if ~isempty(curr_disp)
-        font=curr_disp.Font;
-        cmap=curr_disp.Cmap;
-    else
-        font=[];
-        cmap=[];
-    end
+curr_disp = get_esp3_prop('curr_disp');
+if ~isempty(curr_disp)
+    font=curr_disp.Font;
+    cmap=curr_disp.Cmap;
 else
     font=[];
     cmap=[];
 end
 
-
+if isempty(main_figure)
+    main_figure=get_esp3_prop('main_figure');
+end
 
 s_str=numel(str_quest);
 nb_lines=ceil(s_str*8/400);

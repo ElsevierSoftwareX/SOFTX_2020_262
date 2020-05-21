@@ -15,6 +15,7 @@ end
 
 addRequired(p,'Filename',@(x) ischar(x)||iscell(x));
 addParameter(p,'PathToMemmap',def_path_m,@ischar);
+addParameter(p,'already_opened_files',{},@iscell);
 addParameter(p,'Frequencies',[],@isnumeric);
 addParameter(p,'load_bar_comp',[]);
 addParameter(p,'force_open',0);
@@ -51,7 +52,7 @@ if p.Results.force_open==0
     
     %str_choice={'hours' 'days' 'weeks'};
     str_choice={'hours' 'days'};
-    open_by=question_dialog_fig([],'File combination','Do you want to group files by: ','opt',str_choice);
+    open_by=question_dialog_fig([],'File combination','Do you want to group files by: ','opt',str_choice,'timeout',5);
     
     if isempty(open_by)
         new_layers=[];
@@ -82,7 +83,7 @@ if p.Results.force_open==0
     
     dates_to_load_str=cellfun(@(x) datestr(x,t_fmt),(num2cell(dates_to_load)),'un',0);
     
-     [idx_out,val] = listdlg_perso([],sprintf('Choose %s(s) to load',open_by),dates_to_load_str,'init_val',idx_to_load_selected);
+     [idx_out,val] = listdlg_perso([],sprintf('Choose %s(s) to load',open_by),dates_to_load_str,'init_val',idx_to_load_selected,'timeout',5);
     if val==0
         new_layers=[];
         return;
@@ -96,15 +97,23 @@ if p.Results.force_open==0
     end
     
     Filename_out=files_out(idx_to_open);
-    str_disp=sprintf('Opening %.0f %s(s), that is %d files',length(idx_out),open_by,length(idx_to_open));
     
-    if ~isempty(p.Results.load_bar_comp)
-        p.Results.load_bar_comp.progress_bar.setText(str_disp);
-    else
-        disp(str_disp)
-    end
 else
     Filename_out=Filename;
+end
+
+Filename_out=setdiff(Filename_out,p.Results.already_opened_files);
+
+if isempty(Filename_out)
+    new_layers=[];
+    return;
+end
+str_disp=sprintf('Opening %d files',length(Filename_out));
+
+if ~isempty(p.Results.load_bar_comp)
+    p.Results.load_bar_comp.progress_bar.setText(str_disp);
+else
+    disp(str_disp)
 end
 
 [pathname,~]=fileparts(Filename_out{end});

@@ -52,8 +52,8 @@ inf_h=inf_h_tmp+inf_h;
 
 pix_pos=getpixelposition(main_figure);
 
-opt_panel=uitabgroup(main_figure,'Units','pixels','Position',[0 pix_pos(4)-pan_height 0.4*pix_pos(3) pan_height]);
-algo_panel=uitabgroup(main_figure,'Units','pixels','Position',[0.4*pix_pos(3) pix_pos(4)-pan_height 0.6*pix_pos(3) pan_height]);
+opt_panel=uitabgroup(main_figure,'Units','pixels','Position',[0 pix_pos(4)-pan_height 0.5*pix_pos(3) pan_height]);
+algo_panel=uitabgroup(main_figure,'Units','pixels','Position',[0.5*pix_pos(3) pix_pos(4)-pan_height 0.5*pix_pos(3) pan_height]);
 
 pt_int.enterFcn =  @(figHandle, currentPoint)...
 replace_interaction(figHandle,'interaction','WindowButtonMotionFcn','id',1);

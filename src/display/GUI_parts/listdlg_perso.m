@@ -13,18 +13,17 @@ addParameter(p,'timeout',[],@isnumeric);
 parse(p,main_figure,tt_str,str_list,varargin{:});
 
 
-if ~isempty(main_figure)
-    curr_disp=get_esp3_prop('curr_disp');
-    if ~isempty(curr_disp)
-        font=curr_disp.Font;
+curr_disp = get_esp3_prop('curr_disp');
+if ~isempty(curr_disp)
+    font=curr_disp.Font;
     cmap=curr_disp.Cmap;
-    else
-       font=[];
-       cmap=[];
-    end
 else
-           font=[];
-       cmap=[];
+    font=[];
+    cmap=[];
+end
+
+if isempty(main_figure)
+    main_figure=get_esp3_prop('main_figure');
 end
 
 opt={'OK' 'Cancel'};

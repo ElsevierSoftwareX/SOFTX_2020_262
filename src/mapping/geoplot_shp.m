@@ -2,9 +2,9 @@ function h_in=geoplot_shp(ax,folders,h_in)
 shape_f={};
 for ifold=1:numel(folders)
     if isfolder(folders{ifold})
-    tmp=dir(fullfile(folders{ifold},'echomaps','*.shp'));
-    tmp([tmp(:).isdir]) =[];
-    shape_f=union(shape_f,cellfun(@(x) fullfile(folders{ifold},'echomaps',x),{tmp(:).name},'un',0));
+        tmp=dir(fullfile(folders{ifold},'echomaps','*.shp'));
+        tmp([tmp(:).isdir]) =[];
+        shape_f=union(shape_f,cellfun(@(x) fullfile(folders{ifold},'echomaps',x),{tmp(:).name},'un',0));
     elseif isfile(folders{ifold})
         shape_f=union(shape_f,folders{ifold});
     end
@@ -74,31 +74,31 @@ for uishp=1:numel(geo_data_shp)
             
             switch type
                 
-%                 case 'stratum'
-%                     if isfield(geo_data_shp{uishp}(i_feat),'Stratum')
-%                         if isnumeric(geo_data_shp{uishp}(i_feat).Stratum)
-%                             str=num2str(geo_data_shp{uishp}(i_feat).Stratum);
-%                         else
-%                             str=geo_data_shp{uishp}(i_feat).Stratum;
-%                         end
-%                         temp_txt=text(ax,nanmean(bbox(:,2)),nanmean(bbox(:,1)),str,...
-%                             'Fontsize',12,'Fontweight','bold','Interpreter','None','VerticalAlignment','bottom','Clipping','on','Color',color);
-%                     end
-                case 'transects'
-                    if isfield(geo_data_shp{uishp}(i_feat),'Transect')
-                        if isnumeric(geo_data_shp{uishp}(i_feat).Transect)
-                            str=num2str(geo_data_shp{uishp}(i_feat).Transect);
+                case 'stratum'
+                    if isfield(geo_data_shp{uishp}(i_feat),'Stratum')
+                        if isnumeric(geo_data_shp{uishp}(i_feat).Stratum)
+                            str=num2str(geo_data_shp{uishp}(i_feat).Stratum);
                         else
-                            str=geo_data_shp{uishp}(i_feat).Transect;
+                            str=geo_data_shp{uishp}(i_feat).Stratum;
                         end
                         temp_txt=text(ax,nanmean(bbox(:,2)),nanmean(bbox(:,1)),str,...
-                            'Fontsize',6,'Fontweight','normal','Interpreter','None','VerticalAlignment','bottom','Clipping','on','Color',color,'tag',new_shp_f{uishp});
+                            'Fontsize',10,'Fontweight','bold','Interpreter','None','VerticalAlignment','bottom','Clipping','on','Color',color,'tag',new_shp_f{uishp});
                     end
+                case 'transects'
+                    %                     if isfield(geo_data_shp{uishp}(i_feat),'Transect')
+                    %                         if isnumeric(geo_data_shp{uishp}(i_feat).Transect)
+                    %                             str=num2str(geo_data_shp{uishp}(i_feat).Transect);
+                    %                         else
+                    %                             str=geo_data_shp{uishp}(i_feat).Transect;
+                    %                         end
+                    %                         temp_txt=text(ax,nanmean(bbox(:,2)),nanmean(bbox(:,1)),str,...
+                    %                             'Fontsize',6,'Fontweight','normal','Interpreter','None','VerticalAlignment','bottom','Clipping','on','Color',color,'tag',new_shp_f{uishp});
+                    %end
                 otherwise
                     temp_txt=[];
             end
-%                         
-        h_in=[h_in temp_txt];
+            %
+            h_in=[h_in temp_txt];
         catch err
             fprintf('Error displaying shapefile %s \n',new_shp_f{uishp});
             print_errors_and_warnings(1,'error',err);

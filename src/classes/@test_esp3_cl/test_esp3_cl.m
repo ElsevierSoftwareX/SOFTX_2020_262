@@ -43,6 +43,9 @@ classdef test_esp3_cl < matlab.unittest.TestCase
             idx_proc=unique(idx_proc);
             file_list=file_list(idx_proc);
             
+            fprintf(1,'Openning files: \n')
+            cellfun(@(x) fprintf(1,'%s\n',x),file_list);
+            
             output=open_file([],[],fullfile(file_path,file_list),testCase.esp3_obj.main_figure);
             
             
