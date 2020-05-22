@@ -2,7 +2,7 @@ function [start_time,end_time] = start_end_time_from_raw_file(filename)
 
 %% parameters
 % block size for reading binary data in file
-BLCK_SIZE = 1e7;
+BLCK_SIZE = 1e6;
 
 %% initialize results
 start_time = 0;
@@ -26,7 +26,7 @@ while ~feof(fid)&&~found_start
     str_read = fread(fid,BLCK_SIZE,'*char')';
     
     % check if tag is in it
-    idx_dg = union(strfind(str_read,'RAW0'),strfind(str_read,'RAW3'));
+    idx_dg = unique([strfind(str_read,'CON0') strfind(str_read,'XML0') strfind(str_read,'RAW0') strfind(str_read,'RAW3') strfind(str_read,'NME0')]);
     
     for ui=1:numel(idx_dg)
         % rewind till beggining of data packet
@@ -66,7 +66,7 @@ while pos >0&&~found_end
     pos = ftell(fid);    
     str_read = fread(fid,BLCK_SIZE,'*char')';    
     % check if tag is in it
-    idx_dg = union(strfind(str_read,'RAW0'),strfind(str_read,'RAW3'));
+    idx_dg = unique([strfind(str_read,'CON0') strfind(str_read,'XML0') strfind(str_read,'RAW0') strfind(str_read,'RAW3') strfind(str_read,'NME0')]);
     
     for ui=numel(idx_dg):-1:1
         % rewind till beggining of data packet

@@ -12,13 +12,7 @@ end
 
 size_max = get(0,'ScreenSize');
 
-if isdeployed()
-    style='modal';
-else
-    style='normal';
-end
-
-db_fig=new_echo_figure(main_figure,'WindowStyle',style,'Resize','on',...
+db_fig=new_echo_figure(main_figure,'Resize','on',...
     'Position',[0 0 size_max(3)*0.95 size_max(4)*0.8],'Name','Database loading tool','tag','ac_db_tool');
 
 main_menu_db.m_files = uimenu(db_fig,'Label','File(s)');

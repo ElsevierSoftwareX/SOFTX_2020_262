@@ -85,19 +85,19 @@ for uishp=1:numel(geo_data_shp)
                             'Fontsize',10,'Fontweight','bold','Interpreter','None','VerticalAlignment','bottom','Clipping','on','Color',color,'tag',new_shp_f{uishp});
                     end
                 case 'transects'
-                    %                     if isfield(geo_data_shp{uishp}(i_feat),'Transect')
-                    %                         if isnumeric(geo_data_shp{uishp}(i_feat).Transect)
-                    %                             str=num2str(geo_data_shp{uishp}(i_feat).Transect);
-                    %                         else
-                    %                             str=geo_data_shp{uishp}(i_feat).Transect;
-                    %                         end
-                    %                         temp_txt=text(ax,nanmean(bbox(:,2)),nanmean(bbox(:,1)),str,...
-                    %                             'Fontsize',6,'Fontweight','normal','Interpreter','None','VerticalAlignment','bottom','Clipping','on','Color',color,'tag',new_shp_f{uishp});
-                    %end
+                    if isfield(geo_data_shp{uishp}(i_feat),'Transect')
+                        if isnumeric(geo_data_shp{uishp}(i_feat).Transect)
+                            str=num2str(geo_data_shp{uishp}(i_feat).Transect);
+                        else
+                            str=geo_data_shp{uishp}(i_feat).Transect;
+                        end
+                        temp_txt=text(ax,nanmean(bbox(:,2)),nanmean(bbox(:,1)),str,...
+                            'Fontsize',6,'Fontweight','normal','Interpreter','None','VerticalAlignment','bottom','Clipping','on','Color',color,'tag',new_shp_f{uishp});
+                    end
                 otherwise
                     temp_txt=[];
             end
-            %
+            
             h_in=[h_in temp_txt];
         catch err
             fprintf('Error displaying shapefile %s \n',new_shp_f{uishp});
