@@ -57,7 +57,6 @@ for iax=1:length(echo_ax_tot)
     
     idx_r=echo_im.UserData.Idx_r(:);
     
-    max_val=intmax('uint8');
     prec='uint8';
         
     switch echo_ax_tot(iax).UserData.geometry_y
@@ -92,27 +91,21 @@ for iax=1:length(echo_ax_tot)
     if update_bt>0
         
         idxBad=find(trans_obj{iax}.Bottom.Tag==0);
-        idx_bad_red=find(ismember(idx_pings,idxBad));
-        
-        data_temp=zeros(size(data),prec);
-        data_temp(:,idx_bad_red)=max_val;
-        alpha_map_bt=zeros(size(data_temp),'single');
+        idx_bad_red=(ismember(idx_pings,idxBad));
+       
+
+        alpha_map_bt=zeros(size(data),prec);
         alpha_map_bt(:,idx_bad_red)=3;
         
         [mask_sp,~]=trans_obj{iax}.Data.get_subdatamat(idx_r,idx_pings,'field','spikesmask');
         
-        if~isempty(mask_sp)&&all(size(mask_sp)==size(data_temp))
-            data_temp(mask_sp>0)=max_val;
+        if~isempty(mask_sp)&&all(size(mask_sp)==size(data))
             alpha_map_bt(mask_sp>0)=5;
         end
         
+
+        set(echo_im_bt,'XData',xdata_ori,'YData',ydata,'CData',alpha_map_bt,'ZData',alpha_map_bt,'AlphaData',single(alpha_map_bt));
         
-        switch echo_im_bt.Type
-            case  'image'
-                set(echo_im_bt,'XData',xdata_ori,'YData',ydata,'CData',data_temp,'AlphaData',(alpha_map_bt));
-            case 'surface'
-                set(echo_im_bt,'XData',xdata_ori,'YData',ydata,'CData',data_temp,'ZData',zeros(size(data_temp),'uint8'),'AlphaData',(alpha_map_bt));
-        end
         
     end
     

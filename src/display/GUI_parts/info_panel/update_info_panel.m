@@ -18,18 +18,18 @@ if isempty(main_figure)||~ishandle(main_figure)
 end
 
 if ~isdeployed()&&DEBUG
-   disp('Update info panel'); 
-   disp(datestr(now,'HH:MM:SS.FFF'));
+    disp('Update info panel');
+    disp(datestr(now,'HH:MM:SS.FFF'));
 end
 
 try
     layer=get_current_layer();
-
+    
     echo_tab_panel=getappdata(main_figure,'echo_tab_panel');
     
     axes_panel_comp=getappdata(main_figure,'Axes_panel');
     bool = ~isa(axes_panel_comp.axes_panel,'matlab.ui.Figure') && ~strcmpi(echo_tab_panel.SelectedTab.Tag,'axes_panel');
-    if isempty(axes_panel_comp)|| bool ||isempty(layer)||~isvalid(layer)        
+    if isempty(axes_panel_comp)|| bool ||isempty(layer)||~isvalid(layer)
         %pause(dpause);
         return;
     end
@@ -47,7 +47,7 @@ try
         %pause(dpause);
         return;
     end
-
+    
     Range_trans=trans_obj.get_transceiver_range();
     Bottom=trans_obj.Bottom;
     Time_trans=trans_obj.Time;
@@ -98,12 +98,9 @@ try
     
     
     xdata_red=linspace(x_lim(1),x_lim(2),nb_pings_red);
-    switch axes_panel_comp.main_echo.Type
-        case 'image'
-            dxi=0;
-        case 'surface'
-            dxi=+1/2;
-    end
+    
+    dxi=+1/2;
+    
     xdata_red=xdata_red+dxi;
     ydata_red=linspace(y_lim(1),y_lim(2),nb_samples_red);
     idx_pings=ceil(xdata(idx_x_keep));
@@ -241,7 +238,7 @@ try
             end
         end
         
-
+        
         if Depth_corr(idx_ping)~=0
             xy_string=sprintf('Range: %.2fm Range Corr: %.2fm\n  Sample: %.0f Ping #:%.0f of  %.0f',Range_trans(idx_r),Range_trans(idx_r)+Depth_corr(idx_ping),Samples(idx_r),Number(idx_ping),Number(end));
         else
@@ -276,7 +273,7 @@ try
         
         iFile=trans_obj.Data.FileId(idx_ping);
         [~,file_curr,~]=fileparts(layer.Filename{iFile});
-
+        
         summary_str=sprintf('%s. Mode: %s Freq: %.0f kHz Power: %.0fW Pulse: %.3fms',file_curr,trans_obj.Mode,curr_disp.Freq/1000,...
             trans_obj.get_params_value('TransmitPower',idx_ping),...
             trans_obj.get_params_value('PulseLength',idx_ping)*1e3);
@@ -316,7 +313,7 @@ try
         end
         
         set(axv_curr,'value',idx_r);
-        if ~isnan(bot_val) 
+        if ~isnan(bot_val)
             set(axv_bot,'value',bot_val,'Label',str);
         end
         

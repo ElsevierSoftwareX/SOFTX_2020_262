@@ -204,8 +204,9 @@ classdef esp3_cl < handle
                 case 'off'
                     alpha_bt=0;
                 case 'on'
-                    alpha_bt=0.7;
+                    alpha_bt=0.8;
             end
+            
             switch obj.curr_disp.DispReg
                 case 'off'
                     alpha_reg=0;

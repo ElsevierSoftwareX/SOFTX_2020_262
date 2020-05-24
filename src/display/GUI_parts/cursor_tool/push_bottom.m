@@ -1,4 +1,4 @@
-    %% push_bottom.m
+%% push_bottom.m
 %
 % TODO: write short description of function
 %
@@ -67,16 +67,13 @@ end
 
 ah=axes_panel_comp.main_axes;
 echo=axes_panel_comp.main_echo;
-switch echo.Type
-    case 'surface'
-           di=-1/2;
-    case 'image'
-            di=-1/2;
-end
+
+di=-1/2;
+
 clear_lines(ah);
 
 [cmap,col_ax,col_lab,col_grid,col_bot,col_txt,line_col]=init_cmap(curr_disp.Cmap);
- 
+
 
 [trans_obj,idx_freq]=layer.get_trans(curr_disp);
 
@@ -152,30 +149,30 @@ hp=plot(ah,xdata,yinit-1/2,'color',line_col,'linewidth',1,'Tag','bottom_temp');
         end
         samples_spline=[samples_ori(p0) sample_new samples_ori(p1)];
         pings=p0:p1;
-
+        
         samples_new = round(spline(pings_spline,samples_spline,pings));
         samples_new(samples_new>nb_samples)=nb_samples;
         samples_new(samples_new<=0)=1;
         
         %delete(circ);
-       
-         if isvalid(circ)
-                set(circ,'XData',circ.XData-nanmean(circ.XData)+ping_new,...
-                    'YData',circ.YData-nanmean(circ.YData)+sample_new);
+        
+        if isvalid(circ)
+            set(circ,'XData',circ.XData-nanmean(circ.XData)+ping_new,...
+                'YData',circ.YData-nanmean(circ.YData)+sample_new);
         else
-           circ=plot(ah,xt,yt,'color','k','linewidth',1,'linestyle','--');
+            circ=plot(ah,xt,yt,'color','k','linewidth',1,'linestyle','--');
         end
         
         switch position
             case 'above'
-                if sample_new<samples_ori(ping_new)                    
+                if sample_new<samples_ori(ping_new)
                     samples_ori(pings)=samples_new;
                     yinit(pings)=samples_new;
                 else
                     return;
-                end                
+                end
             case 'below'
-                if sample_new>samples_ori(ping_new)                   
+                if sample_new>samples_ori(ping_new)
                     samples_ori(pings)=samples_new;
                     yinit(pings)=samples_new;
                 else
@@ -190,8 +187,8 @@ hp=plot(ah,xdata,yinit-1/2,'color',line_col,'linewidth',1,'Tag','bottom_temp');
         end
     end
 
-   
-    
+
+
 
     function [x_f, y_f]=check_xy()
         xinit(isnan(yinit))=[];
@@ -199,7 +196,7 @@ hp=plot(ah,xdata,yinit-1/2,'color',line_col,'linewidth',1,'Tag','bottom_temp');
         
         x_rem=xinit>xdata(end)|xinit<xdata(1);
         y_rem=yinit>ydata(end)|yinit<ydata(1);
-
+        
         xinit(x_rem|y_rem)=[];
         yinit(x_rem|y_rem)=[];
         
@@ -211,33 +208,33 @@ hp=plot(ah,xdata,yinit-1/2,'color',line_col,'linewidth',1,'Tag','bottom_temp');
         delete(circ);
         delete(hp);
         
-       [x_f,y_f]=check_xy();
-
-       bot.Sample_idx(x_f)=y_f;
-       end_bottom_edit();
+        [x_f,y_f]=check_xy();
+        
+        bot.Sample_idx(x_f)=y_f;
+        end_bottom_edit();
         
     end
 
 
-   
+
 
 
     function end_bottom_edit()
         replace_interaction(main_figure,'interaction','WindowButtonMotionFcn','id',2);
         replace_interaction(main_figure,'interaction','WindowButtonUpFcn','id',1);
         trans_obj.Bottom=bot;
-        curr_disp.Bot_changed_flag=1; 
+        curr_disp.Bot_changed_flag=1;
         
         
         
         add_undo_bottom_action(main_figure,trans_obj,old_bot,bot);
-
+        
         display_bottom(main_figure);
-        set_alpha_map(main_figure,'update_bt',0);  
+        set_alpha_map(main_figure,'update_bt',0);
         update_info_panel([],[],1);
     end
 
 
 
-    
+
 end

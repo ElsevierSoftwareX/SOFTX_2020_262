@@ -156,16 +156,11 @@ alpha_prop_bt='flat';
 
 usrdata=init_echo_usrdata();
 
-switch curr_disp.EchoType
-    case 'surface'
-        axes_panel_comp.main_echo=pcolor(axes_panel_comp.main_axes,echo_init);
-        axes_panel_comp.bad_transmits=pcolor(axes_panel_comp.main_axes,zeros(size(echo_init),'uint8'));
-        set(axes_panel_comp.main_echo,'Facealpha',alpha_prop,'FaceColor',alpha_prop,'LineStyle','none','tag','echo','AlphaDataMapping','direct','UserData',usrdata); 
-        set(axes_panel_comp.bad_transmits,'Facealpha',alpha_prop_bt,'FaceColor',alpha_prop_bt,'LineStyle','none','tag','bad_transmits','AlphaDataMapping','direct');
-    case 'image'
-        axes_panel_comp.main_echo=image(1:size(echo_init,1),1:size(echo_init,2),uint8(echo_init),'parent',axes_panel_comp.main_axes,'tag','echo','CDataMapping','scaled','AlphaData',0,'AlphaDataMapping','direct','UserData',usrdata);
-        axes_panel_comp.bad_transmits=image(1:size(echo_init,1),1:size(echo_init,2),zeros(size(echo_init),'uint8'),'parent',axes_panel_comp.main_axes,'AlphaData',0,'tag','bad_transmits','AlphaDataMapping','direct');
-end
+axes_panel_comp.main_echo=pcolor(axes_panel_comp.main_axes,echo_init);
+axes_panel_comp.bad_transmits=pcolor(axes_panel_comp.main_axes,zeros(size(echo_init),'uint8'));
+set(axes_panel_comp.main_echo,'Facealpha',alpha_prop,'FaceColor',alpha_prop,'LineStyle','none','tag','echo','AlphaDataMapping','direct','UserData',usrdata);
+set(axes_panel_comp.bad_transmits,'Facealpha',alpha_prop_bt,'FaceColor','k','LineStyle','none','tag','bad_transmits','AlphaDataMapping','direct');
+
 
 pt_int.enterFcn =  @(figHandle, currentPoint)...
 replace_interaction(figHandle,'interaction','WindowButtonMotionFcn','id',1,'interaction_fcn',{@update_info_panel,0});

@@ -145,10 +145,6 @@ uimenu(main_menu.map,'Label','Map survey result files','Callback',{@map_survey_c
 
 main_menu.display = uimenu(main_figure,'Label','Display','Tag','menutags');
 
-m_graphics=uimenu(main_menu.display,'Label','Graphics Type');
-main_menu.disp_slow=uimenu(m_graphics,'Label','Slow and pretty','Callback',{@change_echotype_callback,main_figure},'checked',strcmp(curr_disp.EchoType,'surface'),'tag','surface');
-main_menu.disp_fast=uimenu(m_graphics,'Label','Fast and ugly','Callback',{@change_echotype_callback,main_figure},'checked',strcmp(curr_disp.EchoType,'image'),'tag','image');
-
 m_gpu=uimenu(main_menu.display,'Label','GPU Computation');
 main_menu.gpu_enabled=uimenu(m_gpu,'Label','Enabled','Callback',{@change_gpu_comp_callback,main_figure},'checked',curr_disp.GPU_computation>0,'tag','enabled');
 main_menu.gpu_disabled=uimenu(m_gpu,'Label','Disabled','Callback',{@change_gpu_comp_callback,main_figure},'checked',curr_disp.GPU_computation==0,'tag','disabled');
@@ -340,12 +336,7 @@ end
 
 end
 
-function change_echotype_callback(src,~,main_figure)
-curr_disp=get_esp3_prop('curr_disp');
 
-curr_disp.EchoType=src.Tag;
-
-end
 function display_map_callback(~,~,main_figure)
 
 undock_tab_callback([],[],main_figure,'map','new_fig');

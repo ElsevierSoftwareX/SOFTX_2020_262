@@ -13,7 +13,7 @@ else
     ls=[];
 end
 
-ls=[ls addlistener(curr_disp_obj,'EchoType','PostSet',@(src,envdata)listenEchoType(src,envdata,main_figure))];
+%ls=[ls addlistener(curr_disp_obj,'EchoType','PostSet',@(src,envdata)listenEchoType(src,envdata,main_figure))];
 ls=[ls addlistener(curr_disp_obj,'EchoQuality','PostSet',@(src,envdata)listenEchoType(src,envdata,main_figure))];
 ls=[ls addlistener(curr_disp_obj,'DispBottom','PostSet',@(src,envdata)listenDispBot(src,envdata,main_figure))];
 ls=[ls addlistener(curr_disp_obj,'DispUnderBottom','PostSet',@(src,envdata)listenDispUnderBot(src,envdata,main_figure))];

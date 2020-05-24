@@ -47,7 +47,6 @@ classdef curr_state_disp_cl <handle
         R_disp=[1 inf];
         V_axes_ratio=0.05;
         H_axes_ratio=0.15;
-        EchoType='surface';
         EchoQuality='high';
     end
     
@@ -93,7 +92,6 @@ classdef curr_state_disp_cl <handle
             addParameter(p,'UnderBotTransparency',90,@isnumeric);
             addParameter(p,'V_axes_ratio',0.05,@isnumeric);
             addParameter(p,'H_axes_ratio',0.15,@isnumeric);
-            addParameter(p,'EchoType','surface',@ischar);
             addParameter(p,'EchoQuality','high',@ischar);
             parse(p,varargin{:});
             results=p.Results;

@@ -4,5 +4,6 @@ if ~isempty(main_figure)
     if ~isempty(load_bar_comp)
         load_bar_comp.progress_bar.setText(disp_str);
     end
+else
+    disp(disp_str);
 end
-disp(disp_str);

@@ -90,7 +90,6 @@ for iax=1:length(echo_ax_tot)
         struct_temp.Freq=layer.Frequencies(strcmpi(layer.ChannelID,cids{iax}));
         struct_temp.DispSpikes=curr_disp.DispSpikes;
         struct_temp.EchoQuality=curr_disp.EchoQuality;
-        struct_temp.EchoType=curr_disp.EchoType;
         struct_temp.Disp_dy_dx=curr_disp.Disp_dy_dx;
         [dr,dp,upped(iax)]=layer.display_layer(struct_temp,curr_disp.Fieldname,echo_ax,echo_im,x,y,off_disp,p.Results.force_update);  
     end

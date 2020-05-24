@@ -54,15 +54,9 @@ for iax=1:length(main_axes_tot)
     if~isempty(idx_bottom)&&~isempty(xdata)&&~isempty(ydata)
         x=linspace(xdata(1),xdata(end),length(xdata));
         
-       
-        if ~strcmpi(main_axes_tot(iax).UserData.geometry_y,'depth')
-            switch echo_im_tot(iax).Type
-                case 'surface'
-                    di=-1/2;
-                case 'image'
-                    di=-1/2;
-            end
-            
+        
+        if ~strcmpi(main_axes_tot(iax).UserData.geometry_y,'depth')            
+            di=-1/2;           
             ydata=trans_obj.get_transceiver_samples()+di;
             y=nan(size(x));
             y(~isnan(idx_bottom))=ydata(idx_bottom(~isnan(idx_bottom)));

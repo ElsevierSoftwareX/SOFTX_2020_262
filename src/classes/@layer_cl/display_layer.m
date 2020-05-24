@@ -105,7 +105,7 @@ idx_r_red_ori=(idx_r(1:dr:end));
 idx_ping_red_ori=idx_ping(1):dp:idx_ping(end);
 
 if force_update==0
-    update_echo=get_update_echo(echo_h,curr_disp.EchoType,layer.Unique_ID,layer.ChannelID{idx_t},fieldname,idx_r_red_ori,idx_ping_red_ori,dr,dp);
+    update_echo=get_update_echo(echo_h,layer.Unique_ID,layer.ChannelID{idx_t},fieldname,idx_r_red_ori,idx_ping_red_ori,dr,dp);
 else
     update_echo=1;
 end
@@ -139,7 +139,7 @@ if update_echo>0
         fprintf('Pings to load %d to %d\n',idx_ping_red(1),idx_ping_red(end));
         fprintf('Pings to display %d to %d\n',idx_ping_red_ori(1),idx_ping_red_ori(end));
     end
-    if ~strcmpi(echo_h.Type,'image')&&strcmp(ax.UserData.geometry_y,'depth')
+    if strcmp(ax.UserData.geometry_y,'depth')
         if off_disp>0
             depth_trans=trans_obj.get_transducer_depth(idx_ping_red);
         else
@@ -167,7 +167,7 @@ if update_echo>0
             case 'svdenoised'
                 fieldname='sv';
         end
-        if ~strcmpi(echo_h.Type,'image')&&strcmp(ax.UserData.geometry_y,'depth')
+        if strcmp(ax.UserData.geometry_y,'depth')
             [x_data_disp,y_data_disp,data,sc]=trans_obj.apply_line_depth(fieldname,idx_r_red,idx_ping_red);
         end
     end
@@ -196,19 +196,14 @@ if update_echo>0
     usrdata.Fieldname=fieldname;
     usrdata.Layer_ID=layer.Unique_ID;
     
-    switch echo_h.Type
-        case  'image'
-            
-            set(echo_h,'XData',x_data_disp,'YData',y_data_disp,'CData',data_mat,'AlphaData',1,'UserData',usrdata);%,'UserData',data_mat
-            x_data_disp=x_data_disp-1/2;
-        case 'surface'
-            switch ax.UserData.geometry_y
-                case 'samples'
-                    y_data_disp=y_data_disp-1/2;    
-            end
-            x_data_disp=x_data_disp-1/2;
-            set(echo_h,'XData',x_data_disp,'YData',y_data_disp,'CData',data_mat,'ZData',zeros(size(data_mat)),'AlphaData',ones(size(data_mat)),'UserData',usrdata);%,'UserData',data_mat        
+    
+    switch ax.UserData.geometry_y
+        case 'samples'
+            y_data_disp=y_data_disp-1/2;
     end
+    x_data_disp=x_data_disp-1/2;
+    set(echo_h,'XData',x_data_disp,'YData',y_data_disp,'CData',data_mat,'ZData',data_mat,'AlphaData',ones(size(data_mat)),'UserData',usrdata);%,'UserData',data_mat
+    
     up=1;
 else
     if ~isdeployed()
@@ -216,10 +211,7 @@ else
     end
     x_data_disp=echo_h.XData;
     y_data_disp=echo_h.YData;
-    switch echo_h.Type
-        case  'image'
-            x_data_disp=x_data_disp-1/2;
-    end
+
 end
 
 idx_p=echo_h.UserData.Idx_pings>=idx_ping_red_ori(1)&echo_h.UserData.Idx_pings<=idx_ping_red_ori(end);

@@ -44,13 +44,10 @@ for iax=1:length(main_axes_tot)
     
     main_axes=main_axes_tot(iax);
     echo_in=echo_im_tot(iax);
-
-    switch echo_in.Type
-        case 'surface'
-            di=1/2;
-        case 'image'
-            di=1/2;
-    end
+    
+    
+    di=1/2;
+    
     
     active_regs=trans.find_regions_Unique_ID(curr_disp.Active_reg_ID);
     

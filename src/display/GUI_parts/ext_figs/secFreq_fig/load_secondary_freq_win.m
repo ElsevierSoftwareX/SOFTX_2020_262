@@ -83,15 +83,10 @@ secondary_freq.names=gobjects(1,nb_chan);
 secondary_freq.link_props_side_ax_internal=[];
 secondary_freq.link_props_top_ax_internal=[];
 
-if curr_disp.DispSecFreqsWithOffset||strcmpi(curr_disp.EchoType,'surface')
-    EchoType='surface';
-    user_data.geometry_y='depth';
-    y_grid_disp='on';
-else
-    EchoType='image';
-    user_data.geometry_y='samples';
-    y_grid_disp='off';
-end
+
+EchoType='surface';
+user_data.geometry_y='depth';
+y_grid_disp='on';
 
 
 disp_chan=ismember(layer.ChannelID,curr_disp.SecChannelIDs);
@@ -163,16 +158,11 @@ for i=1:nb_chan
     
     usrdata=init_echo_usrdata();
     
-    switch EchoType
-        case 'image'
-            secondary_freq.echoes(i)=image(echo_init,'Parent',secondary_freq.axes(i),'CDataMapping','scaled','Tag',curr_disp.SecChannelIDs{i},'AlphaDataMapping','direct','UserData',usrdata);
-            secondary_freq.echoes_bt(i)=image(echo_init,'Parent',secondary_freq.axes(i),'Tag','bad_transmits','AlphaData',0,'UserData',curr_disp.SecChannelIDs{i},'AlphaDataMapping','direct');
-        case 'surface'
-            secondary_freq.echoes(i)=pcolor(secondary_freq.axes(i),echo_init);
-            set(secondary_freq.echoes(i),'Facealpha',alpha_prop,'FaceColor',alpha_prop,'LineStyle','none','tag',curr_disp.SecChannelIDs{i},'AlphaDataMapping','direct','UserData',usrdata);
-            secondary_freq.echoes_bt(i)=pcolor(secondary_freq.axes(i),zeros(size(echo_init),'uint8'));
-            set(secondary_freq.echoes_bt(i),'Facealpha',alpha_prop_bt,'FaceColor',alpha_prop_bt,'LineStyle','none','tag','bad_transmits','AlphaDataMapping','direct');
-    end
+    
+    secondary_freq.echoes(i)=pcolor(secondary_freq.axes(i),echo_init);
+    set(secondary_freq.echoes(i),'Facealpha',alpha_prop,'FaceColor',alpha_prop,'LineStyle','none','tag',curr_disp.SecChannelIDs{i},'AlphaDataMapping','direct','UserData',usrdata);
+    secondary_freq.echoes_bt(i)=pcolor(secondary_freq.axes(i),zeros(size(echo_init),'uint8'));
+    set(secondary_freq.echoes_bt(i),'Facealpha',alpha_prop_bt,'FaceColor','k','LineStyle','none','tag','bad_transmits','AlphaDataMapping','direct');
     
     secondary_freq.names(i)=text(secondary_freq.axes(i),10,15,sprintf('%.0fkHz',curr_disp.SecFreqs(i)/1e3),'Units','Pixel','Fontweight','Bold','Fontsize',16,'ButtonDownFcn',{@change_cid,main_figure},'Tag',curr_disp.SecChannelIDs{i},'UserData',curr_disp.SecChannelIDs{i});
     secondary_freq.bottom_plots(i)=plot(secondary_freq.axes(i),nan,nan,'tag','bottom');

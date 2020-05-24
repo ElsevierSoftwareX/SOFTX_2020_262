@@ -63,12 +63,9 @@ end
 
 ah=axes_panel_comp.main_axes;
 echo=axes_panel_comp.main_echo;
-switch echo.Type
-    case 'surface'
-           di=1/2;
-    case 'image'
-            di=-1/2;
-end
+
+di=1/2;
+
 
 clear_lines(ah);
 

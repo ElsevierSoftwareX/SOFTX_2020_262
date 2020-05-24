@@ -3,8 +3,9 @@ function update_cmap(main_figure)
 axes_panel_comp=getappdata(main_figure,'Axes_panel');
 
 curr_disp=get_esp3_prop('curr_disp');
+layer=get_current_layer();
 mini_axes_comp=getappdata(main_figure,'Mini_axes');
-st_tracks_tab_comp=getappdata(main_figure,'ST_Tracks');
+%st_tracks_tab_comp=getappdata(main_figure,'ST_Tracks');
 echo_int_tab_comp=getappdata(main_figure,'EchoInt_tab');
 
 if isempty(axes_panel_comp)
@@ -14,6 +15,12 @@ end
 
 set(axes_panel_comp.main_axes,'Color',col_ax,...
     'GridColor',col_grid,'MinorGridColor',col_grid,'XColor',col_lab,'YColor',col_lab);
+
+[~,~,echo_im_bt,~,~,~]=get_axis_from_cids(main_figure,union({'main' 'mini'}, layer.ChannelID));
+
+for iim=1:numel(echo_im_bt)
+    set(echo_im_bt(iim),'FaceColor',col_lab);
+end
 
 set(axes_panel_comp.bottom_plot,'Color',col_bot);
     track_h=findobj(axes_panel_comp.main_axes,'tag','track');

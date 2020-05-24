@@ -18,11 +18,6 @@ end
 
 outputSize=round(dqf*outputSize);
 
-switch echoType
-    case  'image'
-        dr=nanmax(ceil(nb_samples/outputSize(2)),1);
-        dp=nanmax(ceil(nb_pings/outputSize(1))-1,1);
-    case 'surface'
-        dr=nanmax(ceil(nb_samples/outputSize(2)),1);
-        dp=nanmax(floor(nb_pings/outputSize(1)),1);
-end
+
+dr=nanmax(ceil(nb_samples/outputSize(2)),1);
+dp=nanmax(floor(nb_pings/outputSize(1)),1);

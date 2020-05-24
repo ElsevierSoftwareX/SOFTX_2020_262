@@ -69,17 +69,11 @@ echo_init=ones(2,2);
 
 usrdata=init_echo_usrdata();
 
-switch curr_disp.EchoType
-    case 'image'
-        mini_axes_comp.mini_echo=image(echo_init,'Parent',mini_axes_comp.mini_ax,'tag','echo','AlphaData',0,'CDataMapping','scaled','AlphaDataMapping','direct','UserData',usrdata);
-        mini_axes_comp.mini_echo_bt=image(echo_init,'Parent',mini_axes_comp.mini_ax,'tag','bad_transmits','AlphaData',0,'AlphaDataMapping','direct');
-    case 'surface'
-        mini_axes_comp.mini_echo=pcolor(mini_axes_comp.mini_ax,echo_init);
-        set(mini_axes_comp.mini_echo,'Facealpha','flat','FaceColor','Flat','LineStyle','none','AlphaDataMapping','direct','tag','echo','VertexNormalsMode','manual','UserData',usrdata);
-        mini_axes_comp.mini_echo_bt=pcolor(mini_axes_comp.mini_ax,echo_init);
-        set(mini_axes_comp.mini_echo_bt,'Facealpha','flat','FaceColor','Flat','LineStyle','none','AlphaDataMapping','direct','tag','bad_transmits','VertexNormalsMode','manual');
-end
 
+mini_axes_comp.mini_echo=pcolor(mini_axes_comp.mini_ax,echo_init);
+set(mini_axes_comp.mini_echo,'Facealpha','flat','FaceColor','Flat','LineStyle','none','AlphaDataMapping','direct','tag','echo','VertexNormalsMode','manual','UserData',usrdata);
+mini_axes_comp.mini_echo_bt=pcolor(mini_axes_comp.mini_ax,echo_init);
+set(mini_axes_comp.mini_echo_bt,'Facealpha','flat','FaceColor','k','LineStyle','none','AlphaDataMapping','direct','tag','bad_transmits','VertexNormalsMode','manual');
 
 mini_axes_comp.bottom_plot=plot(mini_axes_comp.mini_ax,nan,nan,'tag','bottom');
 mini_axes_comp.patch_obj=patch(mini_axes_comp.mini_ax,'Faces',[],'Vertices',[],'FaceColor',[0 0 0.6],'FaceAlpha',.2,'EdgeColor',[0 0 0.6],'Tag','zoom_area','LineWidth',1);
