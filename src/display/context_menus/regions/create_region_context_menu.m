@@ -154,7 +154,7 @@ end
 idx_r = reg_obj.Idx_r;
 idx_pings = reg_obj.Idx_pings;
 
-trans_obj.Data.replace_sub_data_v2('spikesmask',false(numel(idx_r),numel(idx_pings)),idx_r,idx_pings);
+trans_obj.set_spikes(idx_r,idx_pings,0);
 set_alpha_map(main_figure,'update_under_bot',0,'update_cmap',0);
 
 end

@@ -97,8 +97,8 @@ for iax=1:length(echo_ax_tot)
         alpha_map_bt=zeros(size(data),prec);
         alpha_map_bt(:,idx_bad_red)=3;
         
-        [mask_sp,~]=trans_obj{iax}.Data.get_subdatamat(idx_r,idx_pings,'field','spikesmask');
-        
+        mask_sp=trans_obj{iax}.get_spikes(idx_r,idx_pings);
+
         if~isempty(mask_sp)&&all(size(mask_sp)==size(data))
             alpha_map_bt(mask_sp>0)=5;
         end

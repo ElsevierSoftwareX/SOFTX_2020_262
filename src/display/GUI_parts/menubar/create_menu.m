@@ -225,7 +225,6 @@ end
 uimenu(data_tools,'Label','Create Motion Compensation echogram','Callback',{@create_motion_compensation_echogramm_cback,main_figure});
 uimenu(data_tools,'Label','Convert Sv to fish Density','Callback',{@create_fish_density_echogramm_cback,main_figure});
 rm_tools=uimenu(data_tools,'Label','Remove Data');
-uimenu(rm_tools,'Label','Spikes','Callback',{@rm_subdata_cback,main_figure,'spikesmask'});
 uimenu(rm_tools,'Label','Denoised data','Callback',{@rm_subdata_cback,main_figure,'denoised'});
 uimenu(rm_tools,'Label','Single Targets','Callback',{@rm_subdata_cback,main_figure,'st'});
 

@@ -21,6 +21,7 @@ classdef transceiver_cl < handle
         Mode
         TransducerImpedance={};
         TransducerDepth double
+        Spikes 
     end
     
     methods
@@ -47,6 +48,7 @@ classdef transceiver_cl < handle
             addParameter(p,'AttitudeNavPing',attitude_nav_cl.empty(),@(x) isa(x,'attitude_nav_cl'));
             addParameter(p,'Algo',algo_cl.empty(),@(x) isa(x,'algo_cl')||isempty(x));
             addParameter(p,'Mode','CW',@ischar);
+
             parse(p,varargin{:});
             results = p.Results;
             props = fieldnames(results);
@@ -79,6 +81,8 @@ classdef transceiver_cl < handle
                 trans_obj.set_pulse_Teff();
                 trans_obj.set_pulse_comp_Teff();
             end
+            trans_obj.Spikes=sparse(numel(trans_obj.Range),numel(trans_obj.Time));
+            
         end
         
         function p_out = get_params_value(trans_obj,param_name,idx)
@@ -101,6 +105,47 @@ classdef transceiver_cl < handle
             end
         end
         
+        function mask_spikes = get_spikes(trans_obj,idx_r,idx_pings)
+            if isempty(trans_obj.Spikes)
+                trans_obj.Spikes=sparse(numel(trans_obj.Range),numel(trans_obj.Time));
+            end
+            
+            if isempty(idx_r)
+                idx_r=1:numel(trans_obj.Range);
+            end
+            
+            if isempty(idx_pings)
+                idx_pings=1:numel(trans_obj.Time);
+            end  
+            mask_spikes=trans_obj.Spikes(idx_r,idx_pings);
+                
+        end
+        
+        function set_spikes(trans_obj,idx_r,idx_pings,mask)
+            
+            if ~issparse(trans_obj.Spikes)
+                trans_obj.Spikes=sparse(trans_obj.Spikes);
+            end
+            
+            if isempty(trans_obj.Spikes)
+                trans_obj.Spikes=sparse(numel(trans_obj.Range),numel(trans_obj.Time));
+            end
+            
+            if isscalar(mask)&&isempty(idx_r)
+                 idx_r=1:numel(trans_obj.Range);  
+            elseif ~isscalar(mask)&&isempty(idx_r)
+                 idx_r=1:size(mask,1); 
+            end
+            
+            if isscalar(mask)&&isempty(idx_pings)
+                idx_pings=1:numel(trans_obj.Time);
+            elseif ~isscalar(mask)&&isempty(idx_pings)
+                idx_pings=1:size(mask,1);
+            end
+ 
+            trans_obj.Spikes(idx_r,idx_pings) = sparse(mask);
+            
+        end
         
         
         

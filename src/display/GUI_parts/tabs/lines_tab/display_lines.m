@@ -25,15 +25,10 @@ if isempty(layer.Lines)
 end
 
 vis=curr_disp.DispLines;
-idx_ac=lines_tab_comp.tog_line.Value;
 
 for i=1:length(list_line)
     active_line=layer.Lines(i);
-    if i==idx_ac
-        lw=2;
-    else
-        lw=1;
-    end
+
     if nansum(curr_dist)>0&&active_line.Dist_diff~=0
         dist_corr=curr_dist-active_line.Dist_diff;
         time_corr=resample_data_v2(curr_time,curr_dist,dist_corr);
@@ -58,7 +53,7 @@ for i=1:length(list_line)
         x_line=curr_pings;
         [cmap,col_ax,col_lab,col_grid,col_bot,col_txt,col_tracks]=init_cmap(curr_disp.Cmap);
         
-        line_plot=plot(main_axes,x_line,y_line,'color',col_tracks,'linewidth',lw,'tag','lines','visible',vis,'UserData',active_line.ID);
+        line_plot=plot(main_axes,x_line,y_line,'color',col_tracks,'linewidth',0.5,'tag','lines','visible',vis,'UserData',active_line.ID);
         pointerBehavior.enterFcn    = @(src, evt) enter_line_plot_fcn(src, evt,line_plot);
         pointerBehavior.exitFcn     = @(src, evt) exit_line_plot_fcn(src, evt,line_plot);
         pointerBehavior.traverseFcn = [];
@@ -69,7 +64,7 @@ end
 end
 
 function exit_line_plot_fcn(src,~,hplot)
-set(hplot,'linewidth',1);
+set(hplot,'linewidth',0.5);
 ax=ancestor(hplot,'axes');
 objt=findobj(ax,'Tag','tooltipl');
 delete(objt);
@@ -81,7 +76,7 @@ if ~isvalid(hplot)
     delete(hplot);
     return;
 end
-main_figure=ancestor(hplot,'figure');
+%main_figure=ancestor(hplot,'figure');
 layer=get_current_layer();
 curr_disp=get_esp3_prop('curr_disp');
 line_idx=layer.get_lines_per_ID(hplot.UserData);

@@ -48,6 +48,8 @@ trans_file_ID=transceiver_cl();
 trans_file_ID.Data=trans_obj.Data.get_data_idx_file(fileID);
 
 trans_file_ID.Range=trans_obj.Range(1:nanmax(trans_file_ID.Data.Nb_samples));
+trans_file_ID.Spikes=trans_obj.Spikes(1:nanmax(trans_file_ID.Data.Nb_samples),idx_file);
+
 trans_file_ID.Time=trans_obj.Time(idx_file);
 trans_file_ID.Bottom=trans_obj.Bottom.get_bottom_idx_section(idx_file);
 

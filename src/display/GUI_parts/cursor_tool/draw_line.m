@@ -62,8 +62,7 @@ x_lim=get(ah,'xlim');
 y_lim=get(ah,'ylim');
 
 nb_pings=length(trans_obj.Time);
-line_obj=line_cl('Name','Hand Drawn Line','Range',nan(1,nb_pings),'Time',trans_obj.Time);
-
+line_obj=line_cl('Name',sprintf('Hand Drawn Line %d',numel(layer.Lines)+1),'Range',nan(1,nb_pings),'Time',trans_obj.Time);
 
 xinit=nan(1,nb_pings);
 yinit=nan(1,nb_pings);
@@ -103,6 +102,7 @@ end
         cp=ah.CurrentPoint;
         xinit(u)=cp(1,1);
         yinit(u)=cp(1,2);
+        
         if isvalid(hp)
             set(hp,'XData',xinit,'YData',yinit);
         else
@@ -172,6 +172,7 @@ end
             for i=1:length(x_f)-1
                 [~, idx_line]=nanmin(abs(x_f(i)-xdata));
                 [~, idx_line_1]=nanmin(abs(x_f(i+1)-xdata));
+                
                 [~,idx_r]=nanmin(abs(y_f(i)-ydata));
                 [~,idx_r1]=nanmin(abs(y_f(i+1)-ydata));
                 
@@ -190,11 +191,10 @@ end
         delete(hp);
         replace_interaction(main_figure,'interaction','WindowButtonMotionFcn','id',2);
         replace_interaction(main_figure,'interaction','WindowButtonUpFcn','id',1);
-        if numel(idx_line_tot)<=1
+        if nansum(~isnan(line_obj.Range))<=1
            disp_perso(main_figure,'Only 1 point in line, not saving it.');
            return;
         end
-        
         
         layer.add_lines(line_obj);
         

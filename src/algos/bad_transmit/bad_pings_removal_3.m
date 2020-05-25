@@ -493,8 +493,7 @@ for ui = 1:num_ite
     end
     
  
-   
-
+  
 %% Basic filter for additive noise
 if p.Results.Additive
        power = trans_obj.Data.get_subdatamat(idx_r,idx_pings,'field','power');
@@ -518,15 +517,16 @@ if p.Results.Additive
     tmp(1:start_sample,:) = nan;
     tmp(~(idx_above|idx_below)) = nan;
     tmp(isinf(tmp))=nan;
-    %power_mode=mode(ceil(tmp/prec)*prec);
     
     power_prc_25=prctile(ceil(tmp/prec)*prec,25,1);
-    
-    %     figure();plot(idx_pings,power_mode,'r');hold on;
-    %      plot(idx_pings,power_prc_25,'b');
-    %     yline(p.Results.thr_add_noise,'b','Noise thr.');
-    %      legend({'Mode','25-percentile'});
-    %     figure();histogram(tmp(:,2),100);hold on;histogram(tmp(:,6),100)
+%     
+%      power_mode=mode(ceil(tmp/prec)*prec);
+%         figure();plot(idx_pings,power_mode,'r');hold on;
+%          plot(idx_pings,power_prc_25,'b');
+%         yline(p.Results.thr_add_noise,'b','Noise thr.');
+%          legend({'Mode','25-percentile'});
+%         figure();histogram(tmp(:,2),100);hold on;histogram(tmp(:,6),100)
+
     idx_add=find(power_prc_25>p.Results.thr_add_noise);
     
 else

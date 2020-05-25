@@ -68,7 +68,10 @@ if length(trans_1)==length(trans_2)
             'Params',concatenate_Params(trans_first.Params,trans_second.Params,numel(trans_first.Time),numel(trans_second.Time)),...
             'Config',trans_first.Config,...
             'Filters',trans_first.Filters);
-
+        
+        trans_out(i).Spikes(1:size(trans_first.Spikes,1),1:size(trans_first.Spikes,2))=trans_first.Spikes;
+        trans_out(i).Spikes(1:size(trans_second.Spikes,1),(1:size(trans_second.Spikes,2))+size(trans_first.Spikes,2))=trans_second.Spikes;
+        
         % concatenate bottom
         new_bot = concatenate_Bottom(trans_first.Bottom,trans_second.Bottom);
         trans_out(i).Bottom = new_bot;

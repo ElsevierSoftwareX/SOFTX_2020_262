@@ -32,7 +32,7 @@ panel_comp=load_algo_panel('main_figure',main_figure,...
 
 p_button=pos{6,1}{1};
 p_button(3)=gui_fmt.button_w;
-uicontrol(panel_comp.container,gui_fmt.pushbtnStyle,'String','Reset','pos',p_button+[1*gui_fmt.button_w 0 0 0],'callback',{@rm_subdata_cback,main_figure,'spikesmask'});
+uicontrol(panel_comp.container,gui_fmt.pushbtnStyle,'String','Reset','pos',p_button+[1*gui_fmt.button_w 0 0 0],'callback',{@rm_spikes_cback,main_figure});
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Dropouts Detection%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 algo_name = 'DropOuts';
@@ -44,6 +44,19 @@ load_algo_panel('main_figure',main_figure,...
 
 end
 
+function rm_spikes_cback(src,~,main_figure)
+
+curr_disp=get_esp3_prop('curr_disp');
+layer = get_current_layer();
+
+[trans_obj_tot,idx_t]=layer.get_trans(curr_disp);
+
+trans_obj_tot.set_spikes([],[],0); 
+
+set_alpha_map(main_figure,'update_cmap',0,'update_under_bot',0,'main_or_mini',union({'main','mini'},layer.ChannelID(idx_t),'stable'));
+
+
+end
 
 function reset_bad_pings_cback(src,~,main_figure)
 
