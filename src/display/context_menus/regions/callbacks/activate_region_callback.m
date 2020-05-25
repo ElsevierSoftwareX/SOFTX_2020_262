@@ -97,7 +97,7 @@ for i=1:length(ah)
             end
         end
         
-        reg_patch_ac=findobj(ah(i),{'Tag','region','-or','Tag','region_cont'},...
+        reg_patch_ac=findobj(ah(i),{'Tag','region'},...
             '-and','UserData',trans_obj.Regions(ireg).Unique_ID,'-and','Type','Polygon','-not','FaceColor',col);
         
         set(reg_patch_ac,'FaceColor',col,'EdgeColor',col);

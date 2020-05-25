@@ -103,10 +103,8 @@ for iax=1:length(echo_ax_tot)
             alpha_map_bt(mask_sp>0)=5;
         end
         
-
-        set(echo_im_bt,'XData',xdata_ori,'YData',ydata,'CData',alpha_map_bt,'ZData',alpha_map_bt,'AlphaData',single(alpha_map_bt));
-        
-        
+        set(echo_im_bt,'XData',xdata_ori,'YData',ydata,'CData',alpha_map_bt,'ZData',zeros(size(alpha_map_bt),'uint8'),'AlphaData',single(alpha_map_bt));
+         
     end
     
     if update_cmap>0

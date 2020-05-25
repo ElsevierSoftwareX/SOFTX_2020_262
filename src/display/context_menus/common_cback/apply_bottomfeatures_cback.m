@@ -29,6 +29,6 @@ hide_status_bar(main_figure);
 
 set_alpha_map(main_figure,'update_bt',0);
 display_bottom(main_figure);
-order_stacks_fig(main_figure,curr_disp);
+
 
 end

@@ -45,9 +45,8 @@ addParameter(p,'bt_on_top',0);
 parse(p,echo_ax,varargin{:});
 echo_im=findobj(echo_ax,'tag','echo');
 bt_im=findobj(echo_ax,'tag','bad_transmits');
-lines=findobj(echo_ax,'Type','Line','-not','tag','region','-not','tag','region_cont');
+lines=findobj(echo_ax,'Type','Line','-not','tag','region');
 text_disp=findobj(echo_ax,'Type','Text');
-regions_cont=findobj(echo_ax,'tag','region_cont');
 regions=findobj(echo_ax,'tag','region');
 %region_text=findobj(echo_ax,'tag','region_text','-and','visible','on');
 select_area=getappdata(ancestor(echo_ax,'Figure'),'SelectArea');
@@ -64,12 +63,12 @@ zoom_area=findobj(echo_ax,'tag','zoom_area','-or','Tag','disp_area');
 switch echo_ax.Tag
     case 'main'
         if p.Results.bt_on_top==0
-            uistack([text_disp;lines;select_area;regions;regions_cont;bt_im;echo_im],'top');
+            uistack([text_disp;lines;select_area;regions;bt_im;echo_im],'top');
         else
-            uistack([bt_im,zoom_area;text_disp;lines;select_area;regions;regions_cont;echo_im],'top');
+            uistack([bt_im,zoom_area;text_disp;lines;select_area;regions;echo_im],'top');
         end
     case 'mini'
-        uistack([zoom_area;bt_im;text_disp;lines;regions_cont;regions;echo_im],'top');
+        uistack([zoom_area;bt_im;text_disp;lines;regions;echo_im],'top');
 end
 
 echo_ax.Layer='top';

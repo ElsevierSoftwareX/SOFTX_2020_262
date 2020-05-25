@@ -66,7 +66,6 @@ update_multi_freq_disp_tab(main_figure,'ts_f',0);
 
 curr_disp.setActive_reg_ID({});
 
-order_stacks_fig(main_figure,curr_disp);
 update_reglist_tab(main_figure,0);
 end
 

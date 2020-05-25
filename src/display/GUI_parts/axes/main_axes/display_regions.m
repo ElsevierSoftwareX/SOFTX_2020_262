@@ -43,15 +43,12 @@ for iax=1:length(main_axes_tot)
     end
     
     main_axes=main_axes_tot(iax);
-    echo_in=echo_im_tot(iax);
-    
-    
+
     di=1/2;
-    
-    
+       
     active_regs=trans.find_regions_Unique_ID(curr_disp.Active_reg_ID);
     
-    reg_h=findobj(main_axes,{'tag','region','-or','tag','region_text','-or','tag','region_cont'});
+    reg_h=findobj(main_axes,{'tag','region','-or','tag','region_text'});
     
     if~isempty(reg_h)
         id_disp=get(reg_h,'UserData');
@@ -64,7 +61,7 @@ for iax=1:length(main_axes_tot)
     end
     
     nb_reg=numel(trans.Regions);
-    %reg_graph_obj=findobj(main_axes,{'tag','region','-or','tag','region_cont'},'-depth',1);
+    %reg_graph_obj=findobj(main_axes,{'tag','region'},'-depth',1);
     reg_text_obj=findobj(main_axes,{'tag','region_text'},'-depth',1);
     
     for i=1:nb_reg
@@ -119,9 +116,7 @@ for iax=1:length(main_axes_tot)
                     if numel(unique(reg_trans_depth))==1
                         reg_trans_depth=unique(reg_trans_depth);
                     end
-                    
 
-                    
                     if any(reg_trans_depth~=0)
                         if numel(reg_trans_depth)>1&&~strcmp(reg_curr.Shape,'Polygon')
                             diff_vert=diff(poly.Vertices(:,1));
@@ -212,8 +207,7 @@ for iax=1:length(main_axes_tot)
             print_errors_and_warnings(1,'error',err);
         end
     end
-
-    order_stacks_fig(main_figure,curr_disp)
+    order_stack(main_axes);
     
 end
 

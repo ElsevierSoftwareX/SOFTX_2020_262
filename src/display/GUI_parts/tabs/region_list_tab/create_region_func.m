@@ -102,8 +102,6 @@ if ~isempty(IDs)
     curr_disp.Reg_changed_flag=1;
 end
 
-order_stacks_fig(main_figure,curr_disp);
-
 
 
 end

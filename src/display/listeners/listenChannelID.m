@@ -67,7 +67,6 @@ update_reglist_tab(main_figure,1);
 
 update_info_panel([],[],1);
 
-order_stacks_fig(main_figure,curr_disp);
 %eplace_interaction(main_figure,'interaction','WindowButtonMotionFcn','id',1,'interaction_fcn',{@update_info_panel,0});
 load_bar_comp.progress_bar.setText('');
 

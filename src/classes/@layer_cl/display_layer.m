@@ -152,7 +152,6 @@ if update_echo>0
             x_data_disp=xdata(idx_ping_red);
             y_data_disp=trans_obj.get_transceiver_range(idx_r_red);
         end
-        y=[nanmin(y_data_disp(:)) nanmax(y_data_disp(:))];
     else
         [data,sc]=trans_obj.Data.get_subdatamat(idx_r_red,idx_ping_red,'field',fieldname);
         
@@ -195,14 +194,14 @@ if update_echo>0
     usrdata.CID=layer.ChannelID{idx_t};
     usrdata.Fieldname=fieldname;
     usrdata.Layer_ID=layer.Unique_ID;
-    
-    
+     
     switch ax.UserData.geometry_y
         case 'samples'
             y_data_disp=y_data_disp-1/2;
     end
+    
     x_data_disp=x_data_disp-1/2;
-    set(echo_h,'XData',x_data_disp,'YData',y_data_disp,'CData',data_mat,'ZData',data_mat,'AlphaData',ones(size(data_mat)),'UserData',usrdata);%,'UserData',data_mat
+    set(echo_h,'XData',x_data_disp,'YData',y_data_disp,'CData',data_mat,'ZData',zeros(size(data_mat)),'AlphaData',ones(size(data_mat)),'UserData',usrdata);%,'UserData',data_mat
     
     up=1;
 else

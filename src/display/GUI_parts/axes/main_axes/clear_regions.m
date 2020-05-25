@@ -57,10 +57,10 @@ end
 for iax=1:length(main_axes_tot)
     if isempty(ids)
         delete(findobj(ancestor(main_axes_tot(iax),'figure'),'Type','UiContextMenu','-and','Tag','RegionContextMenu'));
-        delete(findobj(main_axes_tot(iax),'tag','region','-or','tag','region_text','-or','tag','region_cont'));
+        delete(findobj(main_axes_tot(iax),'tag','region','-or','tag','region_text'));
     else
         for i=1:numel(ids)
-            delete(findobj(main_axes_tot(iax),{'tag','region','-or','tag','region_text','-or','tag','region_cont'},'-and','UserData',ids{i}));
+            delete(findobj(main_axes_tot(iax),{'tag','region','-or','tag','region_text'},'-and','UserData',ids{i}));
             delete(findobj(ancestor(main_axes_tot(iax),'figure'),'Type','UiContextMenu','-and','Tag','RegionContextMenu','-and','UserData',ids{i}));
         end
     end

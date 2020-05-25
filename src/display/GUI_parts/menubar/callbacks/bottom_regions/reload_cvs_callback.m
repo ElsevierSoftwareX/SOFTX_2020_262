@@ -65,8 +65,6 @@ curr_disp.setActive_reg_ID({});
 display_bottom(main_figure);
 
 set_alpha_map(main_figure,'main_or_mini',union({'main','mini'},layer.ChannelID));
-order_stacks_fig(main_figure,curr_disp);
-
 
 
 

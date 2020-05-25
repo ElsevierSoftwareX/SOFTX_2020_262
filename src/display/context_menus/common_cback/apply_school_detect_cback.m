@@ -67,6 +67,6 @@ hide_status_bar(main_figure);
     
 display_regions(main_figure,'both');
 curr_disp.setActive_reg_ID({});
-order_stacks_fig(main_figure,curr_disp);
+
 
 end

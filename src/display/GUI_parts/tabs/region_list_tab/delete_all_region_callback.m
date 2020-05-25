@@ -59,10 +59,9 @@ switch choice
             display_regions(main_figure,'both');            
             
             add_undo_region_action(main_figure,trans_obj,old_regs,trans_obj.Regions);
-
-               
+  
             curr_disp.setActive_reg_ID({});
-            order_stacks_fig(main_figure,curr_disp);
+            
             curr_disp.Reg_changed_flag=1;
             
         else

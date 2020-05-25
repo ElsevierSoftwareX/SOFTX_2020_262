@@ -29,7 +29,7 @@ curr_disp=get_esp3_prop('curr_disp');
 curr_disp.setActive_reg_ID({});
 
 set_alpha_map(main_figure,'main_or_mini',union({'main','mini'},layer.ChannelID));
-order_stacks_fig(main_figure,curr_disp);
+
 
 
 end
