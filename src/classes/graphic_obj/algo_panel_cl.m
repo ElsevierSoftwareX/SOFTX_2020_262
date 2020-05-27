@@ -42,12 +42,12 @@ classdef algo_panel_cl < dynamicprops
              end
              
              if isempty(results.save_as_cback_fcn)
-                 nb_r_max =6;    
+                 nb_r_max =7;    
              else
-                 nb_r_max =5;
+                 nb_r_max =6;
              end
              
-             nb_r_max_tot=7;
+             nb_r_max_tot=8;
              
              nb_c=nanmax(ceil((nb_params-nb_bool_params+1)/nb_r_max),nb_c_min);
             
@@ -140,7 +140,9 @@ classdef algo_panel_cl < dynamicprops
                                 'String',str_disp{ui},'Position',p_tmp,...
                                 'callback',@update_algo_input_param_fcn,...
                                 'tooltipstring',obj.algo.Input_params(ui).Tooltipstring,'Tag',param_names{ui});
-                            ip = ip-1;
+                            if ~(numel(param_names)>ui&&strcmpi(params_class{ui+1},'logical'))
+                                ip = ip-1;
+                            end
 
                     end
                 else

@@ -31,7 +31,7 @@ map_tab_comp.opt_panel=uibuttongroup(map_tab_comp.map_tab,'units','pixels','Posi
 
 gui_fmt=init_gui_fmt_struct();
 gui_fmt.txt_w=gui_fmt.txt_w;
-pos=create_pos_3(7,2,gui_fmt.x_sep,gui_fmt.y_sep,gui_fmt.txt_w,gui_fmt.box_w,gui_fmt.box_h);
+pos=create_pos_3(8,2,gui_fmt.x_sep,gui_fmt.y_sep,gui_fmt.txt_w,gui_fmt.box_w,gui_fmt.box_h);
 %
 %  uicontrol(...
 % 'Parent',multi_freq_tab.setting_panel,...

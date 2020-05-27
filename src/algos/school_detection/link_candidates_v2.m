@@ -13,6 +13,7 @@ dist_pings_mat=bsxfun(@times,dist_pings(:)',ones(nb_samples,1));
 
 
 vec_candidates=double(unique(candidates(candidates>0)))';
+
 vec_candidates(vec_candidates==0)=[];
 nb_candidates=length(vec_candidates);
 

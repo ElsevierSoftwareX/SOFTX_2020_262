@@ -41,8 +41,8 @@ processing_tab_comp.processing_tab = uitab(option_tab_panel,'Title','Processing'
 gui_fmt = init_gui_fmt_struct();
 gui_fmt.txt_w = gui_fmt.txt_w*1.5;
 
-pos = cell(6,4);
-for j = 1:6
+pos = cell(8,4);
+for j = 1:8
     for i = 1:4
         pos{j,i} = [gui_fmt.x_sep+(i-1)*(gui_fmt.x_sep+gui_fmt.txt_w+gui_fmt.x_sep) gui_fmt.y_sep+(j-1)*(gui_fmt.y_sep+gui_fmt.txt_h)  gui_fmt.txt_w gui_fmt.txt_h];
     end

@@ -79,6 +79,10 @@ regSummary{8,1}='Nb Cells';
 regSummary{8,2}=nansum(regIntStruct.sv_mean(:)>0);
 regSummary{8,3}='';
 
+% regSummary{9,1}='Abscf';
+% regSummary{9,2}=Sa_lin;%Abscf Region
+% regSummary{9,3}='m2/m2';
+% 
 
 table_main=uitable('Parent',hfig,...
     'Data', regSummary,...

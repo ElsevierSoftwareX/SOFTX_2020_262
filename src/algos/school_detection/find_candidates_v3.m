@@ -1,6 +1,6 @@
 
 
-function candidates=find_candidates_v3(Mask,range,dist_pings,l_min_can,h_min_can,min_nb_sples,output,load_bar_comp)
+function candidates=find_candidates_v3(Mask,range_d,dist_pings,l_min_can,h_min_can,min_nb_sples,output,load_bar_comp)
 
 
 [nb_row,~]=size(Mask);
@@ -38,8 +38,8 @@ for ic=1:num_can
         row_idx(row_idx==0)=nb_row;
         col_idx=ceil(curr_candidate/nb_row);
         
-        if abs(nanmax(dist_pings(col_idx))-nanmin(dist_pings(col_idx)))>=l_min_can...
-                &&abs(nanmax(range(row_idx))-nanmin(range(row_idx)))>=h_min_can
+        if range(dist_pings(col_idx))>=l_min_can...
+                &&range(range_d(row_idx))>=h_min_can
             
             switch output
                 case 'mat'

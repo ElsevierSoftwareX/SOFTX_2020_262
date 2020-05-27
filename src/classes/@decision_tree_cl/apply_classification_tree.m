@@ -15,7 +15,7 @@ if ~isempty(missing_variables)
     fprintf('\nMissing variables:\n');
     fprintf('% s\n',missing_variables{:});
     
-    
+    tag = '';
     return;
 end
 
@@ -75,5 +75,6 @@ for ui=1:numel(idx_to_classify)
         end
     end
     
+  
 end
 

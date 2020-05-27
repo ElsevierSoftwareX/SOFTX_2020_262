@@ -1,5 +1,18 @@
 function output_struct=apply_classification(layer,varargin)
 
+default_l_min_tot=25;
+check_l_min_tot=@(l)(l>=0);
+
+default_h_min_tot=10;
+check_h_min_tot=@(l)(l>=0);
+
+default_horz_link_max=55;
+check_horz_link_max=@(l)(l>=0&&l<=1000);
+
+default_vert_link_max=5;
+check_vert_link_max=@(l)(l>=0&&l<=500);
+
+
 p = inputParser;
 
 addRequired(p,'layer',@(x) isa(x,'layer_cl'));
@@ -8,7 +21,13 @@ addParameter(p,'classification_file','',@ischar);
 addParameter(p,'ref','Surface',@(x) ismember(x,{'Surface' 'Transducer' 'Bottom'}));
 addParameter(p,'timeBounds',[0 inf],@isnumeric);
 addParameter(p,'create_regions',true,@islogical);
+addParameter(p,'cluster_tags',true,@islogical);
+addParameter(p,'thr_cluster',10,@isnumeric);
 addParameter(p,'reg_obj',region_cl.empty(),@(x) isa(x,'region_cl'));
+addParameter(p,'l_min_tot',default_l_min_tot,check_l_min_tot);
+addParameter(p,'h_min_tot',default_h_min_tot,check_h_min_tot);
+addParameter(p,'horz_link_max',default_horz_link_max,check_horz_link_max);
+addParameter(p,'vert_link_max',default_vert_link_max,check_vert_link_max);
 addParameter(p,'survey_options',layer.get_survey_options(),@(x) isa(x,'survey_options_cl'));
 addParameter(p,'load_bar_comp',[]);
 
@@ -53,7 +72,7 @@ switch lower(p.Results.classification_type)
         surv_opt_obj.IntRef='';
         surv_opt_obj.IntType='Regions only';
         
-    case 'cell by cell'        
+    case 'cell by cell'
         nb_schools=0;
         idx_schools=[];
         output_struct.school_struct=[];
@@ -85,31 +104,29 @@ if ~strcmpi(class_tree_obj.ClassificationType,p.Results.classification_type)
     return;
 end
 
+sv_freqs=cellfun(@(x) textscan(x,'Sv_%d'),vars,'un',1);
+delta_sv_freqs=cellfun(@(x) textscan(x,'delta_Sv_%d_%d'),vars,'un',0);
 
-idx_var_freq=find(contains(vars,'Sv_'));
-idx_var_freq_sec=find(contains(vars,'delta_Sv_'));
+idx_var_freq=find(cellfun(@(x) ~any(isempty(x)),sv_freqs));
+idx_var_freq_sec=find(cellfun(@(x) ~any(isempty([x{:}])),delta_sv_freqs));
 
-primary_freqs=nan(1,numel(idx_var_freq));
-secondary_freqs=nan(1,numel(idx_var_freq));
+primary_freqs_sv = [sv_freqs{idx_var_freq}];
 
-for ii=1:numel(idx_var_freq)
-    if ismember(idx_var_freq(ii),idx_var_freq_sec)
-        freqs_tmp=textscan(vars{idx_var_freq(ii)},'delta_Sv_%d_%d');
-    else
-        freqs_tmp=textscan(vars{idx_var_freq(ii)},'Sv_%');
-    end
-    primary_freqs(ii)=freqs_tmp{1}*1e3;
-    if ismember(idx_var_freq(ii),idx_var_freq_sec)
-        secondary_freqs(ii)=freqs_tmp{2}*1e3;
-    end
-end
+primary_freqs_delta = cellfun(@(x) [x{1}],delta_sv_freqs(idx_var_freq_sec));
+sec_freqs_delta = cellfun(@(x) [x{2}],delta_sv_freqs(idx_var_freq_sec));
 
-
+primary_freqs = double([primary_freqs_delta setdiff(primary_freqs_sv,primary_freqs_delta)]);
+primary_freqs = primary_freqs*1e3;
+secondary_freqs = nan(1,numel(primary_freqs));
+secondary_freqs(1:numel(sec_freqs_delta)) = double(sec_freqs_delta);
+secondary_freqs = secondary_freqs*1e3;
 idx_primary_freqs=nan(1,numel(primary_freqs));
 idx_secondary_freqs=nan(1,numel(primary_freqs));
 
 
 for ii=1:numel(primary_freqs)
+    
+    
     [idx_primary_freqs(ii),found]=find_freq_idx(layer,primary_freqs(ii));
     
     if ~found
@@ -176,7 +193,7 @@ switch lower(p.Results.classification_type)
         
         for ui=1:numel(output_struct.school_struct)
             output_struct.school_struct{ui}=layer.EchoIntStruct.output_2D{idx_main}{ui};
-            
+            output_struct.out_type{ui}=layer.EchoIntStruct.output_2D_type{idx_main}{ui};
             for ip=1:numel(primary_freqs)
                 
                 if idx_primary_freq==idx_primary_freqs(ip)
@@ -214,25 +231,125 @@ for ui=1:length(output_struct.school_struct)
             
         case 'cell by cell'
             tag=class_tree_obj.apply_classification_tree(output_struct.school_struct{ui});
+            l_min_can = surv_opt_obj.Vertical_slice_size;
+            h_min_can = surv_opt_obj.Horizontal_slice_size;
+            nb_min_sples = 1;
             
-            for ifreq=1:numel(layer.EchoIntStruct.output_2D)
-                layer.EchoIntStruct.output_2D{ifreq}{ui}.Tags=tag;
+            switch lower(surv_opt_obj.Vertical_slice_units)
+                case 'pings'
+                    dist_can = output_struct.school_struct{ui}.Ping_S;
+                case 'meters'
+                    dist_can= output_struct.school_struct{ui}.Dist_S;
+                    if nanmean(diff(dist))==0
+                        warning('No Distance was computed, using ping instead of distance for linking');
+                        dist_can= output_struct.school_struct{ui}.Ping_S;
+                    end
             end
+            tags=unique(tag);
+            tags(tags == "") = [];
+            if p.Results.cluster_tags
+                
+                  
+                vert_link_max = p.Results.vert_link_max;
+                horz_link_max = p.Results.horz_link_max;
+                
+                l_min_tot = p.Results.l_min_tot;
+                h_min_tot = p.Results.h_min_tot;
+                
+                tag_can = zeros(size(tag));
+                
+
+                
+                dist= output_struct.school_struct{ui}.Dist_S;
+                if nanmean(diff(dist))==0
+                    warning('No Distance was computed, using ping instead of distance for linking');
+                    dist= output_struct.school_struct{ui}.Ping_S;
+                end
+                
+                linked_cell_tags = cell(1,numel(tags));
+                candidates_cell_tags = cell(1,numel(tags));
+                
+                for itag = 1:numel(tags)
+                    tag_can(tag==tags{itag}) = itag;
+                    candidates_cell_tags{itag}=find_candidates_v3(tag==tags{itag},output_struct.school_struct{ui}.Range_ref_min(:,1),dist_can,l_min_can,h_min_can,nb_min_sples,'mat',[]);
+                    linked_cell_tags{itag}=link_candidates_v2(candidates_cell_tags{itag},dist,output_struct.school_struct{ui}.Range_ref_min(:,1),horz_link_max,vert_link_max,l_min_tot,h_min_tot,[]);
+                end
+                
+                candidates=find_candidates_v3(tag~="",output_struct.school_struct{ui}.Range_ref_min(:,1),dist_can,l_min_can,h_min_can,nb_min_sples,'mat',[]);
+                
+                linked_tags=link_candidates_v2(candidates,dist,output_struct.school_struct{ui}.Range_ref_min(:,1),horz_link_max,vert_link_max,l_min_tot,h_min_tot,[]);
+                
+                tag_f = layer.EchoIntStruct.output_2D{idx_main}{ui}.Tags;
+                
+                unique_can = unique(linked_tags(:));
+                unique_can(unique_can==0)=[];
+                n_can = numel(unique_can);
+                
+                prop=cell(n_can,numel(tags));
+                
+                for ican=1:n_can
+                    can_temp = linked_tags==unique_can(ican);
+                    nc = nansum(nansum(can_temp));
+                    for itag = 1:numel(tags)
+                        tu = unique(linked_cell_tags{itag});
+                        tu(tu==0)=[];
+                        for utu = 1:numel(tu)
+                            tag_ori=linked_cell_tags{itag}==tu(utu);
+                            prop{ican,itag}(utu) =nansum(nansum(tag_ori&can_temp))/nc;
+                        end
+                    end
+                end
+               
+                prop_per_tag = cellfun(@nansum,prop);
+                for ican=1:n_can
+                    [~,id_max] = nanmax(prop_per_tag(ican,:));
+                    can_temp = linked_tags==unique_can(ican);
+                    for itag = 1:numel(tags)
+                        tu = unique(linked_cell_tags{itag});
+                        tu(tu==0)=[];
+                        for utu = 1:numel(tu)
+                            tag_ori=linked_cell_tags{itag}==tu(utu);
+                            if  prop{ican,itag}(utu)>p.Results.thr_cluster/100
+                                tag_f(tag_ori&can_temp) = tags{itag};
+                            else
+                                tag_f(tag_ori&can_temp) = tags{id_max};
+                            end
+                        end
+                    end
+                    
+                end
+                
+            else
+                candidates=find_candidates_v3(tag~="",output_struct.school_struct{ui}.Range_ref_min(:,1),dist_can,l_min_can,h_min_can,nb_min_sples,'mat',[]);
+                tag_f=tag;
+            end
+            
+            layer.EchoIntStruct.output_2D{idx_main}{ui}.Tags=tag_f;
+            
             if p.Results.create_regions
                 
                 if ~isempty(p.Results.load_bar_comp)
                     p.Results.load_bar_comp.progress_bar.setText('Creating regions...');
                 end
-                trans_obj_primary.create_regions_from_linked_candidates(tag,...
-                    'idx_pings',1/2*(output_struct.school_struct{ui}.Ping_S+output_struct.school_struct{ui}.Ping_E),...
-                    'idx_r',1/2*(output_struct.school_struct{ui}.Sample_S+output_struct.school_struct{ui}.Sample_E),...
-                    'w_unit',surv_opt_obj.Vertical_slice_units,...
-                    'cell_w',surv_opt_obj.Vertical_slice_size,...
-                    'h_unit','meters',...
-                    'ref',layer.EchoIntStruct.output_2D_type{idx_main}{ui},...
-                    'cell_h',surv_opt_obj.Horizontal_slice_size,...
-                    'reg_names','Classified',...
-                    'rm_overlapping_regions',true);
+                
+                for itag = 1:numel(tags)
+                    
+                    can_temp=candidates;
+                    can_temp(tag_f~=tags{itag})=0;
+                    
+                    trans_obj_primary.create_regions_from_linked_candidates(can_temp,...
+                        'idx_pings',1/2*(output_struct.school_struct{ui}.Ping_S+output_struct.school_struct{ui}.Ping_E),...
+                        'idx_r',1/2*(output_struct.school_struct{ui}.Sample_S+output_struct.school_struct{ui}.Sample_E),...
+                        'w_unit',surv_opt_obj.Vertical_slice_units,...
+                        'cell_w',surv_opt_obj.Vertical_slice_size,...
+                        'h_unit','meters',...
+                        'ref',layer.EchoIntStruct.output_2D_type{idx_main}{ui},...
+                        'cell_h',surv_opt_obj.Horizontal_slice_size,...
+                        'reg_names','Classified',...
+                        'tag',tags{itag},...
+                        'rm_overlapping_regions',true);
+                
+                end
             end
             
     end

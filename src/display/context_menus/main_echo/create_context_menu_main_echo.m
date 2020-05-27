@@ -115,7 +115,7 @@ for ifi = 1:length(layer.Filename)
                     end
             end
         catch
-            warning('Could not read Config file for file %s\n',fileN);
+            warning('Could not read Config for file %s\n',fileN);
         end
         break;
     end

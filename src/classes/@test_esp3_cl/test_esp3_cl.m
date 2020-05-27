@@ -56,7 +56,7 @@ classdef test_esp3_cl < matlab.unittest.TestCase
         function run_scripts(testCase)
             script_path= fullfile(testCase.esp3_obj.app_path.test_folder.Path_to_folder,'scripts');
             
-            PathToResults = fullfile(testCase.esp3_obj.app_path.test_folder.Path_to_folder,'esp3_results');
+            PathToResults = fullfile(testCase.esp3_obj.app_path.test_folder.Path_to_folder,'results');
             
             f=dir(fullfile(script_path,'*.xml'));
             scripts_to_run = {f([f(:).isdir]==0).name};
@@ -79,14 +79,12 @@ classdef test_esp3_cl < matlab.unittest.TestCase
             ref_files=fullfile(Path_ref,files);
             esp3_files=fullfile(Path_esp3,files);
             
-            
-            
-            
+                      
             same=true(1,numel(esp3_files));
             diff_cell=cell(1,numel(esp3_files));
             surv_obj_cell=cell(1,numel(esp3_files));
-            %fig=new_echo_figure([]);
-            fig=[];
+            fig=new_echo_figure([]);
+            %fig=[];
             for ii=1:numel(esp3_files)
                 if isfile(esp3_files{ii})
                     fprintf('File %s:\n',esp3_files{ii});
@@ -194,6 +192,7 @@ classdef test_esp3_cl < matlab.unittest.TestCase
                 for ui=idx_lays
                     ii=ii+1;
                     if found(ii)
+                        load_bar_comp.progress_bar.setText(sprintf('Applying %s on %s',al_names{ial},layers(ui).Filename{2}));
                         out_tmp=layers(ui).apply_algo(al_names{ial},'load_bar_comp',load_bar_comp);
                         sucess{ii,ial}=false(1,numel(out_tmp));
                         for ifi=1:numel(out_tmp)

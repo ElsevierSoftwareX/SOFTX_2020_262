@@ -18,7 +18,7 @@ curr_ss=envdata.SoundSpeed;
 curr_abs=10/1e3;
 
 %%%%%%Environnement%%%%%%
-pos=create_pos_3(7,2,gui_fmt.x_sep,gui_fmt.y_sep,gui_fmt.txt_w,gui_fmt.box_w,gui_fmt.box_h);
+pos=create_pos_3(8,2,gui_fmt.x_sep,gui_fmt.y_sep,gui_fmt.txt_w,gui_fmt.box_w,gui_fmt.box_h);
 
 env_tab_comp.env_group=uipanel(env_tab_comp.env_tab,'Position',[0 0.0 0.4 1],'units','norm');
 
