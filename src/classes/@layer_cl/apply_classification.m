@@ -145,6 +145,7 @@ idx_freq_tot=union(idx_primary_freqs,idx_secondary_freqs);
 idx_freq_tot(isnan(idx_freq_tot))=[];
 
 reslice = true;
+%reslice = false;
 
 if reslice
     layer.multi_freq_slice_transect2D(...
@@ -332,10 +333,11 @@ for ui=1:length(output_struct.school_struct)
                 
                 if ~isempty(p.Results.load_bar_comp)
                     p.Results.load_bar_comp.progress_bar.setText('Creating regions...');
+                    set(p.Results.load_bar_comp.progress_bar, 'Minimum',0, 'Maximum',numel(tags), 'Value',0);
                 end
                 
                 for itag = 1:numel(tags)
-                    
+                    set(p.Results.load_bar_comp.progress_bar, 'Minimum',0, 'Maximum',numel(tags), 'Value',itag);
                     can_temp=candidates;
                     can_temp(tag_f~=tags{itag})=0;
                     

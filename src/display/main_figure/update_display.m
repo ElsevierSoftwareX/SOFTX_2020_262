@@ -53,7 +53,7 @@ if ~isappdata(main_figure,'Axes_panel')
 %     
     load_axis_panel(main_figure,axes_panel);
     display_tab_comp=getappdata(main_figure,'Display_tab');
-    load_mini_axes(main_figure,display_tab_comp.display_tab,[0 0 1 0.67]);
+    load_mini_axes(main_figure,display_tab_comp.display_tab,[0 0 1 0.77]);
     enabled_obj=findobj(main_figure,'Enable','off');
     set(enabled_obj,'Enable','on');
 end
@@ -102,7 +102,7 @@ try
     update_axis(main_figure,new,'main_or_mini','mini','force_update',force_update);
 catch
     display_tab_comp=getappdata(main_figure,'Display_tab');
-    load_mini_axes(main_figure,display_tab_comp.display_tab,[0 0 1 0.67]);
+    load_mini_axes(main_figure,display_tab_comp.display_tab,[0 0 1 0.77]);
     update_axis(main_figure,new,'main_or_mini','mini','force_update',force_update);
 end
 curr_disp=get_esp3_prop('curr_disp');

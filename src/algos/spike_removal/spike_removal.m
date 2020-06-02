@@ -10,6 +10,7 @@ addParameter(p,'r_max',Inf,@isnumeric);
 addParameter(p,'thr_spikes',10,@isnumeric);
 addParameter(p,'thr_sp',-80,@isnumeric);
 addParameter(p,'v_filt',1.5,@isnumeric);
+addParameter(p,'v_buffer',2,@isnumeric);
 addParameter(p,'denoised',true,@(x) isnumeric(x)||islogical(x));
 addParameter(p,'flag_bad_pings',100,@isnumeric)
 addParameter(p,'block_len',get_block_len(10,'cpu'),@(x) x>0);
@@ -43,7 +44,9 @@ end
 
 range_tot=trans_obj.get_transceiver_range(idx_r_tot);
 
-Np=floor(p.Results.v_filt/nanmean(diff(range_tot)));
+Np=floor(p.Results.v_filt/nanmean(diff(range_tot)))*2;
+
+Np_buff=floor(p.Results.v_buffer/nanmean(diff(range_tot)))*2;
 
 block_size=nanmin(ceil(p.Results.block_len/numel(idx_r_tot)),numel(idx_pings_tot));
 num_ite=ceil(numel(idx_pings_tot)/block_size);
@@ -82,6 +85,7 @@ for ui=1:num_ite
     else
         mask=bad_data_mask|below_bot_mask;
     end
+    
     sp_spikes(mask)=-999;
     
     sp_filtered=pow2db_perso(filter2_perso(ones(2*Np,1),db2pow(sp_spikes)));
@@ -98,7 +102,8 @@ for ui=1:num_ite
     mask=Fx>p.Results.thr_spikes&sp_spikes>p.Results.thr_sp|Fx2>p.Results.thr_spikes&sp_spikes>p.Results.thr_sp;
 
     mask=floor(filter2_perso(ones(Np,1),mask))==1;
-    mask=ceil(filter2_perso(ones(2*Np,1),mask))==1;
+    mask=ceil(filter2_perso(ones(Np_buff,1),mask))==1;
+    
     nb_spikes=nb_spikes+nansum(mask(:));
     
 % 

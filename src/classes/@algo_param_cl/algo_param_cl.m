@@ -38,7 +38,7 @@ classdef algo_param_cl < matlab.mixin.Copyable
             name={obj(:).Name};
         end
 
-        function cc=get_range_class(obj)
+        function cc=get_class(obj)
             cc=cell(1,numel(obj));
             for io=1:numel(obj)
                 cc{io}=class(obj(io).Value_range);

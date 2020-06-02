@@ -27,7 +27,7 @@ classdef algo_panel_cl < dynamicprops
             obj.algo=results.algo;
             
              param_names=obj.algo.Input_params.get_name();
-             params_class=obj.algo.Input_params.get_range_class();
+             params_class=obj.algo.Input_params.get_class();
              nb_cell_params=sum(strcmpi(params_class,'cell'));
              nb_bool_params=sum(strcmpi(params_class,'logical'));
              
@@ -60,10 +60,12 @@ classdef algo_panel_cl < dynamicprops
   
             if isempty(results.container)
                 obj.container = new_echo_figure([]);
-            else
+            else      
                 obj.container = results.container;
             end
+           
             obj.container.Tag=obj.algo.Name;
+            
             if isempty(results.title)
                 obj.title = obj.algo.Name;
             else
@@ -75,6 +77,8 @@ classdef algo_panel_cl < dynamicprops
                     obj.container.Name=obj.title;
                 otherwise
                     obj.container.Title=obj.title;
+                    %txt_tmp = uicontrol(obj.container)
+                    
             end
             
             obj.container.Tag=obj.algo.Name;
@@ -157,7 +161,7 @@ classdef algo_panel_cl < dynamicprops
                 end
             end
             
-            uicontrol(obj.container,gui_fmt.pushbtnStyle,'String','Apply','pos',p_button+[1*gui_fmt.button_w 0 0 0],'callback',results.apply_cback_fcn,'Tag',obj.algo.Name);
+            uicontrol(obj.container,gui_fmt.pushbtnStyle,'String','Apply','pos',p_button+[1*gui_fmt.button_w 0 0 0],'callback',results.apply_cback_fcn,'Tag',obj.algo.Name,'TooltipString',obj.algo.get_algo_descr_and_params());
             uicontrol(obj.container,gui_fmt.pushbtnStyle,'String','Save','pos',p_button+[2*gui_fmt.button_w 0 0 0],'callback',results.save_cback_fcn,'Tag',obj.algo.Name);
             
             if ~isempty(results.save_as_cback_fcn)
