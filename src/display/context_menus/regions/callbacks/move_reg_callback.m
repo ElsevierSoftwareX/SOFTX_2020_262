@@ -143,7 +143,7 @@ switch main_figure.SelectionType
             return;
         end
         
-        hfig=display_region_stat_fig(main_figure,regCellInt);
+        hfig=display_region_stat_fig(main_figure,regCellInt,reg_curr.Unique_ID);
         set(hfig,'Name',reg_curr.print());
         
         

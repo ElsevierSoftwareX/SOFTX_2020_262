@@ -16,7 +16,6 @@ check_vert_link_max=@(l)(l>=0&&l<=500);
 p = inputParser;
 
 addRequired(p,'layer',@(x) isa(x,'layer_cl'));
-addParameter(p,'classification_type','By regions',@(x) ismember(x,{'By regions' 'Cell by cell'}));
 addParameter(p,'classification_file','',@ischar);
 addParameter(p,'ref','Surface',@(x) ismember(x,{'Surface' 'Transducer' 'Bottom'}));
 addParameter(p,'timeBounds',[0 inf],@isnumeric);
@@ -56,7 +55,19 @@ if isempty(trans_obj_primary)
     return;
 end
 
-switch lower(p.Results.classification_type)
+if exist(classification_file,'file')>0
+    try
+        class_tree_obj=decision_tree_cl(classification_file);
+    catch
+        warndlg_perso([],'Warning',sprintf('Cannot parse specified classification file: %s',classification_file));
+        return;
+    end
+else
+    warndlg_perso([],'Warning',sprintf('Cannot find specified classification file: %s',classification_file));
+    return;
+end
+
+switch lower(class_tree_obj.ClassificationType)
     case 'by regions'
         if isempty(reg_obj)
             idx_schools=trans_obj_primary.find_regions_type('Data');
@@ -82,27 +93,15 @@ switch lower(p.Results.classification_type)
         else
             surv_opt_obj.IntType='By regions';
         end
+    otherwise
+         warndlg_perso([],'Warning',sprintf('Un regognized ClassificationType in classification file: %s\n Should be "Cell by cell" or "By regions"',classification_file));
+        return;
+        
 end
 
-if exist(classification_file,'file')>0
-    try
-        class_tree_obj=decision_tree_cl(classification_file);
-    catch
-        warning('Cannot parse specified classification file: %s',classification_file);
-        return;
-    end
-else
-    warning('Cannot find specified classification file: %s',classification_file);
-    return;
-end
 
 %freqs=class_tree_obj.get_frequencies();
 vars=class_tree_obj.get_variables();
-
-if ~strcmpi(class_tree_obj.ClassificationType,p.Results.classification_type)
-    warndlg_perso([],'',sprintf('Chosen classification file does not match the required classsification type (%s instead of %s)....',class_tree_obj.ClassificationType,p.Results.classification_type));
-    return;
-end
 
 sv_freqs=cellfun(@(x) textscan(x,'Sv_%d'),vars,'un',1);
 delta_sv_freqs=cellfun(@(x) textscan(x,'delta_Sv_%d_%d'),vars,'un',0);
@@ -145,20 +144,23 @@ end
 idx_freq_tot=union(idx_primary_freqs,idx_secondary_freqs);
 idx_freq_tot(isnan(idx_freq_tot))=[];
 
-layer.multi_freq_slice_transect2D(...
-    'idx_regs',idx_schools,...
-    'timeBounds',p.Results.timeBounds,...
-    'regs',p.Results.reg_obj,...
-    'idx_main_freq',idx_primary_freq,...
-    'idx_sec_freq',idx_freq_tot,...
-    'tag_sliced_output',false,...
-    'keep_all',1,...
-    'keep_bottom',1,...
-    'survey_options',surv_opt_obj,...
-    'load_bar_comp',p.Results.load_bar_comp);
+reslice = true;
 
+if reslice
+    layer.multi_freq_slice_transect2D(...
+        'idx_regs',idx_schools,...
+        'timeBounds',p.Results.timeBounds,...
+        'regs',p.Results.reg_obj,...
+        'idx_main_freq',idx_primary_freq,...
+        'idx_sec_freq',idx_freq_tot,...
+        'tag_sliced_output',false,...
+        'keep_all',1,...
+        'keep_bottom',1,...
+        'survey_options',surv_opt_obj,...
+        'load_bar_comp',p.Results.load_bar_comp);
+end
 
-switch lower(p.Results.classification_type)
+switch lower(class_tree_obj.ClassificationType)
     case 'by regions'
         for jj=1:nb_schools
             for ii=1:numel(primary_freqs)
@@ -224,15 +226,15 @@ if ~isempty(p.Results.load_bar_comp)
 end
 
 for ui=1:length(output_struct.school_struct)
-    switch lower(p.Results.classification_type)
+    switch lower(class_tree_obj.ClassificationType)
         case 'by regions'
             tag=class_tree_obj.apply_classification_tree(output_struct.school_struct{ui});
             trans_obj_primary.Regions(idx_schools(ui)).Tag=char(tag);
             
         case 'cell by cell'
             tag=class_tree_obj.apply_classification_tree(output_struct.school_struct{ui});
-            l_min_can = surv_opt_obj.Vertical_slice_size;
-            h_min_can = surv_opt_obj.Horizontal_slice_size;
+            l_min_can = surv_opt_obj.Vertical_slice_size/2;
+            h_min_can = surv_opt_obj.Horizontal_slice_size/2;
             nb_min_sples = 1;
             
             switch lower(surv_opt_obj.Vertical_slice_units)

@@ -35,10 +35,9 @@
 % Yoann Ladroit, NIWA. Type |help EchoAnalysis.m| for copyright information.
 
 %% Function
-function hfig = display_region_stat_fig(main_figure,regIntStruct)
+function hfig = display_region_stat_fig(main_figure,regIntStruct,id)
 
-
-hfig=new_echo_figure(main_figure,'Tag','reg_stat','Resize','off','Units','pixels','Position',[200 200 400 400]);
+hfig=new_echo_figure(main_figure,'Tag',sprintf('reg_stat_%s',id),'Resize','off','Units','pixels','Position',[200 200 400 400]);
 
 columnname = {'Variable','Value','unit'};
 columnformat = {'char','numeric','char'};

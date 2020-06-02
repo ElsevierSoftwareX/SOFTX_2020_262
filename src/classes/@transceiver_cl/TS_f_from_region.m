@@ -79,8 +79,9 @@ if alg_found
     %ts_thr=varin.TS_threshold;
 else
     max_beam_comp=12;
-    %ts_thr=-80;
+    %ts_thr=-200;
 end
+
 
 for ip=1:length(pings)
     

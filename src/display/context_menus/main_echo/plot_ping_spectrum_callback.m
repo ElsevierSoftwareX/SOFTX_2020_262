@@ -35,7 +35,8 @@ for uui=idx_sort
 
         [Sp_f,Compensation_f,f_vec,r_disp,~]=processTS_f_v2(layer.Transceivers(uui),layer.EnvData,idx_ping,range,cal,'doonan');
         
-        Compensation_f(Sp_f<-70)=0;
+        Compensation_f(Sp_f<-200)=0;
+        Sp_f(Sp_f<-200)=nan;
         TS_f=Sp_f+Compensation_f;
 
        [cmap,col_ax,col_lab,col_grid,~,~,~]=init_cmap(curr_disp.Cmap);

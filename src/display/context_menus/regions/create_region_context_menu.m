@@ -82,13 +82,14 @@ end
 
 analysis_menu=uimenu(context_menu,'Label','Analysis');
 uimenu(analysis_menu,'Label','Display Pdf of values','Callback',{@disp_hist_region_callback,select_plot,main_figure});
-
+uimenu(analysis_menu,'Label','Display region(s) statistics','Callback',{@reg_integrated_callback,select_plot,main_figure});
 if isreg>0
-    uimenu(analysis_menu,'Label','Classify region','Callback',{@classify_reg_callback,main_figure});
+      
+    uimenu(analysis_menu,'Label','Classify region(s)','Callback',{@classify_reg_callback,main_figure});
     uimenu(analysis_menu,'Label','Display Mean Depth of current region','Callback',{@plot_mean_aggregation_depth_callback,main_figure});
 
     export_menu=uimenu(context_menu,'Label','Export');
-    uimenu(export_menu,'Label','Export integrated region to .xlsx','Callback',{@export_regions_callback,main_figure});
+    uimenu(export_menu,'Label','Export integrated region(s) to .xlsx','Callback',{@export_regions_callback,main_figure});
     uimenu(export_menu,'Label','Export Sv values to .xlsx','Callback',{@export_regions_values_callback,main_figure,'selected','sv'});
     uimenu(export_menu,'Label','Export currently displayed values to .xlsx','Callback',{@export_regions_values_callback,main_figure,'selected','curr_data'});
     sub_export_menu=uimenu(export_menu,'Label','XYZ/VRML');
@@ -138,6 +139,9 @@ end
 
 
 end
+
+
+
 function clear_spikes_cback(~,~,select_plot,main_figure)
 layer=get_current_layer();
 curr_disp=get_esp3_prop('curr_disp');
@@ -223,21 +227,30 @@ end
 end
 
 
-
-
-function reg_integrated_callback(~,~,main_figure)
+function reg_integrated_callback(~,~,select_plot,main_figure)
 layer=get_current_layer();
 curr_disp=get_esp3_prop('curr_disp');
 [trans_obj,~]=layer.get_trans(curr_disp);
 
-reg_curr=trans_obj.get_region_from_Unique_ID(curr_disp.Active_reg_ID);
-for i=1:numel(reg_curr)
-    regCellInt=trans_obj.integrate_region(reg_curr(i));
+switch class(select_plot)
+    case 'region_cl'
+        [trans_obj,~]=layer.get_trans(curr_disp);
+        reg_obj=trans_obj.get_region_from_Unique_ID(curr_disp.Active_reg_ID);
+    otherwise
+        idx_pings=round(nanmin(select_plot.XData)):round(nanmax(select_plot.XData));
+        idx_r=round(nanmin(select_plot.YData)):round(nanmax(select_plot.YData));
+        reg_obj=region_cl('Name','Select Area','Idx_r',idx_r,'Idx_pings',idx_pings,'Unique_ID','select_area');
+end
+
+
+for i=1:numel(reg_obj)
+    regCellInt=trans_obj.integrate_region(reg_obj(i));
     if isempty(regCellInt)
         return;
     end
     
-    display_region_stat_fig(main_figure,regCellInt);
+    hfig = display_region_stat_fig(main_figure,regCellInt,reg_obj(i).Unique_ID);
+    set(hfig,'Name',reg_obj(i).print());
 end
 end
 

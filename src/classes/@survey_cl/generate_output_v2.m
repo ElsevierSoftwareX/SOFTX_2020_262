@@ -68,10 +68,16 @@ horz_slice = surv_input_obj.Options.Horizontal_slice_size;
 algos_xml = surv_input_obj.Algos;
 
 classified_by_cell = false;
+
 if ~isempty(algos_xml)
     idx_al = find(cellfun(@(x) strcmpi(x.Name,'Classification'),algos_xml),1);
-    if ~isempty(idx_al)&&isfield(algos_xml{idx_al}.Varargin,'classification_type')
-        classified_by_cell = strcmpi(algos_xml{idx_al}.Varargin.classification_type,'Cell by cell');
+    if ~isempty(idx_al)&&isfield(algos_xml{idx_al}.Varargin,'classification_file')
+        try
+            class_tree_obj=decision_tree_cl(algos_xml{idx_al}.Varargin.classification_file);
+            classified_by_cell = strcmpi(class_tree_obj.ClassificationType,'Cell by cell');
+        catch
+            warning('Cannot parse specified classification file: %s',algos_xml{idx_al}.Varargin.classification_file);
+        end     
     end
 end
 

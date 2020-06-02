@@ -226,20 +226,23 @@ if ~isempty(idx_main)&&~isempty(layer_obj.EchoIntStruct.output_2D{idx_main})
             h_disp=(nanmean(c_disp,1));
             ty='tag';
     end
-    
-    
+
     c_disp=gather(c_disp);
     v_disp=gather(v_disp);
     h_disp=gather(h_disp);
     
-    
     xlim=[nanmin(x_disp(:)) nanmax(x_disp(:))];
-    ylim=[nanmin(y_disp_tmp(:)) nanmax(y_disp_tmp(:))];
+    if any(out.sv_mean>0)
+        ylim=[nanmin(y_disp_tmp(out.sv_mean>0)) nanmax(y_disp_tmp(out.sv_mean>0))];
+    else
+        ylim=[nanmin(y_disp_tmp(:)) nanmax(y_disp_tmp(:))];
+    end
 else
     out=[];
     ylim=[nan nan];
     xlim=[nan nan];
 end
+
 if ~isempty(out)
     
     %figure();pcolor(x_disp,y_disp,c_disp);axis ij ;y_ticks=get(gca,'ytick');y_labels=get(gca,'YTickLabel');
@@ -259,7 +262,10 @@ if ~isempty(out)
     end
     set(echo_int_tab_comp.h_ax,'XTickLabel',x_labels);
     set(echo_int_tab_comp.v_ax,'YTickLabel',y_labels);
-    set(echo_int_tab_comp.main_ax,'xlim',xlim,'ylim',ylim);
+    
+    if diff(xlim)>0&&diff(ylim)>0
+        set(echo_int_tab_comp.main_ax,'xlim',xlim,'ylim',ylim);
+    end
     
     update_echo_int_alphamap(main_figure);
     if ~isempty(legend_str)

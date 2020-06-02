@@ -48,7 +48,9 @@ for i=1:numel(id_new)
             if ~isempty(sd)
                 sd=sd(idx_disp);
             end
-            set(id_c(ui),'XData',curves(idx(ui)).XData(idx_disp),'YData',curves(idx(ui)).YData(idx_disp)-pow2db_perso(av),'YNegativeDelta',sd,'YPositiveDelta',sd,'Tag',curves(idx(ui)).Unique_ID);
+            yd = curves(idx(ui)).YData(idx_disp)-pow2db_perso(av);
+            yd(yd<-200)=nan;
+            set(id_c(ui),'XData',curves(idx(ui)).XData(idx_disp),'YData',yd,'YNegativeDelta',sd,'YPositiveDelta',sd,'Tag',curves(idx(ui)).Unique_ID);
         end
     else
         for ui=1:numel(idx)
@@ -60,8 +62,10 @@ for i=1:numel(id_new)
             if ~isempty(sd)
                 sd=curves(idx(ui)).SD(idx_disp);
             end
-        id_c(ui)=errorbar(multi_freq_disp_tab_comp.ax,curves(idx(ui)).XData(idx_disp),curves(idx(ui)).YData(idx_disp)-av,sd,...
-            'Tag',curves(idx(ui)).Unique_ID,'ButtonDownFcn',{@display_line_cback,main_figure,tab_tag});
+            yd = curves(idx(ui)).YData(idx_disp)-pow2db_perso(av);
+            yd(yd<-200)=nan;
+            id_c(ui)=errorbar(multi_freq_disp_tab_comp.ax,curves(idx(ui)).XData(idx_disp),yd,sd,...
+                'Tag',curves(idx(ui)).Unique_ID,'ButtonDownFcn',{@display_line_cback,main_figure,tab_tag});
         end
     end
     if ~isempty(multi_freq_disp_tab_comp.table.Data)
