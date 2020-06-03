@@ -18,7 +18,6 @@ if isempty(echo_int_tab_comp.cell_w_unit.Value)
 end
 
 survey_options_obj.Vertical_slice_units=echo_int_tab_comp.cell_w_unit.String{echo_int_tab_comp.cell_w_unit.Value};
-
 survey_options_obj.Vertical_slice_size=str2double(echo_int_tab_comp.cell_w.String);
 survey_options_obj.Horizontal_slice_size=str2double(echo_int_tab_comp.cell_h.String);
 
@@ -45,7 +44,10 @@ else
     survey_options_obj.IntRef = '';
 end
 
-
+survey_options_obj.Salinity = layer.EnvData.Salinity;
+survey_options_obj.MeanDepth = layer.EnvData.Depth;
+survey_options_obj.Temperature = layer.EnvData.Temperature;
+survey_options_obj.SoundSpeed = layer.EnvData.SoundSpeed;
 
 layer_obj.create_survey_options_xml(survey_options_obj);
 

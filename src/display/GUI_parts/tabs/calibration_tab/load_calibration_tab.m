@@ -13,8 +13,7 @@ gui_fmt=init_gui_fmt_struct();
 
 pos=create_pos_3(8,2,gui_fmt.x_sep,gui_fmt.y_sep,gui_fmt.txt_w,gui_fmt.box_w,gui_fmt.box_h);
 p_button=pos{6,1}{1};
-p_button(3)=gui_fmt.button_w*7/4;
-
+p_button(3)=gui_fmt.txt_w+gui_fmt.x_sep+gui_fmt.box_w;
 
 calibration_tab_comp.cal_group=uipanel(calibration_tab_comp.calibration_tab,'Position',[0 0.0 0.3 1],'title','','units','norm','BackgroundColor','white');
 
@@ -38,7 +37,7 @@ calibration_tab_comp.SACORRECT=uicontrol(calibration_tab_comp.cal_group,gui_fmt.
 %         end
 
 uicontrol(calibration_tab_comp.cal_group,gui_fmt.pushbtnStyle,'String','Process TS Cal','callback',{@reprocess_TS_calibration,main_figure},'position',p_button);
-calibration_tab_comp.cw_proc(1)=uicontrol(calibration_tab_comp.cal_group,gui_fmt.pushbtnStyle,'String','Save CW  Cal','callback',{@save_CW_calibration,main_figure},'position',p_button+[0 -gui_fmt.box_h 0 0]);
+calibration_tab_comp.cw_proc(1)=uicontrol(calibration_tab_comp.cal_group,gui_fmt.pushbtnStyle,'String','Save CW  Cal','callback',{@save_CW_calibration_cback,main_figure},'position',p_button+[0 -gui_fmt.box_h 0 0]);
 calibration_tab_comp.fm_proc(1)=uicontrol(calibration_tab_comp.cal_group,gui_fmt.pushbtnStyle,'String','Disp.Cal.','callback',{@display_cal,main_figure},'position',p_button+[p_button(3) -gui_fmt.box_h 0 0]);
 
 uicontrol(calibration_tab_comp.cal_group,gui_fmt.txtStyle,'string','Sphere:','position',pos{5,1}{1});
@@ -130,39 +129,7 @@ end
 end
 
 
-
-function save_CW_calibration(~,~,main_figure)
+function save_CW_calibration_cback(~,~,main_figure)
 apply_calibration([],[],main_figure);
-layer=get_current_layer();
-if ~isempty(layer)
-    try
-        cal_cw=extract_cal_to_apply(layer,layer.get_cal());
-    catch err
-        print_errors_and_warnings([],'error',err);
-        disp_perso(main_figure,'Could not read calibration file');
-        cal_cw=get_cal(layer);
-    end
-    [cal_path,~,~]=fileparts(layer.Filename{1});
-    
-    
-    cal_file=fullfile(cal_path,'cal_echo.csv');
-    cal_f=init_cal_struct(cal_file);
-    if ~isempty(cal_f)
-        idx_add=find(~ismember(cal_f.CID,cal_cw.CID));
-    else
-        idx_add=[];
-    end
-    fid=fopen(cal_file,'w');
-    
-    fprintf(fid,'%s,%s,%s,%s,%s,%s\n', 'FREQ', 'CID','G0', 'SACORRECT','EQA','alpha');
-    for i=1:length(cal_cw.G0)
-        fprintf(fid,'%.0f,%s,%.2f,%.2f,%.2f,%.2f\n',cal_cw.FREQ(i),cal_cw.CID{i},cal_cw.G0(i),cal_cw.SACORRECT(i),cal_cw.EQA(i),cal_cw.alpha(i));
-    end
-    
-    for i=idx_add'
-        fprintf(fid,'%.0f,%s,%.2f,%.2f,%.2f,%.2f\n',cal_f.FREQ(i),cal_f.CID{i},cal_f.G0(i),cal_f.SACORRECT(i),cal_f.EQA(i),cal_f.alpha(i));
-    end
-    
-    fclose(fid);
-end
+save_cal_echo_file();
 end
