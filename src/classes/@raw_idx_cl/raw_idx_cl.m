@@ -80,6 +80,12 @@ classdef raw_idx_cl
             time_dg=idx_obj.time_dg(strcmp(idx_obj.type_dg,type));
         end
         
+        function time_dg=get_time_by_chan_dg(idx_obj,type,chan)
+            time_dg=idx_obj.time_dg(strcmp(idx_obj.type_dg,type)&&idx_obj.chan_dg==chan);
+        end
+        
+        
+        
         function delete(obj)
             if ~isdeployed
                 c = class(obj);

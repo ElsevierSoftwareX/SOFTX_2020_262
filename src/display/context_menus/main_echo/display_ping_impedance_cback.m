@@ -36,8 +36,7 @@ end
 
 if any(~cellfun(@isempty,Z))
     n_fig=sprintf('Channel %s Impedance for ping %i',layer.ChannelID{idx_freq},idx_ping);
-   
-    
+     
     if ~isempty(idx_fig)
         h_fig=hfigs(idx_fig);
         ax= findobj(h_fig,'Type','axes');

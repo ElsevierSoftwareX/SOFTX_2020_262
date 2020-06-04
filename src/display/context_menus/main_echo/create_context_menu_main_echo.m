@@ -15,7 +15,9 @@ axes_panel_comp.bad_transmits.UIContextMenu = context_menu;
 % Ping Analysis
 analysis_menu = uimenu(context_menu,'Label','Ping Analysis');
 uimenu(analysis_menu,'Label','Plot Profiles',         'Callback',{@plot_profiles_callback,main_figure});
-uimenu(analysis_menu,'Label','Display Ping Impedance','Callback',{@display_ping_impedance_cback,main_figure,[],1});
+if ~isdeployed
+    uimenu(analysis_menu,'Label','Display Ping Impedance','Callback',{@display_ping_impedance_cback,main_figure,[],1});
+end
 uimenu(analysis_menu,'Label','Plot Ping TS Spectrum', 'Callback',{@plot_ping_spectrum_callback,main_figure});
 uimenu(analysis_menu,'Label','Plot Ping Sv Spectrum', 'Callback',{@plot_ping_sv_spectrum_callback,main_figure});
 

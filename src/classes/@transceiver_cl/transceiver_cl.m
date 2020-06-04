@@ -47,6 +47,7 @@ classdef transceiver_cl < handle
             addParameter(p,'GPSDataPing',gps_data_cl.empty(),@(x) isa(x,'gps_data_cl'));
             addParameter(p,'AttitudeNavPing',attitude_nav_cl.empty(),@(x) isa(x,'attitude_nav_cl'));
             addParameter(p,'Algo',algo_cl.empty(),@(x) isa(x,'algo_cl')||isempty(x));
+            addParameter(p,'ComputeImpedance',false,@islogical);
             addParameter(p,'Mode','CW',@ischar);
 
             parse(p,varargin{:});
@@ -56,7 +57,9 @@ classdef transceiver_cl < handle
             
             
             for i = 1:length(props)
-                trans_obj.(props{i}) = results.(props{i});
+                if isprop(trans_obj,props{i})
+                    trans_obj.(props{i}) = results.(props{i});
+                end
             end
             
             if ~isempty(p.Results.Data)
@@ -72,9 +75,12 @@ classdef transceiver_cl < handle
                  trans_obj.TransducerDepth=zeros(size(trans_obj.Time));
              end
              
-             if isempty(trans_obj.TransducerImpedance)
+             if ~isdeployed&&isempty(trans_obj.TransducerImpedance)&&p.Results.ComputeImpedance
                  trans_obj.TransducerImpedance=cell(size(trans_obj.Time));
+             else
+                 trans_obj.TransducerImpedance = [];
              end
+             
             trans_obj.Params=trans_obj.Params.reduce_params();
             trans_obj.Bottom = p.Results.Bottom;
             if ~isempty(trans_obj.Params.PingNumber)

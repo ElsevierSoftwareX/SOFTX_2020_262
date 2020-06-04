@@ -333,8 +333,10 @@ for idg=1:nb_dg
                         
                         trans_obj(idx).Params.Time(i_ping(idx))=dgTime;
                         
-                        if i_ping(idx)==1
-                            trans_obj(idx).TransducerImpedance=cell(trans_obj(idx).Config.NbQuadrants,nb_pings(idx));
+                        if iscell(trans_obj(idx).TransducerImpedance)
+                            if i_ping(idx)==1
+                                trans_obj(idx).TransducerImpedance=cell(trans_obj(idx).Config.NbQuadrants,nb_pings(idx));
+                            end
                         end
                         
                         for jj=1:length(prop_params)
@@ -498,10 +500,11 @@ for idg=1:nb_dg
                                 %                                 end
                                 data_tmp{idx}.(sprintf('comp_sig_%1d',isig))(1:sampleCount,block_i(idx))=temp(1+2*(isig-1),:)+1i*temp(2+2*(isig-1),:);
                                 
-                                tmp_real=temp(1+2*(isig-1),1:Np);
-                                tmp_imag=temp(2+2*(isig-1),1:Np);
-                                
-                                trans_obj(idx).TransducerImpedance{isig,i_ping(idx)}=tmp_real+1i*tmp_imag;
+                                if iscell(trans_obj(idx).TransducerImpedance)
+                                    tmp_real=temp(1+2*(isig-1),1:Np);
+                                    tmp_imag=temp(2+2*(isig-1),1:Np);
+                                    trans_obj(idx).TransducerImpedance{isig,i_ping(idx)}=tmp_real+1i*tmp_imag;
+                                end
                             end
                         end
                         
@@ -510,14 +513,10 @@ for idg=1:nb_dg
                     chan=idx_raw_obj.chan_dg(idg);
                     idx=find(chan==channels);
                     
-                    
-                    
                     if isempty(idx)||i_ping(idx)>nb_pings(idx)
                         continue;
                     end
-                    if i_ping(idx)==1
-                        trans_obj(idx).TransducerImpedance=cell(1,nb_pings(idx));
-                    end
+
                     %fseek(fid,idx_raw_obj.pos_dg(idg),'bof');
                     fseek(fid,idx_raw_obj.pos_dg(idg)-pos+HEADER_LEN,'cof');
                     data.pings(idx).time(i_ping(idx))=idx_raw_obj.time_dg(idg);
