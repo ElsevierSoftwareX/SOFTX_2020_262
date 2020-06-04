@@ -175,7 +175,7 @@ main_menu.show_colorbar=uimenu(main_menu.display,'Label','Show Colorbar','checke
 
 main_menu.disp_bottom=uimenu(main_menu.display,'checked',curr_disp.DispBottom,'Label','Display bottom');
 main_menu.disp_spikes=uimenu(main_menu.display,'checked',curr_disp.DispSpikes,'Label','Display Spikes');
-main_menu.disp_bad_trans=uimenu(main_menu.display,'checked',curr_disp.DispBadTrans,'Label','Display Bad transmits');
+main_menu.disp_bad_trans=uimenu(main_menu.display,'checked',curr_disp.DispBadTrans,'Label','Display Bad Pings');
 main_menu.disp_reg=uimenu(main_menu.display,'checked',curr_disp.DispReg,'Label','Display Regions');
 main_menu.disp_tracks=uimenu(main_menu.display,'checked',curr_disp.DispTracks,'Label','Display_tracks');
 main_menu.disp_lines=uimenu(main_menu.display,'checked',curr_disp.DispLines,'Label','Display Lines');

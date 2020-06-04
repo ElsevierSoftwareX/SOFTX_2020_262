@@ -37,8 +37,8 @@ uimenu(survey_menu,'Label','Split Transect Here',                   'Callback',{
 tools_menu = uimenu(context_menu,'Label','Tools');
 uimenu(tools_menu,'Label','Correct this transect position based on cable angle and towbody depth','Callback',{@correct_pos_angle_depth_sector_cback,main_figure});
 
-% Bad Transmits
-bt_menu = uimenu(context_menu,'Label','Bad Transmits');
+% Bad Pings
+bt_menu = uimenu(context_menu,'Label','Bad Pings');
 uifreq  = uimenu(bt_menu,'Label','Copy to other channels');
 uimenu(uifreq,'Label','all',                  'Callback',{@copy_bt_cback,main_figure,[]});
 uimenu(uifreq,'Label','choose which Channels','Callback',{@copy_bt_cback,main_figure,1});

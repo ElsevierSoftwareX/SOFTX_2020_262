@@ -1,6 +1,6 @@
 %% find_bt_cback.m
 %
-% Find Bad Transmits on selected area or region_cl
+% Find Bad Pings on selected area or region_cl
 %
 %% Help
 %

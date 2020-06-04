@@ -167,7 +167,7 @@ try
         end
         
         switch curr_disp.CursorMode
-            case {'Edit Bottom' 'Bad Transmits'}
+            case {'Edit Bottom' 'Bad Pings'}
                 switch curr_disp.Fieldname
                     case {'sv','sp','sp_comp','spdenoised','svdenoised','spunmatched','svunmatched','powerunmatched','powerdenoised','power'}
                         sub_bot=Bottom.Sample_idx(idx_pings);

@@ -23,7 +23,7 @@ switch listdata.AffectedObject.CursorMode
         toggle_func(cursor_mode_tool_comp.zoom_in,[],main_figure);
     case 'Zoom Out'
         toggle_func(cursor_mode_tool_comp.zoom_out,[],main_figure);
-    case 'Bad Transmits'
+    case 'Bad Pings'
         toggle_func(cursor_mode_tool_comp.bad_trans,[],main_figure);
     case 'Add ST'
         toggle_func('add_st',[],main_figure);

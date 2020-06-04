@@ -211,7 +211,7 @@ pos=create_pos_3(6,2,gui_fmt.x_sep,gui_fmt.y_sep,gui_fmt.txt_w,gui_fmt.box_w,gui
 xml_scrip_h.Options.SvThr_bool=uicontrol(panel2,gui_fmt.chckboxStyle,'String','Sv Thr(dB)','Position',pos{1,1}{1},'Value',0,'Tag','SvThr_bool');
 xml_scrip_h.Options.SvThr=uicontrol(panel2,gui_fmt.edtStyle,'position',pos{1,1}{2},'string',-999,'Tag','SvThr','callback',{@check_fmt_box,-999,0,surv_opt_obj.SvThr,'%.0f'});
 
-uicontrol(panel2,gui_fmt.txtStyle,'String','Bad Transmits % thr.','Position',pos{1,2}{1});
+uicontrol(panel2,gui_fmt.txtStyle,'String','Bad Pings % thr.','Position',pos{1,2}{1});
 xml_scrip_h.Options.BadTransThr=uicontrol(panel2,gui_fmt.edtStyle,'position',pos{1,2}{2},'string','100','callback',{@ check_fmt_box,0,100,surv_opt_obj.BadTransThr,'%.0f'},'visible','on','tag','BadTransThr');
 
 xml_scrip_h.Options.Es60_correction_bool=uicontrol(panel2,gui_fmt.chckboxStyle,'Value',0,'String','ES60 correction (dB)','Position',pos{2,1}{1},'visible','on','tag','Es60_correction_bool');

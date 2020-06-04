@@ -95,7 +95,7 @@ Below            = p.Results.Below;
 
 %%
 if ~isempty(p.Results.load_bar_comp)
-    p.Results.load_bar_comp.progress_bar.setText('Automatic detection of bad transmits...');
+    p.Results.load_bar_comp.progress_bar.setText('Automatic detection of bad pings...');
 end
 output_struct.done =  false;
 
@@ -482,7 +482,7 @@ for ui = 1:num_ite
         sv_mean_vert_bad_above = nan(1,nb_pings);
         sv_mean_vert_bad_below(idx_bad_below) = sv_mean_vert_below(idx_bad_below);
         sv_mean_vert_bad_above(idx_bad_above) = sv_mean_vert_above(idx_bad_above);
-        h_fig = new_echo_figure([],'Name','Bad Transmits test','Tag','temp_badt');
+        h_fig = new_echo_figure([],'Name','Bad Pings test','Tag','temp_badt');
         ax = axes(h_fig,'nextplot','add');
         grid(ax,'on');
         plot(ax,sv_mean_vert_below,'-+');

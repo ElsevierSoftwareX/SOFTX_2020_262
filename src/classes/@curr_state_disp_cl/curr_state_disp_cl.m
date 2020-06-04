@@ -160,7 +160,7 @@ classdef curr_state_disp_cl <handle
                     pointer='glassplus';
                 case 'Zoom Out'
                     pointer='glassminus';
-                case 'Bad Transmits'
+                case 'Bad Pings'
                     pointer='lrdrag';
                 case 'Edit Bottom'
                     pointer='crosshair';
