@@ -33,7 +33,7 @@ classdef transceiver_cl < handle
             addParameter(p,'Data', ac_data_cl.empty(), @(x) isa(x,'ac_data_cl'));
             addParameter(p,'Time',[],@isnumeric);
             addParameter(p,'TransducerDepth',[],@isnumeric);
-            addParameter(p,'TransducerImpedance',{},@iscell);
+            addParameter(p,'TransducerImpedance',{},@(x) iscell(x)||isempty(x));
             addParameter(p,'Range',[],@isnumeric);
             addParameter(p,'Alpha',[],@isnumeric);
             addParameter(p,'Alpha_ori','constant',@(x) ismember(x,{'constant' 'profile' 'theoritical'}));
@@ -75,7 +75,7 @@ classdef transceiver_cl < handle
                  trans_obj.TransducerDepth=zeros(size(trans_obj.Time));
              end
              
-             if ~isdeployed&&isempty(trans_obj.TransducerImpedance)&&p.Results.ComputeImpedance
+             if isempty(trans_obj.TransducerImpedance)&&p.Results.ComputeImpedance
                  trans_obj.TransducerImpedance=cell(size(trans_obj.Time));
              else
                  trans_obj.TransducerImpedance = [];
