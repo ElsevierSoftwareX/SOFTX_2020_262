@@ -144,6 +144,7 @@ classdef algo_panel_cl < dynamicprops
                                 'String',str_disp{ui},'Position',p_tmp,...
                                 'callback',@update_algo_input_param_fcn,...
                                 'tooltipstring',obj.algo.Input_params(ui).Tooltipstring,'Tag',param_names{ui});
+                            
                             if ~(numel(param_names)>ui&&strcmpi(params_class{ui+1},'logical'))
                                 ip = ip-1;
                             end

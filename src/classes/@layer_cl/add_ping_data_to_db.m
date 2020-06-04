@@ -16,12 +16,13 @@ for ilay=1:length(layers_obj)
             
             gps_data=get_ping_data_from_db(layers_obj(ilay).Filename,freq);
             gps_data_obj=trans_obj.GPSDataPing;
+            
             if isempty(gps_data_obj)||all(gps_data_obj.Lat==0)
                 continue;
             end
             
             if ~isempty(gps_data{end})
-                if abs(gps_data_obj.Time(end)-gps_data{end}.Time(end))<5/(24*60*60)
+                if abs(gps_data_obj.Time(end)-gps_data{end}.Time(end))<5/(24*60*60)&&~clear_existing_data>0
                     if~isdeployed()
                         fprintf('Gps data up to date\n');
                     end
@@ -51,7 +52,7 @@ for ilay=1:length(layers_obj)
                         continue;
                     end
                 end
-                
+               
                 id_keep_f=intersect(id_keep,idx_pings);
                 if isempty(id_keep_f)        
                    continue;
@@ -70,7 +71,7 @@ for ilay=1:length(layers_obj)
                 
                 dbconn=sqlite(fileN,'connect');
                 createPingTable(dbconn);
-                
+                dbconn.exec(sprintf('delete from ping_data where Filename is "%s"',[fileOri extN]));
                 if clear_existing_data>0
                     clearPingTable(dbconn,[fileOri extN],freq);
                 end

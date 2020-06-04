@@ -15,7 +15,7 @@ pos=create_pos_3(8,2,gui_fmt.x_sep,gui_fmt.y_sep,gui_fmt.txt_w,gui_fmt.box_w,gui
 p_button=pos{6,1}{1};
 p_button(3)=gui_fmt.txt_w+gui_fmt.x_sep+gui_fmt.box_w;
 
-calibration_tab_comp.cal_group=uipanel(calibration_tab_comp.calibration_tab,'Position',[0 0.0 0.3 1],'title','','units','norm','BackgroundColor','white');
+calibration_tab_comp.cal_group=uipanel(calibration_tab_comp.calibration_tab,'Position',[0 0.0 0.325 1],'title','','units','norm','BackgroundColor','white');
 
 calibration_tab_comp.calibration_txt=uicontrol(calibration_tab_comp.cal_group,gui_fmt.txtTitleStyle,...
     'String',sprintf('Current Channel: %.0f kHz',curr_disp.Freq/1e3),'Position',pos{1,1}{1}+[0 0 gui_fmt.txt_w 0]);
@@ -37,14 +37,14 @@ calibration_tab_comp.SACORRECT=uicontrol(calibration_tab_comp.cal_group,gui_fmt.
 %         end
 
 uicontrol(calibration_tab_comp.cal_group,gui_fmt.pushbtnStyle,'String','Process TS Cal','callback',{@reprocess_TS_calibration,main_figure},'position',p_button);
-calibration_tab_comp.cw_proc(1)=uicontrol(calibration_tab_comp.cal_group,gui_fmt.pushbtnStyle,'String','Save CW  Cal','callback',{@save_CW_calibration_cback,main_figure},'position',p_button+[0 -gui_fmt.box_h 0 0]);
+calibration_tab_comp.cw_proc(1)=uicontrol(calibration_tab_comp.cal_group,gui_fmt.pushbtnStyle,'String','Save CW  Cal','callback',{@save_CW_calibration_cback},'position',p_button+[0 -gui_fmt.box_h 0 0]);
 calibration_tab_comp.fm_proc(1)=uicontrol(calibration_tab_comp.cal_group,gui_fmt.pushbtnStyle,'String','Disp.Cal.','callback',{@display_cal,main_figure},'position',p_button+[p_button(3) -gui_fmt.box_h 0 0]);
 
 uicontrol(calibration_tab_comp.cal_group,gui_fmt.txtStyle,'string','Sphere:','position',pos{5,1}{1});
 sphere_struct=list_spheres();
 calibration_tab_comp.sphere=uicontrol(calibration_tab_comp.cal_group,gui_fmt.popumenuStyle,'string',{sphere_struct(:).name},'position',pos{5,1}{2}+[0 0 gui_fmt.txt_w/2 0]);
 
-calibration_tab_comp.ax_group=uipanel(calibration_tab_comp.calibration_tab,'Position',[0.3 0.0 0.7 1],'title','','units','norm','BackgroundColor','white');
+calibration_tab_comp.ax_group=uipanel(calibration_tab_comp.calibration_tab,'Position',[0.325 0.0 0.675 1],'title','','units','norm','BackgroundColor','white');
 
 field={'EQA','SACORRECT','G0'};
 label={'EQA (dB)','Sa_{corr} (dB)','G0 (dB)'};
@@ -129,7 +129,6 @@ end
 end
 
 
-function save_CW_calibration_cback(~,~,main_figure)
-apply_calibration([],[],main_figure);
+function save_CW_calibration_cback(~,~)
 save_cal_echo_file();
 end

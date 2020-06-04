@@ -15,10 +15,10 @@ checkSNRThr=@(SNRThr)(SNRThr>=0&&SNRThr<=40);
 
 
 addRequired(p,'trans_obj',@(obj) isa(obj,'transceiver_cl'));
-
 addParameter(p,'v_filt',defaultv_filt,checkv_filt);
 addParameter(p,'h_filt',defaulth_filt,checkh_filt);
 addParameter(p,'NoiseThr',defaultNoiseThr,checkNoiseThr);
+addParameter(p,'snr_filt',true,@islogical);
 addParameter(p,'SNRThr',defaultSNRThr,checkSNRThr);
 addParameter(p,'reg_obj',region_cl.empty(),@(x) isa(x,'region_cl'));
 addParameter(p,'block_len',get_block_len(10,'cpu'),@(x) x>0);
@@ -140,6 +140,10 @@ for ui=1:num_ite
     
     
     SNR=Sv_unoised-pow2db_perso(sv_noise);
+    if p.Results.snr_filt
+        SNR = filter2_perso(ones(v_filt,h_filt),SNR);
+        %SNR = filter2_perso(gausswin(v_filt,1)*gausswin(h_filt,1)',SNR);
+    end
     %SNR_2=pow2db_perso(pow_unoised./pow_noise);
     %pow_unoised(SNR<SNR_thr)=0;
     Sp_unoised(SNR<SNR_thr)=-999;

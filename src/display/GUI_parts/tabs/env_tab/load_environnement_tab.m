@@ -50,13 +50,13 @@ env_tab_comp.string_cal=uicontrol(env_tab_comp.env_group,gui_fmt.txtStyle,'posit
 p_button=pos{7,1}{1};
 p_button(3)=gui_fmt.txt_w+gui_fmt.x_sep+gui_fmt.box_w;
 uicontrol(env_tab_comp.env_group,gui_fmt.pushbtnStyle,'String','Apply env.','callback',{@apply_envdata_callback,main_figure},'position',p_button,'tooltipstring','Apply Environnemental values');
-uicontrol(env_tab_comp.env_group,gui_fmt.pushbtnStyle,'String','Save env.','callback',{@save_abs_calibration,main_figure},'position',p_button+[0 -gui_fmt.box_h 0 0],'tooltipstring','Save environnemental values to cal_echo.csv and survey_options.xml');
+uicontrol(env_tab_comp.env_group,gui_fmt.pushbtnStyle,'String','Save env.','callback',{@save_abs_calibration},'position',p_button+[0 -gui_fmt.box_h 0 0],'tooltipstring','Save environnemental values to cal_echo.csv and survey_options.xml');
 
 
 p_button=pos{7,2}{1}+[gui_fmt.box_w+gui_fmt.x_sep 0 0 0];
 p_button(3)=gui_fmt.txt_w+gui_fmt.x_sep+gui_fmt.box_w;
 uicontrol(env_tab_comp.env_group,gui_fmt.pushbtnStyle,'String','Save profiles','callback',{@save_envdata_profiles_callback,main_figure},'position',p_button,'tooltipstring','Save Profiles');
-uicontrol(env_tab_comp.env_group,gui_fmt.pushbtnStyle,'String','Reload','callback',{@reload_envdata_profiles_callback,main_figure},'position',p_button+[0 -gui_fmt.box_h 0 0],'tooltipstring','Reload Profiles');
+uicontrol(env_tab_comp.env_group,gui_fmt.pushbtnStyle,'String','Reload profiles','callback',{@reload_envdata_profiles_callback,main_figure},'position',p_button+[0 -gui_fmt.box_h 0 0],'tooltipstring','Reload Profiles');
 
 env_tab_comp.att_choice=uicontrol(env_tab_comp.env_group,gui_fmt.popumenuStyle,'string',{'Constant' 'Profile' 'Theoritical'},...
     'position',pos{6,2}{1}+[gui_fmt.box_w+gui_fmt.x_sep 0 0 0]);
@@ -93,9 +93,9 @@ setappdata(main_figure,'Env_tab',env_tab_comp);
 end
 
 
-function save_abs_calibration(~,~,main_figure)
-update_envcal_values([],[],main_figure);
-update_survey_opts(main_figure);
+function save_abs_calibration(~,~)
+esp3_obj=getappdata(groot,'esp3_obj');
+update_survey_opts(esp3_obj.main_figure);
 save_cal_echo_file();
 end
 
@@ -106,7 +106,6 @@ layer.save_svp('');
 layer.save_ctd('');
 
 end
-
 
 function reload_envdata_profiles_callback(~,~,main_figure)
 layer=get_current_layer();
