@@ -111,16 +111,16 @@ if strcmp(trans_obj.Mode,'FM')
     uimenu(freq_analysis_menu,'Label','Create Frequency Matrix TS','Callback',{@freq_response_sp_mat_callback,select_plot,main_figure});
 end
 
-algo_menu=uimenu(context_menu,'Label','Apply Algorithm ...');
+algo_menu=uimenu(context_menu,'Label','Apply Algorithm');
 uimenu(algo_menu,'Label','Bottom Detection V1','Callback',{@apply_bottom_detect_cback,select_plot,main_figure,'v1'});
 uimenu(algo_menu,'Label','Bottom Detection V2','Callback',{@apply_bottom_detect_cback,select_plot,main_figure,'v2'});
-uimenu(algo_menu,'Label','Bottom Features','Callback',{@apply_bottomfeatures_cback,select_plot,main_figure});
+uimenu(algo_menu,'Label','Bottom Features Calculation','Callback',{@apply_bottomfeatures_cback,select_plot,main_figure});
 uimenu(algo_menu,'Label','Bad Pings Detection','Callback',{@find_bt_cback,select_plot,main_figure,'v2'});
-uimenu(algo_menu,'Label','Spikes removal','Callback',{@find_spikes_cback,select_plot,main_figure});
+uimenu(algo_menu,'Label','Spikes Detection','Callback',{@find_spikes_cback,select_plot,main_figure});
+uimenu(algo_menu,'Label','Dropouts Detection','Callback',{@find_bt_cback,select_plot,main_figure,'dropouts'});
 uimenu(algo_menu,'Label','School Detection','Callback',{@apply_school_detect_cback,select_plot,main_figure});
 uimenu(algo_menu,'Label','Single Targets Detection','Callback',{@apply_st_detect_cback,select_plot,main_figure});
 uimenu(algo_menu,'Label','Target Tracking','Callback',{@apply_track_target_cback,select_plot,main_figure});
-uimenu(algo_menu,'Label','Dropouts detection','Callback',{@find_bt_cback,select_plot,main_figure,'dropouts'});
 
 uimenu(context_menu,'Label','Shift Bottom ...','Callback',{@shift_bottom_callback,select_plot,main_figure});
 
