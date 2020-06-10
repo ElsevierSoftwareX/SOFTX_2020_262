@@ -207,28 +207,36 @@ xml_scrip_h.Options.Soundspeed=uicontrol(panel1,gui_fmt.edtStyle,'position',pos{
 
 gui_fmt=init_gui_fmt_struct('norm',6,2);
 pos=create_pos_3(6,2,gui_fmt.x_sep,gui_fmt.y_sep,gui_fmt.txt_w,gui_fmt.box_w,gui_fmt.box_h);
+dd  =gui_fmt.box_w*1.5;
+uicontrol(panel2,gui_fmt.txtStyle,'String','Integration type:','Position',pos{1,1}{1}+[0 0 -dd 0],'Tooltipstring',sprintf('"WC":\n-integrate all water at the given grid and given reference ignoring region specifications.\n"By regions":\n-only integrate specified regions.'));
+int_opt={'By regions' 'WC'};
+xml_scrip_h.Options.IntType=uicontrol(panel2,gui_fmt.popumenuStyle,'String',int_opt,'Value',1,'Position',pos{1,1}{2}+[-dd 0 dd 0]);
 
-xml_scrip_h.Options.SvThr_bool=uicontrol(panel2,gui_fmt.chckboxStyle,'String','Sv Thr(dB)','Position',pos{1,1}{1},'Value',0,'Tag','SvThr_bool');
-xml_scrip_h.Options.SvThr=uicontrol(panel2,gui_fmt.edtStyle,'position',pos{1,1}{2},'string',-999,'Tag','SvThr','callback',{@check_fmt_box,-999,0,surv_opt_obj.SvThr,'%.0f'});
+uicontrol(panel2,gui_fmt.txtStyle,'String','Reference:','Position',pos{1,2}{1}+[0 0 -dd 0]);
+int_opt={'--' 'Surface' 'Bottom' 'Transducer'};
+xml_scrip_h.Options.IntRef=uicontrol(panel2,gui_fmt.popumenuStyle,'String',int_opt,'Value',1,'Position',pos{1,2}{2}+[-dd 0 dd 0]);
 
-uicontrol(panel2,gui_fmt.txtStyle,'String','Bad Pings % thr.','Position',pos{1,2}{1});
-xml_scrip_h.Options.BadTransThr=uicontrol(panel2,gui_fmt.edtStyle,'position',pos{1,2}{2},'string','100','callback',{@ check_fmt_box,0,100,surv_opt_obj.BadTransThr,'%.0f'},'visible','on','tag','BadTransThr');
+xml_scrip_h.Options.SvThr_bool=uicontrol(panel2,gui_fmt.chckboxStyle,'String','Sv Thr(dB)','Position',pos{2,1}{1},'Value',0,'Tag','SvThr_bool');
+xml_scrip_h.Options.SvThr=uicontrol(panel2,gui_fmt.edtStyle,'position',pos{2,1}{2},'string',-999,'Tag','SvThr','callback',{@check_fmt_box,-999,0,surv_opt_obj.SvThr,'%.0f'});
 
-xml_scrip_h.Options.Es60_correction_bool=uicontrol(panel2,gui_fmt.chckboxStyle,'Value',0,'String','ES60 correction (dB)','Position',pos{2,1}{1},'visible','on','tag','Es60_correction_bool');
-xml_scrip_h.Options.Es60_correction=uicontrol(panel2,gui_fmt.edtStyle,'position',pos{2,1}{2},'string',num2str(surv_opt_obj.Es60_correction),'callback',{@ check_fmt_box,0,inf,surv_opt_obj.Es60_correction,'%.2f'},'visible','on','tag','Es60_correction');
+uicontrol(panel2,gui_fmt.txtStyle,'String','Bad Pings % thr.','Position',pos{2,2}{1});
+xml_scrip_h.Options.BadTransThr=uicontrol(panel2,gui_fmt.edtStyle,'position',pos{2,2}{2},'string','100','callback',{@ check_fmt_box,0,100,surv_opt_obj.BadTransThr,'%.0f'},'visible','on','tag','BadTransThr');
 
-xml_scrip_h.Options.Shadow_zone=uicontrol(panel2,gui_fmt.chckboxStyle,'Value',surv_opt_obj.Shadow_zone,'String','Shadow zone Est. (m)','Position',pos{2,2}{1},'visible','on','tag','Shadow_zone');
-xml_scrip_h.Options.Shadow_zone_height=uicontrol(panel2,gui_fmt.edtStyle,'position',pos{2,2}{2},'string',num2str(surv_opt_obj.Shadow_zone_height),'callback',{@ check_fmt_box,0,inf,surv_opt_obj.Shadow_zone_height,'%.1f'},'visible','on','tag','Shadow_zone_height');
+xml_scrip_h.Options.Es60_correction_bool=uicontrol(panel2,gui_fmt.chckboxStyle,'Value',0,'String','ES60 correction (dB)','Position',pos{3,1}{1},'visible','on','tag','Es60_correction_bool');
+xml_scrip_h.Options.Es60_correction=uicontrol(panel2,gui_fmt.edtStyle,'position',pos{3,1}{2},'string',num2str(surv_opt_obj.Es60_correction),'callback',{@ check_fmt_box,0,inf,surv_opt_obj.Es60_correction,'%.2f'},'visible','on','tag','Es60_correction');
+
+xml_scrip_h.Options.Shadow_zone=uicontrol(panel2,gui_fmt.chckboxStyle,'Value',surv_opt_obj.Shadow_zone,'String','Shadow zone Est. (m)','Position',pos{3,2}{1},'visible','on','tag','Shadow_zone');
+xml_scrip_h.Options.Shadow_zone_height=uicontrol(panel2,gui_fmt.edtStyle,'position',pos{3,2}{2},'string',num2str(surv_opt_obj.Shadow_zone_height),'callback',{@ check_fmt_box,0,inf,surv_opt_obj.Shadow_zone_height,'%.1f'},'visible','on','tag','Shadow_zone_height');
 
 
-xml_scrip_h.Options.Use_exclude_regions=uicontrol(panel2,gui_fmt.chckboxStyle,'Value',surv_opt_obj.Use_exclude_regions,'String','Rm. Bad Data Regions','Position',pos{3,1}{1},'tag','Use_exclude_regions');
-xml_scrip_h.Options.Denoised=uicontrol(panel2,gui_fmt.chckboxStyle,'Value',surv_opt_obj.Denoised,'String','Denoised data','Position',pos{3,2}{1},'tag','Denoised');
+xml_scrip_h.Options.Use_exclude_regions=uicontrol(panel2,gui_fmt.chckboxStyle,'Value',surv_opt_obj.Use_exclude_regions,'String','Rm. Bad Data Regions','Position',pos{4,1}{1},'tag','Use_exclude_regions');
+xml_scrip_h.Options.Denoised=uicontrol(panel2,gui_fmt.chckboxStyle,'Value',surv_opt_obj.Denoised,'String','Denoised data','Position',pos{4,2}{1},'tag','Denoised');
 
-xml_scrip_h.Options.Motion_correction=uicontrol(panel2,gui_fmt.chckboxStyle,'Value',surv_opt_obj.Motion_correction,'String','Motion Correction','Position',pos{4,1}{1},'tag','Motion_correction');
-xml_scrip_h.Options.CopyBottomFromFrequency=uicontrol(panel2,gui_fmt.chckboxStyle,'position',pos{4,2}{1},'Value',surv_opt_obj.CopyBottomFromFrequency,'String','Copy Bot. from main Freq','tag','CopyBottomFromFrequency');
+xml_scrip_h.Options.Motion_correction=uicontrol(panel2,gui_fmt.chckboxStyle,'Value',surv_opt_obj.Motion_correction,'String','Motion Correction','Position',pos{5,1}{1},'tag','Motion_correction');
+xml_scrip_h.Options.CopyBottomFromFrequency=uicontrol(panel2,gui_fmt.chckboxStyle,'position',pos{5,2}{1},'Value',surv_opt_obj.CopyBottomFromFrequency,'String','Copy Bot. from main Freq','tag','CopyBottomFromFrequency');
 
-xml_scrip_h.Options.Remove_ST=uicontrol(panel2,gui_fmt.chckboxStyle,'Value',surv_opt_obj.Remove_ST,'String','Rm. Single Targets','Position',pos{5,1}{1},'tag','Remove_ST');
-xml_scrip_h.Options.Remove_tracks=uicontrol(panel2,gui_fmt.chckboxStyle,'Value',surv_opt_obj.Remove_tracks,'String','Remove Tracks','Position',pos{5,2}{1},'tag','Remove_tracks');
+xml_scrip_h.Options.Remove_ST=uicontrol(panel2,gui_fmt.chckboxStyle,'Value',surv_opt_obj.Remove_ST,'String','Rm. Single Targets','Position',pos{6,1}{1},'tag','Remove_ST');
+xml_scrip_h.Options.Remove_tracks=uicontrol(panel2,gui_fmt.chckboxStyle,'Value',surv_opt_obj.Remove_tracks,'String','Remove Tracks','Position',pos{6,2}{1},'tag','Remove_tracks');
 
 
 
@@ -414,10 +422,10 @@ end
 
 
 
-xml_scrip_h.reg_only=uicontrol(xml_scrip_h.regions_panel,gui_fmt.chckboxStyle,'Value',1,'String','Integrate by','Position',pos{8,1}{1},'Tooltipstring','unchecked: integrate all WC within bounds','Fontweight','bold');
+xml_scrip_h.reg_only=uicontrol(xml_scrip_h.regions_panel,gui_fmt.chckboxStyle,'Value',1,'String','Filter by','Position',pos{8,1}{1},'Tooltipstring','unchecked: integrate all WC within bounds','Fontweight','bold');
 int_opt={'Tag' 'IDs' 'Name' 'All Data Regions'};
 xml_scrip_h.tog_int=uicontrol(xml_scrip_h.regions_panel,gui_fmt.popumenuStyle,'String',int_opt,'Value',1,'Position',pos{8,1}{2}+[0 0 gui_fmt.box_w 0]);
-uicontrol(xml_scrip_h.regions_panel,gui_fmt.txtStyle,'position',pos{9,1}{1},'string','Specify: ');
+uicontrol(xml_scrip_h.regions_panel,gui_fmt.txtStyle,'position',pos{9,1}{1},'string','Region specs: ');
 xml_scrip_h.reg_id_box=uicontrol(xml_scrip_h.regions_panel,gui_fmt.edtStyle,'position',pos{9,1}{2}+[0 0 gui_fmt.box_w 0],'string','');
 
 
@@ -583,6 +591,7 @@ end
 
 survey_input_obj.Algos=al_out;
 int_opt=xml_scrip_h.tog_int.String;
+
 switch int_opt{xml_scrip_h.tog_int.Value}
     case 'All Data Regions'
         ids='IDs';
@@ -591,6 +600,7 @@ switch int_opt{xml_scrip_h.tog_int.Value}
         ids=int_opt{xml_scrip_h.tog_int.Value};
         ids_str=xml_scrip_h.reg_id_box.String;
 end
+
 data_init=xml_scrip_h.transects_table.Data;
 if isempty(data_init)
     warndlg_perso(main_figure,'No data','Nothing to put in the script.');

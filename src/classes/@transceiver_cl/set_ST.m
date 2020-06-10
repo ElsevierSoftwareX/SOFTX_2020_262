@@ -5,7 +5,10 @@ block_len=get_block_len(100,'cpu');
 trans_obj.Data.replace_sub_data_v2('singletarget',-999,[],[]);
     
 if ~isempty(ST)&&~isempty(ST.Ping_number)
-    idx_r=nanmin(ST.idx_r):nanmax(ST.idx_r);
+    [~,np]=trans_obj.get_pulse_Teff(ST.Ping_number);
+    idx_r=nanmin(ST.idx_r-nanmax(np)):nanmax(ST.idx_r+nanmax(np));
+    idx_r(idx_r<1)=1;
+    idx_r(idx_r>numel(trans_obj.Range))=numel(trans_obj.Range);
     idx_pings_st=nanmin(ST.Ping_number):nanmax(ST.Ping_number);
     
     block_size = nanmin(ceil(block_len/numel(idx_r)),numel(idx_pings_st));

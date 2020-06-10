@@ -16,13 +16,7 @@ app_path_tstring  = {'Root Data folder' 'Temporary folder' 'Data folder'...
     'Script folder' 'Results folder' ...
      'CVS root folder' 'Test folder'};
 
-
-if isdeployed()
-    idx = 1:numel(app_path_fields)-2;
-else
-    idx = 1:numel(app_path_fields);
-end
-
+idx = 1:numel(app_path_fields);
 
 for ui=idx
     app_path.(app_path_fields{ui}) =  path_elt_cl(app_path_folders{ui},'Path_description',app_path_descr{ui},'Path_tooltipstring',app_path_tstring{ui},'Path_fieldname',app_path_fields{ui});

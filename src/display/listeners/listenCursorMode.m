@@ -5,18 +5,6 @@ if~isdeployed
 end
 cursor_mode_tool_comp=getappdata(main_figure,'Cursor_mode_tool');
 
-if isappdata(main_figure,'Axes_panel')
-    axes_panel_comp=getappdata(main_figure,'Axes_panel');
-    ah=axes_panel_comp.main_axes;
-    clear_lines_temp(ah);
-    select_area=getappdata(main_figure,'SelectArea');
-    delete(select_area.patch_h);
-    delete(select_area.uictxt_menu_h);
-    select_area.patch_h=[];
-    select_area.uictxt_menu_h=[];
-    setappdata(main_figure,'SelectArea',select_area);
-    
-end
 
 switch listdata.AffectedObject.CursorMode
     case 'Zoom In'
@@ -40,6 +28,20 @@ switch listdata.AffectedObject.CursorMode
     case 'Normal'
         toggle_func(cursor_mode_tool_comp.pointer,[],main_figure);
 end
+
+if isappdata(main_figure,'Axes_panel')
+    axes_panel_comp=getappdata(main_figure,'Axes_panel');
+    ah=axes_panel_comp.main_axes;
+    clear_lines_temp(ah);
+    select_area=getappdata(main_figure,'SelectArea');
+    delete(select_area.patch_h);
+    delete(select_area.uictxt_menu_h);
+    select_area.patch_h=[];
+    select_area.uictxt_menu_h=[];
+    setappdata(main_figure,'SelectArea',select_area);
+end
+
+
 %order_axes(main_figure);
 %profile off;
 %profile viewer;

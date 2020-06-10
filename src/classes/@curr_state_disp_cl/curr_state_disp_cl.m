@@ -137,7 +137,14 @@ classdef curr_state_disp_cl <handle
         
         function setCax(obj,cax)
             if cax(2)>cax(1)
-                idx_field=find(cellfun(@(x) strcmpi(obj.Fieldname,x),obj.Fieldnames));
+                field = obj.Fieldname;
+                rm_str = {'denoised' 'unmatched' '_filtered'};
+                
+                for istr = 1:numel(rm_str)
+                    field = strrep(field,rm_str{istr},'');
+                end
+               
+                idx_field=find(cellfun(@(x) strcmpi(field,x),obj.Fieldnames));
                 
                 if ~isempty(idx_field)
                     obj.Caxes{idx_field}=cax;
@@ -182,8 +189,15 @@ classdef curr_state_disp_cl <handle
         function setTypeCax(obj)
             
             [cax,obj.Type,~]=init_cax(obj.Fieldname);
-          
-            idx_field=find(cellfun(@(x) strcmpi(obj.Fieldname,x),obj.Fieldnames));
+            
+            field = obj.Fieldname;
+            rm_str = {'denoised' 'unmatched' '_filtered'};
+            
+            for istr = 1:numel(rm_str)
+                field = strrep(field,rm_str{istr},'');
+            end
+
+            idx_field=find(cellfun(@(x) strcmpi(field,x),obj.Fieldnames));
             
             if ~isempty(idx_field)
                 obj.Cax=obj.Caxes{idx_field};
@@ -192,6 +206,7 @@ classdef curr_state_disp_cl <handle
                 obj.Fieldnames=[obj.Fieldnames obj.Fieldname];
                 obj.Cax=cax;
             end
+            
         end
         
         function setType(obj)
@@ -212,7 +227,15 @@ classdef curr_state_disp_cl <handle
         end
         
         function cax=getCaxField(obj,field)
+                       
+            rm_str = {'denoised' 'unmatched' '_filtered'};
+            
+            for istr = 1:numel(rm_str)
+                field = strrep(field,rm_str{istr},'');
+            end
+
             idx_field=find(cellfun(@(x) strcmpi(field,x),obj.Fieldnames));
+            
             if ~isempty(idx_field)
                 cax=obj.Caxes{idx_field};
             else

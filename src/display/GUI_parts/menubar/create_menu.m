@@ -203,7 +203,6 @@ uimenu(reg_tools,'Label','Display Mean Depth of current region','Callback',{@plo
 towbody_tools=uimenu(main_menu.tools,'Label','Towed-body Tools');
 uimenu(towbody_tools,'Label','Correct position based on cable angle and towbody depth','Callback',{@correct_pos_angle_depth_cback,main_figure});
 
-
 if ~isdeployed
     bs_tools=uimenu(main_menu.tools,'Label','Backscatter Analysis');   
     uimenu(bs_tools,'Label','Execute BS analysis','Callback',{@bs_analysis_callback,main_figure});
@@ -213,7 +212,7 @@ env_tools=uimenu(main_menu.tools,'Label','Environnement tools');
 uimenu(env_tools,'Label','Load CTD (ESP3 format)','Callback',{@load_ctd_esp3_callback,main_figure});
 uimenu(env_tools,'Label','Load SVP (ESP3 Format)','Callback',{@load_svp_esp3_callback,main_figure});
 uimenu(env_tools,'Label','Compute SVP from CTD profile','Callback',{@compute_svp_esp3_callback,main_figure});
-env_tools_imp=uimenu(env_tools,'Label','Exernal imports');
+env_tools_imp=uimenu(env_tools,'Label','External imports');
 uimenu(env_tools_imp,'Label','Load CTD data from Seabird file','Callback',{@load_ctd_callback,main_figure});
 uimenu(env_tools_imp,'Label','Load SVP data from file','Callback',{@load_svp_callback,main_figure});
 

@@ -67,10 +67,12 @@ try
     end
     
     map_tab_comp=getappdata(main_figure,'Map_tab');
+    
     if ~isvalid(map_tab_comp.curr_track)
         map_tab_comp.curr_track=matlab.graphics.chart.primitive.Line('Parent',map_tab_comp.ax,'Color','r','linestyle','--','linewidth',1,'tag','curr_track');
         map_tab_comp.curr_track.LatitudeDataMode='manual';
     end
+    
     idx_keep=~isnan(layer.GPSData.Long);
     set(map_tab_comp.curr_track,'LatitudeData',layer.GPSData.Lat(idx_keep),'LongitudeData',layer.GPSData.Long(idx_keep));
     
@@ -82,9 +84,7 @@ try
             layers=layers_tmp(idx_lays);
         end
         replot=0;
-        
-        
-        
+ 
         idx_list=[];
         for uil=1:numel(layers)
             if ~isempty(layers(uil).GPSData.Lat)
@@ -142,8 +142,7 @@ try
             
             %delete(map_tab_comp.tracks_plots);
             %map_tab_comp.tracks_plots=[];
-            
-            
+                    
             if ~isempty(files)
                 survey_data=get_survey_data_from_db(files);
                 idx_rem=cellfun(@numel,survey_data)==0;

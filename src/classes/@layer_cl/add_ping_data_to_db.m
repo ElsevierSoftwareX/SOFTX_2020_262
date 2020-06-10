@@ -22,7 +22,7 @@ for ilay=1:length(layers_obj)
             end
             
             if ~isempty(gps_data{end})
-                if abs(gps_data_obj.Time(end)-gps_data{end}.Time(end))<5/(24*60*60)&&~clear_existing_data>0
+                if abs(gps_data_obj.Time(end)-gps_data{end}.Time(end))<5/(24*60*60)&&abs(gps_data_obj.Time(1)-gps_data{end}.Time(1))<5/(24*60*60)&&~clear_existing_data>0
                     if~isdeployed()
                         fprintf('Gps data up to date\n');
                     end

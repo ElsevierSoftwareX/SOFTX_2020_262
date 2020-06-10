@@ -516,7 +516,7 @@ for idg=1:nb_dg
                     if isempty(idx)||i_ping(idx)>nb_pings(idx)
                         continue;
                     end
-
+                    
                     %fseek(fid,idx_raw_obj.pos_dg(idg),'bof');
                     fseek(fid,idx_raw_obj.pos_dg(idg)-pos+HEADER_LEN,'cof');
                     data.pings(idx).time(i_ping(idx))=idx_raw_obj.time_dg(idg);
@@ -695,7 +695,7 @@ end
 function mode=write_data(datatype,trans_obj,data_tmp,GPSOnly,idx_r,idx_pings)
 
 if datatype(1)==dec2bin(1)
-    if datatype(2)==dec2bin(1)||datatype(1)==dec2bin(0)
+    if datatype(2)==dec2bin(1)||datatype(1)==dec2bin(0)&&trans_obj.Config.BeamType>0
         [AlongAngle,AcrossAngle]=computesPhasesAngles_v3(data_tmp,...
             trans_obj.Config.AngleSensitivityAlongship,...
             trans_obj.Config.AngleSensitivityAthwartship,...
@@ -709,7 +709,7 @@ if datatype(1)==dec2bin(1)
     
     if GPSOnly==0
         trans_obj.Data.replace_sub_data_v2('power',db2pow_perso(data_tmp.power),idx_r,idx_pings)
-        if  datatype(2)==dec2bin(1)
+        if  datatype(2)==dec2bin(1)&&trans_obj.Config.BeamType>0
             trans_obj.Data.replace_sub_data_v2('alongangle',AlongAngle,idx_r,idx_pings)
             trans_obj.Data.replace_sub_data_v2('acrossangle',AcrossAngle,idx_r,idx_pings)
         end
@@ -720,7 +720,7 @@ else
     trans_obj.Config.NbQuadrants=sum(contains(fieldnames(data_tmp),'comp_sig'));
     
     [data_tmp,mode]=match_filter_data(data_tmp,trans_obj.Params,trans_obj.Filters);
-    if datatype(2)==dec2bin(1)||datatype(1)==dec2bin(0)
+    if datatype(2)==dec2bin(1)||datatype(1)==dec2bin(0)&&trans_obj.Config.BeamType>0
         [AlongAngle,AcrossAngle]=computesPhasesAngles_v3(data_tmp,...
             trans_obj.Config.AngleSensitivityAlongship,...
             trans_obj.Config.AngleSensitivityAthwartship,...
@@ -744,8 +744,10 @@ else
             trans_obj.Data.replace_sub_data_v2('y_imag',imag(y),idx_r,idx_pings)
         end
         trans_obj.Data.replace_sub_data_v2('power',pow,idx_r,idx_pings)
-        trans_obj.Data.replace_sub_data_v2('alongangle',AlongAngle,idx_r,idx_pings)
-        trans_obj.Data.replace_sub_data_v2('acrossangle',AcrossAngle,idx_r,idx_pings)
+        if trans_obj.Config.BeamType>0
+            trans_obj.Data.replace_sub_data_v2('alongangle',AlongAngle,idx_r,idx_pings)
+            trans_obj.Data.replace_sub_data_v2('acrossangle',AcrossAngle,idx_r,idx_pings)
+        end
     end
 end
 end

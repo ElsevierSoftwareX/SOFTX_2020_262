@@ -122,20 +122,23 @@ secondary_freqs = secondary_freqs*1e3;
 idx_primary_freqs=nan(1,numel(primary_freqs));
 idx_secondary_freqs=nan(1,numel(primary_freqs));
 
+if isempty(primary_freqs)    
+    warndlg_perso([],'Warning',sprintf('No Sv acoustic parameter defined in the classification file(either Sv_XX or delta_Sv_XX_YY).\nThere needs to be at least one.'));
+    return;
+end
 
 for ii=1:numel(primary_freqs)
-    
     
     [idx_primary_freqs(ii),found]=find_freq_idx(layer,primary_freqs(ii));
     
     if ~found
-        warning('Cannot find %dkHz! Cannot apply classification here....',primary_freqs(ii)/1e3);
+        warndlg_perso([],'Warning',sprintf('Cannot find %dkHz! Cannot apply classification here...',primary_freqs(ii)/1e3));
         return;
     end
     if ~isnan(secondary_freqs(ii))
         [idx_secondary_freqs(ii),found]=find_freq_idx(layer,secondary_freqs(ii));
         if ~found
-            warning('Cannot find %dkHz! Cannot apply classification here....',secondary_freqs(ii)/1e3);
+            warndlg_perso([],'Warning',sprintf('Cannot find %dkHz! Cannot apply classification here...',secondary_freqs(ii)/1e3));
             return;
         end
     end

@@ -39,6 +39,14 @@ if length(trans_1)==length(trans_2)
           
         if (found_sv_1&&found_sv_2)&&(~isempty(setxor(round(alpha_1*1e6),round(alpha_2*1e6)))||~isempty(setxor(r_1,r_2))||~strcmpi(ori_alpha_1,ori_alpha_2)||cal_diff)
             trans_2(i).set_cal(cal_1);
+            
+            switch ori_alpha_1
+                case 'constant'
+                    trans_2(i).set_absorption(alpha_1);
+                otherwise
+                    trans_2(i).set_absorption(envdata_1);
+            end
+            
             trans_2(i).computeSpSv_v3(envdata_1);
         end
         

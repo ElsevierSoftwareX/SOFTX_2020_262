@@ -73,7 +73,9 @@ else
     state='on';
 end
 %iptPointerManager(main_figure,'enable');
-
+replace_interaction(main_figure,'interaction','WindowButtonMotionFcn','id',2);
+replace_interaction(main_figure,'interaction','WindowButtonUpFcn','id',2);
+ 
 switch state
     case'on'
         %iptPointerManager(main_figure,'disable');

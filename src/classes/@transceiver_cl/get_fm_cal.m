@@ -28,15 +28,15 @@ cal_struct.BeamWidthAthwartship_f_file=nan(size(cal_struct.freq_vec));
 cal_struct.BeamWidthAlongship_f_fit=nan(size(cal_struct.freq_vec));
 cal_struct.BeamWidthAthwartship_f_fit=nan(size(cal_struct.freq_vec));
 
-file_cal=fullfile(cal_path,['Curve_' trans_obj.Config.ChannelID '.mat']);
+file_cal=fullfile(cal_path,generate_valid_filename(['Curve_' trans_obj.Config.ChannelID '.mat']));
 if ~isfile(file_cal)
-    file_cal=fullfile(cal_path,['Curve_' num2str(f_nom,'%.0f') '.mat']);
+    file_cal=fullfile(cal_path,generate_valid_filename(['Curve_' num2str(f_nom,'%.0f') '.mat']));
 end
 
-file_cal_eba=fullfile(cal_path,[ 'Curve_EBA_' trans_obj.Config.ChannelID '.mat']);
+file_cal_eba=fullfile(cal_path,generate_valid_filename(['Curve_EBA_' trans_obj.Config.ChannelID '.mat']));
 
 if ~isfile(file_cal_eba)
-    file_cal_eba=fullfile(cal_path,[ 'Curve_EBA_' num2str(f_nom,'%.0f') '.mat']);
+    file_cal_eba=fullfile(cal_path,generate_valid_filename(['Curve_EBA_' num2str(f_nom,'%.0f') '.mat']));
 end
 
 if ~isempty(trans_obj.Config.Cal_FM)

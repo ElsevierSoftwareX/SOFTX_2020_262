@@ -180,25 +180,24 @@ classdef test_esp3_cl < matlab.unittest.TestCase
             
             layers=testCase.esp3_obj.layers;
             
-            [idx_lays,found]=layers.find_layer_idx_files(fff);
+            
             al_names=list_algos();
-            sucess=cell(numel(idx_lays),numel(al_names));
+            sucess=cell(numel(fff),numel(al_names));
             load_bar_comp=getappdata(testCase.esp3_obj.main_figure,'Loading_bar');
             show_status_bar(testCase.esp3_obj.main_figure);
             pass=true;
             
-            for ial=1:numel(al_names)
-                ii=0;
-                for ui=idx_lays
-                    ii=ii+1;
-                    if found(ii)
-                        load_bar_comp.progress_bar.setText(sprintf('Applying %s on %s',al_names{ial},layers(ui).Filename{2}));
-                        out_tmp=layers(ui).apply_algo(al_names{ial},'load_bar_comp',load_bar_comp);
-                        sucess{ii,ial}=false(1,numel(out_tmp));
+            for ial=1:numel(al_names)               
+                for ui=1:numel(fff)
+                    [idx_lay,found]=layers.find_layer_idx_files(fff{ui});
+                    if found
+                        load_bar_comp.progress_bar.setText(sprintf('Applying %s on %s',al_names{ial},fff{ui}));
+                        out_tmp=layers(idx_lay).apply_algo(al_names{ial},'load_bar_comp',load_bar_comp);
+                        sucess{ui,ial}=false(1,numel(out_tmp));
                         for ifi=1:numel(out_tmp)
-                            sucess{ii,ial}(ifi)=out_tmp{ifi}.done;
+                            sucess{ui,ial}(ifi)=out_tmp{ifi}.done;
                         end
-                        pass=all(sucess{ial});
+                        pass=pass&all(sucess{ui,ial});
                     end
                 end
             end
@@ -209,9 +208,9 @@ classdef test_esp3_cl < matlab.unittest.TestCase
                 'Error applying algorithms on files');
             
             for ial=1:numel(al_names)
-                for uj=1:numel(idx_lays)
+                for uj=1:numel(fff)
                     if any(~sucess{uj,ial})
-                        fprintf('Could not apply %s to %s\n',al_names{ial},strjoin(layers(idx_lays(uj)).Filename,' and '));
+                        fprintf('Could not apply %s to %s\n',al_names{ial},fff{uj});
                     end
                 end
             end
