@@ -3,7 +3,7 @@
 %% Function
 function load_bad_pings_tab(main_figure,algo_tab_panel)
 
-tab_main = uitab(algo_tab_panel,'Title','Bad Pings & Spikes');
+tab_main = uitab(algo_tab_panel,'Title','Bad Data');
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Bad Pings Detection Algorithm%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

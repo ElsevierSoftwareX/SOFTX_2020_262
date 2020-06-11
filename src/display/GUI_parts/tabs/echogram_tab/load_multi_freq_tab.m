@@ -1,6 +1,6 @@
 function load_multi_freq_tab(main_figure,parent_tab_group)
 
-multi_freq_tab.parent_tab=uitab(parent_tab_group,'Title','Multi-freq','BackgroundColor','white');
+multi_freq_tab.parent_tab=uitab(parent_tab_group,'Title','Multi-frequency','BackgroundColor','white');
 multi_freq_tab.setting_panel=uipanel(multi_freq_tab.parent_tab,'Position',[0 0 1 1]);
 %multi_freq_tab.disp_panel=uipanel(multi_freq_tab.parent_tab,'Position',[0.15 0 0.85 1]);
 

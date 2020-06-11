@@ -37,7 +37,7 @@
 %% Function
 function load_denoise_tab(main_figure,algo_tab_panel)
 
-denoise_tab=uitab(algo_tab_panel,'Title','Denoise/Filtering');
+denoise_tab=uitab(algo_tab_panel,'Title','Filtering');
 
 algo_name='Denoise';
 

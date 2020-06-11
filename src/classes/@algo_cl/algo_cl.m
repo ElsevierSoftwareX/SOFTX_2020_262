@@ -61,7 +61,7 @@ classdef algo_cl < matlab.mixin.Copyable
                     case 'cell'
                        str = [str sprintf('- %s [%s]: %s.\n',obj_p.Name,str_disp{ui},obj_p.Tooltipstring)];
                     case {'single' 'double' 'int8' 'int16' 'int32' 'int64' 'uint8' 'uint16' 'uint32' 'uint64'}
-                       str = [str sprintf(['- %s [%s]: %s. Value Range = ['  obj_p.Precision  ' ' obj_p.Precision ']\n'],str_disp{ui},obj_p.Name,obj_p.Tooltipstring,obj_p.Value_range(1), obj_p.Value_range(2)),];
+                       str = [str sprintf(['- %s [%s]: %s. Value Range = ['  obj_p.Precision  ' ' obj_p.Precision ']\n'],obj_p.Name,str_disp{ui},obj_p.Tooltipstring,obj_p.Value_range(1), obj_p.Value_range(2)),];
                     case 'logical'
                       str = [str sprintf('- %s [%s]: boolean. %s.\n',obj_p.Name,str_disp{ui},obj_p.Tooltipstring)];
                 end

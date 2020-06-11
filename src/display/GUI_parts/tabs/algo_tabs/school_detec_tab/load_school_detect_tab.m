@@ -38,7 +38,7 @@
 function load_school_detect_tab(main_figure,algo_tab_panel)
 
 algo_name = 'SchoolDetection';
-school_detect_tab=uitab(algo_tab_panel,'Title','School Detect./Classif.');
+school_detect_tab=uitab(algo_tab_panel,'Title','Schools');
 
 load_algo_panel('main_figure',main_figure,...
     'panel_h',uipanel(school_detect_tab,'Position',[0 0 0.5 1]),...
