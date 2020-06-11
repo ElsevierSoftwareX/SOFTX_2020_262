@@ -6,7 +6,7 @@ if ~isempty(gps_obj.Lat)
     end
     lat=resample_data_v2(gps_obj.Lat,gps_obj.Time,time,'Type','Angle');
     long=resample_data_v2(gps_obj.Long,gps_obj.Time,time,'Type','Angle');    
-
+    long(long<0) = long(long<0)+360;
     corr_max_lat = 2*prctile(abs(diff(gps_obj.Lat)),99);
     corr_max_lon = 2*prctile(abs(diff(gps_obj.Long)),99);
     

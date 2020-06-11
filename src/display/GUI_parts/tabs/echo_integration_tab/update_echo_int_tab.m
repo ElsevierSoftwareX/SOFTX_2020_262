@@ -233,9 +233,9 @@ if ~isempty(idx_main)&&~isempty(layer_obj.EchoIntStruct.output_2D{idx_main})
     
     xlim=[nanmin(x_disp(:)) nanmax(x_disp(:))];
     if any(out.sv_mean>0)
-        ylim=[nanmin(y_disp_tmp(out.sv_mean>0)) nanmax(y_disp_tmp(out.sv_mean>0))];
+        ylim=[nanmin(y_disp(out.sv_mean>0)) nanmax(y_disp(out.sv_mean>0))];
     else
-        ylim=[nanmin(y_disp_tmp(:)) nanmax(y_disp_tmp(:))];
+        ylim=[nanmin(y_disp(:)) nanmax(y_disp(:))];
     end
 else
     out=[];

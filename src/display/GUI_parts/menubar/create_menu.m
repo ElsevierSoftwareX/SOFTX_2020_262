@@ -248,10 +248,10 @@ uimenu(main_menu.options,'Label','Save Current Display Configuration (Survey)','
 uimenu(main_menu.options,'Label','Save Current Display Configuration (Default)','Callback',{@save_disp_config_cback,main_figure});
 
 
-main_menu.help_shortcuts=uimenu(main_figure,'Label','Shortcuts/Help/Doc');
+main_menu.help_shortcuts=uimenu(main_figure,'Label','Help');
 uimenu(main_menu.help_shortcuts,'Label','Shortcuts','Callback',{@shortcut_menu,main_figure});
 uimenu(main_menu.help_shortcuts,'Label','Documentation','Callback',{@load_doc_fig_cback,main_figure});
-uimenu(main_menu.help_shortcuts,'Label','Infos','Callback',{@info_menu,main_figure});
+uimenu(main_menu.help_shortcuts,'Label','About','Callback',{@info_menu,main_figure});
 
 setappdata(main_figure,'main_menu',main_menu);
 

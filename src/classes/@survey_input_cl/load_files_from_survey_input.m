@@ -485,37 +485,35 @@ for isn = 1:length(snapshots)
                         end
                         
                     end
-                    
+                    idx_other=[];
+                    for ifreq = 1:length(options.FrequenciesToLoad)
+                        [i_freq,found]=layer_new.find_freq_idx(options.FrequenciesToLoad(ifreq));
+                        if found>0
+                            idx_other=union(i_freq,idx_other) ;
+                        end
+                    end
+                    [idx_bot_freq,~]=layer_new.find_freq_idx(options.Frequency);
+                    idx_bot_freq = idx_bot_freq(1);
                     bot_copied = false;
+                    
+                    if ~isempty(algos_xml)
+                        al_names = cellfun(@(x) x.Name,algos_xml,'un',0);
+                        if ~any(contains(al_names,{'BottomDetection' 'BottomDetectionV2' 'DropOuts' 'SpikesRemoval' 'BadPingsV2' 'Denoise'}))
+                             layer_new.copy_bottom_to_other_freq(idx_bot_freq,idx_other,1);
+                             bot_copied = true;
+                        end
+                    elseif options.CopyBottomFromFrequency>0
+                        bot_copied = true;
+                        layer_new.copy_bottom_to_other_freq(idx_bot_freq,idx_other,1);
+                    end
                     
                     for ial = 1:length(algos_xml)
                         
                         if  ~ismember(algos_xml{ial}.Name,{'BottomDetection' 'BottomDetectionV2' 'DropOuts' 'SpikesRemoval' 'BadPingsV2' 'Denoise'})&&~bot_copied
                             if options.CopyBottomFromFrequency>0
                                 bot_copied = true;
-                                idx_other=[];
-                                for ifreq = 1:length(options.FrequenciesToLoad)
-                                    [i_freq,found]=layer_new.find_freq_idx(options.FrequenciesToLoad(ifreq));
-                                    if found>0
-                                        idx_other=union(i_freq,idx_other) ;
-                                    end
-                                end
-                                
-                                if ~isempty(idx_other)
-                                    [idx_bot_freq,found]=layer_new.find_freq_idx(options.Frequency);
-                                    if found==0
-                                        disp_perso(gui_main_handle,'Could not find frequency to copy bottom from');
-                                        print_errors_and_warnings(fid_error,'','Could not find frequency to copy bottom from');
-                                    else
-                                        [bots,ifreq_b]=layer_new.generate_bottoms_for_other_freqs(idx_bot_freq(1),idx_other);
-                                        
-                                        for ifreq=1:numel(ifreq_b)
-                                            layer_new.Transceivers(ifreq_b(ifreq)).Bottom=bots(ifreq);
-                                        end
-                                    end
-                                end
-                            end
-                            
+                                layer_new.copy_bottom_to_other_freq(idx_bot_freq,idx_other,1);
+                            end                           
                         end
                         
                         disp_str=sprintf('Applying %s',algos_xml{ial}.Name);
@@ -577,6 +575,11 @@ for isn = 1:length(snapshots)
                             
                         end
                     end
+                    
+                    if options.CopyBottomFromFrequency>0 && ~bot_copied
+                        layer_new.copy_bottom_to_other_freq(idx_bot_freq,idx_other,1);
+                    end
+                    
                     
                     if options.SaveBot>0
                         layer_new.write_bot_to_bot_xml();
@@ -680,7 +683,7 @@ end
 
 
 hide_status_bar(gui_main_handle);
-sum_str=sprintf(['\n Files loading process for script %s finished with:\n' ...
+sum_str=sprintf(['Files loading process for script %s finished with:\n' ...
     '%d Warnings\n'...
     '%d Errors \n\n']...
     ,surv_input_obj.Infos.Title,war_num,err_num);
