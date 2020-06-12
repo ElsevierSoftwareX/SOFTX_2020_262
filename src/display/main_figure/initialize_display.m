@@ -57,14 +57,6 @@ al_disp_ratio = curr_disp.Al_opt_tab_size_ratio;
 opt_panel=uitabgroup(main_figure,'Units','pixels','Position',[0 pix_pos(4)-pan_height (1-al_disp_ratio)*pix_pos(3) pan_height],'tag','opt','ButtonDownFcn',@change_opt_al_tab_ratio);
 algo_panel=uitabgroup(main_figure,'Units','pixels','Position',[(1-al_disp_ratio)*pix_pos(3) pix_pos(4)-pan_height al_disp_ratio*pix_pos(3) pan_height],'tag','algo','ButtonDownFcn',@change_opt_al_tab_ratio);
 
-ipt.enterFcn =  @(figHandle, currentPoint)...
-    set(figHandle, 'Pointer', 'hand');
-ipt.exitFcn =  [];
-ipt.traverseFcn = [];
-
-iptSetPointerBehavior(opt_panel,ipt);
-iptSetPointerBehavior(algo_panel,ipt);
-
 pt_int.enterFcn =  @(figHandle, currentPoint)...
 replace_interaction(figHandle,'interaction','WindowButtonMotionFcn','id',1);
 pt_int.exitFcn = [];

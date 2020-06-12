@@ -36,18 +36,18 @@
 
 %% Function
 function load_school_detect_tab(main_figure,algo_tab_panel)
-
+[h,l] = get_top_panel_height(7.25);
 algo_name = 'SchoolDetection';
 school_detect_tab=uitab(algo_tab_panel,'Title','Schools');
 
 load_algo_panel('main_figure',main_figure,...
-    'panel_h',uipanel(school_detect_tab,'Position',[0 0 0.5 1]),...
+    'panel_h',uipanel(school_detect_tab,'Units','Pixels','Position',[0 0 2*l h]),...
     'algo_name',algo_name,...
     'title','School Detection',...
     'save_fcn_bool',true);
 
 %%%%%%%%%%%%%%%% Classification Panel%%%%%%%%%%%%%%%%%%%%%%%%%
-classification_panel=uipanel(school_detect_tab,'Position',[0.5 0 0.5 1],'Title','Classification');
+classification_panel=uipanel(school_detect_tab,'Units','Pixels','Position',[2*l 0 2*l h],'Title','Classification');
 algo_name= 'Classification';
 
 load_algo_panel('main_figure',main_figure,...

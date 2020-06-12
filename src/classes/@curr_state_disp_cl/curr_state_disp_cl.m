@@ -43,7 +43,7 @@ classdef curr_state_disp_cl <handle
         Disp_dy_dx=[1/4 1];
         Active_reg_ID={};
         Active_line_ID='';
-        Al_opt_tab_size_ratio = 0.6;
+        Al_opt_tab_size_ratio = 0.5;
         Reg_changed_flag=0; %flag=0 nothing change flag=1 : changes made nothing saved; flag=2  changes made saved to the xml file; flag=3  changes made saved to db file
         R_disp=[1 inf];
         V_axes_ratio=0.05;
@@ -90,7 +90,7 @@ classdef curr_state_disp_cl <handle
             addParameter(p,'Font','default',@ischar);
             addParameter(p,'UIupdate',0,@isnumeric);
             addParameter(p,'Online',1,@isnumeric);
-            addParameter(p,'Al_opt_tab_size_ratio',0.6,@isnumeric);
+            addParameter(p,'Al_opt_tab_size_ratio',0.5,@isnumeric);
             addParameter(p,'UnderBotTransparency',90,@isnumeric);
             addParameter(p,'V_axes_ratio',0.05,@isnumeric);
             addParameter(p,'H_axes_ratio',0.15,@isnumeric);

@@ -170,6 +170,9 @@ classdef algo_panel_cl < dynamicprops
                 uicontrol(obj.container,gui_fmt.pushbtnStyle,'String','Delete','pos',p_button+[4*gui_fmt.button_w 0 0 0],'callback',results.delete_cback_fcn,'Tag',obj.algo.Name);
             end
             
+           
+            
+            
             function load_params_fcn(src,evt)
                 [~,~,xml_file]=get_config_files(src.Tag);
                 [~,algo_alt,names]=read_config_algo_xml(xml_file{1});
