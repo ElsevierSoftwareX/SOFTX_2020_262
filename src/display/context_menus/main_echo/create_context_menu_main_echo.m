@@ -2,6 +2,10 @@ function create_context_menu_main_echo(main_figure)
 
 % prep
 axes_panel_comp = getappdata(main_figure,'Axes_panel');
+
+if isempty(axes_panel_comp)
+    return;
+end
 curr_disp=get_esp3_prop('curr_disp');
 layer = get_current_layer();
 [~,idx_freq] = layer.get_trans(curr_disp);

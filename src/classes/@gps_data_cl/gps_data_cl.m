@@ -117,6 +117,7 @@ classdef gps_data_cl
             end
             id_nn = find(~isnan(obj.Long));
             if numel(id_nn)<2
+                obj_out=obj;
                 return;
             end
             [~,~,id_keep]=DouglasPeucker(obj.Long(id_nn),obj.Lat(id_nn),prec,0,1e3,0);

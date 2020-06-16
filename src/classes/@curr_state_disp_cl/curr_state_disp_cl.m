@@ -185,6 +185,8 @@ classdef curr_state_disp_cl <handle
                     pointer='eraser';
                 case 'Normal'
                     pointer='arrow';
+                otherwise
+                     pointer='arrow';
             end
         end
         

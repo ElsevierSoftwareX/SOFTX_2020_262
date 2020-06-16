@@ -5,7 +5,7 @@ range_t=trans_obj.get_transceiver_range();
 p = inputParser;
 
 defaultv_filt=5;
-checkv_filt=@(v_filt)(v_filt>0&&v_filt<=range_t(end));
+checkv_filt=@(v_filt)(v_filt>0&&v_filt<=1000);
 defaulth_filt=10;
 checkh_filt=@(h_filt)(h_filt>0&&h_filt<=1000);
 defaultNoiseThr=-125;

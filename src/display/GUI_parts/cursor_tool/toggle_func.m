@@ -61,7 +61,7 @@ cursor_tools_comp=getappdata(main_figure,'Cursor_mode_tool');
      end
  end
 
-if isa(src_out,'matlab.ui.container.toolbar.PushTool')
+if isa(src_out,'matlab.ui.container.toolbar.PushTool')||isempty(axes_panel_comp)
     %profile off;
     return;
 end

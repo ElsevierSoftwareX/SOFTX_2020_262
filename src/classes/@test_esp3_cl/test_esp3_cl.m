@@ -169,13 +169,14 @@ classdef test_esp3_cl < matlab.unittest.TestCase
             [files,~]=list_ac_files(file_path,1);
             
             n_files=numel(files);
-            nb_files_max=5;
+            nb_files_max=10;
             
             idx_proc=randi(n_files,[1 nanmin(nb_files_max,n_files)]);
             
             idx_proc=unique(idx_proc);
             
             fff=fullfile(file_path,files(idx_proc));
+            
             open_file([],[],fff,testCase.esp3_obj.main_figure);
             
             layers=testCase.esp3_obj.layers;

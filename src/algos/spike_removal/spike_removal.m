@@ -53,7 +53,6 @@ num_ite=ceil(numel(idx_pings_tot)/block_size);
 
 load_bar_comp=p.Results.load_bar_comp;
 if ~isempty(p.Results.load_bar_comp)
-    load_bar_comp.progress_bar.setText('Spikes removal');
     set(p.Results.load_bar_comp.progress_bar, 'Minimum',0, 'Maximum',num_ite, 'Value',0);
 end
 tag=trans_obj.Bottom.Tag;

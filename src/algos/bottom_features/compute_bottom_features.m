@@ -44,6 +44,7 @@ output_struct.E1 = -999.*ones(size(idx_pings));
 output_struct.E2 = -999.*ones(size(idx_pings));
 
 if isempty(idx_pings)
+    output_struct.done = true;
     return;
 end
 idx_pings = trans_obj.get_transceiver_pings(idx_pings);
@@ -56,6 +57,7 @@ bot_r(idx_bad) = NaN;
 idx_val = find(~isnan(bot_r));
 
 if isempty(idx_val)
+    output_struct.done = true;
     return;
 end
 
@@ -148,8 +150,10 @@ for ii = idx_val
                 [~,delta_along(ii),phi_slope_along(ii),phi_est_along] = est_phicross_fft(idx_tmp,db2pow_perso(sv_first_echo(idx_tmp)),al_phi(idx_tmp),0);
                 [~,delta_across(ii),phi_slope_across(ii),phi_est_across] = est_phicross_fft(idx_tmp,db2pow_perso(sv_first_echo(idx_tmp)),ac_phi(idx_tmp),0);
             else
-                delta_along(ii)=nan;phi_slope_along(ii)=nan;phi_est_along=nan(size(sv_first_echo(idx_tmp)));
-                delta_across(ii)=nan;phi_slope_across(ii)=nan;phi_ephi_est_acrossst_along=nan(size(sv_first_echo(idx_tmp)));
+                delta_along(ii)=nan;phi_slope_along(ii)=nan;
+                phi_est_along=nan(size(sv_first_echo(idx_tmp)));
+                delta_across(ii)=nan;phi_slope_across(ii)=nan;
+                phi_est_across=nan(size(sv_first_echo(idx_tmp)));
             end
             
             if DEBUG

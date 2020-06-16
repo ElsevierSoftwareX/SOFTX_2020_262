@@ -57,8 +57,7 @@ al_disp_ratio = curr_disp.Al_opt_tab_size_ratio;
 opt_panel=uitabgroup(main_figure,'Units','pixels','Position',[0 pix_pos(4)-pan_height (1-al_disp_ratio)*pix_pos(3) pan_height],'tag','opt','ButtonDownFcn',@change_opt_al_tab_ratio);
 algo_panel=uitabgroup(main_figure,'Units','pixels','Position',[(1-al_disp_ratio)*pix_pos(3) pix_pos(4)-pan_height al_disp_ratio*pix_pos(3) pan_height],'tag','algo','ButtonDownFcn',@change_opt_al_tab_ratio);
 
-pt_int.enterFcn =  @(figHandle, currentPoint)...
-replace_interaction(figHandle,'interaction','WindowButtonMotionFcn','id',1);
+pt_int.enterFcn =  @(figHandle, currentPoint)enter_panel(figHandle, currentPoint);
 pt_int.exitFcn = [];
 pt_int.traverseFcn = [];
 
@@ -117,6 +116,11 @@ set(main_figure,'Visible','on');
 
 end
 
+
+function enter_panel(figHandle,~)
+%set(figHandle, 'Pointer', 'hand');
+replace_interaction(figHandle,'interaction','WindowButtonMotionFcn','id',1);
+end
 
 
 
