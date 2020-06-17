@@ -102,7 +102,6 @@ load_track_target_tab(main_figure,algo_panel);
 
 load_multi_freq_tab(main_figure,algo_panel);
 
-format_color_gui(main_figure,curr_disp.Font,curr_disp.Cmap);
 display_tab_comp=getappdata(main_figure,'Display_tab');
 opt_panel.SelectedTab=display_tab_comp.display_tab;
 esp3_tab_comp=getappdata(main_figure,'esp3_tab');
@@ -111,6 +110,8 @@ order_option_tab(main_figure);
 obj_enable=findobj(main_figure,'Enable','on','-not','Type','uimenu');
 set(obj_enable,'Enable','off');
 centerfig(main_figure);
+
+format_color_gui(main_figure,curr_disp.Font,curr_disp.Cmap);
 set(main_figure,'Visible','on');
 
 

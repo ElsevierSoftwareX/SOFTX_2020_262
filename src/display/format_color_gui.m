@@ -11,6 +11,7 @@ if nargin>3
 else
     background_col=[0.98 0.98 1];
     col_lab=[0 0 0.2];
+    col_grid = [0.95 0.95 1];
 end
 for i=1:length(fig)
     if ~isvalid(fig(i))
@@ -19,6 +20,7 @@ for i=1:length(fig)
     if isprop(fig(i),'Color')
         set(fig(i),'Color',background_col);
     end
+    
     if isprop(fig(i),'BackgroundColor')
         set(fig(i),'BackgroundColor',background_col);
     end
@@ -27,8 +29,11 @@ for i=1:length(fig)
     set(c_obj,'Color',col_lab);
     
     panel_obj=findobj(fig(i),'Type','uipanel');
-    set(panel_obj,'BackgroundColor',background_col,'bordertype','none','ForegroundColor',col_lab);
+    set(panel_obj,'BackgroundColor',background_col,'bordertype','line','ForegroundColor',col_lab,'HighlightColor',background_col);
 
+    uibut_obj=findobj(fig(i),'Type','uibuttongroup');
+    set(uibut_obj,'bordertype','line','HighlightColor',col_grid);
+    
      tab_obj=findobj(fig(i),'Type','uitab','-property','BackgroundColor');
      set(tab_obj,'BackgroundColor',background_col);
      if nargin>3

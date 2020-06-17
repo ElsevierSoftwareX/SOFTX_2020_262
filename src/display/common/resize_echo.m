@@ -9,6 +9,9 @@ opt_panel=getappdata(main_figure,'option_tab_panel');
 algo_panel=getappdata(main_figure,'algo_tab_panel');
 info_panel_comp=getappdata(main_figure,'Info_panel');
 load_bar_comp=getappdata(main_figure,'Loading_bar');
+if isempty(load_bar_comp)
+    return;
+end
 
 inf_h_1=load_bar_comp.panel.Position(4);
 inf_h_2=info_panel_comp.info_panel.Position(4);
