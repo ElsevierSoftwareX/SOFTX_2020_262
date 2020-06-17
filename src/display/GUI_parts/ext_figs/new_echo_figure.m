@@ -46,6 +46,10 @@ addParameter(p,'UiFigureBool',false,@islogical);
 
 parse(p,main_figure,varargin{:});
 
+    cur_ver=ver('Matlab');
+    cur_ver_num = str2double(cur_ver.Version);
+    
+
 
 if p.Results.Keep_old==0
     hfigs=clean_echo_figures(main_figure,'Tag',p.Results.Tag);
@@ -142,7 +146,6 @@ switch p.Results.Toolbar
         create_default_toolbar(fig_handle);
 end
 
-
 %% Install mouse pointer manager in figure
 iptPointerManager(fig_handle);
 if ~p.Results.UiFigureBool
@@ -152,6 +155,8 @@ if ~p.Results.UiFigureBool
         javaFrame.fHG2Client.setClientDockable(true);
         set(javaFrame,'GroupName',p.Results.Group);
     end
+elseif cur_ver_num>=9.9
+    fig_handle.Icon = fullfile(whereisEcho(),'icons','echoanalysis.png');
 end
 
 

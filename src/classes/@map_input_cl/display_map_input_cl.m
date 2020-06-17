@@ -165,8 +165,10 @@ for ui=1:numel(obj_tot)
                                 
                         end
                         s_obj=geoscatter(n_ax(usnap),obj.SliceLat{idx_snap(uui)}(idx_rings),obj.SliceLong{idx_snap(uui)}(idx_rings),pi*ring_size(idx_rings).^2,C,'filled');
+                      
                         set(s_obj,'MarkerFaceAlpha',0.5,'MarkerEdgeAlpha',0.5);
                         set(s_obj,'ButtonDownFcn',{@disp_line_name_callback,hfig,idx_snap(uui)});
+                     
                     end
                     if isempty(obj.Long{idx_snap(uui)})
                         geoplot(n_ax(usnap),obj.SliceLat{idx_snap(uui)}(1),obj.SliceLong{idx_snap(uui)}(1),'Marker','o','Markersize',4,'Color',[0 0.5 0],'tag','start');

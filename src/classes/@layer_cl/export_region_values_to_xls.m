@@ -53,6 +53,9 @@ for ir=1:length(idx_freq_sort)
         reg_tmp,...
         'field',p.Results.field,...
         'intersect_only',p.Results.intersection_only);
+    if isempty(data_reg)
+        continue;
+    end
  
     if p.Results.rm_bad_data_reg>0
         data_reg(bad_data_mask)=-999;
@@ -81,8 +84,8 @@ for ir=1:length(idx_freq_sort)
     ping_number=trans_obj.get_transceiver_pings(idx_pings);
     
     
-    output_f=p.Results.output_f;
-    sheet_name= sprintf('%.0fkHz',layer_obj.Frequencies(ir)/1e3);
+    output_f=generate_valid_filename(p.Results.output_f);
+    sheet_name= sprintf('%.0fkHz',layer_obj.Frequencies(idx_freq_sort(ir))/1e3);
     sheet_name=sheet_name(1:nanmin(numel(sheet_name),31));
     writetable(table(samples_t),output_f,'WriteVariableNames',0,'Sheet',sheet_name,'Range','A3');
     writetable(table(range_t),output_f,'WriteVariableNames',0,'Sheet',sheet_name,'Range','B3');   

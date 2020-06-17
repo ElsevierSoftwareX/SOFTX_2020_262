@@ -520,18 +520,21 @@ if p.Results.Additive
     
     %power_prc_25=prctile(ceil(tmp/prec)*prec,251);
     power_prc_25=prctile(tmp,25,1);
-%     
-%     power_mode=mode(ceil(tmp/prec)*prec);
-%     
-%     power_mean=pow2db(nanmean(db2pow(tmp)));
-%     figure();plot(idx_pings,power_mode,'r');hold on;
-%     plot(idx_pings,power_mean,'k')
-%     plot(idx_pings,power_prc_25,'b');
-%     yline(p.Results.thr_add_noise,'b','Noise thr.');
-%     legend({'Mode','Mean','25-percentile'});
-%     figure();histogram(tmp(:,2),100);hold on;histogram(tmp(:,6),100)
-
+    if DEBUG
+        power_mode=mode(ceil(tmp/prec)*prec);
+        
+        power_mean=pow2db(nanmean(db2pow(tmp)));
+        new_echo_figure();plot(idx_pings,power_mode,'r');hold on;
+        plot(idx_pings,power_mean,'k')
+        plot(idx_pings,power_prc_25,'b');
+        yline(p.Results.thr_add_noise,'b','Noise thr.');
+        legend({'Mode','Mean','25-percentile'});
+        %     figure();histogram(tmp(:,2),100);hold on;histogram(tmp(:,6),100)
+    end
     idx_add=find(power_prc_25>p.Results.thr_add_noise);
+    if ~isempty(p.Results.load_bar_comp)
+        p.Results.load_bar_comp.progress_bar.setText(sprintf('Estimated noise level : %.1fdB',prctile(power_prc_25,50)));
+    end
     
 else
     idx_add=[];

@@ -165,7 +165,6 @@ try
     ax_size=[size_opt(3)+size_opt(1) 0 size_tab(3)-size_opt(3) size_tab(4)];
     table_size=[size_opt(1) 5 size_opt(3) size_tab(4)-size_opt(4)-5];
     
-    
     set(multi_freq_disp_tab_comp.opt_panel,'Position',size_opt);
     set(multi_freq_disp_tab_comp.ax,'OuterPosition',ax_size);
     set(multi_freq_disp_tab_comp.table,'OuterPosition',table_size);

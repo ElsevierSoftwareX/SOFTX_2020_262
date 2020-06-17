@@ -285,7 +285,6 @@ for i=1:length(reg_obj)
         return;
     end
     
-    [pdf,x]=pdf_perso(data,'bin',50);
     
     tt=reg_curr.print();
     switch lower(deblank(curr_disp.Fieldname))
@@ -293,10 +292,13 @@ for i=1:length(reg_obj)
             xlab=sprintf('Angle (deg)');
         case{'alongphi','acrossphi'}
             xlab='Phase (deg)';
+        case {'power' 'powerdenoised' 'powerunmatched'}
+            data = pow2db_perso(data);
+            xlab=sprintf('%s (dB)',curr_disp.Type);
         otherwise
             xlab=sprintf('%s (dB)',curr_disp.Type);
     end
-    
+    [pdf,x]=pdf_perso(data,'bin',50);
     new_echo_figure(main_figure,'Name',sprintf('Region %d Histogram: %s',reg_curr.ID,curr_disp.Type),'Tag',sprintf('histo%s',reg_curr.Unique_ID));
     hold on;
     title(tt);
