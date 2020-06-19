@@ -9,6 +9,7 @@ set_alpha_map(main_figure,'main_or_mini',union({'main','mini'},layer.ChannelID),
 track_tab_comp=getappdata(main_figure,'ST_Tracks');
 
 cax=curr_disp.getCaxField('singletarget');
+
 caxis(track_tab_comp.ax_pos,cax);
 
 % link_ylim_to_echo_clim([],[],main_figure,'sv_f');

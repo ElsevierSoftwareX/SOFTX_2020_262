@@ -78,7 +78,9 @@ else
             else
                 legend_str{i}=[];
             end
-            xlim(ax,xl);
+            if diff(xl)>0
+                xlim(ax,xl);
+            end
         end
         
     end
@@ -123,10 +125,25 @@ if ~isempty(ax_pdf)&&~isempty(pc_pdf)
     %histogram2(mean_TS_per_track,mean_range_per_track,[numel((xl(1):db_res:xl(2))) numel((0:survey_options_obj.Horizontal_slice_size:nanmax(mean_range_per_track)))],'FaceColor','flat','DisplayStyle','tile');
     [pdf,x_mat,y_mat]=pdf_2d_perso(mean_TS_per_track,mean_range_per_track,(xl(1):db_res:xl(2))',(0:survey_options_obj.Horizontal_slice_size:nanmax(mean_range_per_track)),'gauss');
     cax=[prctile(pdf(pdf>0),50) prctile(pdf(pdf>0),99)];
-    set(pc_pdf,'XData',x_mat,'YData',y_mat,'CData',pdf,'ZData',zeros(size(pdf)),'AlphaData',pdf>=cax(1),'EdgeColor',col_grid);
+    try
+        set(pc_pdf,'XData',x_mat,'YData',y_mat,'CData',pdf,'ZData',zeros(size(pdf)),'AlphaData',pdf>=cax(1),'EdgeColor',col_grid);
+    catch err
+        print_errors_and_warnings(main_figure,'warning','Could not update track histogram');
+        print_errors_and_warnings(main_figure,'warning',err);
+    end
+    
     ax_pdf.YDir=ydir;
-    ax_pdf.XLim=[nanmin(x_mat(:)) nanmax(x_mat(:))];
-    ax_pdf.YLim=[nanmin(y_mat(:)) nanmax(y_mat(:))];
+    
+    xl = [nanmin(x_mat(:)) nanmax(x_mat(:))];
+    
+    yl = [nanmin(y_mat(:)) nanmax(y_mat(:))];
+    
+    if diff(xl)>0
+        ax_pdf.XLim=xl;
+    end
+    if diff(yl)>0
+        ax_pdf.YLim=yl;
+    end
     caxis(ax_pdf,cax);
     colormap(ax_pdf,cmap);
     

@@ -4,7 +4,7 @@ if isappdata(main_figure,'Env_tab')
     env_tab_comp=getappdata(main_figure,'Env_tab');
     delete(get(env_tab_comp.env_tab,'children'));
 else
-    env_tab_comp.env_tab=uitab(option_tab_panel,'Title','Environnement','tag','env');
+    env_tab_comp.env_tab=uitab(option_tab_panel,'Title','Environment','tag','env');
 end
 
 %curr_disp=get_esp3_prop('curr_disp');
@@ -17,8 +17,8 @@ curr_temp=envdata.Temperature;
 curr_ss=envdata.SoundSpeed;
 curr_abs=10/1e3;
 
-%%%%%%Environnement%%%%%%
-pos=create_pos_3(7,2,gui_fmt.x_sep,gui_fmt.y_sep,gui_fmt.txt_w,gui_fmt.box_w,gui_fmt.box_h);
+%%%%%%Environment%%%%%%
+pos=create_pos_3(8,2,gui_fmt.x_sep,gui_fmt.y_sep,gui_fmt.txt_w,gui_fmt.box_w,gui_fmt.box_h);
 
 env_tab_comp.env_group=uipanel(env_tab_comp.env_tab,'Position',[0 0.0 0.4 1],'units','norm');
 
@@ -49,12 +49,14 @@ env_tab_comp.string_cal=uicontrol(env_tab_comp.env_group,gui_fmt.txtStyle,'posit
 
 p_button=pos{7,1}{1};
 p_button(3)=gui_fmt.txt_w+gui_fmt.x_sep+gui_fmt.box_w;
-uicontrol(env_tab_comp.env_group,gui_fmt.pushbtnStyle,'String','Apply','callback',{@apply_envdata_callback,main_figure},'position',p_button,'tooltipstring','Apply Environnemental values');
+uicontrol(env_tab_comp.env_group,gui_fmt.pushbtnStyle,'String','Apply env.','callback',{@apply_envdata_callback,main_figure},'position',p_button,'tooltipstring','Apply environmental values');
+uicontrol(env_tab_comp.env_group,gui_fmt.pushbtnStyle,'String','Save env.','callback',{@save_abs_calibration},'position',p_button+[0 -gui_fmt.box_h 0 0],'tooltipstring','Save environmental values to cal_echo.csv and survey_options.xml');
+
 
 p_button=pos{7,2}{1}+[gui_fmt.box_w+gui_fmt.x_sep 0 0 0];
-p_button(3)=gui_fmt.button_w;
-uicontrol(env_tab_comp.env_group,gui_fmt.pushbtnStyle,'String','Save','callback',{@save_envdata_profiles_callback,main_figure},'position',p_button,'tooltipstring','Save Profiles');
-uicontrol(env_tab_comp.env_group,gui_fmt.pushbtnStyle,'String','Reload','callback',{@reload_envdata_profiles_callback,main_figure},'position',p_button+[gui_fmt.button_w 0 0 0],'tooltipstring','Reload Profiles');
+p_button(3)=gui_fmt.txt_w+gui_fmt.x_sep+gui_fmt.box_w;
+uicontrol(env_tab_comp.env_group,gui_fmt.pushbtnStyle,'String','Save profiles','callback',{@save_envdata_profiles_callback,main_figure},'position',p_button,'tooltipstring','Save Profiles');
+uicontrol(env_tab_comp.env_group,gui_fmt.pushbtnStyle,'String','Reload profiles','callback',{@reload_envdata_profiles_callback,main_figure},'position',p_button+[0 -gui_fmt.box_h 0 0],'tooltipstring','Reload Profiles');
 
 env_tab_comp.att_choice=uicontrol(env_tab_comp.env_group,gui_fmt.popumenuStyle,'string',{'Constant' 'Profile' 'Theoritical'},...
     'position',pos{6,2}{1}+[gui_fmt.box_w+gui_fmt.x_sep 0 0 0]);
@@ -86,10 +88,15 @@ end
 
 ylabel(env_tab_comp.ax_temperature,'Depth(m)');
 
-
-
 setappdata(main_figure,'Env_tab',env_tab_comp);
 
+end
+
+
+function save_abs_calibration(~,~)
+esp3_obj=getappdata(groot,'esp3_obj');
+update_survey_opts(esp3_obj.main_figure);
+save_cal_echo_file();
 end
 
 function save_envdata_profiles_callback(~,~,main_figure)

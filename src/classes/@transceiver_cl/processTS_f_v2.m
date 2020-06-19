@@ -88,9 +88,10 @@ if strcmp(trans_obj.Mode,'FM')
     
     r_tot=r_ts(idx_val);
     
-    
-    AlongAngle_val=AlongAngle_val(idx_val);
-    AcrossAngle_val=AcrossAngle_val(idx_val);
+    if ~isempty(AlongAngle_val)
+        AlongAngle_val=AlongAngle_val(idx_val);
+        AcrossAngle_val=AcrossAngle_val(idx_val);
+    end
     
     %eq_beam_angle_f=eq_beam_angle-20*log10(f_vec/Freq);
     
@@ -114,12 +115,15 @@ if strcmp(trans_obj.Mode,'FM')
     %f_corr=nansum((1+(f_nom-f_vec)/f_nom).*Prx_fft.^2)/nansum(Prx_fft.^2);
     
     f_corr=1;
-    
-    AlongAngle_val_corr=AlongAngle_val/f_corr;
-    AcrossAngle_val_corr=AcrossAngle_val/f_corr;
-    
-    compensation_f =arrayfun(@(x,y)  simradBeamCompensation(x,y, AlongAngle_val_corr,AcrossAngle_val_corr),BeamWidthAlongship_f,BeamWidthAthwartship_f,'un',0);
-    compensation_f=cell2mat(compensation_f);
+    if ~isempty(AlongAngle_val)
+        AlongAngle_val_corr=AlongAngle_val/f_corr;
+        AcrossAngle_val_corr=AcrossAngle_val/f_corr;
+        
+        compensation_f =arrayfun(@(x,y)  simradBeamCompensation(x,y, AlongAngle_val_corr,AcrossAngle_val_corr),BeamWidthAlongship_f,BeamWidthAthwartship_f,'un',0);
+        compensation_f=cell2mat(compensation_f);
+    else
+        compensation_f = zeros(size(f_vec));
+    end
     
     %     compensation_f(compensation_f<0)=nan;
     %     compensation_f(compensation_f>12)=nan;

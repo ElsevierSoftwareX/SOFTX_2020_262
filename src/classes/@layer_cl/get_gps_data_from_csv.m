@@ -5,7 +5,6 @@ if isempty(filenames)
     filenames=cellfun(@generate_gps_default_fname,layer_obj.Filename,'un',0);
 end
 
-
 up=0;
 for ui=1:numel(filenames)
     if isfile(filenames{ui})

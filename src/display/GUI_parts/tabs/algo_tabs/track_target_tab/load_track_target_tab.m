@@ -37,8 +37,18 @@
 %% Function
 function load_track_target_tab(main_figure,algo_tab_panel)
 
+[h,l] = get_top_panel_height(7.25);
+track_target_tab=uitab(algo_tab_panel,'Title','Single Targets');
 
-track_target_tab=uitab(algo_tab_panel,'Title','Target Tracking');
+
+algo_name='SingleTarget';
+
+load_algo_panel('main_figure',main_figure,...
+        'panel_h',uipanel(track_target_tab,'title','Single Targets','Units','Pixels','Position',[0 0 2*l h]),...
+        'algo_name',algo_name,...
+        'title','Single Targets Detection',...
+        'save_fcn_bool',true);
+
 
 gui_fmt=init_gui_fmt_struct();
 
@@ -46,7 +56,7 @@ pos=create_pos_3(7,2,gui_fmt.x_sep,gui_fmt.y_sep,gui_fmt.txt_w,gui_fmt.box_w,gui
 
 next_w=[gui_fmt.x_sep+gui_fmt.box_w 0 0 0];
 
-alpha_beta=uipanel(track_target_tab,'title','Step 1: Alpha/Beta tracking','Position',[0.0 0.0 0.3 1],'Tag','alpha_beta');
+alpha_beta=uipanel(track_target_tab,'title','Tracking Step 1: Alpha/Beta tracking','Units','Pixels','Position',[2*l 0 1.5*l h],'Tag','alpha_beta');
 
 uicontrol(alpha_beta,gui_fmt.txtStyle,'string','Al.','pos',pos{1,1}{2},'HorizontalAlignment','left','tooltipstring','AlongShip');
 uicontrol(alpha_beta,gui_fmt.txtStyle,'string','Ac.','pos',pos{1,1}{2}+next_w,'HorizontalAlignment','left','tooltipstring','AcrossShip');
@@ -77,7 +87,7 @@ track_target_tab_comp.MissedPingExpMajAxis=uicontrol(alpha_beta,gui_fmt.edtStyle
 track_target_tab_comp.MissedPingExpRange=uicontrol(alpha_beta,gui_fmt.edtStyle,'pos',pos{6,1}{2}+2*next_w);
 
 
-weights_panel=uipanel(track_target_tab,'Position',[0.3 0 0.7 1]);
+weights_panel=uipanel(track_target_tab,'Units','Pixels','Position',[3.5*l 0 2*l h]);
 
 algo_name='TrackTarget';
 
@@ -85,7 +95,7 @@ load_algo_panel('main_figure',main_figure,...
         'panel_h',weights_panel,...
         'algo_name',algo_name,...
         'input_struct_h',track_target_tab_comp,...
-        'title','Step 2: Weights & track acceptance',...
+        'title','Tracking Step 2: Weights & track acceptance',...
         'save_fcn_bool',true);
 
 end

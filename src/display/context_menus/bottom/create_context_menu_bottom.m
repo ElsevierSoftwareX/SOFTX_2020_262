@@ -38,20 +38,24 @@
 function create_context_menu_bottom(main_figure,bottom_line)
 curr_disp=get_esp3_prop('curr_disp');
 layer=get_current_layer();
+if isempty(layer)
+    return;
+end
 [~,idx_freq]=layer.get_trans(curr_disp);
 
 delete(findobj(main_figure,'Type','Uicontextmenu','-and','Tag','botCtxtMenu'));
 
 context_menu=uicontextmenu(ancestor(bottom_line,'figure'),'Tag','botCtxtMenu');
 bottom_line.UIContextMenu=context_menu;
+
+uimenu(context_menu,'Label','Shift Bottom ...','Callback',{@shift_bottom_callback,[],main_figure});
+uimenu(context_menu,'Label','Filter Bottom ...','Callback',@filter_bottom_callback);
+uimenu(context_menu,'Label','Remove Bottom','Callback',{@rm_bottom_callback,main_figure});
 switch layer.Filetype
     case 'EK60'
         uimenu(context_menu,'Label','Reload Simrad bottom','Callback',@reload_ek_bot_cback);
 end
-uimenu(context_menu,'Label','Shift Bottom ...','Callback',{@shift_bottom_callback,[],main_figure});
-uimenu(context_menu,'Label','Remove Bottom ...','Callback',{@rm_bottom_callback,main_figure});
 uimenu(context_menu,'Label','Display Bottom Region','Callback',@display_bottom_region_callback);
-uimenu(context_menu,'Label','Filter Bottom','Callback',@filter_bottom_callback);
 % uimenu(context_menu,'Label','Display Slope estimation','Callback',@slope_est_callback);
 % uimenu(context_menu,'Label','Display Shadow zone height estimation','Callback',@shadow_zone_est_callback);
 uimenu(context_menu,'Label','Display Shadow zone content estimation (10m X 10m)','Callback',@shadow_zone_content_est_callback);

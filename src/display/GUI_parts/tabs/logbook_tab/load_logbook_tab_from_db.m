@@ -220,13 +220,14 @@ try
             
             rc_menu = uicontextmenu(ancestor(surv_data_table.table_main,'figure'));
             surv_data_table.table_main.UIContextMenu =rc_menu;
-            select_menu=uimenu(rc_menu,'Label','Select');
-            process_menu=uimenu(rc_menu,'Label','Process');
-            survey_menu=uimenu(rc_menu,'Label','Import/Export SurveyData');
-            map_menu=uimenu(rc_menu,'Label','Map');
-            mod_survey_menu=uimenu(rc_menu,'Label','Edit SurveyData');
-            
             open_menu=uimenu(rc_menu,'Label','Open');  
+            select_menu=uimenu(rc_menu,'Label','Select'); 
+            mod_survey_menu=uimenu(rc_menu,'Label','Edit SurveyData');
+            survey_menu=uimenu(rc_menu,'Label','Import/Export SurveyData');
+            process_menu=uimenu(rc_menu,'Label','Process'); 
+            map_menu=uimenu(rc_menu,'Label','Map');
+           
+
             uimenu(open_menu,'Label','Open highlighted file(s)','Callback',{@open_files_callback,surv_data_tab,main_figure,'high'});
             uimenu(open_menu,'Label','Open selected file(s)','Callback',{@open_files_callback,surv_data_tab,main_figure,'sel'});
             uimenu(open_menu,'Label','Open Script Builder with selected file(s)','Callback',{@generate_xml_callback,surv_data_tab,main_figure});

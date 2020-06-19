@@ -4,6 +4,7 @@ classdef algo_cl < matlab.mixin.Copyable
         Name
         Function
         Input_params
+        Description
         Varargout
     end
     
@@ -14,6 +15,7 @@ classdef algo_cl < matlab.mixin.Copyable
             p = inputParser;
             
             addParameter(p,'Name','',@ischar);
+            addParameter(p,'Description','',@ischar);
             addParameter(p,'Input_params',[],@(x) isa(x,'algo_param_cl')||isempty(x));
             addParameter(p,'Varargin',[],@(x) isstruct(x)||isempty(x));
             addParameter(p,'Frequencies',[],@(x) isnumeric(x)||isempty(x));
@@ -23,7 +25,7 @@ classdef algo_cl < matlab.mixin.Copyable
             
             obj.Name=results.Name;
             
-            obj.init_func();
+            obj.init_func_and_descr();
             
             obj.init_input_params();
             
@@ -36,7 +38,35 @@ classdef algo_cl < matlab.mixin.Copyable
                 end
             end
             
-            obj.Varargout=init_varargout(obj.Name);
+            obj.init_varargout();
+            
+        end
+        
+        function str = get_algo_descr_and_params(obj)
+%        Name = ''
+%        Value= 0
+%        Validation_fcn = @isnumeric
+%        Default_value= 0
+%        Value_range = [-inf inf]
+%        Disp_name = ''
+%        Tooltipstring = ''
+%        Precision = '%.2f'  
+%        Units = ''
+            str = sprintf('%s\nDescription: %s\nFunction: @%s\nInput parameters:\n',obj.Name, obj.Description, char(obj.Function));
+            params_class=obj.Input_params.get_class();
+            str_disp=obj.Input_params.to_string();
+            for ui=1:numel(params_class)  
+                obj_p = obj.Input_params(ui);
+                switch params_class{ui}
+                    case 'cell'
+                       str = [str sprintf('- %s [%s]: %s.\n',obj_p.Name,str_disp{ui},obj_p.Tooltipstring)];
+                    case {'single' 'double' 'int8' 'int16' 'int32' 'int64' 'uint8' 'uint16' 'uint32' 'uint64'}
+                       str = [str sprintf(['- %s [%s]: %s. Value Range = ['  obj_p.Precision  ' ' obj_p.Precision ']\n'],obj_p.Name,str_disp{ui},obj_p.Tooltipstring,obj_p.Value_range(1), obj_p.Value_range(2)),];
+                    case 'logical'
+                      str = [str sprintf('- %s [%s]: boolean. %s.\n',obj_p.Name,str_disp{ui},obj_p.Tooltipstring)];
+                end
+                
+            end
             
         end
         

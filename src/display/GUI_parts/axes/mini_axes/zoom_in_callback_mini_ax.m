@@ -80,7 +80,7 @@ end
 
 x_box=xinit;
 y_box=yinit;
-
+set(mini_ax_comp.patch_obj,'ButtonDownFcn','');
 
 hp=line(x_box,y_box,'color',col_lab,'linewidth',1,'parent',ah);
 %replace_interaction(main_figure,'interaction','WindowButtonMotionFcn','id',1);
@@ -168,14 +168,15 @@ replace_interaction(current_fig,'interaction','WindowButtonUpFcn','id',2,'intera
         new_vert(:,1)=[x_lim(1) x_lim(2) x_lim(2) x_lim(1)];
         new_vert(:,2)=[y_lim(1) y_lim(1) y_lim(2) y_lim(2)];
         
-        set(patch_obj,'Vertices',new_vert);
-
+       
         axes_panel_comp=getappdata(main_figure,'Axes_panel');
         set(axes_panel_comp.main_axes,'XLim',x_lim);
         set(axes_panel_comp.main_axes,'YLim',y_lim);
-       
+        set(patch_obj,'Vertices',new_vert);
         
         end
+        drawnow;
+        set(mini_ax_comp.patch_obj,'ButtonDownFcn',{@move_patch_mini_axis_grab,main_figure});
     end
 
 end

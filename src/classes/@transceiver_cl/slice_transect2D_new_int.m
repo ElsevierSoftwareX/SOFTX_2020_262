@@ -92,8 +92,7 @@ output_2D=cell(1,numel(output_type));
 idx_reg=cell(1,numel(output_type));
 regs_ref=cell(1,numel(output_type));
 
-if slice_int
-    
+if slice_int   
         for ity=1:numel(output_type)
             idx_reg{ity}=find_regions_ref(trans_obj,output_type{ity});
             idx_reg{ity}=intersect(idx_reg{ity},p.Results.idx_regs);

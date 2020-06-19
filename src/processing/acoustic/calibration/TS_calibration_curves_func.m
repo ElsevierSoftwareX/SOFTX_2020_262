@@ -213,7 +213,7 @@ for uui=select
     % What method to use when calculating the 'best' estimate of the on-axis
     % sphere TS. Max of on-axis echoes, mean of on-axis echoes, or the peak of
     % the fitted beam pattern.
-    onAxisMethod = {'mean','max','beam fitting'}; 
+    onAxisMethod = {'mean','max','beam fitting'};
     
     
     faBW = trans_obj.Config.BeamWidthAlongship; % [degrees]
@@ -231,7 +231,7 @@ for uui=select
     %Power_norm = trans_obj.ST.Power_norm;
     
     [phi, ~] = simradAnglesToSpherical(AlongAngle_sph, AcrossAngle_sph);
-       
+    
     idx_high=get_highest_target_per_ping(trans_obj.ST);
     
     idx_keep=idx_high&...
@@ -264,12 +264,18 @@ for uui=select
     cax=[sphere_ts-12 sphere_ts+3];
     switch trans_obj.Mode
         case 'FM'
-            
-            fig_bp=plot_bp(AcrossAngle_sph,AlongAngle_sph,Sp_sph,idx_keep);
-            
-            if~isempty(path_out)&&~isempty(fig_bp)
-                print(fig_bp,fullfile(path_out,['bp_contour_plot' freq_str '.png']),'-dpng','-r300');
+            if trans_obj.Config.BeamType>0
+                fig_bp=plot_bp(AcrossAngle_sph,AlongAngle_sph,Sp_sph,idx_keep);
+                
+                if~isempty(path_out)&&~isempty(fig_bp)
+                    print(fig_bp,fullfile(path_out,generate_valid_filename(['bp_contour_plot' freq_str '.png'])),'-dpng','-r300');
+                end
+            else
+                peak_ts = prctile(Sp_sph(idx_keep),95);
+                idx_keep = idx_keep&abs(Sp_sph-peak_ts)<=maxdBDiff2/2;
             end
+            
+            
             
         case 'CW'
             [sim_pulse,~]=trans_obj.get_pulse();
@@ -281,9 +287,6 @@ for uui=select
             % Fit the simrad beam pattern to the data. We get estimated beamwidth,
             % offsets, and peak value from this.
             switch trans_obj.Config.BeamType
-                case 1
-                    [offset_fa,faBW,offset_ps,psBW,~,peak_ts,exitflag] = ...
-                        fit_beampattern(Sp_sph(idx_keep),AcrossAngle_sph(idx_keep),AlongAngle_sph(idx_keep),maxdBDiff2/2, (faBW+psBW)/2);
                 case 0
                     offset_fa = trans_obj.Config.AngleOffsetAlongship;
                     faBW = trans_obj.Config.BeamWidthAlongship;
@@ -291,6 +294,9 @@ for uui=select
                     psBW = trans_obj.Config.BeamWidthAthwartship;
                     peak_ts = nanmax(Sp_sph(idx_keep));
                     exitflag=1;
+                otherwise
+                    [offset_fa,faBW,offset_ps,psBW,~,peak_ts,exitflag] = ...
+                        fit_beampattern(Sp_sph(idx_keep),AcrossAngle_sph(idx_keep),AlongAngle_sph(idx_keep),maxdBDiff2/2, (faBW+psBW)/2);
             end
             
             % If a beam pattern couldn't be fitted, give up with some diagonistics.
@@ -321,46 +327,54 @@ for uui=select
             
             
             switch trans_obj.Config.BeamType
-                case 1
-                    idx_keep = idx_keep&abs(Sp_sph+compensation-peak_ts)<=maxdBDiff2;
                 case 0
                     idx_keep = idx_keep&abs(Sp_sph+compensation-peak_ts)<=maxdBDiff2/2;
+                otherwise
+                    idx_keep = idx_keep&abs(Sp_sph+compensation-peak_ts)<=maxdBDiff2;
             end
-
+            
     end
-    
     
     
     idx_keep_sec=idx_keep&abs(phi)<=on_axis;
-    
-    if nansum(idx_keep_sec)<minOnAxisEchoes
-        warndlg_perso(main_figure,'',sprintf('Less than %d echoes closer than %.1f degrees to the center. Looking out to %.1f degree.',minOnAxisEchoes,on_axis, onAxisFactorExpension*on_axis),5);
-        on_axis = onAxisFactorExpension*on_axis;
-        idx_keep_sec=idx_keep&abs(phi)<=on_axis;
-    end
-    
-    if nansum(idx_keep_sec)<minOnAxisEchoes
-        warndlg_perso(main_figure,'POOR CALIBRATION DATA',sprintf(['Less than %d echoes closer than %.1f degrees to the center. Looking out to %.1f degree.\n'...
-            'PRETTY POOR CALIBRATION DATA, I WOULD NOT TRUST IT!!!!'],minOnAxisEchoes,on_axis, onAxisFactorExpension*on_axis),5);
-        on_axis = onAxisFactorExpension*on_axis;
-        idx_keep_sec=idx_keep&abs(phi)<=on_axis;
-    end
-    
-    if nansum(idx_keep_sec)<minOnAxisEchoes
-        warndlg_perso(main_figure,'POOR CALIBRATION DATA',sprintf(['Less than %d echoes closer than %.1f degrees to the center. Looking out to %.1f degree.\n'...
-            'You are about to try to obtain a calibration from very poor quality data, with very low number of central echoes...'],minOnAxisEchoes,on_axis, onAxisFactorExpension*on_axis/2),5);
-        on_axis = onAxisFactorExpension*on_axis/2;
-        idx_keep_sec=idx_keep&abs(phi)<=on_axis;
-    end
-    
-    if nansum(idx_keep_sec)<minOnAxisEchoes
-        warndlg_perso(main_figure,'','I have tried very hard and cannot find any usable spere echoes in there... Try changing your single target detection parameter for this frequency');
-        if~isempty(path_out)
-            fclose(fid(2));
+    if trans_obj.Config.BeamType >0
+        if nansum(idx_keep_sec)<minOnAxisEchoes
+            warndlg_perso(main_figure,'',sprintf('Less than %d echoes closer than %.1f degrees to the center. Looking out to %.1f degree.',minOnAxisEchoes,on_axis, onAxisFactorExpension*on_axis),5);
+            on_axis = onAxisFactorExpension*on_axis;
+            idx_keep_sec=idx_keep&abs(phi)<=on_axis;
         end
-        continue
+        
+        if nansum(idx_keep_sec)<minOnAxisEchoes
+            warndlg_perso(main_figure,'POOR CALIBRATION DATA',sprintf(['Less than %d echoes closer than %.1f degrees to the center. Looking out to %.1f degree.\n'...
+                'PRETTY POOR CALIBRATION DATA, I WOULD NOT TRUST IT!!!!'],minOnAxisEchoes,on_axis, onAxisFactorExpension*on_axis),5);
+            on_axis = onAxisFactorExpension*on_axis;
+            idx_keep_sec=idx_keep&abs(phi)<=on_axis;
+        end
+        
+        if nansum(idx_keep_sec)<minOnAxisEchoes
+            warndlg_perso(main_figure,'POOR CALIBRATION DATA',sprintf(['Less than %d echoes closer than %.1f degrees to the center. Looking out to %.1f degree.\n'...
+                'You are about to try to obtain a calibration from very poor quality data, with very low number of central echoes...'],minOnAxisEchoes,on_axis, onAxisFactorExpension*on_axis/2),5);
+            on_axis = onAxisFactorExpension*on_axis/2;
+            idx_keep_sec=idx_keep&abs(phi)<=on_axis;
+        end
+        
+        if nansum(idx_keep_sec)<minOnAxisEchoes
+            warndlg_perso(main_figure,'','I have tried very hard and cannot find any usable spere echoes in there... Try changing your single target detection parameter for this frequency');
+            if~isempty(path_out)
+                fclose(fid(2));
+            end
+            continue
+        end
+    else
+        if nansum(idx_keep_sec)<minOnAxisEchoes
+            warndlg_perso(main_figure,'','Cannot find any usable spere echoes in there for this single-beam calibration... Try changing your single target detection parameter for this frequency');
+            if~isempty(path_out)
+                fclose(fid(2));
+            end
+            continue;
+        end
+        
     end
-    
     if  nansum(idx_keep_sec)<minOnAxisEchoes
         choice=question_dialog_fig(main_figure,'Crappy calibration data detected','Do you want REALLY want to try to calibrate with those crappy data? Well, nothing I can do to stop you them...','timeout',10);
         
@@ -390,7 +404,7 @@ for uui=select
     ylabel(ax,'Sphere range (m)')
     
     if~isempty(path_out)
-        print(fig_r,fullfile(path_out,['sph_depth' freq_str '.png']),'-dpng','-r300');
+        print(fig_r,fullfile(path_out,generate_valid_filename(['sph_depth' freq_str '.png'])),'-dpng','-r300');
     end
     
     
@@ -414,7 +428,7 @@ for uui=select
             
             
             cal_struct=trans_obj.get_fm_cal('');
-             
+            
             for kk=1:length(idx_pings)
                 [sp,cp,f,~,f_corr(kk)]=processTS_f_v2(trans_obj,layer.EnvData,idx_pings(kk),range_tot(idx_peak_tot(kk)),cal_struct,att_m);
                 if kk==1
@@ -456,25 +470,24 @@ for uui=select
             grid(ax,'on');
             xlabel(ax,'kHz')
             ylabel(ax,'TS(dB)');
-
+            
             if~isempty(path_out)
-                print(ts_fig,fullfile(path_out,['ts_f' freq_str '.png']),'-dpng','-r300');
+                print(ts_fig,fullfile(path_out,generate_valid_filename(['ts_f' freq_str '.png'])),'-dpng','-r300');
             end
             
             
             
             [cal_path,~,~]=fileparts(layer.Filename{1});
-            file_cal=fullfile(cal_path,['Curve_' layer.ChannelID{uui} '.mat']);
+            file_cal=fullfile(cal_path,generate_valid_filename(['Curve_' layer.ChannelID{uui} '.mat']));
             
             freq_vec=f_vec(:,1)';
             cal_ts=TS_f_mean;
             
-
+            
             Gf_th=interp1(cal_struct.freq_vec,cal_struct.Gf,freq_vec,'linear','extrap');
-
+            
             Gf=(cal_ts-th_ts)/2+Gf_th(:)';
             
-
             qstring=sprintf('Do you want to save those results for frequency %.0f kHz',Freq/1e3);
             choice=question_dialog_fig(main_figure,'Calibration',qstring,'opt',{'Yes' 'No'});
             
@@ -490,7 +503,11 @@ for uui=select
                 otherwise
                     save(file_cal,'freq_vec','cal_ts','th_ts','Gf');
             end
-                       
+            
+            if trans_obj.Config.BeamType == 0
+                continue;
+            end
+            
             qstring=sprintf('Do also want to try and calibrate the Angles for frequency %.0f kHz',Freq/1e3);
             choice=question_dialog_fig(main_figure,'Calibration',qstring,'opt',{'Yes' 'No'});
             
@@ -572,11 +589,11 @@ for uui=select
             ylim([nanmin(BeamWidthAthwartship_f_th)*0.7 nanmax(BeamWidthAthwartship_f_th)*1.3]);
             
             if~isempty(path_out)
-                print(b_width_fig,fullfile(path_out,['bw_f_' freq_str '.png']),'-dpng','-r300');
+                print(b_width_fig,fullfile(path_out,generate_valid_filename(['bw_f_' freq_str '.png'])),'-dpng','-r300');
             end
             
             [cal_path,~,~]=fileparts(layer.Filename{1});
-            file_cal=fullfile(cal_path,['Curve_EBA_' layer.ChannelID{uui} '.mat']);
+            file_cal=fullfile(cal_path,generate_valid_filename(['Curve_EBA_' layer.ChannelID{uui} '.mat']));
             
             
             freq_vec=f_vec(:,1);
@@ -594,7 +611,7 @@ for uui=select
             % Handle response
             switch choice
                 case 'Yes'
-                    save(file_cal,'BeamWidthAlongship_f_fit','BeamWidthAlongship_f_th','BeamWidthAthwartship_f_fit','BeamWidthAthwartship_f_th','freq_vec');     
+                    save(file_cal,'BeamWidthAlongship_f_fit','BeamWidthAlongship_f_th','BeamWidthAthwartship_f_fit','BeamWidthAthwartship_f_th','freq_vec');
             end
             
         case 'CW'
@@ -616,7 +633,7 @@ for uui=select
             title(ax2,['On axis TS values for ' num2str(numel(ts_values)) ' targets']);
             
             if~isempty(path_out)
-                print(fig_ts,fullfile(path_out,['on_axis_ts' freq_str '.png']),'-dpng','-r300');
+                print(fig_ts,fullfile(path_out,generate_valid_filename(['on_axis_ts' freq_str '.png'])),'-dpng','-r300');
             end
             
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -661,7 +678,7 @@ for uui=select
             if trans_obj.Config.BeamType>0
                 fig_bp=plot_bp(AcrossAngle_sph,AlongAngle_sph,Sp_sph+outby(1),idx_keep);
                 if~isempty(path_out)&&~isempty(fig_bp)
-                    print(fig_bp,fullfile(path_out,['bp_contour_plot' freq_str '.png']),'-dpng','-r300');
+                    print(fig_bp,fullfile(path_out,generate_valid_filename(['bp_contour_plot' freq_str '.png'])),'-dpng','-r300');
                 end
                 
                 % Do a plot of the compensated and uncompensated echoes at a selection of
@@ -670,7 +687,7 @@ for uui=select
                 fig=plotBeamSlices(AcrossAngle_sph(idx_keep),AlongAngle_sph(idx_keep),Sp_sph(idx_keep),outby(1),(faBW + psBW)/2, faBW, psBW, peak_ts, 1/2);
                 
                 if~isempty(path_out)&&~isempty(fig)
-                    print(fig,fullfile(path_out,['slices' freq_str '.png']),'-dpng','-r300');
+                    print(fig,fullfile(path_out,generate_valid_filename(['slices' freq_str '.png'])),'-dpng','-r300');
                 end
             end
             % The Sa correction is a value that corrects for the received pulse having
@@ -712,7 +729,7 @@ for uui=select
             alpha_corr = mean(sum_pow)/nansum(abs(sim_pulse).^2);
             % And convert that to dB, taking account of how this ratio is used as 2Sa
             % everywhere (i.e., it needs to be halved after converting to dB).
-           
+            
             sa_correction = 5 * log10(alpha_corr);
             %sa_correction_new = 5 * log10(alpha_new);
             
@@ -949,10 +966,10 @@ loadEcho(main_figure);
         pings=unique(ST.Ping_number);
         idx_high=zeros(size(ST.Ping_number));
         for uip=1:numel(pings)
-           id_p = find(pings(uip) == ST.Ping_number);
-           
-          [~,id_max] = nanmax(ST.TS_uncomp(id_p));
-          idx_high(id_p(id_max))=1;
+            id_p = find(pings(uip) == ST.Ping_number);
+            
+            [~,id_max] = nanmax(ST.TS_uncomp(id_p));
+            idx_high(id_p(id_max))=1;
         end
     end
 

@@ -141,7 +141,7 @@ axes_panel_comp.h_axes_plot_high=plot(axes_panel_comp.haxes,nan,nan,'color',[0.5
 axes_panel_comp.h_curr_val=xline(axes_panel_comp.haxes,0,'--b','Tag','curr_val','Interpreter','none');       
 
 axes_panel_comp.h_axes_text=text(nan,nan,'','Color','r','VerticalAlignment','bottom','fontsize',10,'parent',axes_panel_comp.haxes,'Clipping', 'on');
-axes_panel_comp.colorbar=colorbar(axes_panel_comp.main_axes,'PickableParts','none','visible','off','fontsize',8,'Color',axes_panel_comp.main_axes.Color);
+axes_panel_comp.colorbar=colorbar(axes_panel_comp.main_axes,'PickableParts','none','visible','off','fontsize',8,'Color','k');
 axes_panel_comp.colorbar.UIContextMenu=[];
 axes_panel_comp.main_axes.Position=[0 0 1 1];
 

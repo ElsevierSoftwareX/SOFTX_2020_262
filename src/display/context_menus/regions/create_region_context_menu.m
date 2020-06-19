@@ -73,22 +73,24 @@ if isreg>0
     uifreq=uimenu(region_menu,'Label','Copy to other channels');
     uimenu(uifreq,'Label','all','Callback',{@copy_region_callback,main_figure,[]});
     uimenu(uifreq,'Label','choose which Channel(s)','Callback',{@copy_region_callback,main_figure,1});
-    uimenu(region_menu,'Label','Merge Overlapping Regions','CallBack',{@merge_overlapping_regions_callback,main_figure});
-    uimenu(region_menu,'Label','Merge Overlapping Regions (per Tag)','CallBack',{@merge_overlapping_regions_per_tag_callback,main_figure});
-    uimenu(region_menu,'Label','Merge Selected Regions','CallBack',{@merge_selected_regions_callback,main_figure});
+    uimenu(region_menu,'Label','Merge Overlapping Regions (union)','CallBack',{@merge_overlapping_regions_callback,main_figure});
+    uimenu(region_menu,'Label','Merge Overlapping Regions (union per Tag)','CallBack',{@merge_overlapping_regions_per_tag_callback,main_figure});
+    uimenu(region_menu,'Label','Merge Selected Regions (union)','CallBack',{@merge_selected_regions_callback,main_figure,0});
+    uimenu(region_menu,'Label','Merge Selected Regions (intersection)','CallBack',{@merge_selected_regions_callback,main_figure,1});
 end
 
 
 
 analysis_menu=uimenu(context_menu,'Label','Analysis');
 uimenu(analysis_menu,'Label','Display Pdf of values','Callback',{@disp_hist_region_callback,select_plot,main_figure});
-
+uimenu(analysis_menu,'Label','Display region(s) statistics','Callback',{@reg_integrated_callback,select_plot,main_figure});
 if isreg>0
-    uimenu(analysis_menu,'Label','Classify region','Callback',{@classify_reg_callback,main_figure});
+      
+    uimenu(analysis_menu,'Label','Classify region(s)','Callback',{@classify_reg_callback,main_figure});
     uimenu(analysis_menu,'Label','Display Mean Depth of current region','Callback',{@plot_mean_aggregation_depth_callback,main_figure});
 
     export_menu=uimenu(context_menu,'Label','Export');
-    uimenu(export_menu,'Label','Export integrated region to .xlsx','Callback',{@export_regions_callback,main_figure});
+    uimenu(export_menu,'Label','Export integrated region(s) to .xlsx','Callback',{@export_regions_callback,main_figure});
     uimenu(export_menu,'Label','Export Sv values to .xlsx','Callback',{@export_regions_values_callback,main_figure,'selected','sv'});
     uimenu(export_menu,'Label','Export currently displayed values to .xlsx','Callback',{@export_regions_values_callback,main_figure,'selected','curr_data'});
     sub_export_menu=uimenu(export_menu,'Label','XYZ/VRML');
@@ -110,16 +112,16 @@ if strcmp(trans_obj.Mode,'FM')
     uimenu(freq_analysis_menu,'Label','Create Frequency Matrix TS','Callback',{@freq_response_sp_mat_callback,select_plot,main_figure});
 end
 
-algo_menu=uimenu(context_menu,'Label','Apply Algorithm ...');
+algo_menu=uimenu(context_menu,'Label','Apply Algorithm');
 uimenu(algo_menu,'Label','Bottom Detection V1','Callback',{@apply_bottom_detect_cback,select_plot,main_figure,'v1'});
 uimenu(algo_menu,'Label','Bottom Detection V2','Callback',{@apply_bottom_detect_cback,select_plot,main_figure,'v2'});
-uimenu(algo_menu,'Label','Bottom Features','Callback',{@apply_bottomfeatures_cback,select_plot,main_figure});
+uimenu(algo_menu,'Label','Bottom Features Calculation','Callback',{@apply_bottomfeatures_cback,select_plot,main_figure});
 uimenu(algo_menu,'Label','Bad Pings Detection','Callback',{@find_bt_cback,select_plot,main_figure,'v2'});
-uimenu(algo_menu,'Label','Spikes removal','Callback',{@find_spikes_cback,select_plot,main_figure});
+uimenu(algo_menu,'Label','Spikes Detection','Callback',{@find_spikes_cback,select_plot,main_figure});
+uimenu(algo_menu,'Label','Dropouts Detection','Callback',{@find_bt_cback,select_plot,main_figure,'dropouts'});
 uimenu(algo_menu,'Label','School Detection','Callback',{@apply_school_detect_cback,select_plot,main_figure});
 uimenu(algo_menu,'Label','Single Targets Detection','Callback',{@apply_st_detect_cback,select_plot,main_figure});
 uimenu(algo_menu,'Label','Target Tracking','Callback',{@apply_track_target_cback,select_plot,main_figure});
-uimenu(algo_menu,'Label','Dropouts detection','Callback',{@find_bt_cback,select_plot,main_figure,'dropouts'});
 
 uimenu(context_menu,'Label','Shift Bottom ...','Callback',{@shift_bottom_callback,select_plot,main_figure});
 
@@ -138,6 +140,9 @@ end
 
 
 end
+
+
+
 function clear_spikes_cback(~,~,select_plot,main_figure)
 layer=get_current_layer();
 curr_disp=get_esp3_prop('curr_disp');
@@ -154,7 +159,7 @@ end
 idx_r = reg_obj.Idx_r;
 idx_pings = reg_obj.Idx_pings;
 
-trans_obj.Data.replace_sub_data_v2('spikesmask',false(numel(idx_r),numel(idx_pings)),idx_r,idx_pings);
+trans_obj.set_spikes(idx_r,idx_pings,0);
 set_alpha_map(main_figure,'update_under_bot',0,'update_cmap',0);
 
 end
@@ -223,21 +228,30 @@ end
 end
 
 
-
-
-function reg_integrated_callback(~,~,main_figure)
+function reg_integrated_callback(~,~,select_plot,main_figure)
 layer=get_current_layer();
 curr_disp=get_esp3_prop('curr_disp');
 [trans_obj,~]=layer.get_trans(curr_disp);
 
-reg_curr=trans_obj.get_region_from_Unique_ID(curr_disp.Active_reg_ID);
-for i=1:numel(reg_curr)
-    regCellInt=trans_obj.integrate_region(reg_curr(i));
+switch class(select_plot)
+    case 'region_cl'
+        [trans_obj,~]=layer.get_trans(curr_disp);
+        reg_obj=trans_obj.get_region_from_Unique_ID(curr_disp.Active_reg_ID);
+    otherwise
+        idx_pings=round(nanmin(select_plot.XData)):round(nanmax(select_plot.XData));
+        idx_r=round(nanmin(select_plot.YData)):round(nanmax(select_plot.YData));
+        reg_obj=region_cl('Name','Select Area','Idx_r',idx_r,'Idx_pings',idx_pings,'Unique_ID','select_area');
+end
+
+
+for i=1:numel(reg_obj)
+    regCellInt=trans_obj.integrate_region(reg_obj(i));
     if isempty(regCellInt)
         return;
     end
     
-    display_region_stat_fig(main_figure,regCellInt);
+    hfig = display_region_stat_fig(main_figure,regCellInt,reg_obj(i).Unique_ID);
+    set(hfig,'Name',reg_obj(i).print());
 end
 end
 
@@ -272,7 +286,6 @@ for i=1:length(reg_obj)
         return;
     end
     
-    [pdf,x]=pdf_perso(data,'bin',50);
     
     tt=reg_curr.print();
     switch lower(deblank(curr_disp.Fieldname))
@@ -280,10 +293,13 @@ for i=1:length(reg_obj)
             xlab=sprintf('Angle (deg)');
         case{'alongphi','acrossphi'}
             xlab='Phase (deg)';
+        case {'power' 'powerdenoised' 'powerunmatched'}
+            data = pow2db_perso(data);
+            xlab=sprintf('%s (dB)',curr_disp.Type);
         otherwise
             xlab=sprintf('%s (dB)',curr_disp.Type);
     end
-    
+    [pdf,x]=pdf_perso(data,'bin',50);
     new_echo_figure(main_figure,'Name',sprintf('Region %d Histogram: %s',reg_curr.ID,curr_disp.Type),'Tag',sprintf('histo%s',reg_curr.Unique_ID));
     hold on;
     title(tt);

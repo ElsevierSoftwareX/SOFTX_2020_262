@@ -53,6 +53,7 @@ addParameter(p,'cell_h',5);
 addParameter(p,'ref','Transducer');
 addParameter(p,'reg_names','School',@ischar);
 addParameter(p,'rm_overlapping_regions',true,@islogical);
+addParameter(p,'tag','',@(x) ischar(x)||istring(x));
 addParameter(p,'bbox_only',0);
 
 
@@ -81,6 +82,7 @@ if isstring(classes)
 else
     classes(classes==0)=[];
     tags=strings(size(classes));
+    tags(:) = p.Results.tag;
 end
 
 idx_pings=nanmin(floor(p.Results.idx_pings)):nanmax(ceil(p.Results.idx_pings));

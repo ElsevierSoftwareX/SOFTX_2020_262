@@ -2,8 +2,15 @@ function create_context_menu_main_echo(main_figure)
 
 % prep
 axes_panel_comp = getappdata(main_figure,'Axes_panel');
+
+if isempty(axes_panel_comp)
+    return;
+end
 curr_disp=get_esp3_prop('curr_disp');
 layer = get_current_layer();
+if isempty(layer)
+    return;
+end
 [~,idx_freq] = layer.get_trans(curr_disp);
 
 delete(findobj(ancestor(axes_panel_comp.bad_transmits,'figure'),'Type','UiContextMenu','-and','Tag','btCtxtMenu'));
@@ -15,7 +22,9 @@ axes_panel_comp.bad_transmits.UIContextMenu = context_menu;
 % Ping Analysis
 analysis_menu = uimenu(context_menu,'Label','Ping Analysis');
 uimenu(analysis_menu,'Label','Plot Profiles',         'Callback',{@plot_profiles_callback,main_figure});
-uimenu(analysis_menu,'Label','Display Ping Impedance','Callback',{@display_ping_impedance_cback,main_figure,[],1});
+if ~isdeployed
+    uimenu(analysis_menu,'Label','Display Ping Impedance','Callback',{@display_ping_impedance_cback,main_figure,[],1});
+end
 uimenu(analysis_menu,'Label','Plot Ping TS Spectrum', 'Callback',{@plot_ping_spectrum_callback,main_figure});
 uimenu(analysis_menu,'Label','Plot Ping Sv Spectrum', 'Callback',{@plot_ping_sv_spectrum_callback,main_figure});
 
@@ -37,8 +46,8 @@ uimenu(survey_menu,'Label','Split Transect Here',                   'Callback',{
 tools_menu = uimenu(context_menu,'Label','Tools');
 uimenu(tools_menu,'Label','Correct this transect position based on cable angle and towbody depth','Callback',{@correct_pos_angle_depth_sector_cback,main_figure});
 
-% Bad Transmits
-bt_menu = uimenu(context_menu,'Label','Bad Transmits');
+% Bad Pings
+bt_menu = uimenu(context_menu,'Label','Bad Pings');
 uifreq  = uimenu(bt_menu,'Label','Copy to other channels');
 uimenu(uifreq,'Label','all',                  'Callback',{@copy_bt_cback,main_figure,[]});
 uimenu(uifreq,'Label','choose which Channels','Callback',{@copy_bt_cback,main_figure,1});
@@ -115,7 +124,7 @@ for ifi = 1:length(layer.Filename)
                     end
             end
         catch
-            warning('Could not read Config file for file %s\n',fileN);
+            warning('Could not read Config for file %s\n',fileN);
         end
         break;
     end

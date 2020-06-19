@@ -11,7 +11,7 @@ icon=get_icons_cdata(fullfile(app_path_main,'icons'));
 cursor_mode_tool_comp.pointer=uitoggletool(cursor_mode_tool_comp.cursor_mode_tool,'CData',icon.pointer,'TooltipString','Normal (0)','Tag','nor');
 cursor_mode_tool_comp.zoom_in=uitoggletool(cursor_mode_tool_comp.cursor_mode_tool,'CData',icon.zin,'TooltipString','Zoom In (1)','Tag','zin');
 cursor_mode_tool_comp.zoom_out=uitoggletool(cursor_mode_tool_comp.cursor_mode_tool,'CData',icon.zout,'TooltipString','Zoom Out (shift+1)','Tag','zout');
-cursor_mode_tool_comp.bad_trans=uitoggletool(cursor_mode_tool_comp.cursor_mode_tool,'CData',icon.bad_trans ,'TooltipString','Bad Transmit (2)','Tag','bt');
+cursor_mode_tool_comp.bad_trans=uitoggletool(cursor_mode_tool_comp.cursor_mode_tool,'CData',icon.bad_trans ,'TooltipString','Bad Pings (2)','Tag','bt');
 cursor_mode_tool_comp.edit_bottom=uitogglesplittool(cursor_mode_tool_comp.cursor_mode_tool,'CData',icon.edit_bot,'TooltipString','Edit Bottom (3)','Tag','ed_bot');
 cursor_mode_tool_comp.create_reg=uitogglesplittool(cursor_mode_tool_comp.cursor_mode_tool,'CData',icon.create_reg_rect ,'TooltipString','Create Rectangular region (4)','Tag','create_reg_rect');
 cursor_mode_tool_comp.measure=uitoggletool(cursor_mode_tool_comp.cursor_mode_tool,'CData',icon.ruler ,'TooltipString','Measure Distance (5)','Tag','meas');
@@ -46,7 +46,7 @@ if strcmp(src.State,'on')
         case 'nor'
             curr_disp.CursorMode='Normal';
         case 'bt'
-            curr_disp.CursorMode='Bad Transmits';
+            curr_disp.CursorMode='Bad Pings';
         case 'zout'
             curr_disp.CursorMode='Zoom Out';
         case 'zin'

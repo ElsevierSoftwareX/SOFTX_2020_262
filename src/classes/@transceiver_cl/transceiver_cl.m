@@ -21,6 +21,7 @@ classdef transceiver_cl < handle
         Mode
         TransducerImpedance={};
         TransducerDepth double
+        Spikes 
     end
     
     methods
@@ -32,7 +33,7 @@ classdef transceiver_cl < handle
             addParameter(p,'Data', ac_data_cl.empty(), @(x) isa(x,'ac_data_cl'));
             addParameter(p,'Time',[],@isnumeric);
             addParameter(p,'TransducerDepth',[],@isnumeric);
-            addParameter(p,'TransducerImpedance',{},@iscell);
+            addParameter(p,'TransducerImpedance',{},@(x) iscell(x)||isempty(x));
             addParameter(p,'Range',[],@isnumeric);
             addParameter(p,'Alpha',[],@isnumeric);
             addParameter(p,'Alpha_ori','constant',@(x) ismember(x,{'constant' 'profile' 'theoritical'}));
@@ -46,7 +47,9 @@ classdef transceiver_cl < handle
             addParameter(p,'GPSDataPing',gps_data_cl.empty(),@(x) isa(x,'gps_data_cl'));
             addParameter(p,'AttitudeNavPing',attitude_nav_cl.empty(),@(x) isa(x,'attitude_nav_cl'));
             addParameter(p,'Algo',algo_cl.empty(),@(x) isa(x,'algo_cl')||isempty(x));
+            addParameter(p,'ComputeImpedance',false,@islogical);
             addParameter(p,'Mode','CW',@ischar);
+
             parse(p,varargin{:});
             results = p.Results;
             props = fieldnames(results);
@@ -54,7 +57,9 @@ classdef transceiver_cl < handle
             
             
             for i = 1:length(props)
-                trans_obj.(props{i}) = results.(props{i});
+                if isprop(trans_obj,props{i})
+                    trans_obj.(props{i}) = results.(props{i});
+                end
             end
             
             if ~isempty(p.Results.Data)
@@ -70,15 +75,20 @@ classdef transceiver_cl < handle
                  trans_obj.TransducerDepth=zeros(size(trans_obj.Time));
              end
              
-             if isempty(trans_obj.TransducerImpedance)
+             if isempty(trans_obj.TransducerImpedance)&&p.Results.ComputeImpedance
                  trans_obj.TransducerImpedance=cell(size(trans_obj.Time));
+             else
+                 trans_obj.TransducerImpedance = [];
              end
+             
             trans_obj.Params=trans_obj.Params.reduce_params();
             trans_obj.Bottom = p.Results.Bottom;
             if ~isempty(trans_obj.Params.PingNumber)
                 trans_obj.set_pulse_Teff();
                 trans_obj.set_pulse_comp_Teff();
             end
+            trans_obj.Spikes=sparse(numel(trans_obj.Range),numel(trans_obj.Time));
+            
         end
         
         function p_out = get_params_value(trans_obj,param_name,idx)
@@ -101,6 +111,47 @@ classdef transceiver_cl < handle
             end
         end
         
+        function mask_spikes = get_spikes(trans_obj,idx_r,idx_pings)
+            if isempty(trans_obj.Spikes)
+                trans_obj.Spikes=sparse(numel(trans_obj.Range),numel(trans_obj.Time));
+            end
+            
+            if isempty(idx_r)
+                idx_r=1:numel(trans_obj.Range);
+            end
+            
+            if isempty(idx_pings)
+                idx_pings=1:numel(trans_obj.Time);
+            end  
+            mask_spikes=trans_obj.Spikes(idx_r,idx_pings);
+                
+        end
+        
+        function set_spikes(trans_obj,idx_r,idx_pings,mask)
+            
+            if ~issparse(trans_obj.Spikes)
+                trans_obj.Spikes=sparse(trans_obj.Spikes);
+            end
+            
+            if isempty(trans_obj.Spikes)
+                trans_obj.Spikes=sparse(numel(trans_obj.Range),numel(trans_obj.Time));
+            end
+            
+            if isscalar(mask)&&isempty(idx_r)
+                 idx_r=1:numel(trans_obj.Range);  
+            elseif ~isscalar(mask)&&isempty(idx_r)
+                 idx_r=1:size(mask,1); 
+            end
+            
+            if isscalar(mask)&&isempty(idx_pings)
+                idx_pings=1:numel(trans_obj.Time);
+            elseif ~isscalar(mask)&&isempty(idx_pings)
+                idx_pings=1:size(mask,1);
+            end
+ 
+            trans_obj.Spikes(idx_r,idx_pings) = sparse(mask);
+            
+        end
         
         
         

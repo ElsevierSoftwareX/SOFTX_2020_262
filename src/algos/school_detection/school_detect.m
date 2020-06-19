@@ -59,10 +59,10 @@ default_h_min_tot=10;
 check_h_min_tot=@(l)(l>=0);
 
 default_horz_link_max=55;
-check_horz_link_max=@(l)(l>=0&&l<=500);
+check_horz_link_max=@(l)(l>=0&&l<=1000);
 
 default_vert_link_max=5;
-check_vert_link_max=@(l)(l>=0&&l<=100);
+check_vert_link_max=@(l)(l>=0&&l<=500);
 
 default_nb_min_sples=100;
 check_nb_min_sples=@(l)(l>0);
@@ -164,8 +164,6 @@ nb_min_sples=p.Results.nb_min_sples;
 
 idx_rem=(idx_r<3*nanmax(Np_p));
 
-
-
 Sv_mask_ori=(Sv_mat>=thr_sv)&(Sv_mat<=thr_sv_max);
 
 Sv_mask_ori(range>=p.Results.r_max|range<=p.Results.r_min,:)=0;
@@ -174,6 +172,7 @@ Sv_mask(idx_rem(:),:)=false;
 % 
 
 candidates=find_candidates_v3(Sv_mask,range,dist_pings,l_min_can,h_min_can,nb_min_sples,'mat',p.Results.load_bar_comp);
+
 linked_candidates_mini=link_candidates_v2(candidates,dist_pings,range,horz_link_max,vert_link_max,l_min_tot,h_min_tot,p.Results.load_bar_comp);
 
 output_struct.linked_candidates=sparse(linked_candidates_mini);

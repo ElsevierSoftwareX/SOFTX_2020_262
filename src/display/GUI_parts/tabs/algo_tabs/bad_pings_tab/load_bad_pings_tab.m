@@ -3,15 +3,15 @@
 %% Function
 function load_bad_pings_tab(main_figure,algo_tab_panel)
 
-tab_main = uitab(algo_tab_panel,'Title','Bad Pings/Spikes rem.');
-
+tab_main = uitab(algo_tab_panel,'Title','Bad Data');
+[h,l] = get_top_panel_height(7.25);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Bad Pings Detection Algorithm%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 algo_name = 'BadPingsV2';
 panel_comp=load_algo_panel('main_figure',main_figure,...
-        'panel_h',uipanel(tab_main,'Position',[0 0 0.33 1]),...
+        'panel_h',uipanel(tab_main,'Units','Pixels','Position',[0 0 1.6*l h]),...
         'algo_name',algo_name,...
-        'title','Bad Pings Detection Algorithm');
+        'title','Bad Pings Detection');
 
 gui_fmt=init_gui_fmt_struct();
 gui_fmt.txt_w=gui_fmt.txt_w*1.2;
@@ -20,30 +20,43 @@ pos=create_pos_3(7,2,gui_fmt.x_sep,gui_fmt.y_sep,gui_fmt.txt_w,gui_fmt.box_w,gui
 p_button=pos{6,1}{1};
 p_button(3)=gui_fmt.button_w;
 
-uicontrol(panel_comp.container,gui_fmt.pushbtnStyle,'String','Reset','pos',p_button+[1*gui_fmt.button_w 0 0 0],'callback',{@reset_bad_pings_cback,main_figure},'tag','curr');
-uicontrol(panel_comp.container,gui_fmt.pushbtnStyle,'String','Reset all','pos',p_button+[2*gui_fmt.button_w 0 gui_fmt.button_w/2 0],'callback',{@reset_bad_pings_cback,main_figure},'tag','all');
+uicontrol(panel_comp.container,gui_fmt.pushbtnStyle,'String','Reset','pos',p_button+[3*gui_fmt.button_w 0 0 0],'callback',{@reset_bad_pings_cback,main_figure},'tag','curr');
+uicontrol(panel_comp.container,gui_fmt.pushbtnStyle,'String','Reset all','pos',p_button+[4*gui_fmt.button_w 0 0 0],'callback',{@reset_bad_pings_cback,main_figure},'tag','all');
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Spike Detection%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 algo_name='SpikesRemoval';
 panel_comp=load_algo_panel('main_figure',main_figure,...
-        'panel_h',uipanel(tab_main,'Position',[0.33 0 0.66 1]),...
+        'panel_h',uipanel(tab_main,'Units','Pixels','Position',[1.6*l 0 2*l h]),...
         'algo_name',algo_name,...
-        'title','Spikes removal Algorithm');
+        'title','Spikes Detection');
 
 p_button=pos{6,1}{1};
 p_button(3)=gui_fmt.button_w;
-uicontrol(panel_comp.container,gui_fmt.pushbtnStyle,'String','Reset','pos',p_button+[1*gui_fmt.button_w 0 0 0],'callback',{@rm_subdata_cback,main_figure,'spikesmask'});
+uicontrol(panel_comp.container,gui_fmt.pushbtnStyle,'String','Reset','pos',p_button+[1*gui_fmt.button_w 0 0 0],'callback',{@rm_spikes_cback,main_figure});
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Dropouts Detection%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 algo_name = 'DropOuts';
 load_algo_panel('main_figure',main_figure,...
-        'panel_h',uipanel(tab_main,'Position',[0.66 0 0.34 1]),...
+        'panel_h',uipanel(tab_main,'Units','Pixels','Position',[3.6*l 0 1.6*l h]),...
         'algo_name',algo_name,...
-        'title','Dropouts detection',...
+        'title','Dropouts Detection',...
         'save_fcn_bool',true);
 
 end
 
+function rm_spikes_cback(src,~,main_figure)
+
+curr_disp=get_esp3_prop('curr_disp');
+layer = get_current_layer();
+
+[trans_obj_tot,idx_t]=layer.get_trans(curr_disp);
+
+trans_obj_tot.set_spikes([],[],0); 
+
+set_alpha_map(main_figure,'update_cmap',0,'update_under_bot',0,'main_or_mini',union({'main','mini'},layer.ChannelID(idx_t),'stable'));
+
+
+end
 
 function reset_bad_pings_cback(src,~,main_figure)
 

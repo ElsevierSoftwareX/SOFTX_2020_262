@@ -14,7 +14,7 @@ else
 end
 
 %ls=[ls addlistener(curr_disp_obj,'EchoType','PostSet',@(src,envdata)listenEchoType(src,envdata,main_figure))];
-ls=[ls addlistener(curr_disp_obj,'EchoQuality','PostSet',@(src,envdata)listenEchoType(src,envdata,main_figure))];
+ls=[ls addlistener(curr_disp_obj,'EchoQuality','PostSet',@(src,envdata)listenEchoQuality(src,envdata,main_figure))];
 ls=[ls addlistener(curr_disp_obj,'DispBottom','PostSet',@(src,envdata)listenDispBot(src,envdata,main_figure))];
 ls=[ls addlistener(curr_disp_obj,'DispUnderBottom','PostSet',@(src,envdata)listenDispUnderBot(src,envdata,main_figure))];
 ls=[ls addlistener(curr_disp_obj,'UnderBotTransparency','PostSet',@(src,envdata)listenUnderBotTransparency(src,envdata,main_figure))];
@@ -36,6 +36,8 @@ ls=[ls addlistener(curr_disp_obj,'DispSecFreqsOr','PostSet',@(src,envdata)listen
 ls=[ls addlistener(curr_disp_obj,'H_axes_ratio','PostSet',@(src,envdata)listenAxesRatio(src,envdata,main_figure))];
 ls=[ls addlistener(curr_disp_obj,'V_axes_ratio','PostSet',@(src,envdata)listenAxesRatio(src,envdata,main_figure))];
 ls=[ls addlistener(curr_disp_obj,'DispSecFreqsWithOffset','PostSet',@(src,envdata)listenDispSecFreqsWithOffset(src,envdata,main_figure))];
+
+ls=[ls addlistener(curr_disp_obj,'Al_opt_tab_size_ratio','PostSet',@(src,envdata)listenAl_opt_tab_size_ratio(src,envdata,main_figure))];
 
 setappdata(main_figure,'ListenersH',ls);
 

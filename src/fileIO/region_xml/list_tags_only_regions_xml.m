@@ -36,8 +36,9 @@
 %% Function
 function tags = list_tags_only_regions_xml(reg_xml_file)
 
-
 fileID=fopen(reg_xml_file,'r');
 txt=fread(fileID,'*char');
-fclose(fileID); tags=regexp(txt','Tag="([^"]*)"','tokens');
+fclose(fileID); 
+
+tags=regexp(txt','Tag="([^"]*)"','tokens');
 tags=unique([tags{:}]);

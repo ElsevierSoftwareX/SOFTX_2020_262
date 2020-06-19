@@ -43,6 +43,7 @@ classdef curr_state_disp_cl <handle
         Disp_dy_dx=[1/4 1];
         Active_reg_ID={};
         Active_line_ID='';
+        Al_opt_tab_size_ratio = 0.5;
         Reg_changed_flag=0; %flag=0 nothing change flag=1 : changes made nothing saved; flag=2  changes made saved to the xml file; flag=3  changes made saved to db file
         R_disp=[1 inf];
         V_axes_ratio=0.05;
@@ -89,6 +90,7 @@ classdef curr_state_disp_cl <handle
             addParameter(p,'Font','default',@ischar);
             addParameter(p,'UIupdate',0,@isnumeric);
             addParameter(p,'Online',1,@isnumeric);
+            addParameter(p,'Al_opt_tab_size_ratio',0.5,@isnumeric);
             addParameter(p,'UnderBotTransparency',90,@isnumeric);
             addParameter(p,'V_axes_ratio',0.05,@isnumeric);
             addParameter(p,'H_axes_ratio',0.15,@isnumeric);
@@ -137,7 +139,14 @@ classdef curr_state_disp_cl <handle
         
         function setCax(obj,cax)
             if cax(2)>cax(1)
-                idx_field=find(cellfun(@(x) strcmpi(obj.Fieldname,x),obj.Fieldnames));
+                field = obj.Fieldname;
+                rm_str = {'denoised' 'unmatched' '_filtered'};
+                
+                for istr = 1:numel(rm_str)
+                    field = strrep(field,rm_str{istr},'');
+                end
+               
+                idx_field=find(cellfun(@(x) strcmpi(field,x),obj.Fieldnames));
                 
                 if ~isempty(idx_field)
                     obj.Caxes{idx_field}=cax;
@@ -160,7 +169,7 @@ classdef curr_state_disp_cl <handle
                     pointer='glassplus';
                 case 'Zoom Out'
                     pointer='glassminus';
-                case 'Bad Transmits'
+                case 'Bad Pings'
                     pointer='lrdrag';
                 case 'Edit Bottom'
                     pointer='crosshair';
@@ -176,14 +185,23 @@ classdef curr_state_disp_cl <handle
                     pointer='eraser';
                 case 'Normal'
                     pointer='arrow';
+                otherwise
+                     pointer='arrow';
             end
         end
         
         function setTypeCax(obj)
             
             [cax,obj.Type,~]=init_cax(obj.Fieldname);
-          
-            idx_field=find(cellfun(@(x) strcmpi(obj.Fieldname,x),obj.Fieldnames));
+            
+            field = obj.Fieldname;
+            rm_str = {'denoised' 'unmatched' '_filtered'};
+            
+            for istr = 1:numel(rm_str)
+                field = strrep(field,rm_str{istr},'');
+            end
+
+            idx_field=find(cellfun(@(x) strcmpi(field,x),obj.Fieldnames));
             
             if ~isempty(idx_field)
                 obj.Cax=obj.Caxes{idx_field};
@@ -192,6 +210,7 @@ classdef curr_state_disp_cl <handle
                 obj.Fieldnames=[obj.Fieldnames obj.Fieldname];
                 obj.Cax=cax;
             end
+            
         end
         
         function setType(obj)
@@ -212,7 +231,15 @@ classdef curr_state_disp_cl <handle
         end
         
         function cax=getCaxField(obj,field)
+                       
+            rm_str = {'denoised' 'unmatched' '_filtered'};
+            
+            for istr = 1:numel(rm_str)
+                field = strrep(field,rm_str{istr},'');
+            end
+
             idx_field=find(cellfun(@(x) strcmpi(field,x),obj.Fieldnames));
+            
             if ~isempty(idx_field)
                 cax=obj.Caxes{idx_field};
             else

@@ -39,6 +39,14 @@ if length(trans_1)==length(trans_2)
           
         if (found_sv_1&&found_sv_2)&&(~isempty(setxor(round(alpha_1*1e6),round(alpha_2*1e6)))||~isempty(setxor(r_1,r_2))||~strcmpi(ori_alpha_1,ori_alpha_2)||cal_diff)
             trans_2(i).set_cal(cal_1);
+            
+            switch ori_alpha_1
+                case 'constant'
+                    trans_2(i).set_absorption(alpha_1);
+                otherwise
+                    trans_2(i).set_absorption(envdata_1);
+            end
+            
             trans_2(i).computeSpSv_v3(envdata_1);
         end
         
@@ -68,7 +76,10 @@ if length(trans_1)==length(trans_2)
             'Params',concatenate_Params(trans_first.Params,trans_second.Params,numel(trans_first.Time),numel(trans_second.Time)),...
             'Config',trans_first.Config,...
             'Filters',trans_first.Filters);
-
+        
+        trans_out(i).Spikes(1:size(trans_first.Spikes,1),1:size(trans_first.Spikes,2))=trans_first.Spikes;
+        trans_out(i).Spikes(1:size(trans_second.Spikes,1),(1:size(trans_second.Spikes,2))+size(trans_first.Spikes,2))=trans_second.Spikes;
+        
         % concatenate bottom
         new_bot = concatenate_Bottom(trans_first.Bottom,trans_second.Bottom);
         trans_out(i).Bottom = new_bot;

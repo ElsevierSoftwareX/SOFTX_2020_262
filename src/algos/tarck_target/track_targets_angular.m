@@ -83,6 +83,7 @@ if nb_targets==0
     tracks_out.target_id={};
     tracks_out.target_ping_number={};
     tracks_out.id=[];
+    output_struct.done =  true;
     output_struct.tracks=tracks_out;
     return;
 end

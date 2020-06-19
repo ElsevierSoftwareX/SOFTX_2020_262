@@ -11,7 +11,7 @@ range_diff_str=0;
 
 gui_fmt=init_gui_fmt_struct();
 
-pos=create_pos_3(6,3,gui_fmt.x_sep,gui_fmt.y_sep,gui_fmt.txt_w,gui_fmt.box_w,gui_fmt.box_h);
+pos=create_pos_3(8,3,gui_fmt.x_sep,gui_fmt.y_sep,gui_fmt.txt_w,gui_fmt.box_w,gui_fmt.box_h);
 
 uicontrol(lines_tab_comp.lines_tab,gui_fmt.txtStyle,'String','Lines','Position',pos{1,2}{1});
 lines_tab_comp.tog_line=uicontrol(lines_tab_comp.lines_tab,gui_fmt.popumenuStyle,...

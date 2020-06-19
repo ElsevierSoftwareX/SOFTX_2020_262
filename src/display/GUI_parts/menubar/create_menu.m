@@ -107,9 +107,9 @@ NMEA_exp_menu = uimenu(main_menu.export,'Label','NMEA messages','Tag','menuexpor
 uimenu(NMEA_exp_menu,'Label','Export to _NMEA.csv file','Callback',{@export_NMEA_to_csv_callback,main_figure,[],'_NMEA'});
 
 st_exp_menu = uimenu(main_menu.export,'Label','Single Targets/Tracks','Tag','menuexportst');
-uimenu(st_exp_menu,'Label','Export Single Targets to .xls file','Callback',{@save_st_to_xls_callback,main_figure,0});
-uimenu(st_exp_menu,'Label','Export Single Targets including signal to .xls file','Callback',{@save_st_to_xls_callback,main_figure,1});
-uimenu(st_exp_menu,'Label','Export Tracked Targets to .xls file','Callback',{@save_tt_to_xls_callback,main_figure});
+uimenu(st_exp_menu,'Label','Export Single Targets to .xlsx file','Callback',{@save_st_to_xls_callback,main_figure,0});
+uimenu(st_exp_menu,'Label','Export Single Targets including signal to .xlsx file','Callback',{@save_st_to_xls_callback,main_figure,1});
+uimenu(st_exp_menu,'Label','Export Tracked Targets to .xlsx file','Callback',{@save_tt_to_xls_callback,main_figure});
 
 
 %% Import tab
@@ -138,8 +138,8 @@ uimenu(main_menu.survey,'Label','Look for new files in current folder','Callback
 uimenu(main_menu.survey,'Label','Acoustic DB tool','Callback',{@acoustic_db_tool_cback,main_figure});
 
 main_menu.map=uimenu(main_figure,'Label','Mapping Tools','Tag','mapping');
-uimenu(main_menu.map,'Label','Open Navigation Figure','Callback',{@display_map_callback,main_figure});
-uimenu(main_menu.map,'Label','Display navigation (GPS) from raw files','Callback',{@plot_gps_track_from_files_callback,main_figure});
+uimenu(main_menu.map,'Label','Open/Undock Map','Callback',{@display_map_callback,main_figure});
+uimenu(main_menu.map,'Label','Display navigation from raw files','Callback',{@plot_gps_track_from_files_callback,main_figure});
 uimenu(main_menu.map,'Label','Map from current layers (integrated)','Callback',{@load_map_fig_callback,main_figure},'separator','on');
 uimenu(main_menu.map,'Label','Map survey result files','Callback',{@map_survey_callback,main_figure});
 
@@ -175,7 +175,7 @@ main_menu.show_colorbar=uimenu(main_menu.display,'Label','Show Colorbar','checke
 
 main_menu.disp_bottom=uimenu(main_menu.display,'checked',curr_disp.DispBottom,'Label','Display bottom');
 main_menu.disp_spikes=uimenu(main_menu.display,'checked',curr_disp.DispSpikes,'Label','Display Spikes');
-main_menu.disp_bad_trans=uimenu(main_menu.display,'checked',curr_disp.DispBadTrans,'Label','Display Bad transmits');
+main_menu.disp_bad_trans=uimenu(main_menu.display,'checked',curr_disp.DispBadTrans,'Label','Display Bad Pings');
 main_menu.disp_reg=uimenu(main_menu.display,'checked',curr_disp.DispReg,'Label','Display Regions');
 main_menu.disp_tracks=uimenu(main_menu.display,'checked',curr_disp.DispTracks,'Label','Display_tracks');
 main_menu.disp_lines=uimenu(main_menu.display,'checked',curr_disp.DispLines,'Label','Display Lines');
@@ -192,7 +192,7 @@ main_menu.close_all_fig=uimenu(main_menu.display,'Label','Close All External Fig
 
 main_menu.tools = uimenu(main_figure,'Label','Tools','Tag','menutools');
 
-reg_tools=uimenu(main_menu.tools,'Label','Regions Tools');
+reg_tools=uimenu(main_menu.tools,'Label','Regions tools');
 uimenu(reg_tools,'Label','Create WC Region','Callback',{@create_reg_dlbox,main_figure});
 uimenu(reg_tools,'Label','Display Mean Depth of current region','Callback',{@plot_mean_aggregation_depth_callback,main_figure});
 
@@ -200,20 +200,19 @@ uimenu(reg_tools,'Label','Display Mean Depth of current region','Callback',{@plo
 %     uimenu(reg_tools,'Label','Slice Transect','CallBack',{@save_sliced_transect_to_xls_callback,main_figure,0});
 % end
 
-towbody_tools=uimenu(main_menu.tools,'Label','Towed-body Tools');
+towbody_tools=uimenu(main_menu.tools,'Label','Towbody tools');
 uimenu(towbody_tools,'Label','Correct position based on cable angle and towbody depth','Callback',{@correct_pos_angle_depth_cback,main_figure});
-
 
 if ~isdeployed
     bs_tools=uimenu(main_menu.tools,'Label','Backscatter Analysis');   
     uimenu(bs_tools,'Label','Execute BS analysis','Callback',{@bs_analysis_callback,main_figure});
 end
 
-env_tools=uimenu(main_menu.tools,'Label','Environnement tools');
+env_tools=uimenu(main_menu.tools,'Label','Environment tools');
 uimenu(env_tools,'Label','Load CTD (ESP3 format)','Callback',{@load_ctd_esp3_callback,main_figure});
 uimenu(env_tools,'Label','Load SVP (ESP3 Format)','Callback',{@load_svp_esp3_callback,main_figure});
 uimenu(env_tools,'Label','Compute SVP from CTD profile','Callback',{@compute_svp_esp3_callback,main_figure});
-env_tools_imp=uimenu(env_tools,'Label','Exernal imports');
+env_tools_imp=uimenu(env_tools,'Label','External imports');
 uimenu(env_tools_imp,'Label','Load CTD data from Seabird file','Callback',{@load_ctd_callback,main_figure});
 uimenu(env_tools_imp,'Label','Load SVP data from file','Callback',{@load_svp_callback,main_figure});
 
@@ -225,7 +224,6 @@ end
 uimenu(data_tools,'Label','Create Motion Compensation echogram','Callback',{@create_motion_compensation_echogramm_cback,main_figure});
 uimenu(data_tools,'Label','Convert Sv to fish Density','Callback',{@create_fish_density_echogramm_cback,main_figure});
 rm_tools=uimenu(data_tools,'Label','Remove Data');
-uimenu(rm_tools,'Label','Spikes','Callback',{@rm_subdata_cback,main_figure,'spikesmask'});
 uimenu(rm_tools,'Label','Denoised data','Callback',{@rm_subdata_cback,main_figure,'denoised'});
 uimenu(rm_tools,'Label','Single Targets','Callback',{@rm_subdata_cback,main_figure,'st'});
 
@@ -250,10 +248,10 @@ uimenu(main_menu.options,'Label','Save Current Display Configuration (Survey)','
 uimenu(main_menu.options,'Label','Save Current Display Configuration (Default)','Callback',{@save_disp_config_cback,main_figure});
 
 
-main_menu.help_shortcuts=uimenu(main_figure,'Label','Shortcuts/Help/Doc');
+main_menu.help_shortcuts=uimenu(main_figure,'Label','Help');
 uimenu(main_menu.help_shortcuts,'Label','Shortcuts','Callback',{@shortcut_menu,main_figure});
 uimenu(main_menu.help_shortcuts,'Label','Documentation','Callback',{@load_doc_fig_cback,main_figure});
-uimenu(main_menu.help_shortcuts,'Label','Infos','Callback',{@info_menu,main_figure});
+uimenu(main_menu.help_shortcuts,'Label','About','Callback',{@info_menu,main_figure});
 
 setappdata(main_figure,'main_menu',main_menu);
 

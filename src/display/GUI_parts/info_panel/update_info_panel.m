@@ -1,6 +1,9 @@
 function update_info_panel(~,~,force_update)
 %profile on;
 global DEBUG
+if isempty(DEBUG)
+    DEBUG =0;
+end
 esp3_obj=getappdata(groot,'esp3_obj');
 
 %dpause=1e-2;
@@ -28,8 +31,8 @@ try
     echo_tab_panel=getappdata(main_figure,'echo_tab_panel');
     
     axes_panel_comp=getappdata(main_figure,'Axes_panel');
-    bool = ~isa(axes_panel_comp.axes_panel,'matlab.ui.Figure') && ~strcmpi(echo_tab_panel.SelectedTab.Tag,'axes_panel');
-    if isempty(axes_panel_comp)|| bool ||isempty(layer)||~isvalid(layer)
+    bool =isempty(axes_panel_comp)||(~isa(axes_panel_comp.axes_panel,'matlab.ui.Figure') && ~strcmpi(echo_tab_panel.SelectedTab.Tag,'axes_panel'));
+    if  bool ||isempty(layer)||~isvalid(layer)
         %pause(dpause);
         return;
     end
@@ -167,7 +170,7 @@ try
         end
         
         switch curr_disp.CursorMode
-            case {'Edit Bottom' 'Bad Transmits'}
+            case {'Edit Bottom' 'Bad Pings'}
                 switch curr_disp.Fieldname
                     case {'sv','sp','sp_comp','spdenoised','svdenoised','spunmatched','svunmatched','powerunmatched','powerdenoised','power'}
                         sub_bot=Bottom.Sample_idx(idx_pings);

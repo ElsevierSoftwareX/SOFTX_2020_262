@@ -27,7 +27,7 @@ classdef algo_panel_cl < dynamicprops
             obj.algo=results.algo;
             
              param_names=obj.algo.Input_params.get_name();
-             params_class=obj.algo.Input_params.get_range_class();
+             params_class=obj.algo.Input_params.get_class();
              nb_cell_params=sum(strcmpi(params_class,'cell'));
              nb_bool_params=sum(strcmpi(params_class,'logical'));
              
@@ -42,12 +42,12 @@ classdef algo_panel_cl < dynamicprops
              end
              
              if isempty(results.save_as_cback_fcn)
-                 nb_r_max =6;    
+                 nb_r_max =7;    
              else
-                 nb_r_max =5;
+                 nb_r_max =6;
              end
              
-             nb_r_max_tot=7;
+             nb_r_max_tot=8;
              
              nb_c=nanmax(ceil((nb_params-nb_bool_params+1)/nb_r_max),nb_c_min);
             
@@ -60,10 +60,12 @@ classdef algo_panel_cl < dynamicprops
   
             if isempty(results.container)
                 obj.container = new_echo_figure([]);
-            else
+            else      
                 obj.container = results.container;
             end
+           
             obj.container.Tag=obj.algo.Name;
+            
             if isempty(results.title)
                 obj.title = obj.algo.Name;
             else
@@ -75,6 +77,8 @@ classdef algo_panel_cl < dynamicprops
                     obj.container.Name=obj.title;
                 otherwise
                     obj.container.Title=obj.title;
+                    %txt_tmp = uicontrol(obj.container)
+                    
             end
             
             obj.container.Tag=obj.algo.Name;
@@ -140,7 +144,10 @@ classdef algo_panel_cl < dynamicprops
                                 'String',str_disp{ui},'Position',p_tmp,...
                                 'callback',@update_algo_input_param_fcn,...
                                 'tooltipstring',obj.algo.Input_params(ui).Tooltipstring,'Tag',param_names{ui});
-                            ip = ip-1;
+                            
+                            if ~(numel(param_names)>ui&&strcmpi(params_class{ui+1},'logical'))
+                                ip = ip-1;
+                            end
 
                     end
                 else
@@ -155,13 +162,16 @@ classdef algo_panel_cl < dynamicprops
                 end
             end
             
-            uicontrol(obj.container,gui_fmt.pushbtnStyle,'String','Apply','pos',p_button+[1*gui_fmt.button_w 0 0 0],'callback',results.apply_cback_fcn,'Tag',obj.algo.Name);
+            uicontrol(obj.container,gui_fmt.pushbtnStyle,'String','Apply','pos',p_button+[1*gui_fmt.button_w 0 0 0],'callback',results.apply_cback_fcn,'Tag',obj.algo.Name,'TooltipString',obj.algo.get_algo_descr_and_params());
             uicontrol(obj.container,gui_fmt.pushbtnStyle,'String','Save','pos',p_button+[2*gui_fmt.button_w 0 0 0],'callback',results.save_cback_fcn,'Tag',obj.algo.Name);
             
             if ~isempty(results.save_as_cback_fcn)
                 uicontrol(obj.container,gui_fmt.pushbtnStyle,'String','Save as','pos',p_button+[3*gui_fmt.button_w 0 0 0],'callback',results.save_as_cback_fcn,'Tag',obj.algo.Name);
                 uicontrol(obj.container,gui_fmt.pushbtnStyle,'String','Delete','pos',p_button+[4*gui_fmt.button_w 0 0 0],'callback',results.delete_cback_fcn,'Tag',obj.algo.Name);
             end
+            
+           
+            
             
             function load_params_fcn(src,evt)
                 [~,~,xml_file]=get_config_files(src.Tag);

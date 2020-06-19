@@ -41,8 +41,8 @@ processing_tab_comp.processing_tab = uitab(option_tab_panel,'Title','Processing'
 gui_fmt = init_gui_fmt_struct();
 gui_fmt.txt_w = gui_fmt.txt_w*1.5;
 
-pos = cell(6,4);
-for j = 1:6
+pos = cell(8,4);
+for j = 1:8
     for i = 1:4
         pos{j,i} = [gui_fmt.x_sep+(i-1)*(gui_fmt.x_sep+gui_fmt.txt_w+gui_fmt.x_sep) gui_fmt.y_sep+(j-1)*(gui_fmt.y_sep+gui_fmt.txt_h)  gui_fmt.txt_w gui_fmt.txt_h];
     end
@@ -58,15 +58,16 @@ processing_tab_comp.tog_freq = uicontrol(processing_tab_comp.processing_tab,gui_
     'Callback',{@tog_freq,main_figure});
 
 % algos checkboxes
-processing_tab_comp.noise_removal  = uicontrol(processing_tab_comp.processing_tab,gui_fmt.chckboxStyle,'Value',0,'String','Denoise','Position',pos{2,1});
-processing_tab_comp.spikes_removal = uicontrol(processing_tab_comp.processing_tab,gui_fmt.chckboxStyle,'Value',0,'String','Spikes Removal','Position',pos{3,1});
-processing_tab_comp.bot_detec      = uicontrol(processing_tab_comp.processing_tab,gui_fmt.chckboxStyle,'Value',0,'String','Bottom Detection V1','Position',pos{4,1});
-processing_tab_comp.bot_detec_v2   = uicontrol(processing_tab_comp.processing_tab,gui_fmt.chckboxStyle,'Value',0,'String','Bottom Detection V2','Position',pos{5,1});
-processing_tab_comp.bot_feat       = uicontrol(processing_tab_comp.processing_tab,gui_fmt.chckboxStyle,'Value',0,'String','Bottom Features','Position',pos{6,1});
-processing_tab_comp.bad_transmit   = uicontrol(processing_tab_comp.processing_tab,gui_fmt.chckboxStyle,'Value',0,'String','Bad Pings Detection','Position',pos{2,2});
+processing_tab_comp.bot_detec      = uicontrol(processing_tab_comp.processing_tab,gui_fmt.chckboxStyle,'Value',0,'String','Bottom Detection V1','Position',pos{2,1});
+processing_tab_comp.bot_detec_v2   = uicontrol(processing_tab_comp.processing_tab,gui_fmt.chckboxStyle,'Value',0,'String','Bottom Detection V2','Position',pos{3,1});
+processing_tab_comp.bot_feat       = uicontrol(processing_tab_comp.processing_tab,gui_fmt.chckboxStyle,'Value',0,'String','Bottom Features','Position',pos{4,1});
+processing_tab_comp.bad_transmit   = uicontrol(processing_tab_comp.processing_tab,gui_fmt.chckboxStyle,'Value',0,'String','Bad Pings Detection','Position',pos{5,1});
+processing_tab_comp.spikes_removal = uicontrol(processing_tab_comp.processing_tab,gui_fmt.chckboxStyle,'Value',0,'String','Spikes Detection','Position',pos{6,1});
+processing_tab_comp.noise_removal  = uicontrol(processing_tab_comp.processing_tab,gui_fmt.chckboxStyle,'Value',0,'String','Denoise','Position',pos{2,2});
 processing_tab_comp.school_detec   = uicontrol(processing_tab_comp.processing_tab,gui_fmt.chckboxStyle,'Value',0,'String','School Detection','Position',pos{3,2});
 processing_tab_comp.single_target  = uicontrol(processing_tab_comp.processing_tab,gui_fmt.chckboxStyle,'Value',0,'String','Single Target Detection','Position',pos{4,2});
 processing_tab_comp.track_target   = uicontrol(processing_tab_comp.processing_tab,gui_fmt.chckboxStyle,'Value',0,'String','Target Tracking','Position',pos{5,2});
+
 
 % setting callback for checkboxes
 set([processing_tab_comp.track_target ...
@@ -171,7 +172,8 @@ for ii = 1:length(layer_to_proc)
             [~,idx_freq] = layer.get_trans(curr_disp);
             layer.add_ping_data_to_db(idx_freq,0);
     end
-    
+    layers_Str_comp=list_layers(layer);
+    load_bar_comp.progress_bar.setText(sprintf('Processing %s',layers_Str_comp));
     % process per frequency with algos to apply
     for kk = 1:length(process_list)
         

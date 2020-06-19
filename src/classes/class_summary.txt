@@ -39,10 +39,10 @@ METHODS :
 - validity isvalid(obj)
 - TF le(A, B)
 - L listener(sources, eventname, callback)
-- L listener(sources, properties, eventname, callback)
-- L listener(sources, propertyname, eventname, callback)
-- L listener(sources, propertyname, eventname, callback)
 - L listener(sources, propertynames, eventname, callback)
+- L listener(sources, propertyname, eventname, callback)
+- L listener(sources, propertyname, eventname, callback)
+- L listener(sources, properties, eventname, callback)
 - TF lt(A, B)
 - TF ne(A, B)
 - notify(sources, eventname)
@@ -58,6 +58,7 @@ PROPERTIES :
 - Name
 - Function
 - Input_params
+- Description
 - Varargout
 
 METHODS :
@@ -74,19 +75,21 @@ METHODS :
 - HM findobj(H, varargin)
 - prop findprop(object, propname)
 - TF ge(A, B)
+- str get_algo_descr_and_params(obj)
 - algo_param_obj get_algo_param(obj, name)
 - varargout get_str_for_eval(varargin)
 - TF gt(A, B)
-- varargout init_func(varargin)
+- varargout init_func_and_descr(varargin)
 - varargout init_input_params(varargin)
+- varargout init_varargout(varargin)
 - input_struct input_params_to_struct(obj)
 - validity isvalid(obj)
 - TF le(A, B)
-- L listener(sources, eventname, callback)
-- L listener(sources, properties, eventname, callback)
-- L listener(sources, propertyname, eventname, callback)
 - L listener(sources, propertyname, eventname, callback)
 - L listener(sources, propertynames, eventname, callback)
+- L listener(sources, properties, eventname, callback)
+- L listener(sources, eventname, callback)
+- L listener(sources, propertyname, eventname, callback)
 - TF lt(A, B)
 - TF ne(A, B)
 - notify(sources, eventname)
@@ -121,8 +124,8 @@ METHODS :
 - HM findobj(H, varargin)
 - prop findprop(object, propname)
 - TF ge(A, B)
+- cc get_class(obj)
 - name get_name(obj)
-- cc get_range_class(obj)
 - TF gt(A, B)
 - validity isvalid(obj)
 - TF le(A, B)
@@ -291,11 +294,11 @@ PROPERTIES :
 - Disp_dy_dx
 - Active_reg_ID
 - Active_line_ID
+- Al_opt_tab_size_ratio
 - Reg_changed_flag
 - R_disp
 - V_axes_ratio
 - H_axes_ratio
-- EchoType
 - EchoQuality
 
 METHODS :
@@ -362,6 +365,7 @@ PROPERTIES :
 - Variables
 - Nodes
 - ClassificationType
+- VarName
 
 METHODS :
 - varargout apply_classification_tree(varargin)
@@ -562,6 +566,7 @@ METHODS :
 - varargout concatenate_layers(varargin)
 - lhs1 copy(rhs1)
 - varargout copy_algo_across(varargin)
+- varargout copy_bottom_to_other_freq(varargin)
 - varargout copy_region_across(varargin)
 - varargout create_bot_xml_from_db(varargin)
 - varargout create_files_line_str(varargin)
@@ -628,8 +633,8 @@ METHODS :
 - memap_files list_memaps(layers)
 - L listener(sources, eventname, callback)
 - L listener(sources, properties, eventname, callback)
-- L listener(sources, propertynames, eventname, callback)
 - L listener(sources, propertyname, eventname, callback)
+- L listener(sources, propertynames, eventname, callback)
 - L listener(sources, propertyname, eventname, callback)
 - varargout load_bot_regs(varargin)
 - varargout load_bottom_regions_from_folder(varargin)
@@ -1031,9 +1036,10 @@ METHODS :
 - obj curve_cl(varargin)
 - delete(obj)
 - nb_nmea_dg get_nb_nmea_dg(idx_obj)
-- nb_pings get_nb_pings_per_channels(idx_obj)
+- [nb_pings, channels] get_nb_pings_per_channels(idx_obj)
 - nb_samples get_nb_samples_per_block_per_channels(idx_obj, block_size)
 - nb_samples get_nb_samples_per_channels(idx_obj)
+- time_dg get_time_by_chan_dg(idx_obj, type, chan)
 - time_dg get_time_dg(idx_obj, type)
 - obj raw_idx_cl
 
@@ -1360,10 +1366,10 @@ PROPERTIES :
 METHODS :
 - addTeardown(teardownable, fcn, varargin)
 - L addlistener(sources, propertynames, eventname, callback)
-- L addlistener(sources, eventname, callback)
+- L addlistener(sources, propertyname, eventname, callback)
+- L addlistener(sources, propertyname, eventname, callback)
 - L addlistener(sources, properties, eventname, callback)
-- L addlistener(sources, propertyname, eventname, callback)
-- L addlistener(sources, propertyname, eventname, callback)
+- L addlistener(sources, eventname, callback)
 - appliedFixture applyFixture(testCase, fixture)
 - assertClass(assertable, actual, expectedClass, varargin)
 - assertEmpty(assertable, actual, varargin)
@@ -1454,16 +1460,16 @@ METHODS :
 - validity isvalid(obj)
 - launchESP3(testCase)
 - TF le(A, B)
+- L listener(sources, propertynames, eventname, callback)
+- L listener(sources, propertyname, eventname, callback)
+- L listener(sources, propertyname, eventname, callback)
 - L listener(sources, eventname, callback)
 - L listener(sources, properties, eventname, callback)
-- L listener(sources, propertyname, eventname, callback)
-- L listener(sources, propertyname, eventname, callback)
-- L listener(sources, propertynames, eventname, callback)
 - log(loggable, varargin)
 - TF lt(A, B)
 - TF ne(A, B)
-- notify(sources, eventname, eventdata)
 - notify(sources, eventname)
+- notify(sources, eventname, eventdata)
 - onFailure(testCase, failureTasks, varargin)
 - open_test_files(testCase)
 - result run(testCase, varargin)
@@ -1519,6 +1525,7 @@ PROPERTIES :
 - Mode
 - TransducerImpedance
 - TransducerDepth
+- Spikes
 
 METHODS :
 - varargout TS_f_from_region(varargin)
@@ -1526,11 +1533,11 @@ METHODS :
 - varargout add_algo(varargin)
 - varargout add_region(varargin)
 - varargout add_st_from_idx(varargin)
-- L addlistener(sources, eventname, callback)
-- L addlistener(sources, properties, eventname, callback)
-- L addlistener(sources, propertyname, eventname, callback)
-- L addlistener(sources, propertyname, eventname, callback)
 - L addlistener(sources, propertynames, eventname, callback)
+- L addlistener(sources, propertyname, eventname, callback)
+- L addlistener(sources, propertyname, eventname, callback)
+- L addlistener(sources, properties, eventname, callback)
+- L addlistener(sources, eventname, callback)
 - varargout apply_algo(varargin)
 - varargout apply_cw_cal(varargin)
 - varargout apply_line_depth(varargin)
@@ -1612,6 +1619,7 @@ METHODS :
 - varargout get_shadow_zone_height_est(varargin)
 - varargout get_slope_est(varargin)
 - varargout get_soundspeed(varargin)
+- mask_spikes get_spikes(trans_obj, idx_r, idx_pings)
 - varargout get_st_sig(varargin)
 - varargout get_time_range(varargin)
 - varargout get_trans_reg_uid(varargin)
@@ -1629,11 +1637,11 @@ METHODS :
 - varargout integrate_region(varargin)
 - validity isvalid(obj)
 - TF le(A, B)
-- L listener(sources, propertyname, eventname, callback)
-- L listener(sources, propertyname, eventname, callback)
 - L listener(sources, propertynames, eventname, callback)
-- L listener(sources, properties, eventname, callback)
+- L listener(sources, propertyname, eventname, callback)
 - L listener(sources, eventname, callback)
+- L listener(sources, propertyname, eventname, callback)
+- L listener(sources, properties, eventname, callback)
 - TF lt(A, B)
 - varargout mask_from_regions(varargin)
 - varargout mask_from_st(varargin)
@@ -1670,6 +1678,7 @@ METHODS :
 - set_position(trans_obj, pos_trans, trans_angle)
 - varargout set_pulse_Teff(varargin)
 - varargout set_pulse_comp_Teff(varargin)
+- set_spikes(trans_obj, idx_r, idx_pings, mask)
 - varargout set_sv_diff(varargin)
 - set_transceiver_range(trans_obj, range)
 - set_transceiver_time(trans_obj, time)

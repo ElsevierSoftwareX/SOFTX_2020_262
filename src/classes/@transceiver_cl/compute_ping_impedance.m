@@ -1,5 +1,12 @@
 function [Z,x_vals]=compute_ping_impedance(trans_obj,iPing)
 
+Z = {};
+x_vals = {};
+
+if isempty(trans_obj.TransducerImpedance)
+    return;
+end
+
 signals=trans_obj.TransducerImpedance(:,iPing);
 
 [~,Np]=trans_obj.get_pulse_length(iPing);

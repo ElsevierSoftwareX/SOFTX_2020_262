@@ -68,10 +68,16 @@ horz_slice = surv_input_obj.Options.Horizontal_slice_size;
 algos_xml = surv_input_obj.Algos;
 
 classified_by_cell = false;
+
 if ~isempty(algos_xml)
     idx_al = find(cellfun(@(x) strcmpi(x.Name,'Classification'),algos_xml),1);
-    if ~isempty(idx_al)&&isfield(algos_xml{idx_al}.Varargin,'classification_type')
-        classified_by_cell = strcmpi(algos_xml{idx_al}.Varargin.classification_type,'Cell by cell');
+    if ~isempty(idx_al)&&isfield(algos_xml{idx_al}.Varargin,'classification_file')
+        try
+            class_tree_obj=decision_tree_cl(algos_xml{idx_al}.Varargin.classification_file);
+            classified_by_cell = strcmpi(class_tree_obj.ClassificationType,'Cell by cell');
+        catch
+            warning('Cannot parse specified classification file: %s',algos_xml{idx_al}.Varargin.classification_file);
+        end     
     end
 end
 
@@ -99,7 +105,6 @@ if ~isempty(load_bar_comp)
 end
 block_len = get_block_len(100,'cpu');
 disp_str = sprintf('----------------Integration-----------------');
-disp(disp_str);
 print_errors_and_warnings(fid_error,'',disp_str);
 for isn = 1:length(snaps)
     
@@ -114,8 +119,6 @@ for isn = 1:length(snaps)
         disp_str = sprintf('Integrating Snapshot %.0f Type %s Stratum %s Transect %d',snap_num,type_t,strat_name,trans_num);
         if ~isempty(load_bar_comp)
             load_bar_comp.progress_bar.setText(disp_str);
-        else
-            disp(disp_str);
         end
         print_errors_and_warnings(fid_error,'',disp_str);
         i_trans = i_trans+1;

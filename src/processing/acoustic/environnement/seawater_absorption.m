@@ -49,13 +49,13 @@ end
 
 if (f < 10 || f > 120) && (nargin < 5 || strcmp(method,'doonan'))
     disp('The formula is only valid for frequencies between 10 and 120kHz.')
-    disp('Try the Francois & Garrison formula')
+    disp('Using Francois & Garrison formula')
     method='fandg';
 end
 
 if (max(T) > 20) && (nargin < 5 || strcmp(method,'doonan'))
     disp('The formula is only valid for temperatures less than 20 deg C')
-    disp('Try the Francois & Garrison formula')
+    disp('Using Francois & Garrison formula')
     method='fandg';
 end
 

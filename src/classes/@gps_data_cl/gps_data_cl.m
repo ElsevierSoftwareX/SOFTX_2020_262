@@ -115,13 +115,18 @@ classdef gps_data_cl
             else
                 prec=varargin{1};
             end
-            [~,~,id_keep]=DouglasPeucker(obj.Long,obj.Lat,prec,0,1e3,0);
+            id_nn = find(~isnan(obj.Long));
+            if numel(id_nn)<2
+                obj_out=obj;
+                return;
+            end
+            [~,~,id_keep]=DouglasPeucker(obj.Long(id_nn),obj.Lat(id_nn),prec,0,1e3,0);
             
 %             figure();
 %             geoplot(obj.Lat(id_keep),obj.Long(id_keep),'-xr');hold on;
 %             geoplot(obj.Lat,obj.Long,'k');
 
-            
+            id_keep = id_nn(id_keep);
             
             obj_out=gps_data_cl('Lat',obj.Lat(id_keep),'Long',obj.Long(id_keep),'Time',obj.Time(id_keep),'NMEA',obj.NMEA);
         end
@@ -196,6 +201,7 @@ classdef gps_data_cl
                         case {'.csv','.txt'}
                             
                             opts = detectImportOptions(fileN{ifi});
+                            opts = setvaropts(opts,'Time','InputFormat','dd/MM/uuuu HH:mm:ss'); 
                             temp=readtable(fileN{ifi},opts);
                             
                             fields =ismember({'Lat','Long','Time'},temp.Properties.VariableNames); 

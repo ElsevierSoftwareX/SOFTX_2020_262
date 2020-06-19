@@ -61,7 +61,7 @@ cursor_tools_comp=getappdata(main_figure,'Cursor_mode_tool');
      end
  end
 
-if isa(src_out,'matlab.ui.container.toolbar.PushTool')
+if isa(src_out,'matlab.ui.container.toolbar.PushTool')||isempty(axes_panel_comp)
     %profile off;
     return;
 end
@@ -73,7 +73,9 @@ else
     state='on';
 end
 %iptPointerManager(main_figure,'enable');
-
+replace_interaction(main_figure,'interaction','WindowButtonMotionFcn','id',2);
+replace_interaction(main_figure,'interaction','WindowButtonUpFcn','id',2);
+ 
 switch state
     case'on'
         %iptPointerManager(main_figure,'disable');

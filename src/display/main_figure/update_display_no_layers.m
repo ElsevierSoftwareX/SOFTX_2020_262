@@ -1,5 +1,6 @@
 function update_display_no_layers(main_figure)
-
+curr_disp=get_esp3_prop('curr_disp');
+curr_disp.CursorMode='Normal';
 obj_enable=findobj(main_figure,'Enable','on','-not',{'Type','uimenu','-or','Type','uitable'});
 set(obj_enable,'Enable','off');
 

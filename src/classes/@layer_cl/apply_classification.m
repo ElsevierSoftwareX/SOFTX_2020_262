@@ -1,14 +1,33 @@
 function output_struct=apply_classification(layer,varargin)
 
+default_l_min_tot=25;
+check_l_min_tot=@(l)(l>=0);
+
+default_h_min_tot=10;
+check_h_min_tot=@(l)(l>=0);
+
+default_horz_link_max=55;
+check_horz_link_max=@(l)(l>=0&&l<=1000);
+
+default_vert_link_max=5;
+check_vert_link_max=@(l)(l>=0&&l<=500);
+
+
 p = inputParser;
 
 addRequired(p,'layer',@(x) isa(x,'layer_cl'));
-addParameter(p,'classification_type','By regions',@(x) ismember(x,{'By regions' 'Cell by cell'}));
 addParameter(p,'classification_file','',@ischar);
 addParameter(p,'ref','Surface',@(x) ismember(x,{'Surface' 'Transducer' 'Bottom'}));
 addParameter(p,'timeBounds',[0 inf],@isnumeric);
 addParameter(p,'create_regions',true,@islogical);
+addParameter(p,'cluster_tags',true,@islogical);
+addParameter(p,'reslice',true,@islogical);
+addParameter(p,'thr_cluster',10,@isnumeric);
 addParameter(p,'reg_obj',region_cl.empty(),@(x) isa(x,'region_cl'));
+addParameter(p,'l_min_tot',default_l_min_tot,check_l_min_tot);
+addParameter(p,'h_min_tot',default_h_min_tot,check_h_min_tot);
+addParameter(p,'horz_link_max',default_horz_link_max,check_horz_link_max);
+addParameter(p,'vert_link_max',default_vert_link_max,check_vert_link_max);
 addParameter(p,'survey_options',layer.get_survey_options(),@(x) isa(x,'survey_options_cl'));
 addParameter(p,'load_bar_comp',[]);
 
@@ -37,7 +56,19 @@ if isempty(trans_obj_primary)
     return;
 end
 
-switch lower(p.Results.classification_type)
+if exist(classification_file,'file')>0
+    try
+        class_tree_obj=decision_tree_cl(classification_file);
+    catch
+        warndlg_perso([],'Warning',sprintf('Cannot parse specified classification file: %s',classification_file));
+        return;
+    end
+else
+    warndlg_perso([],'Warning',sprintf('Cannot find specified classification file: %s',classification_file));
+    return;
+end
+
+switch lower(class_tree_obj.ClassificationType)
     case 'by regions'
         if isempty(reg_obj)
             idx_schools=trans_obj_primary.find_regions_type('Data');
@@ -53,7 +84,7 @@ switch lower(p.Results.classification_type)
         surv_opt_obj.IntRef='';
         surv_opt_obj.IntType='Regions only';
         
-    case 'cell by cell'        
+    case 'cell by cell'
         nb_schools=0;
         idx_schools=[];
         output_struct.school_struct=[];
@@ -63,63 +94,52 @@ switch lower(p.Results.classification_type)
         else
             surv_opt_obj.IntType='By regions';
         end
+    otherwise
+         warndlg_perso([],'Warning',sprintf('Un regognized ClassificationType in classification file: %s\n Should be "Cell by cell" or "By regions"',classification_file));
+        return;
+        
 end
 
-if exist(classification_file,'file')>0
-    try
-        class_tree_obj=decision_tree_cl(classification_file);
-    catch
-        warning('Cannot parse specified classification file: %s',classification_file);
-        return;
-    end
-else
-    warning('Cannot find specified classification file: %s',classification_file);
-    return;
-end
 
 %freqs=class_tree_obj.get_frequencies();
 vars=class_tree_obj.get_variables();
 
-if ~strcmpi(class_tree_obj.ClassificationType,p.Results.classification_type)
-    warndlg_perso([],'',sprintf('Chosen classification file does not match the required classsification type (%s instead of %s)....',class_tree_obj.ClassificationType,p.Results.classification_type));
-    return;
-end
+sv_freqs=cellfun(@(x) textscan(x,'Sv_%d'),vars,'un',1);
+delta_sv_freqs=cellfun(@(x) textscan(x,'delta_Sv_%d_%d'),vars,'un',0);
 
+idx_var_freq=find(cellfun(@(x) ~any(isempty(x)),sv_freqs));
+idx_var_freq_sec=find(cellfun(@(x) ~any(isempty([x{:}])),delta_sv_freqs));
 
-idx_var_freq=find(contains(vars,'Sv_'));
-idx_var_freq_sec=find(contains(vars,'delta_Sv_'));
+primary_freqs_sv = [sv_freqs{idx_var_freq}];
 
-primary_freqs=nan(1,numel(idx_var_freq));
-secondary_freqs=nan(1,numel(idx_var_freq));
+primary_freqs_delta = cellfun(@(x) [x{1}],delta_sv_freqs(idx_var_freq_sec));
+sec_freqs_delta = cellfun(@(x) [x{2}],delta_sv_freqs(idx_var_freq_sec));
 
-for ii=1:numel(idx_var_freq)
-    if ismember(idx_var_freq(ii),idx_var_freq_sec)
-        freqs_tmp=textscan(vars{idx_var_freq(ii)},'delta_Sv_%d_%d');
-    else
-        freqs_tmp=textscan(vars{idx_var_freq(ii)},'Sv_%');
-    end
-    primary_freqs(ii)=freqs_tmp{1}*1e3;
-    if ismember(idx_var_freq(ii),idx_var_freq_sec)
-        secondary_freqs(ii)=freqs_tmp{2}*1e3;
-    end
-end
-
-
+primary_freqs = double([primary_freqs_delta setdiff(primary_freqs_sv,primary_freqs_delta)]);
+primary_freqs = primary_freqs*1e3;
+secondary_freqs = nan(1,numel(primary_freqs));
+secondary_freqs(1:numel(sec_freqs_delta)) = double(sec_freqs_delta);
+secondary_freqs = secondary_freqs*1e3;
 idx_primary_freqs=nan(1,numel(primary_freqs));
 idx_secondary_freqs=nan(1,numel(primary_freqs));
 
+if isempty(primary_freqs)    
+    warndlg_perso([],'Warning',sprintf('No Sv acoustic parameter defined in the classification file(either Sv_XX or delta_Sv_XX_YY).\nThere needs to be at least one.'));
+    return;
+end
 
 for ii=1:numel(primary_freqs)
+    
     [idx_primary_freqs(ii),found]=find_freq_idx(layer,primary_freqs(ii));
     
     if ~found
-        warning('Cannot find %dkHz! Cannot apply classification here....',primary_freqs(ii)/1e3);
+        warndlg_perso([],'Warning',sprintf('Cannot find %dkHz! Cannot apply classification here...',primary_freqs(ii)/1e3));
         return;
     end
     if ~isnan(secondary_freqs(ii))
         [idx_secondary_freqs(ii),found]=find_freq_idx(layer,secondary_freqs(ii));
         if ~found
-            warning('Cannot find %dkHz! Cannot apply classification here....',secondary_freqs(ii)/1e3);
+            warndlg_perso([],'Warning',sprintf('Cannot find %dkHz! Cannot apply classification here...',secondary_freqs(ii)/1e3));
             return;
         end
     end
@@ -128,20 +148,22 @@ end
 idx_freq_tot=union(idx_primary_freqs,idx_secondary_freqs);
 idx_freq_tot(isnan(idx_freq_tot))=[];
 
-layer.multi_freq_slice_transect2D(...
-    'idx_regs',idx_schools,...
-    'timeBounds',p.Results.timeBounds,...
-    'regs',p.Results.reg_obj,...
-    'idx_main_freq',idx_primary_freq,...
-    'idx_sec_freq',idx_freq_tot,...
-    'tag_sliced_output',false,...
-    'keep_all',1,...
-    'keep_bottom',1,...
-    'survey_options',surv_opt_obj,...
-    'load_bar_comp',p.Results.load_bar_comp);
 
+if strcmpi(class_tree_obj.ClassificationType,'by regions')||p.Results.reslice||isempty(layer.EchoIntStruct)||~all(ismember(idx_freq_tot,layer.EchoIntStruct.idx_freq_out))
+    layer.multi_freq_slice_transect2D(...
+        'idx_regs',idx_schools,...
+        'timeBounds',p.Results.timeBounds,...
+        'regs',p.Results.reg_obj,...
+        'idx_main_freq',idx_primary_freq,...
+        'idx_sec_freq',idx_freq_tot,...
+        'tag_sliced_output',false,...
+        'keep_all',1,...
+        'keep_bottom',1,...
+        'survey_options',surv_opt_obj,...
+        'load_bar_comp',p.Results.load_bar_comp);
+end
 
-switch lower(p.Results.classification_type)
+switch lower(class_tree_obj.ClassificationType)
     case 'by regions'
         for jj=1:nb_schools
             for ii=1:numel(primary_freqs)
@@ -176,7 +198,7 @@ switch lower(p.Results.classification_type)
         
         for ui=1:numel(output_struct.school_struct)
             output_struct.school_struct{ui}=layer.EchoIntStruct.output_2D{idx_main}{ui};
-            
+            output_struct.out_type{ui}=layer.EchoIntStruct.output_2D_type{idx_main}{ui};
             for ip=1:numel(primary_freqs)
                 
                 if idx_primary_freq==idx_primary_freqs(ip)
@@ -207,32 +229,177 @@ if ~isempty(p.Results.load_bar_comp)
 end
 
 for ui=1:length(output_struct.school_struct)
-    switch lower(p.Results.classification_type)
+    switch lower(class_tree_obj.ClassificationType)
         case 'by regions'
-            tag=class_tree_obj.apply_classification_tree(output_struct.school_struct{ui});
+            tag=class_tree_obj.apply_classification_tree(output_struct.school_struct{ui},p.Results.load_bar_comp);
             trans_obj_primary.Regions(idx_schools(ui)).Tag=char(tag);
             
         case 'cell by cell'
-            tag=class_tree_obj.apply_classification_tree(output_struct.school_struct{ui});
+            tag=class_tree_obj.apply_classification_tree(output_struct.school_struct{ui},p.Results.load_bar_comp);
+            l_min_can = surv_opt_obj.Vertical_slice_size/2;
+            h_min_can = surv_opt_obj.Horizontal_slice_size/2;
+            nb_min_sples = 1;
             
-            for ifreq=1:numel(layer.EchoIntStruct.output_2D)
-                layer.EchoIntStruct.output_2D{ifreq}{ui}.Tags=tag;
+            switch lower(surv_opt_obj.Vertical_slice_units)
+                case 'pings'
+                    dist_can = output_struct.school_struct{ui}.Ping_S;
+                case 'meters'
+                    dist_can= output_struct.school_struct{ui}.Dist_S;
+                    if nanmean(diff(dist))==0
+                        warning('No Distance was computed, using ping instead of distance for linking');
+                        dist_can= output_struct.school_struct{ui}.Ping_S;
+                    end
             end
+            tags=unique(tag);
+            tags(tags == "") = [];
+            if p.Results.cluster_tags
+                
+                  
+                vert_link_max = p.Results.vert_link_max;
+                horz_link_max = p.Results.horz_link_max;
+                
+                l_min_tot = p.Results.l_min_tot;
+                h_min_tot = p.Results.h_min_tot;
+                
+                tag_can = zeros(size(tag));
+                
+
+                
+                dist= output_struct.school_struct{ui}.Dist_S;
+                if nanmean(diff(dist))==0
+                    warning('No Distance was computed, using ping instead of distance for linking');
+                    dist= output_struct.school_struct{ui}.Ping_S;
+                end
+                
+                linked_cell_tags = cell(1,numel(tags));
+                candidates_cell_tags = cell(1,numel(tags));
+                i_tags = cell(1,numel(tags));
+                j_tags = cell(1,numel(tags));
+                
+                for itag = 1:numel(tags)
+                    tag_can(tag==tags{itag}) = itag;
+                    candidates_cell_tags{itag}=find_candidates_v3(tag==tags{itag},output_struct.school_struct{ui}.Range_ref_min(:,1),dist_can,l_min_can,h_min_can,nb_min_sples,'mat',[]);
+                    linked_cell_tags{itag}=link_candidates_v2(candidates_cell_tags{itag},dist,output_struct.school_struct{ui}.Range_ref_min(:,1),horz_link_max,vert_link_max,l_min_tot,h_min_tot,[]);
+                    [i_tags{itag},j_tags{itag}]=find(linked_cell_tags{itag});
+                end
+                
+                candidates=find_candidates_v3(tag~="",output_struct.school_struct{ui}.Range_ref_min(:,1),dist_can,l_min_can,h_min_can,nb_min_sples,'mat',[]);
+                
+                linked_tags=link_candidates_v2(candidates,dist,output_struct.school_struct{ui}.Range_ref_min(:,1),horz_link_max,vert_link_max,l_min_tot,h_min_tot,[]);
+                
+                %tag_f = tag;
+                
+                tag_f=strings(size(tag));
+                
+                unique_can = unique(linked_tags(:));
+                unique_can(unique_can==0)=[];
+                n_can = numel(unique_can);
+                
+                prop=cell(n_can,numel(tags));
+%                 
+%                 
+%                 figure()
+%                 imagesc(linked_tags);
+% 
+%                 
+%                 figure()
+%                 
+%                 for itag=1:numel(tags)
+%                     nexttile();
+%                     imagesc(linked_cell_tags{itag});
+%                     title(tags{itag})
+%                 end
+                
+                for ican=1:n_can
+                    can_temp = linked_tags==unique_can(ican);
+                    nc = nansum(nansum(can_temp));
+                    for itag = 1:numel(tags)
+                        tu = unique(linked_cell_tags{itag});
+                        tu(tu==0)=[];
+                        for utu = 1:numel(tu)
+                            tag_ori=linked_cell_tags{itag}==tu(utu);
+                            prop{ican,itag}(utu) =nansum(nansum(tag_ori&can_temp))/nc;
+                        end
+                    end
+                end
+                
+%                 prop_per_tag = cellfun(@nansum,prop);
+                for ican=1:n_can
+                    %[~,id_max] = nanmax(prop_per_tag(ican,:));
+                    can_temp = linked_tags==unique_can(ican);
+                    no_overlap = true;
+                    for itag = 1:numel(tags)
+                        tu = unique(linked_cell_tags{itag});
+                        tu(tu==0)=[];
+                        for utu = 1:numel(tu)
+                            tag_ori=linked_cell_tags{itag}==tu(utu);
+                            if ~any(tag_ori&can_temp)
+                                continue;
+                            end
+                            no_overlap = false;
+                            if  prop{ican,itag}(utu)>p.Results.thr_cluster/100
+                                tag_f(tag_ori&can_temp) = tags{itag};
+                            else
+                                min_dist = nan(1,numel(tags));
+                                    [ii,jj] = find(tag_ori);
+                                    ii = nanmean(ii);
+                                    jj = nanmean(jj);
+                                for itag2 = 1:numel(tags)
+                                    if itag~=itag2
+                                        min_dist(itag2)=nanmin(sqrt((ii-i_tags{itag2}).^2+(jj-j_tags{itag2}).^2));
+                                    end
+                                end
+                                [~,id_min]=nanmin(min_dist);
+                                tag_f(tag_ori&can_temp) = tags{id_min};
+                            end
+                        end
+                    end  
+                    
+                    if no_overlap
+                        min_dist = nan(1,numel(tags));
+                        [ii,jj] = find(can_temp);
+                        ii = nanmean(ii);
+                        jj = nanmean(jj);
+                        for itag2 = 1:numel(tags)
+                            min_dist(itag2)=nanmin(sqrt((ii-i_tags{itag2}).^2+(jj-j_tags{itag2}).^2));
+                        end
+                        [~,id_min]=nanmin(min_dist);
+                        tag_f(can_temp) = tags{id_min};
+                    end
+                end
+                
+            else
+                candidates=find_candidates_v3(tag~="",output_struct.school_struct{ui}.Range_ref_min(:,1),dist_can,l_min_can,h_min_can,nb_min_sples,'mat',[]);
+                tag_f=tag;
+            end
+            
+            layer.EchoIntStruct.output_2D{idx_main}{ui}.Tags=tag_f;
+            
             if p.Results.create_regions
                 
                 if ~isempty(p.Results.load_bar_comp)
                     p.Results.load_bar_comp.progress_bar.setText('Creating regions...');
+                    set(p.Results.load_bar_comp.progress_bar, 'Minimum',0, 'Maximum',numel(tags), 'Value',0);
                 end
-                trans_obj_primary.create_regions_from_linked_candidates(tag,...
-                    'idx_pings',1/2*(output_struct.school_struct{ui}.Ping_S+output_struct.school_struct{ui}.Ping_E),...
-                    'idx_r',1/2*(output_struct.school_struct{ui}.Sample_S+output_struct.school_struct{ui}.Sample_E),...
-                    'w_unit',surv_opt_obj.Vertical_slice_units,...
-                    'cell_w',surv_opt_obj.Vertical_slice_size,...
-                    'h_unit','meters',...
-                    'ref',layer.EchoIntStruct.output_2D_type{idx_main}{ui},...
-                    'cell_h',surv_opt_obj.Horizontal_slice_size,...
-                    'reg_names','Classified',...
-                    'rm_overlapping_regions',true);
+                
+                for itag = 1:numel(tags)
+                    set(p.Results.load_bar_comp.progress_bar, 'Minimum',0, 'Maximum',numel(tags), 'Value',itag);
+                    can_temp=candidates;
+                    can_temp(tag_f~=tags{itag})=0;
+                    
+                    trans_obj_primary.create_regions_from_linked_candidates(can_temp,...
+                        'idx_pings',1/2*(output_struct.school_struct{ui}.Ping_S+output_struct.school_struct{ui}.Ping_E),...
+                        'idx_r',1/2*(output_struct.school_struct{ui}.Sample_S+output_struct.school_struct{ui}.Sample_E),...
+                        'w_unit',surv_opt_obj.Vertical_slice_units,...
+                        'cell_w',surv_opt_obj.Vertical_slice_size,...
+                        'h_unit','meters',...
+                        'ref',layer.EchoIntStruct.output_2D_type{idx_main}{ui},...
+                        'cell_h',surv_opt_obj.Horizontal_slice_size,...
+                        'reg_names','Classified',...
+                        'tag',tags{itag},...
+                        'rm_overlapping_regions',true);
+                
+                end
             end
             
     end

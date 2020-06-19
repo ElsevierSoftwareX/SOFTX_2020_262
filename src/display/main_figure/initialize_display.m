@@ -39,7 +39,7 @@ function initialize_display(esp3_obj)
 main_figure=esp3_obj.main_figure;
 curr_disp=esp3_obj.curr_disp;
 
-pan_height=get_top_panel_height(7.5);
+pan_height=get_top_panel_height(8.25);
 load_loading_bar_panel_v2(main_figure);
 load_info_panel(main_figure);
 
@@ -52,11 +52,12 @@ inf_h=inf_h_tmp+inf_h;
 
 pix_pos=getpixelposition(main_figure);
 
-opt_panel=uitabgroup(main_figure,'Units','pixels','Position',[0 pix_pos(4)-pan_height 0.5*pix_pos(3) pan_height]);
-algo_panel=uitabgroup(main_figure,'Units','pixels','Position',[0.5*pix_pos(3) pix_pos(4)-pan_height 0.5*pix_pos(3) pan_height]);
+al_disp_ratio = curr_disp.Al_opt_tab_size_ratio;
 
-pt_int.enterFcn =  @(figHandle, currentPoint)...
-replace_interaction(figHandle,'interaction','WindowButtonMotionFcn','id',1);
+opt_panel=uitabgroup(main_figure,'Units','pixels','Position',[0 pix_pos(4)-pan_height (1-al_disp_ratio)*pix_pos(3) pan_height],'tag','opt','ButtonDownFcn',@change_opt_al_tab_ratio);
+algo_panel=uitabgroup(main_figure,'Units','pixels','Position',[(1-al_disp_ratio)*pix_pos(3) pix_pos(4)-pan_height al_disp_ratio*pix_pos(3) pan_height],'tag','algo','ButtonDownFcn',@change_opt_al_tab_ratio);
+
+pt_int.enterFcn =  @(figHandle, currentPoint)enter_panel(figHandle, currentPoint);
 pt_int.exitFcn = [];
 pt_int.traverseFcn = [];
 
@@ -94,16 +95,13 @@ load_multi_freq_disp_tab(main_figure,opt_panel,'sv_f');
 load_multi_freq_disp_tab(main_figure,opt_panel,'ts_f');
 
 load_bottom_tab(main_figure,algo_panel);
-load_bottom_feature_tab(main_figure,algo_panel)
 load_bad_pings_tab(main_figure,algo_panel);
 load_denoise_tab(main_figure,algo_panel);
 load_school_detect_tab(main_figure,algo_panel);
-load_single_target_tab(main_figure,algo_panel);
 load_track_target_tab(main_figure,algo_panel);
 
 load_multi_freq_tab(main_figure,algo_panel);
 
-format_color_gui(main_figure,curr_disp.Font,curr_disp.Cmap);
 display_tab_comp=getappdata(main_figure,'Display_tab');
 opt_panel.SelectedTab=display_tab_comp.display_tab;
 esp3_tab_comp=getappdata(main_figure,'esp3_tab');
@@ -112,11 +110,18 @@ order_option_tab(main_figure);
 obj_enable=findobj(main_figure,'Enable','on','-not','Type','uimenu');
 set(obj_enable,'Enable','off');
 centerfig(main_figure);
+
+format_color_gui(main_figure,curr_disp.Font,curr_disp.Cmap);
 set(main_figure,'Visible','on');
 
 
 end
 
+
+function enter_panel(figHandle,~)
+%set(figHandle, 'Pointer', 'hand');
+replace_interaction(figHandle,'interaction','WindowButtonMotionFcn','id',1);
+end
 
 
 

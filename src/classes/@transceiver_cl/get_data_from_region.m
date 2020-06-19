@@ -101,7 +101,8 @@ end
 
 idx = trans_obj.find_regions_type('Bad Data');
 bad_data_mask = region.get_mask_from_intersection(trans_obj.Regions(idx));
-mask_spikes = trans_obj.Data.get_subdatamat(idx_r,idx_pings,'field','spikesmask');
+
+mask_spikes = trans_obj.get_spikes(idx_r,idx_pings);
 
 if ~isempty(mask_spikes)
     bad_data_mask = bad_data_mask|mask_spikes;

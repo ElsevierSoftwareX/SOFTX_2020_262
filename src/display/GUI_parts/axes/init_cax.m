@@ -104,10 +104,6 @@ switch lower(deblank(Fieldname))
         Cax=[0 50];
         Type='PRC';
         Units='%';
-    case 'spikesmask'
-        Cax=[0 1];
-        Type='Spikes Mask';
-        Units='';
     otherwise
         if contains(lower(Fieldname),'khz')
             Type=['Sv-' Fieldname];

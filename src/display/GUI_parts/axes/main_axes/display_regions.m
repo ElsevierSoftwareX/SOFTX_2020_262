@@ -186,7 +186,7 @@ for iax=1:length(main_axes_tot)
             for uipo=idx_sort(1:nb_draw)'                
                 id=id+1;
                 reg_plot(id)=text(nanmean(sub_reg_poly(uipo).Vertices(:,1)),nanmean(sub_reg_poly(uipo).Vertices(:,2)),reg_curr.disp_str(),'FontWeight','Normal','Fontsize',...
-                text_size(iax),'Tag','region_text','color',txt_col,'parent',main_axes,'UserData',reg_curr.Unique_ID,'Clipping', 'on');
+                text_size(iax),'Tag','region_text','color',txt_col,'parent',main_axes,'UserData',reg_curr.Unique_ID,'Clipping', 'on','interpreter','none');
             end
             
             for ii=1:length(reg_plot)

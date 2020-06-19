@@ -177,7 +177,7 @@ try
             switch get(cursor_mode_tool_comp.bad_trans,'state')
                 case 'off'
                     set(cursor_mode_tool_comp.bad_trans,'state','on');
-                    curr_disp.CursorMode='Bad Transmits';
+                    curr_disp.CursorMode='Bad Pings';
                 case 'on'
                     set(cursor_mode_tool_comp.bad_trans,'state','off');
                     curr_disp.CursorMode='Normal';

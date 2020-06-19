@@ -81,11 +81,7 @@ output_struct.idx_noise_sector=idx_noise_sector;
 output_struct.done = true;
 
 tag = trans_obj.Bottom.Tag;
-if isempty(p.Results.reg_obj)
-    tag = ones(size(tag));
-else
-    tag = trans_obj.Bottom.Tag;
-end
+
 tag(output_struct.idx_noise_sector) = 0;
 
 trans_obj.Bottom.Tag = tag;

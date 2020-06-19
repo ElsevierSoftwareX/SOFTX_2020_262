@@ -24,11 +24,11 @@ echo_int_tab_comp.ax_panel=uipanel(echo_int_tab_comp.echo_int_tab,'units','pixel
 
 [cmap, col_ax, col_lab, col_grid, col_bot, col_txt,~]=init_cmap(curr_disp.Cmap);
 echo_int_tab_comp.main_ax=axes('Parent',echo_int_tab_comp.ax_panel,'Interactions',[],'Toolbar',[],...
-    'Units','Normalized','position',[0.05 0 0.9 0.9],'Color',col_ax,'Layer','top','YTickLabel',{},'XTickLabel',{},'visible','on');
+    'Units','Normalized','position',[0.05 0.01 0.9 0.89],'Color',col_ax,'Layer','top','YTickLabel',{},'XTickLabel',{},'visible','on');
 echo_int_tab_comp.v_ax=axes('Parent',echo_int_tab_comp.ax_panel,'Interactions',[],'Toolbar',[],...
-    'Units','Normalized','position',[0 0 0.05 0.9],'YAxisLocation','right','XTickLabel',{},'visible','on');
+    'Units','Normalized','position',[0 0.01 0.05 0.89],'YAxisLocation','right','XTickLabel',{},'visible','on');
 echo_int_tab_comp.h_ax=axes('Parent',echo_int_tab_comp.ax_panel,'Interactions',[],'Toolbar',[],...
-'Units','Normalized','position',[0.05 .9 0.9 0.1],'YTickLabel',{},'visible','on');
+'Units','Normalized','position',[0.05 .9 0.9 0.09],'YTickLabel',{},'visible','on');
 % echo_int_tab_comp.v_ax.YAxis.TickLabelFormat=' %.0g m';
 echo_int_tab_comp.h_ax.XTickLabelRotation=-90;
 

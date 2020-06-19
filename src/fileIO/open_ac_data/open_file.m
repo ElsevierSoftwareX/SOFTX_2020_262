@@ -268,7 +268,7 @@ try
         else
             chan=layer.ChannelID;
         end
-        
+
         %profile on;
         [new_layers,multi_lay_mode]=open_file_standalone(Filename,ftype,...
             'already_opened_files',old_files,...

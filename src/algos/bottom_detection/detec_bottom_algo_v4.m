@@ -174,7 +174,8 @@ for ui = 1:num_ite
     Sp(mask==0) = -999;
     
     % mask the spikes too
-    spikes = trans_obj.Data.get_subdatamat(idx_r,idx_pings,'field','spikesmask');
+    spikes =trans_obj.get_spikes(idx_r,idx_pings);
+    
     if ~isempty(spikes)
         Sp(spikes>0) = -999;
     end

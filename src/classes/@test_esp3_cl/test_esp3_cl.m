@@ -56,7 +56,7 @@ classdef test_esp3_cl < matlab.unittest.TestCase
         function run_scripts(testCase)
             script_path= fullfile(testCase.esp3_obj.app_path.test_folder.Path_to_folder,'scripts');
             
-            PathToResults = fullfile(testCase.esp3_obj.app_path.test_folder.Path_to_folder,'esp3_results');
+            PathToResults = fullfile(testCase.esp3_obj.app_path.test_folder.Path_to_folder,'results');
             
             f=dir(fullfile(script_path,'*.xml'));
             scripts_to_run = {f([f(:).isdir]==0).name};
@@ -79,14 +79,12 @@ classdef test_esp3_cl < matlab.unittest.TestCase
             ref_files=fullfile(Path_ref,files);
             esp3_files=fullfile(Path_esp3,files);
             
-            
-            
-            
+                      
             same=true(1,numel(esp3_files));
             diff_cell=cell(1,numel(esp3_files));
             surv_obj_cell=cell(1,numel(esp3_files));
-            %fig=new_echo_figure([]);
-            fig=[];
+            fig=new_echo_figure([]);
+            %fig=[];
             for ii=1:numel(esp3_files)
                 if isfile(esp3_files{ii})
                     fprintf('File %s:\n',esp3_files{ii});
@@ -171,35 +169,36 @@ classdef test_esp3_cl < matlab.unittest.TestCase
             [files,~]=list_ac_files(file_path,1);
             
             n_files=numel(files);
-            nb_files_max=5;
+            nb_files_max=10;
             
             idx_proc=randi(n_files,[1 nanmin(nb_files_max,n_files)]);
             
             idx_proc=unique(idx_proc);
             
             fff=fullfile(file_path,files(idx_proc));
+            
             open_file([],[],fff,testCase.esp3_obj.main_figure);
             
             layers=testCase.esp3_obj.layers;
             
-            [idx_lays,found]=layers.find_layer_idx_files(fff);
+            
             al_names=list_algos();
-            sucess=cell(numel(idx_lays),numel(al_names));
+            sucess=cell(numel(fff),numel(al_names));
             load_bar_comp=getappdata(testCase.esp3_obj.main_figure,'Loading_bar');
             show_status_bar(testCase.esp3_obj.main_figure);
             pass=true;
             
-            for ial=1:numel(al_names)
-                ii=0;
-                for ui=idx_lays
-                    ii=ii+1;
-                    if found(ii)
-                        out_tmp=layers(ui).apply_algo(al_names{ial},'load_bar_comp',load_bar_comp);
-                        sucess{ii,ial}=false(1,numel(out_tmp));
+            for ial=1:numel(al_names)               
+                for ui=1:numel(fff)
+                    [idx_lay,found]=layers.find_layer_idx_files(fff{ui});
+                    if found
+                        load_bar_comp.progress_bar.setText(sprintf('Applying %s on %s',al_names{ial},fff{ui}));
+                        out_tmp=layers(idx_lay).apply_algo(al_names{ial},'load_bar_comp',load_bar_comp);
+                        sucess{ui,ial}=false(1,numel(out_tmp));
                         for ifi=1:numel(out_tmp)
-                            sucess{ii,ial}(ifi)=out_tmp{ifi}.done;
+                            sucess{ui,ial}(ifi)=out_tmp{ifi}.done;
                         end
-                        pass=all(sucess{ial});
+                        pass=pass&all(sucess{ui,ial});
                     end
                 end
             end
@@ -210,9 +209,9 @@ classdef test_esp3_cl < matlab.unittest.TestCase
                 'Error applying algorithms on files');
             
             for ial=1:numel(al_names)
-                for uj=1:numel(idx_lays)
+                for uj=1:numel(fff)
                     if any(~sucess{uj,ial})
-                        fprintf('Could not apply %s to %s\n',al_names{ial},strjoin(layers(idx_lays(uj)).Filename,' and '));
+                        fprintf('Could not apply %s to %s\n',al_names{ial},fff{uj});
                     end
                 end
             end

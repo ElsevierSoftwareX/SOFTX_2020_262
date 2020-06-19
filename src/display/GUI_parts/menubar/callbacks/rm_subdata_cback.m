@@ -22,10 +22,6 @@ switch field
         trans_obj.Data.remove_sub_data(fields);
         display_tracks(main_figure);
         curr_disp.setField('sv');
-    case 'spikesmask'
-        trans_obj.Data.remove_sub_data(field);
-        curr_disp.DispSpikes= curr_disp.DispSpikes;
-        set_alpha_map(main_figure,'update_cmap',0,'update_under_bot',0);
 end
 
 

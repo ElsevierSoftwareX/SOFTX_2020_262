@@ -200,8 +200,9 @@ end
 
 mat_size=size(var_disp);
 if  ~any(mat_size==1)
-    reg_plot=pcolor(ax_in,repmat(x_disp,size(y_disp,1),1),y_disp,var_disp);
-    set(reg_plot,'alphadata',alphadata,'facealpha','flat','edgecolor','none','AlphaDataMapping','none');
+    reg_plot=imagesc(ax_in,x_disp,y_disp(:,1),var_disp);
+    %set(reg_plot,'alphadata',alphadata,'facealpha','flat','edgecolor','none','AlphaDataMapping','none');
+    set(reg_plot,'alphadata',alphadata,'AlphaDataMapping','none');
     create_context_menu_int_plot(reg_plot)
     uimenu(reg_plot.UIContextMenu,'Label','Hide vertical profile','Callback',{@hide_axes_cback,'vert'},'Checked','off');
     uimenu(reg_plot.UIContextMenu,'Label','Hide horizontal profile','Callback',{@hide_axes_cback,'horz'},'Checked','off');
@@ -303,9 +304,12 @@ linkaxes([ax_in ax_horz],'x');
 
 
 %% final adjust axes
-set(ax_in,'Xlim',[xmin-mode(diff(x_disp)/2) xmax+mode(diff(x_disp)/2)]);
-set(ax_in,'Ylim',[ymin-reg_obj.Cell_h/2 ymax+reg_obj.Cell_h/2]);
-
+if xmax>xmin
+    set(ax_in,'Xlim',[xmin xmax]);
+end
+if ymax>ymin
+    set(ax_in,'Ylim',[ymin ymax]);
+end
 %% nest functions
 
     function hide_axes_cback(src,evt,ax_str)

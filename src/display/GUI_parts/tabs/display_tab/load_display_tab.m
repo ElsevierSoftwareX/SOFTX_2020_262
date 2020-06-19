@@ -39,7 +39,9 @@ function load_display_tab(main_figure,option_tab_panel)
 curr_disp=get_esp3_prop('curr_disp');
 display_tab_comp.display_tab=uitab(option_tab_panel,'Title','Display Option','tag','disp');
 nb_col=8;
-size_bttn_grp=[0 0.67 1 0.33];
+
+size_bttn_grp=[0 0.77 1 0.23];
+
 gui_fmt=init_gui_fmt_struct();
 gui_fmt.txt_w=gui_fmt.txt_w/2.5;
 gui_fmt.box_w=gui_fmt.box_w*2;
@@ -139,7 +141,7 @@ switch src.Tag
         id=1;
 end
 
-if val>0&&val<100
+if val>0&&val<=100
     curr_disp.Move_dy_dx(id)=val/100;
 else
     val=curr_disp.Move_dy_dx(id)*100;
@@ -160,7 +162,7 @@ switch src.Tag
         id=1;
 end
 
-if val>0&&val<100
+if val>0&&val<=500
     curr_disp.Disp_dy_dx(id)=val/100;
 else
     val=curr_disp.Disp_dy_dx(id)*100;

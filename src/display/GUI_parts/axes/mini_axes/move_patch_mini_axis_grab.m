@@ -40,7 +40,7 @@ mini_axes_comp=getappdata(main_figure,'Mini_axes');
 axes_panel_comp=getappdata(main_figure,'Axes_panel');
 main_axes=axes_panel_comp.main_axes;
 patch_obj=mini_axes_comp.patch_obj;
-
+%curr_disp = get_esp3_prop('curr_disp');
 ah=mini_axes_comp.mini_ax;
 
 if isempty(patch_obj.Vertices)
@@ -48,6 +48,10 @@ if isempty(patch_obj.Vertices)
 end
 
 current_fig=gcf;
+
+set(mini_axes_comp.mini_echo,'ButtonDownFcn','');
+set(mini_axes_comp.mini_echo_bt,'ButtonDownFcn','');
+
 
 if strcmp(current_fig.SelectionType,'normal')
     cp = ah.CurrentPoint;
@@ -61,9 +65,7 @@ if strcmp(current_fig.SelectionType,'normal')
     dy_patch=nanmax(patch_obj.Vertices(:,2))-nanmin(patch_obj.Vertices(:,2));
     %replace_interaction(current_fig,'interaction','WindowButtonMotionFcn','id',1);
     replace_interaction(current_fig,'interaction','WindowButtonMotionFcn','id',2,'interaction_fcn',@wbmcb,'Pointer','fleur');
-    replace_interaction(current_fig,'interaction','WindowButtonUpFcn','id',2,'interaction_fcn',@wbucb);
-    
-    
+    replace_interaction(current_fig,'interaction','WindowButtonUpFcn','id',2,'interaction_fcn',@wbucb);   
 end
     function wbmcb(~,~)
         cp = ah.CurrentPoint;
@@ -95,7 +97,7 @@ end
         x0=x1;
         y0=y1;
         %all(inpolygon(new_vert(:,1),new_vert(:,2),patch_obj_lim.Vertices(:,1),patch_obj_lim.Vertices(:,2)))
-%         if all(inpolygon(new_vert(:,1),new_vert(:,2),patch_obj_lim.Vertices(:,1),patch_obj_lim.Vertices(:,2)))&&curr_disp.DispSecFreqs==0
+%         if all(inpolygon(new_vert(:,1),new_vert(:,2),mini_axes_comp.patch_lim_obj.Vertices(:,1),mini_axes_comp.patch_lim_obj.Vertices(:,2)))&&curr_disp.DispSecFreqs==0
 %             set(main_axes,'xlim',[nanmin(patch_obj.Vertices(:,1)) nanmax(patch_obj.Vertices(:,1))]);
 %             set(main_axes,'ylim',[nanmin(patch_obj.Vertices(:,2)) nanmax(patch_obj.Vertices(:,2))]);
 %             drawnow;
@@ -112,7 +114,9 @@ end
         
         set(main_axes,'xlim',[nanmin(patch_obj.Vertices(:,1)) nanmax(patch_obj.Vertices(:,1))]);
         set(main_axes,'ylim',[nanmin(patch_obj.Vertices(:,2)) nanmax(patch_obj.Vertices(:,2))]);
-        
+        drawnow;
+        set(mini_axes_comp.mini_echo,'ButtonDownFcn',{@zoom_in_callback_mini_ax,main_figure});
+        set(mini_axes_comp.mini_echo_bt,'ButtonDownFcn',{@zoom_in_callback_mini_ax,main_figure});
         
         
         

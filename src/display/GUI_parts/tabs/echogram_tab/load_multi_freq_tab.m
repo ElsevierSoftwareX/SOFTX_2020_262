@@ -1,12 +1,12 @@
 function load_multi_freq_tab(main_figure,parent_tab_group)
 
-multi_freq_tab.parent_tab=uitab(parent_tab_group,'Title','Multi-freq','BackgroundColor','white');
+multi_freq_tab.parent_tab=uitab(parent_tab_group,'Title','Multi-frequency','BackgroundColor','white');
 multi_freq_tab.setting_panel=uipanel(multi_freq_tab.parent_tab,'Position',[0 0 1 1]);
 %multi_freq_tab.disp_panel=uipanel(multi_freq_tab.parent_tab,'Position',[0.15 0 0.85 1]);
 
 gui_fmt=init_gui_fmt_struct();
 
-pos=create_pos_3(6,3,gui_fmt.x_sep,gui_fmt.y_sep,gui_fmt.txt_w,gui_fmt.box_w,gui_fmt.box_h);
+pos=create_pos_3(8,3,gui_fmt.x_sep,gui_fmt.y_sep,gui_fmt.txt_w,gui_fmt.box_w,gui_fmt.box_h);
 p_button=pos{5,3}{1};
 
  uicontrol(...
@@ -51,7 +51,7 @@ gui_fmt.txtTitleStyle,...
 uicontrol(multi_freq_tab.setting_panel,gui_fmt.txtStyle,'String','Pings:','Position',pos{2,3}{1});
 multi_freq_tab.grid_pings=uicontrol(multi_freq_tab.setting_panel,gui_fmt.edtStyle,'position',pos{2,3}{2},'string','5');
 
-uicontrol(multi_freq_tab.setting_panel,gui_fmt.txtStyle,'String','Samples:','Position',pos{3,3}{1});
+uicontrol(multi_freq_tab.setting_panel,gui_fmt.txtStyle,'String','Meters:','Position',pos{3,3}{1});
 multi_freq_tab.grid_samples=uicontrol(multi_freq_tab.setting_panel,gui_fmt.edtStyle,'position',pos{3,3}{2},'string','5');
 
 set([multi_freq_tab.grid_pings multi_freq_tab.grid_samples],'callback',{@check_fmt_box,0,inf,5,'%.0f'})
@@ -70,7 +70,7 @@ set(multi_freq_tab.db_threshold ,'callback',{@check_fmt_box,-999,-30,-75,'%.0f'}
 uicontrol(...
     'Parent',multi_freq_tab.setting_panel,...
     gui_fmt.pushbtnStyle,...
-    'String','Update',...
+    'String','Compute',...
     'callback',{@compute_freq_diff_cback,main_figure},...
     'position',p_button);
 

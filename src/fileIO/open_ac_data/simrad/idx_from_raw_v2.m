@@ -51,10 +51,6 @@ end
 
 while~feof(fid)
     
-    if ~isempty(load_bar_comp)
-        set(load_bar_comp.progress_bar,  'Value',n+1);
-    end
-    
     if n>0
         fseek(fid,-overlap,'cof');
     end
@@ -70,6 +66,10 @@ while~feof(fid)
     end
     idx_dg=[idx_dg idx_dg_temp+offset];
     n=n+1;
+    if ~isempty(load_bar_comp)
+        set(load_bar_comp.progress_bar, 'Value',n);
+    end
+    
 end
 
 idx_dg=sort(idx_dg);
