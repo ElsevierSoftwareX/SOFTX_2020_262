@@ -201,6 +201,7 @@ classdef gps_data_cl
                         case {'.csv','.txt'}
                             
                             opts = detectImportOptions(fileN{ifi});
+                            opts = setvaropts(opts,'Time','InputFormat','dd/MM/uuuu HH:mm:ss'); 
                             temp=readtable(fileN{ifi},opts);
                             
                             fields =ismember({'Lat','Long','Time'},temp.Properties.VariableNames); 

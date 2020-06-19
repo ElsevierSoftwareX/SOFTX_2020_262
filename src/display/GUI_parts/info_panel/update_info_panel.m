@@ -1,6 +1,9 @@
 function update_info_panel(~,~,force_update)
 %profile on;
 global DEBUG
+if isempty(DEBUG)
+    DEBUG =0;
+end
 esp3_obj=getappdata(groot,'esp3_obj');
 
 %dpause=1e-2;

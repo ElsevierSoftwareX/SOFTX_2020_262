@@ -2,7 +2,7 @@ function map_survey_callback(~,~,hObject_main)
 
 app_path=get_esp3_prop('app_path');
 
-[Filename,PathToFile]= uigetfile( {fullfile(app_path.results.Path_to_folder)}, 'Pick a survey output file','MultiSelect','on');
+[Filename,PathToFile]= uigetfile( {fullfile(app_path.results.Path_to_folder,'*_output.txt;*_output.mat')}, 'Pick a survey output file','MultiSelect','on');
 
 if ~isequal(Filename, 0)
     

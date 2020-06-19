@@ -114,9 +114,9 @@ for uu=1:length(trans_comb)
                     if first_cond
                         continue;
                     end
-                                        
-                    second_cond= nansum(layers_grp(uu).time_end(:,kki)+ 5*layers_grp(uu).dt(:,kki)>=layers_grp(uu).time_start(:,kkj)&...
-                        layers_grp(uu).time_end(:,kki)-5*layers_grp(uu).dt(:,kki)<=layers_grp(uu).time_start(:,kkj))==trans_nb(uu);
+                    mult_val = 10;
+                    second_cond= nansum(layers_grp(uu).time_end(:,kki)+ mult_val*layers_grp(uu).dt(:,kki)>=layers_grp(uu).time_start(:,kkj)&...
+                        layers_grp(uu).time_end(:,kki)-mult_val*layers_grp(uu).dt(:,kki)<=layers_grp(uu).time_start(:,kkj))==trans_nb(uu);
                     
                     if second_cond
                         if all(ismember([idx(kkj) idx(kki)],idx_to_concatenate{uu}{kk}))

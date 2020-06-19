@@ -173,6 +173,7 @@ classdef attitude_nav_cl
                 try
 
                     opts = detectImportOptions(fileN{ifi});
+                    opts = setvaropts(opts,'Time','InputFormat','dd/MM/uuuu HH:mm:ss');
                     temp=readtable(fileN{ifi},opts);
                     
                     fields =ismember({'Heading','Roll','Heave','Pitch','Yaw','Time'},temp.Properties.VariableNames);

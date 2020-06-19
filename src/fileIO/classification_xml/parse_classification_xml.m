@@ -1,4 +1,4 @@
-function [Frequencies,Variables,Nodes,Title,Type]=parse_classification_xml(xml_file)
+function [Frequencies,Variables,Nodes,Title,Type,VarName]=parse_classification_xml(xml_file)
 
 xml_struct=parseXML(xml_file);
 Title='';
@@ -6,6 +6,7 @@ Type='';
 Frequencies=[];
 Variables={};
 Nodes={};
+VarName = '';
 if ~strcmpi(xml_struct.Name,'classification_descr')
     warning('XML file not describing a Classification');
     return;
@@ -20,6 +21,17 @@ Type=get_att(xml_struct,'type');
 if isempty(Type)
     Type='By regions';
 end
+
+VarName=get_att(xml_struct,'varname');
+if isempty(VarName)
+    switch lower(Type)
+        case 'by regions'
+            VarName = 'school';
+        case 'cell by cell'
+            VarName = 'cell';
+    end
+end
+
 
 nb_child=length(xml_struct.Children);
 

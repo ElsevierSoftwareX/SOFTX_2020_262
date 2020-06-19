@@ -226,7 +226,7 @@ try
                             if ~isdeployed()
                                 fprintf('%d in navigation instead of %d\n',numel(lat_disp),numel(gps_data{ifi}.Lat));
                             end
-                            new_plots=[geoplot(map_tab_comp.ax,gps_data{ifi}.Lat(1),gps_data{ifi}.Long(1),'Marker','o','Tag',files{ifi},'Color',[0 0.6 0],'UserData',userdata,'Markersize',4,'LineWidth',0.7,'MarkerFaceColor',[0 0.6 0]) ...
+                            new_plots=[geoplot(map_tab_comp.ax,gps_data{ifi}.Lat(1),gps_data{ifi}.Long(1),'Marker','o','Tag',files{ifi},'Color',[0 0.6 0],'UserData',userdata,'Markersize',2,'LineWidth',0.7,'MarkerFaceColor',[0 0.6 0]) ...
                                 geoplot(map_tab_comp.ax,lat_disp,lon_disp,'Tag',files{ifi},'UserData',userdata,'LineWidth',0.7,'Color',[0 0 0],'ButtonDownFcn',@disp_obj_tag_callback)] ;
                             new_plots(1).LatitudeDataMode='manual';
                             new_plots(2).LatitudeDataMode='manual';

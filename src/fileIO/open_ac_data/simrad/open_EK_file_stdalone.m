@@ -128,6 +128,53 @@ if ~isequal(Filename_cell, 0)
         try
             ftype = get_ftype(Filename);
             
+             fileIdx = fullfile(path_f,'echoanalysisfiles',[fileN '_echoidx.mat']);
+            
+            if ~isfile(fileIdx)
+                %idx_raw_obj=idx_from_raw(Filename,p.Results.load_bar_comp);
+                idx_raw_obj = idx_from_raw_v2(Filename,p.Results.load_bar_comp);
+                save(fileIdx,'idx_raw_obj');
+            else
+                load(fileIdx);
+            end
+            
+            [~,et] = start_end_time_from_file(Filename);
+            
+            dgs = find((strcmp(idx_raw_obj.type_dg,'RAW0')|strcmp(idx_raw_obj.type_dg,'RAW3'))&idx_raw_obj.chan_dg==nanmin(idx_raw_obj.chan_dg));
+            
+            if isempty(dgs)
+                if ~isempty(load_bar_comp)
+                    load_bar_comp.progress_bar.setText(sprintf('No accoustic data in file %s\n',Filename));
+                else
+                    fprintf('No accoustic data in file %s\n',Filename);
+                end
+                id_rem = union(id_rem,uu);
+                continue;
+            end
+            
+            if et-idx_raw_obj.time_dg(dgs(end))>2*nanmax(diff(idx_raw_obj.time_dg(dgs)))
+                fprintf('Re-Indexing file: %s\n',Filename);
+                delete(fileIdx);
+                idx_raw_obj = idx_from_raw_v2(Filename,p.Results.load_bar_comp);
+                save(fileIdx,'idx_raw_obj');
+            end
+            
+            
+            [nb_pings,channels_id]=idx_raw_obj.get_nb_pings_per_channels();
+            channels_id = channels_id(nb_pings>0);
+            nb_pings = nb_pings(nb_pings>0);
+            
+            if isempty(nb_pings)
+                id_rem=union(id_rem,uu);
+                disp_str=sprintf('No acoustic data in file %s. Ignoring it.',Filename);
+                if ~isempty(load_bar_comp)
+                    load_bar_comp.progress_bar.setText(disp_str);
+                else
+                    disp(disp_str);
+                end
+                
+                continue;
+            end
             switch ftype
                 case 'EK80'
                     [~,config] = read_EK80_config(Filename);
@@ -144,10 +191,14 @@ if ~isequal(Filename_cell, 0)
                     continue;
             end
             
+            frequency  = frequency(channels_id);
+            channels  = channels(channels_id);
+            
             if isempty(frequency)
                 warndlg_perso([],'Failed',['Cannot open file ' Filename]);
                 continue;
             end
+            
             av_frequencies=frequency;
             av_cids=channels;
             transceivercount = length(frequency);
@@ -164,7 +215,7 @@ if ~isequal(Filename_cell, 0)
             
             idx_common_channels = ismember(channels_temp,channels_init);
             idx_common_freqs = ismember(vec_freq_temp,vec_freq_init);
-            fig=findobj(0,'Type','figure','-and','Name','ESP3');
+ 
             if (sum(idx_common_channels)==transceivercount||sum(idx_common_channels)==numel(channels_init))&&~isempty(channels_init)
                 vec_freq = vec_freq_temp(idx_common_channels);
                 channels_sub = channels_temp(idx_common_channels);
@@ -212,39 +263,7 @@ if ~isequal(Filename_cell, 0)
                 mkdir(fullfile(path_f,'echoanalysisfiles'));
             end
             
-            fileIdx = fullfile(path_f,'echoanalysisfiles',[fileN '_echoidx.mat']);
-            
-            if ~isfile(fileIdx)
-                %idx_raw_obj=idx_from_raw(Filename,p.Results.load_bar_comp);
-                idx_raw_obj = idx_from_raw_v2(Filename,p.Results.load_bar_comp);
-                save(fileIdx,'idx_raw_obj');
-            else
-                load(fileIdx);
-            end
-            
-            [~,et] = start_end_time_from_file(Filename);
-            
-            dgs = find((strcmp(idx_raw_obj.type_dg,'RAW0')|strcmp(idx_raw_obj.type_dg,'RAW3'))&idx_raw_obj.chan_dg==nanmin(idx_raw_obj.chan_dg));
-            
-            if isempty(dgs)
-                if ~isempty(load_bar_comp)
-                    load_bar_comp.progress_bar.setText(sprintf('No accoustic data in file %s\n',Filename));
-                else
-                    fprintf('No accoustic data in file %s\n',Filename);
-                end
-                id_rem = union(id_rem,uu);
-                continue;
-            end
-            
-            if et-idx_raw_obj.time_dg(dgs(end))>2*nanmax(diff(idx_raw_obj.time_dg(dgs)))
-                fprintf('Re-Indexing file: %s\n',Filename);
-                delete(fileIdx);
-                idx_raw_obj = idx_from_raw_v2(Filename,p.Results.load_bar_comp);
-                save(fileIdx,'idx_raw_obj');
-            end
-            
-            
-            nb_pings=idx_raw_obj.get_nb_pings_per_channels();
+           
             
             if any(nb_pings<=1)
                 id_rem=union(id_rem,uu);

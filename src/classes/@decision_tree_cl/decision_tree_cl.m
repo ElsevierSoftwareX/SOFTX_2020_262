@@ -5,6 +5,7 @@ classdef decision_tree_cl
         Variables
         Nodes
         ClassificationType='';
+        VarName = 'school';
     end
     
     
@@ -16,7 +17,7 @@ classdef decision_tree_cl
             parse(p,XMLFileName);
             
             if exist(XMLFileName,'file')>0
-                [obj.Frequencies,obj.Variables,obj.Nodes,obj.Title,obj.ClassificationType]=parse_classification_xml(XMLFileName);
+                [obj.Frequencies,obj.Variables,obj.Nodes,obj.Title,obj.ClassificationType,obj.VarName]=parse_classification_xml(XMLFileName);
             else
                 warning('Could not find Classification XML file') ;
                 obj.Title='';
@@ -24,6 +25,7 @@ classdef decision_tree_cl
                 obj.Variables={};
                 obj.Nodes={};
                 obj.ClassificationType='';
+                obj.VarName = 'school';
             end
         end
         

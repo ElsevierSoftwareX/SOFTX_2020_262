@@ -7,7 +7,6 @@ addParameter(p,'overlap_only',1,@isnumeric);
 
 parse(p,regions,varargin{:});
 
-
 disp('Merging regions');
 
 idx_bad=find(strcmpi({regions(:).Type},'Bad Data'));

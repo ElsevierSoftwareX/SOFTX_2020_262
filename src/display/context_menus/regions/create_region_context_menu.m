@@ -73,9 +73,10 @@ if isreg>0
     uifreq=uimenu(region_menu,'Label','Copy to other channels');
     uimenu(uifreq,'Label','all','Callback',{@copy_region_callback,main_figure,[]});
     uimenu(uifreq,'Label','choose which Channel(s)','Callback',{@copy_region_callback,main_figure,1});
-    uimenu(region_menu,'Label','Merge Overlapping Regions','CallBack',{@merge_overlapping_regions_callback,main_figure});
-    uimenu(region_menu,'Label','Merge Overlapping Regions (per Tag)','CallBack',{@merge_overlapping_regions_per_tag_callback,main_figure});
-    uimenu(region_menu,'Label','Merge Selected Regions','CallBack',{@merge_selected_regions_callback,main_figure});
+    uimenu(region_menu,'Label','Merge Overlapping Regions (union)','CallBack',{@merge_overlapping_regions_callback,main_figure});
+    uimenu(region_menu,'Label','Merge Overlapping Regions (union per Tag)','CallBack',{@merge_overlapping_regions_per_tag_callback,main_figure});
+    uimenu(region_menu,'Label','Merge Selected Regions (union)','CallBack',{@merge_selected_regions_callback,main_figure,0});
+    uimenu(region_menu,'Label','Merge Selected Regions (intersection)','CallBack',{@merge_selected_regions_callback,main_figure,1});
 end
 
 

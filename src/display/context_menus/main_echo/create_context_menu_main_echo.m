@@ -8,6 +8,9 @@ if isempty(axes_panel_comp)
 end
 curr_disp=get_esp3_prop('curr_disp');
 layer = get_current_layer();
+if isempty(layer)
+    return;
+end
 [~,idx_freq] = layer.get_trans(curr_disp);
 
 delete(findobj(ancestor(axes_panel_comp.bad_transmits,'figure'),'Type','UiContextMenu','-and','Tag','btCtxtMenu'));

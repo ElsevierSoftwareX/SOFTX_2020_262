@@ -21,6 +21,7 @@ addParameter(p,'ref','Surface',@(x) ismember(x,{'Surface' 'Transducer' 'Bottom'}
 addParameter(p,'timeBounds',[0 inf],@isnumeric);
 addParameter(p,'create_regions',true,@islogical);
 addParameter(p,'cluster_tags',true,@islogical);
+addParameter(p,'reslice',true,@islogical);
 addParameter(p,'thr_cluster',10,@isnumeric);
 addParameter(p,'reg_obj',region_cl.empty(),@(x) isa(x,'region_cl'));
 addParameter(p,'l_min_tot',default_l_min_tot,check_l_min_tot);
@@ -147,10 +148,8 @@ end
 idx_freq_tot=union(idx_primary_freqs,idx_secondary_freqs);
 idx_freq_tot(isnan(idx_freq_tot))=[];
 
-reslice = true;
-%reslice = false;
 
-if reslice
+if strcmpi(class_tree_obj.ClassificationType,'by regions')||p.Results.reslice||isempty(layer.EchoIntStruct)||~all(ismember(idx_freq_tot,layer.EchoIntStruct.idx_freq_out))
     layer.multi_freq_slice_transect2D(...
         'idx_regs',idx_schools,...
         'timeBounds',p.Results.timeBounds,...
@@ -232,11 +231,11 @@ end
 for ui=1:length(output_struct.school_struct)
     switch lower(class_tree_obj.ClassificationType)
         case 'by regions'
-            tag=class_tree_obj.apply_classification_tree(output_struct.school_struct{ui});
+            tag=class_tree_obj.apply_classification_tree(output_struct.school_struct{ui},p.Results.load_bar_comp);
             trans_obj_primary.Regions(idx_schools(ui)).Tag=char(tag);
             
         case 'cell by cell'
-            tag=class_tree_obj.apply_classification_tree(output_struct.school_struct{ui});
+            tag=class_tree_obj.apply_classification_tree(output_struct.school_struct{ui},p.Results.load_bar_comp);
             l_min_can = surv_opt_obj.Vertical_slice_size/2;
             h_min_can = surv_opt_obj.Horizontal_slice_size/2;
             nb_min_sples = 1;
@@ -274,24 +273,42 @@ for ui=1:length(output_struct.school_struct)
                 
                 linked_cell_tags = cell(1,numel(tags));
                 candidates_cell_tags = cell(1,numel(tags));
+                i_tags = cell(1,numel(tags));
+                j_tags = cell(1,numel(tags));
                 
                 for itag = 1:numel(tags)
                     tag_can(tag==tags{itag}) = itag;
                     candidates_cell_tags{itag}=find_candidates_v3(tag==tags{itag},output_struct.school_struct{ui}.Range_ref_min(:,1),dist_can,l_min_can,h_min_can,nb_min_sples,'mat',[]);
                     linked_cell_tags{itag}=link_candidates_v2(candidates_cell_tags{itag},dist,output_struct.school_struct{ui}.Range_ref_min(:,1),horz_link_max,vert_link_max,l_min_tot,h_min_tot,[]);
+                    [i_tags{itag},j_tags{itag}]=find(linked_cell_tags{itag});
                 end
                 
                 candidates=find_candidates_v3(tag~="",output_struct.school_struct{ui}.Range_ref_min(:,1),dist_can,l_min_can,h_min_can,nb_min_sples,'mat',[]);
                 
                 linked_tags=link_candidates_v2(candidates,dist,output_struct.school_struct{ui}.Range_ref_min(:,1),horz_link_max,vert_link_max,l_min_tot,h_min_tot,[]);
                 
-                tag_f = layer.EchoIntStruct.output_2D{idx_main}{ui}.Tags;
+                %tag_f = tag;
+                
+                tag_f=strings(size(tag));
                 
                 unique_can = unique(linked_tags(:));
                 unique_can(unique_can==0)=[];
                 n_can = numel(unique_can);
                 
                 prop=cell(n_can,numel(tags));
+%                 
+%                 
+%                 figure()
+%                 imagesc(linked_tags);
+% 
+%                 
+%                 figure()
+%                 
+%                 for itag=1:numel(tags)
+%                     nexttile();
+%                     imagesc(linked_cell_tags{itag});
+%                     title(tags{itag})
+%                 end
                 
                 for ican=1:n_can
                     can_temp = linked_tags==unique_can(ican);
@@ -305,24 +322,50 @@ for ui=1:length(output_struct.school_struct)
                         end
                     end
                 end
-               
-                prop_per_tag = cellfun(@nansum,prop);
+                
+%                 prop_per_tag = cellfun(@nansum,prop);
                 for ican=1:n_can
-                    [~,id_max] = nanmax(prop_per_tag(ican,:));
+                    %[~,id_max] = nanmax(prop_per_tag(ican,:));
                     can_temp = linked_tags==unique_can(ican);
+                    no_overlap = true;
                     for itag = 1:numel(tags)
                         tu = unique(linked_cell_tags{itag});
                         tu(tu==0)=[];
                         for utu = 1:numel(tu)
                             tag_ori=linked_cell_tags{itag}==tu(utu);
+                            if ~any(tag_ori&can_temp)
+                                continue;
+                            end
+                            no_overlap = false;
                             if  prop{ican,itag}(utu)>p.Results.thr_cluster/100
                                 tag_f(tag_ori&can_temp) = tags{itag};
                             else
-                                tag_f(tag_ori&can_temp) = tags{id_max};
+                                min_dist = nan(1,numel(tags));
+                                    [ii,jj] = find(tag_ori);
+                                    ii = nanmean(ii);
+                                    jj = nanmean(jj);
+                                for itag2 = 1:numel(tags)
+                                    if itag~=itag2
+                                        min_dist(itag2)=nanmin(sqrt((ii-i_tags{itag2}).^2+(jj-j_tags{itag2}).^2));
+                                    end
+                                end
+                                [~,id_min]=nanmin(min_dist);
+                                tag_f(tag_ori&can_temp) = tags{id_min};
                             end
                         end
-                    end
+                    end  
                     
+                    if no_overlap
+                        min_dist = nan(1,numel(tags));
+                        [ii,jj] = find(can_temp);
+                        ii = nanmean(ii);
+                        jj = nanmean(jj);
+                        for itag2 = 1:numel(tags)
+                            min_dist(itag2)=nanmin(sqrt((ii-i_tags{itag2}).^2+(jj-j_tags{itag2}).^2));
+                        end
+                        [~,id_min]=nanmin(min_dist);
+                        tag_f(can_temp) = tags{id_min};
+                    end
                 end
                 
             else

@@ -33,7 +33,7 @@
 % Yoann Ladroit, NIWA. Type |help EchoAnalysis.m| for copyright information.
 
 %% Function
-function merge_selected_regions_callback(~,~,main_figure)
+function merge_selected_regions_callback(~,~,main_figure,overlap)
 
 layer=get_current_layer();
 
@@ -51,7 +51,7 @@ if ~isempty(trans_obj.Regions)&&~isempty(selected_regs_ids)
 
     old_regs=trans_obj.Regions;
 
-    new_regions=trans_obj.Regions(idx_regs).merge_regions('overlap_only',0);
+    new_regions=trans_obj.Regions(idx_regs).merge_regions('overlap_only',overlap);
 
     layer.delete_regions_from_uid(curr_disp,selected_regs_ids);
     IDs=trans_obj.add_region(new_regions);

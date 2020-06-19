@@ -4,7 +4,7 @@ if isappdata(main_figure,'Env_tab')
     env_tab_comp=getappdata(main_figure,'Env_tab');
     delete(get(env_tab_comp.env_tab,'children'));
 else
-    env_tab_comp.env_tab=uitab(option_tab_panel,'Title','Environnement','tag','env');
+    env_tab_comp.env_tab=uitab(option_tab_panel,'Title','Environment','tag','env');
 end
 
 %curr_disp=get_esp3_prop('curr_disp');
@@ -17,7 +17,7 @@ curr_temp=envdata.Temperature;
 curr_ss=envdata.SoundSpeed;
 curr_abs=10/1e3;
 
-%%%%%%Environnement%%%%%%
+%%%%%%Environment%%%%%%
 pos=create_pos_3(8,2,gui_fmt.x_sep,gui_fmt.y_sep,gui_fmt.txt_w,gui_fmt.box_w,gui_fmt.box_h);
 
 env_tab_comp.env_group=uipanel(env_tab_comp.env_tab,'Position',[0 0.0 0.4 1],'units','norm');
@@ -49,8 +49,8 @@ env_tab_comp.string_cal=uicontrol(env_tab_comp.env_group,gui_fmt.txtStyle,'posit
 
 p_button=pos{7,1}{1};
 p_button(3)=gui_fmt.txt_w+gui_fmt.x_sep+gui_fmt.box_w;
-uicontrol(env_tab_comp.env_group,gui_fmt.pushbtnStyle,'String','Apply env.','callback',{@apply_envdata_callback,main_figure},'position',p_button,'tooltipstring','Apply Environnemental values');
-uicontrol(env_tab_comp.env_group,gui_fmt.pushbtnStyle,'String','Save env.','callback',{@save_abs_calibration},'position',p_button+[0 -gui_fmt.box_h 0 0],'tooltipstring','Save environnemental values to cal_echo.csv and survey_options.xml');
+uicontrol(env_tab_comp.env_group,gui_fmt.pushbtnStyle,'String','Apply env.','callback',{@apply_envdata_callback,main_figure},'position',p_button,'tooltipstring','Apply environmental values');
+uicontrol(env_tab_comp.env_group,gui_fmt.pushbtnStyle,'String','Save env.','callback',{@save_abs_calibration},'position',p_button+[0 -gui_fmt.box_h 0 0],'tooltipstring','Save environmental values to cal_echo.csv and survey_options.xml');
 
 
 p_button=pos{7,2}{1}+[gui_fmt.box_w+gui_fmt.x_sep 0 0 0];

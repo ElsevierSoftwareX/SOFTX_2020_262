@@ -1,6 +1,6 @@
-function tag=apply_classification_tree(tree_obj,school_struct)
+function tag=apply_classification_tree(tree_obj,var_struct,load_bar_comp)
 
-fields=fieldnames(school_struct);
+fields=fieldnames(var_struct);
 
 missing_variables=setdiff(tree_obj.Variables,fields);
 if ~isempty(missing_variables)
@@ -21,31 +21,41 @@ end
 
 switch lower(tree_obj.ClassificationType)
     case 'cell by cell'
-        idx_to_classify=find(school_struct.eint>0);
-        tag=strings(size(school_struct.eint));
-        [idx_to_classify_j,idx_to_classify_i]=find(school_struct.eint>0);
+        idx_to_classify=find(var_struct.eint>0);
+        tag=strings(size(var_struct.eint));
+        [idx_to_classify_j,idx_to_classify_i]=find(var_struct.eint>0);
     case 'by regions'
-        idx_to_classify=find(~isnan(school_struct.(tree_obj.Variables{1})));
-        [idx_to_classify_j,idx_to_classify_i]=find(~isnan(school_struct.(tree_obj.Variables{1})));
-        tag=strings(size(school_struct.(tree_obj.Variables{1})));
+        idx_to_classify=find(~isnan(var_struct.(tree_obj.Variables{1})));
+        [idx_to_classify_j,idx_to_classify_i]=find(~isnan(var_struct.(tree_obj.Variables{1})));
+        tag=strings(size(var_struct.(tree_obj.Variables{1})));
 end
 
+for ifi=1:numel(tree_obj.Variables)
+    if numel(var_struct.(tree_obj.Variables{ifi}))==1
+        var_tot_struct.(tree_obj.Variables{ifi})=var_struct.(tree_obj.Variables{ifi})*ones(size(tag));
+    elseif isrow(var_struct.(tree_obj.Variables{ifi}))
+        var_tot_struct.(tree_obj.Variables{ifi})=var_struct.(tree_obj.Variables{ifi})(idx_to_classify_i);
+    elseif iscolumn(var_struct.(tree_obj.Variables{ifi}))
+        var_tot_struct.(tree_obj.Variables{ifi})=var_struct.(tree_obj.Variables{ifi})(idx_to_classify_j);
+    else
+        var_tot_struct.(tree_obj.Variables{ifi})=var_struct.(tree_obj.Variables{ifi})(idx_to_classify);
+    end
+end
 
+classified=false(size(var_struct.(tree_obj.Variables{1})));
 
-classified=false(size(school_struct.(tree_obj.Variables{1})));
+if ~isempty(load_bar_comp)
+    set(load_bar_comp.progress_bar, 'Value',0,'Minimum',0,'Maximum',numel(idx_to_classify));
+end
 
 for ui=1:numel(idx_to_classify)
-    for ifi=1:numel(tree_obj.Variables)
-        if numel(school_struct.(tree_obj.Variables{ifi}))==1
-            school.(tree_obj.Variables{ifi})=school_struct.(tree_obj.Variables{ifi});
-        elseif isrow(school_struct.(tree_obj.Variables{ifi}))
-            school.(tree_obj.Variables{ifi})=school_struct.(tree_obj.Variables{ifi})(idx_to_classify_i(ui));
-        elseif iscolumn(school_struct.(tree_obj.Variables{ifi}))
-            school.(tree_obj.Variables{ifi})=school_struct.(tree_obj.Variables{ifi})(idx_to_classify_j(ui));
-        else
-            school.(tree_obj.Variables{ifi})=school_struct.(tree_obj.Variables{ifi})(idx_to_classify(ui));
-        end
+    if ~isempty(load_bar_comp)&&rem(ui,100)==0
+        set(load_bar_comp.progress_bar, 'Value',ui+1);
     end
+    for ifi=1:numel(tree_obj.Variables)
+        struct_to_eval.(tree_obj.Variables{ifi})=var_tot_struct.(tree_obj.Variables{ifi})(ui);
+    end
+    
     IDs_cond=tree_obj.get_condition_node();
     IDs_class=tree_obj.get_class_node();
     if ~isempty(IDs_cond)
@@ -56,7 +66,7 @@ for ui=1:numel(idx_to_classify)
         node=tree_obj.get_node(ID_goto);
         if any(ID_goto==IDs_cond)
             try
-                output=eval(node.Condition);
+                output=eval(strrep(node.Condition,tree_obj.VarName,'struct_to_eval'));
             catch
                 print_errors_and_warnings([],'warning',sprintf('Failed on evaluation of condition %s...',node.Condition));
                 return;
@@ -75,6 +85,5 @@ for ui=1:numel(idx_to_classify)
         end
     end
     
-  
 end
 

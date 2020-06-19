@@ -38,6 +38,9 @@
 function create_context_menu_bottom(main_figure,bottom_line)
 curr_disp=get_esp3_prop('curr_disp');
 layer=get_current_layer();
+if isempty(layer)
+    return;
+end
 [~,idx_freq]=layer.get_trans(curr_disp);
 
 delete(findobj(main_figure,'Type','Uicontextmenu','-and','Tag','botCtxtMenu'));

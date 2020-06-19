@@ -88,6 +88,7 @@ else
     set_current_layer(layer_obj);
     
     update_display_no_layers(main_figure);
+    
 
 end
 update_map_tab(main_figure);
