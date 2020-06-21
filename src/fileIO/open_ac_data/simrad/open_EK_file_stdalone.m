@@ -128,8 +128,12 @@ if ~isequal(Filename_cell, 0)
         try
             ftype = get_ftype(Filename);
             
-             fileIdx = fullfile(path_f,'echoanalysisfiles',[fileN '_echoidx.mat']);
+            fileIdx = fullfile(path_f,'echoanalysisfiles',[fileN '_echoidx.mat']);
             
+            if ~isfolder(fullfile(path_f,'echoanalysisfiles'))
+                mkdir(fullfile(path_f,'echoanalysisfiles'));
+            end
+             
             if ~isfile(fileIdx)
                 %idx_raw_obj=idx_from_raw(Filename,p.Results.load_bar_comp);
                 idx_raw_obj = idx_from_raw_v2(Filename,p.Results.load_bar_comp);
@@ -259,9 +263,7 @@ if ~isequal(Filename_cell, 0)
             
             vec_freq_init = vec_freq;
 
-            if ~isfolder(fullfile(path_f,'echoanalysisfiles'))
-                mkdir(fullfile(path_f,'echoanalysisfiles'));
-            end
+
             
            
             
