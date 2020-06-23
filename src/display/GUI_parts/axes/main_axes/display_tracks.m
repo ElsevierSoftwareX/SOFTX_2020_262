@@ -1,12 +1,12 @@
 function axes_panel_comp=display_tracks(main_figure)
 axes_panel_comp=getappdata(main_figure,'Axes_panel');
-track_h=findobj(axes_panel_comp.main_axes,'tag','track');
+track_h=findobj(axes_panel_comp.echo_obj.main_ax,'tag','track');
 
 delete(track_h);
 
-delete(findobj(ancestor(axes_panel_comp.main_axes,'figure'),'Type','UiContextMenu','-and','Tag','stTrackCtxtMenu'));
+delete(findobj(ancestor(axes_panel_comp.echo_obj.main_ax,'figure'),'Type','UiContextMenu','-and','Tag','stTrackCtxtMenu'));
 
-objt=findobj(axes_panel_comp.main_axes,'Tag','tooltipt');
+objt=findobj(axes_panel_comp.echo_obj.main_ax,'Tag','tooltipt');
 delete(objt);
 
 layer=get_current_layer();
@@ -31,7 +31,7 @@ if isempty(tracks.target_id)
     return;
 end
 
-xd=get(axes_panel_comp.main_echo,'XData');
+xd=get(axes_panel_comp.echo_obj.echo_surf,'XData');
 x_lim=[nanmin(xd(:)) nanmax(xd(:))];
 idx_remove=find(cellfun(@(x) all(x<x_lim(1)|x>x_lim(2)),tracks.target_ping_number));
 tracks.id(idx_remove)=[];
@@ -45,7 +45,7 @@ for k=1:length(tracks.target_id)
     Z_t=Z_st(idx_targets);
     Z_t=Z_t(idx_sort);
 
-    plot_handle=plot(axes_panel_comp.main_axes,X_t,Z_t,'linewidth',0.7,'tag','track','visible',curr_disp.DispTracks,'userdata',tracks.uid{k},'Color',col_tracks,'Color',col_tracks);
+    plot_handle=plot(axes_panel_comp.echo_obj.main_ax,X_t,Z_t,'linewidth',0.7,'tag','track','visible',curr_disp.DispTracks,'userdata',tracks.uid{k},'Color',col_tracks,'Color',col_tracks);
     
     pointerBehavior.enterFcn    = @(src, evt) enter_track_plot_fcn(src, evt,plot_handle);
     pointerBehavior.exitFcn     = @(src, evt) exit_track_plot_fcn(src, evt,plot_handle);

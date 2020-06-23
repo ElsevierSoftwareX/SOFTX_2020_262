@@ -104,10 +104,12 @@ classdef gps_data_cl
         function [obj_out,id_keep]=clean_gps_track(obj,varargin)
             if isempty(obj)
                 obj_out=obj;
+                id_keep=[];
                 return;
             end
             if isempty(obj.Long)
                 obj_out=obj;
+                id_keep=[];
                 return;
             end
             if isempty(varargin)
@@ -118,8 +120,10 @@ classdef gps_data_cl
             id_nn = find(~isnan(obj.Long));
             if numel(id_nn)<2
                 obj_out=obj;
+                id_keep =  1:numel(obj.Long);
                 return;
             end
+            
             [~,~,id_keep]=DouglasPeucker(obj.Long(id_nn),obj.Lat(id_nn),prec,0,1e3,0);
             
 %             figure();

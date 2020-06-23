@@ -171,7 +171,7 @@ end
 set(src,'string', num2str(val,'%.0f'));
 
 axes_panel_comp=getappdata(main_figure,'Axes_panel');
-main_axes=axes_panel_comp.main_axes;
+main_axes=axes_panel_comp.echo_obj.main_ax;
 set(main_axes,'YLim',main_axes.YLim);
 
 end

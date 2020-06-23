@@ -17,7 +17,7 @@ curr_disp=get_esp3_prop('curr_disp');
 [trans_obj,idx_freq]=layer.get_trans(curr_disp);
 
 linestyles={'-' '--' ':' '-.'};
-ax_main=axes_panel_comp.main_axes;
+ax_main=axes_panel_comp.echo_obj.main_ax;
 
 if isempty(idx_ping)
     x_lim=double(get(ax_main,'xlim'));

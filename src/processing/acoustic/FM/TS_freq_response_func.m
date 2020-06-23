@@ -9,7 +9,7 @@ if lbar
 else
     load_bar_comp=[];
 end
-ah=axes_panel_comp.main_axes;
+ah=axes_panel_comp.echo_obj.main_ax;
 clear_lines(ah);
 
 

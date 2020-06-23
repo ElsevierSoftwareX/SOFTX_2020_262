@@ -1,6 +1,5 @@
 function [echo_im_tot,echo_ax_tot,echo_im_bt_tot,trans_obj,text_size,cids]=get_axis_from_cids(main_figure,main_or_mini)
 
-
 echo_im_tot=[];
 echo_ax_tot=[];
 echo_im_bt_tot=[];
@@ -13,14 +12,15 @@ if isempty(layer)
     return;
 end
 secondary_freq=getappdata(main_figure,'Secondary_freq');
+
 for im=1:length(main_or_mini)
     switch main_or_mini{im}
         case 'main'
             axes_panel_comp=getappdata(main_figure,'Axes_panel');
-            echo_im_tmp=axes_panel_comp.main_echo;
-            echo_ax_tmp=axes_panel_comp.main_axes;
-            echo_im_bt_tmp=axes_panel_comp.bad_transmits;
-            set(axes_panel_comp.bottom_plot,'vis',curr_disp.DispBottom);
+            echo_im_tmp=axes_panel_comp.echo_obj.echo_surf;
+            echo_ax_tmp=axes_panel_comp.echo_obj.main_ax;
+            echo_im_bt_tmp=axes_panel_comp.echo_obj.echo_bt_surf;
+            set(axes_panel_comp.echo_obj.bottom_line_plot,'vis',curr_disp.DispBottom);
             [trans_obj_temp,~]=layer.get_trans(curr_disp);
             
             if isempty(trans_obj_temp)
@@ -31,9 +31,9 @@ for im=1:length(main_or_mini)
             text_size(numel(text_size)+1)=8;
         case 'mini'
             mini_axes_comp=getappdata(main_figure,'Mini_axes');
-            echo_im_tmp=mini_axes_comp.mini_echo;
-            echo_ax_tmp=mini_axes_comp.mini_ax;
-            echo_im_bt_tmp=mini_axes_comp.mini_echo_bt;
+            echo_im_tmp=mini_axes_comp.echo_obj.echo_surf;
+            echo_ax_tmp=mini_axes_comp.echo_obj.main_ax;
+            echo_im_bt_tmp=mini_axes_comp.echo_obj.echo_bt_surf;
             
             [trans_obj_temp,~]=layer.get_trans(curr_disp);
             
@@ -45,11 +45,14 @@ for im=1:length(main_or_mini)
             text_size(numel(text_size)+1)=6;
         otherwise
             if ~isempty(secondary_freq)
-                if~isempty(secondary_freq.axes)&&curr_disp.DispSecFreqs>0
-                    idx=(strcmp(main_or_mini{im},{secondary_freq.echoes(:).Tag}));
-                    echo_ax_tmp=secondary_freq.axes(idx);
-                    echo_im_tmp=secondary_freq.echoes(idx);
-                    echo_im_bt_tmp=secondary_freq.echoes_bt(idx);
+                if~isempty(secondary_freq.echo_obj)&&curr_disp.DispSecFreqs>0
+                    tags = secondary_freq.echo_obj.get_tags();
+                    idx=(strcmp(main_or_mini{im},tags));
+                    
+                    echo_ax_tmp=secondary_freq.echo_obj.get_main_ax(idx);
+                    echo_im_tmp=secondary_freq.echo_obj.get_echo_surf(idx);
+                    echo_im_bt_tmp=secondary_freq.echo_obj.get_echo_bt_surf(idx);
+                    
                     for i=1:length(echo_ax_tmp)
                         [trans_obj_temp,~]=layer.get_trans(main_or_mini{im});
                         if isempty(trans_obj_temp)

@@ -1,11 +1,11 @@
 function create_context_menu_mini_echo(main_figure)
 mini_axes_comp=getappdata(main_figure,'Mini_axes');
  
-parent=ancestor(mini_axes_comp.mini_ax,'figure');
+parent=ancestor(mini_axes_comp.echo_obj.main_ax,'figure');
 delete(findobj(parent,'Tag','miniechoCtxtMenu'));
 context_menu=uicontextmenu(parent,'Tag','miniechoCtxtMenu');
-mini_axes_comp.mini_echo_bt.UIContextMenu=context_menu;
-mini_axes_comp.mini_axes.UIContextMenu=context_menu;
+mini_axes_comp.echo_obj.echo_bt_surf.UIContextMenu=context_menu;
+mini_axes_comp.echo_obj.main_ax.UIContextMenu=context_menu;
 mini_axes_comp.patch_obj.UIContextMenu=context_menu;
 
 if parent==main_figure

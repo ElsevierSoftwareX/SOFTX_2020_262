@@ -12,7 +12,7 @@ curr_pings=trans_obj.get_transceiver_pings();
 curr_range=trans_obj.get_transceiver_range();
 curr_dist=trans_obj.GPSDataPing.Dist;
 
-main_axes=axes_panel_comp.main_axes;
+main_axes=axes_panel_comp.echo_obj.main_ax;
 
 u=findobj(main_axes,'tag','lines');
 

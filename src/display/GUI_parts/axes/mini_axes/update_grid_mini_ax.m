@@ -4,7 +4,7 @@ layer=get_current_layer();
 curr_disp=get_esp3_prop('curr_disp');
 mini_axes_comp=getappdata(main_figure,'Mini_axes');
 
-if ~isgraphics(mini_axes_comp.mini_ax.Parent,'figure')
+if ~isgraphics(mini_axes_comp.echo_obj.main_ax.Parent,'figure')
     return;
 end
 
@@ -12,11 +12,11 @@ end
 if isempty(trans_obj)
 return;
 end
-xdata=get(mini_axes_comp.mini_echo,'XData');
-ydata=get(mini_axes_comp.mini_echo,'YData');
+xdata=get(mini_axes_comp.echo_obj.echo_surf,'XData');
+ydata=get(mini_axes_comp.echo_obj.echo_surf,'YData');
 
-idx_pings=ceil(mini_axes_comp.mini_echo.XData);
-idx_r=ceil(mini_axes_comp.mini_echo.YData);
+idx_pings=ceil(mini_axes_comp.echo_obj.echo_surf.XData);
+idx_r=ceil(mini_axes_comp.echo_obj.echo_surf.YData);
 
 curr_disp=init_grid_val(main_figure);
 [dx,dy]=curr_disp.get_dx_dy();
@@ -44,6 +44,6 @@ ydata_grid=trans_obj.get_transceiver_range(idx_r);
 idx_xticks=find((diff(rem(xdata_grid,dx))<0))+1;
 idx_yticks=find((diff(rem(ydata_grid,dy))<0))+1;
 
-set(mini_axes_comp.mini_ax,'XTick',xdata(idx_xticks),'YTick',ydata(idx_yticks),'XAxisLocation','top','XGrid','on','YGrid','on');
+set(mini_axes_comp.echo_obj.main_ax,'XTick',xdata(idx_xticks),'YTick',ydata(idx_yticks),'XAxisLocation','top','XGrid','on','YGrid','on');
 
 end

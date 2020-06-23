@@ -38,6 +38,7 @@ calibration_tab_comp.SACORRECT=uicontrol(calibration_tab_comp.cal_group,gui_fmt.
 
 uicontrol(calibration_tab_comp.cal_group,gui_fmt.pushbtnStyle,'String','Process TS Cal','callback',{@reprocess_TS_calibration,main_figure},'position',p_button);
 calibration_tab_comp.cw_proc(1)=uicontrol(calibration_tab_comp.cal_group,gui_fmt.pushbtnStyle,'String','Save CW  Cal','callback',{@save_CW_calibration_cback},'position',p_button+[0 -gui_fmt.box_h 0 0]);
+calibration_tab_comp.cw_proc(1)=uicontrol(calibration_tab_comp.cal_group,gui_fmt.pushbtnStyle,'String','Load FM Cal from .xml','callback',{@load_FM_cal_cback},'position',p_button+[0 -2*gui_fmt.box_h 0 0]);
 calibration_tab_comp.fm_proc(1)=uicontrol(calibration_tab_comp.cal_group,gui_fmt.pushbtnStyle,'String','Disp.Cal.','callback',{@display_cal,main_figure},'position',p_button+[p_button(3) -gui_fmt.box_h 0 0]);
 
 uicontrol(calibration_tab_comp.cal_group,gui_fmt.txtStyle,'string','Sphere:','position',pos{5,1}{1});
@@ -131,4 +132,20 @@ end
 
 function save_CW_calibration_cback(~,~)
 save_cal_echo_file();
+end
+
+
+function load_FM_cal_cback(~,~)
+
+layer = get_current_layer();
+[path_f,~] = fileparts(layer.Filename{1});
+
+[filename, path_f] = uigetfile({fullfile(path_f,'*.xml')},'Select XML calibration file');
+
+if isequal(filename,0)
+   return;
+end
+
+
+
 end

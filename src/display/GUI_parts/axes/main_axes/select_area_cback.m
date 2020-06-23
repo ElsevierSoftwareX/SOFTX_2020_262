@@ -49,7 +49,7 @@ if isempty(axes_panel_comp)
     return;
 end
 
-ah=axes_panel_comp.main_axes;
+ah=axes_panel_comp.echo_obj.main_ax;
 
 switch src.SelectionType
     case 'normal'

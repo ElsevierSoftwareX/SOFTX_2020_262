@@ -8,9 +8,9 @@ end
 obj=gco;
 
 axes_panel_comp=getappdata(main_figure,'Axes_panel');
-ah=axes_panel_comp.main_axes;
+ah=axes_panel_comp.echo_obj.main_ax;
 
-if strcmp(src.SelectionType,'normal')&&axes_panel_comp.main_echo==obj
+if strcmp(src.SelectionType,'normal')&&axes_panel_comp.echo_obj.echo_surf==obj
     
     u=get(ah,'children');
     
@@ -21,8 +21,8 @@ if strcmp(src.SelectionType,'normal')&&axes_panel_comp.main_echo==obj
         end
     end
     
-    xdata=get(axes_panel_comp.main_echo,'XData');
-    ydata=get(axes_panel_comp.main_echo,'YData');
+    xdata=get(axes_panel_comp.echo_obj.echo_surf,'XData');
+    ydata=get(axes_panel_comp.echo_obj.echo_surf,'YData');
     cp = ah.CurrentPoint;
     
     xinit = cp(1,1);

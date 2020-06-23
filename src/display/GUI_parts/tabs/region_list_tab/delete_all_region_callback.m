@@ -48,7 +48,7 @@ switch choice
         [trans_obj,~]=layer.get_trans(curr_disp);
         list_reg = trans_obj.regions_to_str();
         axes_panel_comp=getappdata(main_figure,'Axes_panel');
-        ah=axes_panel_comp.main_axes;
+        ah=axes_panel_comp.echo_obj.main_ax;
         clear_lines(ah);
         
         if ~isempty(list_reg)

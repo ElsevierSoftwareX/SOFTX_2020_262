@@ -74,7 +74,7 @@ try
             
             
             axes_panel_comp=getappdata(main_figure,'Axes_panel');
-            main_axes=axes_panel_comp.main_axes;
+            main_axes=axes_panel_comp.echo_obj.main_ax;
             
             if ~isfield(axes_panel_comp,'main_echo')
                 return;

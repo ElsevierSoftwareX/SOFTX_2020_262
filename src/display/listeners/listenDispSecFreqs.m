@@ -35,6 +35,8 @@ switch curr_disp.DispSecFreqs
             secondary_freq_init=init_secondary_axes_struct();
           
             setappdata(main_figure,'Secondary_freq',secondary_freq_init);
+        else
+           setappdata(main_figure,'Secondary_freq',secondary_freq_init); 
         end
 end
 

@@ -194,7 +194,7 @@ for iax=1:length(main_axes_tot)
                 iptaddcallback(reg_plot(ii),'ButtonDownFcn',{@move_reg_callback,reg_curr.Unique_ID,main_figure});
             end
             
-            if main_axes==axes_panel_comp.main_axes
+            if main_axes==axes_panel_comp.echo_obj.main_ax
                 create_region_context_menu(reg_plot,main_figure,reg_curr.Unique_ID);
                 ipt.enterFcn =  @(figHandle, currentPoint)...
                     set(figHandle, 'Pointer', 'hand');
@@ -207,7 +207,6 @@ for iax=1:length(main_axes_tot)
             print_errors_and_warnings(1,'error',err);
         end
     end
-    order_stack(main_axes);
     
 end
 

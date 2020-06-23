@@ -51,7 +51,7 @@ trans=layer.get_trans(curr_disp);
 xdata_tot=trans.get_transceiver_pings();
 ydata_tot=trans.get_transceiver_samples();
 
-ah=axes_panel_comp.main_axes;
+ah=axes_panel_comp.echo_obj.main_ax;
 
 cp = ah.CurrentPoint;
 xx=ah.XLim;

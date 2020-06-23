@@ -41,7 +41,7 @@ function load_mini_axes(main_figure,parent,pos_in_parent)
 if isappdata(main_figure,'Mini_axes')
     mini_axes_comp=getappdata(main_figure,'Mini_axes');
     
-    delete(mini_axes_comp.mini_ax);
+    delete(mini_axes_comp.echo_obj.main_ax);
     
     rmappdata(main_figure,'Mini_axes');
 end
@@ -55,60 +55,24 @@ pointerBehavior.traverseFcn = @(figHandle, currentPoint)...
     set(figHandle, 'Pointer', 'fleur');
 
 
-user_data.geometry_y='samples';
-user_data.geometry_x='pings';
+mini_axes_comp.echo_obj=echo_disp_cl(parent,'pos_in_parent',pos_in_parent,'disp_hori_ax',false,'disp_vert_ax',false,'disp_colorbar',false,'disp_grid','off','ax_tag','mini');
 
-
-mini_axes_comp.mini_ax=axes('Parent',parent,'Interactions',[],'Toolbar',[],...
-    'Units','normalized','box','on',...
-    'Position',pos_in_parent,'visible','on',...
-    'NextPlot','add','box','on','tag','mini',...
-    'ClippingStyle','rectangle','UserData',user_data);
-
-rm_axes_interactions(mini_axes_comp.mini_ax);
-%iptSetPointerBehavior(mini_axes_comp.mini_ax,pointerBehavior);
-%curr_disp=get_esp3_prop('curr_disp');
-echo_init=zeros(2,2);
-
-usrdata=init_echo_usrdata();
-
-alpha_prop='flat';
-%alpha_prop='texturemap';
-alpha_prop_bt='flat';
-
-mini_axes_comp.mini_echo=pcolor(mini_axes_comp.mini_ax,echo_init);
-mini_axes_comp.mini_echo_bt=pcolor(mini_axes_comp.mini_ax,zeros(size(echo_init),'uint8'));
-
-set(mini_axes_comp.mini_echo,...    
-    'Facealpha',alpha_prop,...
-    'FaceColor',alpha_prop,...
-    'LineStyle','none',...
-    'AlphaDataMapping','direct',...
-    'tag','echo','UserData',usrdata);
-
-set(mini_axes_comp.mini_echo_bt,...
-    'Facealpha',alpha_prop_bt,...
-    'FaceColor','k',...
-    'LineStyle','none',...
-    'AlphaDataMapping','direct',....
-    'tag','bad_transmits');
-
-mini_axes_comp.bottom_plot=plot(mini_axes_comp.mini_ax,nan,nan,'tag','bottom');
-mini_axes_comp.patch_obj=patch(mini_axes_comp.mini_ax,'Faces',[],'Vertices',[],'FaceColor',[0 0 0.6],'FaceAlpha',.2,'EdgeColor',[0 0 0.6],'Tag','zoom_area','LineWidth',1);
-mini_axes_comp.patch_lim_obj=patch(mini_axes_comp.mini_ax,'Faces',[],'Vertices',[],'FaceColor','k','FaceAlpha',0,'EdgeColor','k','Tag','disp_area','LineWidth',0.5,'Linestyle','--');
+mini_axes_comp.patch_obj=patch(mini_axes_comp.echo_obj.main_ax,'Faces',[],'Vertices',[],'FaceColor',[0 0 0.6],'FaceAlpha',.2,'EdgeColor',[0 0 0.6],'Tag','zoom_area','LineWidth',1);
+mini_axes_comp.patch_lim_obj=patch(mini_axes_comp.echo_obj.main_ax,'Faces',[],'Vertices',[],'FaceColor','k','FaceAlpha',0,'EdgeColor','k','Tag','disp_area','LineWidth',0.5,'Linestyle','--');
 
 iptSetPointerBehavior(mini_axes_comp.patch_obj,pointerBehavior);
 
-set(mini_axes_comp.mini_ax,'XTickLabels',[],'YTickLabels',[]);
+set(mini_axes_comp.echo_obj.main_ax,'XTickLabels',[],'YTickLabels',[]);
 
+
+set(mini_axes_comp.echo_obj.echo_surf,'ButtonDownFcn',{@zoom_in_callback_mini_ax,main_figure});
+set(mini_axes_comp.echo_obj.echo_bt_surf,'ButtonDownFcn',{@zoom_in_callback_mini_ax,main_figure});
 set(mini_axes_comp.patch_obj,'ButtonDownFcn',{@move_patch_mini_axis_grab,main_figure});
-set(mini_axes_comp.mini_echo,'ButtonDownFcn',{@zoom_in_callback_mini_ax,main_figure});
-set(mini_axes_comp.mini_echo_bt,'ButtonDownFcn',{@zoom_in_callback_mini_ax,main_figure});
 
 if isgraphics(parent,'figure')
     set(parent,'SizeChangedFcn',{@resize_mini_ax,main_figure});
 else
-    set(mini_axes_comp.mini_ax,'ButtonDownFcn',{@move_mini_axis_grab,main_figure});
+    set(mini_axes_comp.echo_obj.main_ax,'ButtonDownFcn',{@move_mini_axis_grab,main_figure});
 end
 
 setappdata(main_figure,'Mini_axes',mini_axes_comp);

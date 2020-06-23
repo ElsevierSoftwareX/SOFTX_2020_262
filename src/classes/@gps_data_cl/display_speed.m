@@ -45,7 +45,7 @@ end
 if ~isempty(parenth)
     axes_panel_comp=getappdata(parenth,'Axes_panel');
     if~isempty(axes_panel_comp)
-        ah=axes_panel_comp.haxes;
+        ah=axes_panel_comp.echo_obj.hori_ax;
         x=1:numel(obj.Time);
     else
         ah=[];

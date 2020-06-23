@@ -16,12 +16,12 @@ pos_colorbar=[1-0.05 0 0.05 1];
 
 switch state_colorbar
     case 'on'
-        set(axes_panel_comp.colorbar,'visible','on');
+        set(axes_panel_comp.echo_obj.colorbar_h,'visible','on');
         hpos=hpos+[0 0 -pos_colorbar(3) 0];
         pos=pos+[0 0 -pos_colorbar(3) 0];
         
     case 'off'
-        set(axes_panel_comp.colorbar,'visible','off');
+        set(axes_panel_comp.echo_obj.colorbar_h,'visible','off');
 end
 
 
@@ -42,10 +42,10 @@ pos_colorbar(1)=pos_colorbar(1)+width_colorbar*1/3;
 height_col=pos_colorbar(4);
 pos_colorbar(2)=height_col*0.05;
 pos_colorbar(4)=height_col*0.9;
-set(axes_panel_comp.colorbar,'Position',pos_colorbar);
+set(axes_panel_comp.echo_obj.colorbar_h,'Position',pos_colorbar);
 
 
-set(axes_panel_comp.main_axes,'Position',pos);
-set(axes_panel_comp.vaxes,'Position',vpos);
-set(axes_panel_comp.haxes,'Position',hpos);
+set(axes_panel_comp.echo_obj.main_ax,'Position',pos);
+set(axes_panel_comp.echo_obj.vert_ax,'Position',vpos);
+set(axes_panel_comp.echo_obj.hori_ax,'Position',hpos);
 end

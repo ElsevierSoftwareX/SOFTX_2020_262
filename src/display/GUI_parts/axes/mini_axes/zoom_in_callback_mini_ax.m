@@ -42,7 +42,7 @@ mini_ax_comp=getappdata(main_figure,'Mini_axes');
 curr_disp=get_esp3_prop('curr_disp');
 
  [cmap,col_ax,col_lab,col_grid,col_bot,col_txt,~]=init_cmap(curr_disp.Cmap);
-ah=mini_ax_comp.mini_ax;
+ah=mini_ax_comp.echo_obj.main_ax;
 
 current_fig=gcf;
 
@@ -56,8 +56,8 @@ end
 
 clear_lines(ah);
 
-xdata=get(mini_ax_comp.mini_echo,'XData');
-ydata=get(mini_ax_comp.mini_echo,'YData');
+xdata=get(mini_ax_comp.echo_obj.echo_surf,'XData');
+ydata=get(mini_ax_comp.echo_obj.echo_surf,'YData');
 
 cp = ah.CurrentPoint;
 
@@ -170,8 +170,8 @@ replace_interaction(current_fig,'interaction','WindowButtonUpFcn','id',2,'intera
         
        
         axes_panel_comp=getappdata(main_figure,'Axes_panel');
-        set(axes_panel_comp.main_axes,'XLim',x_lim);
-        set(axes_panel_comp.main_axes,'YLim',y_lim);
+        set(axes_panel_comp.echo_obj.main_ax,'XLim',x_lim);
+        set(axes_panel_comp.echo_obj.main_ax,'YLim',y_lim);
         set(patch_obj,'Vertices',new_vert);
         
         end

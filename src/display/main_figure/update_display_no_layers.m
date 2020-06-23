@@ -9,7 +9,7 @@ delete(axes_panel_comp.axes_panel);
 rmappdata(main_figure,'Axes_panel');
 
 mini_axes_comp=getappdata(main_figure,'Mini_axes');
-delete(mini_axes_comp.mini_ax);
+delete(mini_axes_comp.echo_obj.main_ax);
 rmappdata(main_figure,'Mini_axes');
 
 if isappdata(main_figure,'Secondary_freq')

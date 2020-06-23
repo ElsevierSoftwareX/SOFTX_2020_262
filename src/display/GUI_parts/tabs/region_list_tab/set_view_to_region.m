@@ -23,7 +23,7 @@ x_reg_lim=xdata(reg_curr.Idx_pings);
 y_reg_lim=ydata(reg_curr.Idx_r);
 
 
-ah=axes_panel_comp.main_axes;
+ah=axes_panel_comp.echo_obj.main_ax;
 x_lim=get(ah,'xlim');
 y_lim=get(ah,'ylim');
 

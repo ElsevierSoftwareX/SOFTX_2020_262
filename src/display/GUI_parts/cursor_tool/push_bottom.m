@@ -65,8 +65,8 @@ for i=1:length(childs)
     
 end
 
-ah=axes_panel_comp.main_axes;
-echo=axes_panel_comp.main_echo;
+ah=axes_panel_comp.echo_obj.main_ax;
+echo=axes_panel_comp.echo_obj.echo_surf;
 
 di=-1/2;
 

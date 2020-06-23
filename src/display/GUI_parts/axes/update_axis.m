@@ -67,7 +67,7 @@ for iax=1:length(echo_ax_tot)
             axes_panel_comp.axes_panel.UserData = curr_disp.ChannelID;
             delete(axes_panel_comp.listeners);
             axes_panel_comp.listeners=[];
-            clear_lines(axes_panel_comp.main_axes);
+            clear_lines(axes_panel_comp.echo_obj.main_ax);
             
         case 'mini'
             
@@ -76,7 +76,7 @@ for iax=1:length(echo_ax_tot)
             x=[1 nb_pings];
         otherwise
             off_disp=curr_disp.DispSecFreqsWithOffset;
-            x=double(get(axes_panel_comp.main_axes,'xlim'));
+            x=double(get(axes_panel_comp.echo_obj.main_ax,'xlim'));
             
             dr=nanmean(diff(range_t));
             y1=(curr_disp.R_disp(1)-range_t(1))/dr;
@@ -111,11 +111,11 @@ for iax=1:length(echo_ax_tot)
             if diff(echo_ax_tot(iax).UserData.ylim)>0
                 echo_ax_tot(iax).YLim=echo_ax_tot(iax).UserData.ylim;
             end
-            ylim_ax=get(axes_panel_comp.main_axes,'YLim');
+            ylim_ax=get(axes_panel_comp.echo_obj.main_ax,'YLim');
             
             if new
                 if ~isempty(ylim_ax)
-                    if strcmpi(axes_panel_comp.main_axes.UserData.geometry_y,'samples')
+                    if strcmpi(axes_panel_comp.echo_obj.main_ax.UserData.geometry_y,'samples')
                         curr_disp.R_disp=range_t(round(ylim_ax));
                     else
                         curr_disp.R_disp=ylim_ax;
@@ -126,7 +126,7 @@ for iax=1:length(echo_ax_tot)
                 
                 
             end
-            axes_panel_comp.listeners=addlistener(axes_panel_comp.main_axes,'YLim','PostSet',@(src,envdata)listenYLim(src,envdata,main_figure));
+            axes_panel_comp.listeners=addlistener(axes_panel_comp.echo_obj.main_ax,'YLim','PostSet',@(src,envdata)listenYLim(src,envdata,main_figure));
             setappdata(main_figure,'Axes_panel',axes_panel_comp);
         case 'mini'
 
@@ -136,13 +136,13 @@ for iax=1:length(echo_ax_tot)
             if diff(echo_ax_tot(iax).UserData.ylim)>0
                 echo_ax_tot(iax).YLim=echo_ax_tot(iax).UserData.ylim;
             end
-            x_lim=get(axes_panel_comp.main_axes,'xlim');
-            y_lim=get(axes_panel_comp.main_axes,'ylim');
+            x_lim=get(axes_panel_comp.echo_obj.main_ax,'xlim');
+            y_lim=get(axes_panel_comp.echo_obj.main_ax,'ylim');
             v1 = [x_lim(1) y_lim(1);x_lim(2) y_lim(1);x_lim(2) y_lim(2);x_lim(1) y_lim(2)];
             f1=[1 2 3 4];
             set(mini_axes_comp.patch_obj,'Faces',f1,'Vertices',v1);
-            xd=get(axes_panel_comp.main_echo,'xdata');
-            yd=get(axes_panel_comp.main_echo,'ydata');
+            xd=get(axes_panel_comp.echo_obj.echo_surf,'xdata');
+            yd=get(axes_panel_comp.echo_obj.echo_surf,'ydata');
             
             v2 = [nanmin(xd) nanmin(yd);nanmax(xd) nanmin(yd);nanmax(xd) nanmax(yd);nanmin(xd) nanmax(yd)];
             f2=[1 2 3 4];

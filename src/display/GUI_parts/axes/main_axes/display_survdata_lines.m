@@ -7,7 +7,7 @@ curr_disp=get_esp3_prop('curr_disp');
 [trans_obj,idx_freq]=layer.get_trans(curr_disp);
 
 
-ax=axes_panel_comp.main_axes;
+ax=axes_panel_comp.echo_obj.main_ax;
 xdata=trans_obj.get_transceiver_pings();
 %ydata=trans_obj.get_transceiver_samples();
 

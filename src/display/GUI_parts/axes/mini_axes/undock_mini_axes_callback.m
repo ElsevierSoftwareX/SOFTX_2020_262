@@ -17,9 +17,9 @@ switch dest
         disp_tab_comp=getappdata(main_figure,'Display_tab');
         parent=disp_tab_comp.display_tab;
         mini_axes_comp=getappdata(main_figure,'Mini_axes');
-        if isvalid(mini_axes_comp.mini_ax)
-            if ~isa(mini_axes_comp.mini_ax.Parent,'matlab.ui.container.Tab')
-                delete(mini_axes_comp.mini_ax.Parent);
+        if ~isempty(mini_axes_comp)&&isvalid(mini_axes_comp.echo_obj.main_ax)
+            if ~isa(mini_axes_comp.echo_obj.main_ax.Parent,'matlab.ui.container.Tab')
+                delete(mini_axes_comp.echo_obj.main_ax.Parent);
             end
         end
     otherwise                
@@ -33,7 +33,7 @@ switch dest
             'CloseRequestFcn',@close_min_axis,...
             'Tag','mini_ax');
         iptPointerManager(parent);
-        delete(mini_axes_comp.mini_ax);
+        delete(mini_axes_comp.echo_obj.main_ax);
         initialize_interactions_mini_ax(parent,main_figure);
 end
 

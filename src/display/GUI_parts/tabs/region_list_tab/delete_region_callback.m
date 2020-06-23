@@ -44,7 +44,7 @@ end
 curr_disp=get_esp3_prop('curr_disp');
 
 axes_panel_comp=getappdata(main_figure,'Axes_panel');
-ah=axes_panel_comp.main_axes;
+ah=axes_panel_comp.echo_obj.main_ax;
 clear_lines(ah);
 
 if isempty(ID)

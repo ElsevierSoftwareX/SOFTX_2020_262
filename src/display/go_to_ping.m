@@ -7,7 +7,7 @@ if isempty(layer)
 end
 
 axes_panel_comp=getappdata(main_figure,'Axes_panel');
-ah=axes_panel_comp.main_axes;
+ah=axes_panel_comp.echo_obj.main_ax;
 
 
 curr_disp=get_esp3_prop('curr_disp');

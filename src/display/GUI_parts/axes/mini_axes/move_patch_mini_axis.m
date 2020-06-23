@@ -9,7 +9,7 @@ end
 
 
 
-ah=mini_axes_comp.mini_ax;
+ah=mini_axes_comp.echo_obj.main_ax;
 
 if evt.Button==1
     cp = ah.CurrentPoint;
@@ -47,7 +47,7 @@ if evt.Button==1
     
     
     axes_panel_comp=getappdata(main_figure,'Axes_panel');
-    main_axes=axes_panel_comp.main_axes;
+    main_axes=axes_panel_comp.echo_obj.main_ax;
     xlim=[nanmin(patch_obj.Vertices(:,1)) nanmax(patch_obj.Vertices(:,1))];
     ylim=[nanmin(patch_obj.Vertices(:,2)) nanmax(patch_obj.Vertices(:,2))];
     

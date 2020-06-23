@@ -13,11 +13,11 @@ if isempty(layer)
 end
 [~,idx_freq] = layer.get_trans(curr_disp);
 
-delete(findobj(ancestor(axes_panel_comp.bad_transmits,'figure'),'Type','UiContextMenu','-and','Tag','btCtxtMenu'));
+delete(findobj(ancestor(axes_panel_comp.echo_obj.echo_bt_surf,'figure'),'Type','UiContextMenu','-and','Tag','btCtxtMenu'));
 
 % initialize context menu
-context_menu = uicontextmenu(ancestor(axes_panel_comp.bad_transmits,'figure'),'Tag','btCtxtMenu');
-axes_panel_comp.bad_transmits.UIContextMenu = context_menu;
+context_menu = uicontextmenu(ancestor(axes_panel_comp.echo_obj.echo_bt_surf,'figure'),'Tag','btCtxtMenu');
+axes_panel_comp.echo_obj.echo_bt_surf.UIContextMenu = context_menu;
 
 % Ping Analysis
 analysis_menu = uimenu(context_menu,'Label','Ping Analysis');
@@ -194,7 +194,7 @@ curr_disp=get_esp3_prop('curr_disp');
 [trans_obj,idx_freq] = layer.get_trans(curr_disp);
 trans = trans_obj;
 
-ax_main = axes_panel_comp.main_axes;
+ax_main = axes_panel_comp.echo_obj.main_ax;
 x_lim = double(get(ax_main,'xlim'));
 
 cp = ax_main.CurrentPoint;

@@ -31,7 +31,7 @@ end
 
 if isappdata(main_figure,'Axes_panel')
     axes_panel_comp=getappdata(main_figure,'Axes_panel');
-    ah=axes_panel_comp.main_axes;
+    ah=axes_panel_comp.echo_obj.main_ax;
     clear_lines_temp(ah);
     select_area=getappdata(main_figure,'SelectArea');
     delete(select_area.patch_h);
@@ -42,7 +42,6 @@ if isappdata(main_figure,'Axes_panel')
 end
 
 
-%order_axes(main_figure);
 %profile off;
 %profile viewer;
 end

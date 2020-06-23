@@ -41,7 +41,7 @@ function inter_region_create(main_figure,mode,func)
 layer=get_current_layer();
 axes_panel_comp=getappdata(main_figure,'Axes_panel');
 curr_disp=get_esp3_prop('curr_disp');
-ah=axes_panel_comp.main_axes;
+ah=axes_panel_comp.echo_obj.main_ax;
 
 switch main_figure.SelectionType
     case 'normal'
@@ -50,8 +50,8 @@ switch main_figure.SelectionType
         %         curr_disp.CursorMode='Normal';
         return;
 end
-axes_panel_comp.bad_transmits.UIContextMenu=[];
-axes_panel_comp.bottom_plot.UIContextMenu=[];
+axes_panel_comp.echo_obj.echo_bt_surf.UIContextMenu=[];
+axes_panel_comp.echo_obj.bottom_line_plot.UIContextMenu=[];
  [cmap,col_ax,col_line,col_grid,col_bot,col_txt,~]=init_cmap(curr_disp.Cmap);
 
 clear_lines(ah);
@@ -63,8 +63,8 @@ ydata=trans_obj.get_transceiver_samples();
 rr=trans_obj.get_transceiver_range();
 
 
-%xdata=double(get(axes_panel_comp.main_echo,'XData'));
-%ydata=double(get(axes_panel_comp.main_echo,'YData'));
+%xdata=double(get(axes_panel_comp.echo_obj.echo_surf,'XData'));
+%ydata=double(get(axes_panel_comp.echo_obj.echo_surf,'YData'));
 x_lim=get(ah,'xlim');
 y_lim=get(ah,'ylim');
 cp = ah.CurrentPoint;

@@ -10,7 +10,7 @@ end
 
 axes_panel_comp=getappdata(main_figure,'Axes_panel');
 
-ah=axes_panel_comp.main_axes;
+ah=axes_panel_comp.echo_obj.main_ax;
 xlim_n = ah.XLim;
 ylim_n = ah.YLim;
 

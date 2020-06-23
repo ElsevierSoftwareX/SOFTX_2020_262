@@ -38,10 +38,10 @@ function move_patch_mini_axis_grab(~,~,main_figure)
 
 mini_axes_comp=getappdata(main_figure,'Mini_axes');
 axes_panel_comp=getappdata(main_figure,'Axes_panel');
-main_axes=axes_panel_comp.main_axes;
+main_axes=axes_panel_comp.echo_obj.main_ax;
 patch_obj=mini_axes_comp.patch_obj;
 %curr_disp = get_esp3_prop('curr_disp');
-ah=mini_axes_comp.mini_ax;
+ah=mini_axes_comp.echo_obj.main_ax;
 
 if isempty(patch_obj.Vertices)
     return;
@@ -49,8 +49,8 @@ end
 
 current_fig=gcf;
 
-set(mini_axes_comp.mini_echo,'ButtonDownFcn','');
-set(mini_axes_comp.mini_echo_bt,'ButtonDownFcn','');
+set(mini_axes_comp.echo_obj.echo_surf,'ButtonDownFcn','');
+set(mini_axes_comp.echo_obj.echo_bt_surf,'ButtonDownFcn','');
 
 
 if strcmp(current_fig.SelectionType,'normal')
@@ -115,8 +115,8 @@ end
         set(main_axes,'xlim',[nanmin(patch_obj.Vertices(:,1)) nanmax(patch_obj.Vertices(:,1))]);
         set(main_axes,'ylim',[nanmin(patch_obj.Vertices(:,2)) nanmax(patch_obj.Vertices(:,2))]);
         drawnow;
-        set(mini_axes_comp.mini_echo,'ButtonDownFcn',{@zoom_in_callback_mini_ax,main_figure});
-        set(mini_axes_comp.mini_echo_bt,'ButtonDownFcn',{@zoom_in_callback_mini_ax,main_figure});
+        set(mini_axes_comp.echo_obj.echo_surf,'ButtonDownFcn',{@zoom_in_callback_mini_ax,main_figure});
+        set(mini_axes_comp.echo_obj.echo_bt_surf,'ButtonDownFcn',{@zoom_in_callback_mini_ax,main_figure});
         
         
         

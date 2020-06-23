@@ -79,10 +79,10 @@ replace_interaction(main_figure,'interaction','WindowButtonUpFcn','id',2);
 switch state
     case'on'
         %iptPointerManager(main_figure,'disable');
-        delete(axes_panel_comp.bad_transmits.UIContextMenu);
-        delete(axes_panel_comp.bottom_plot.UIContextMenu);
-        axes_panel_comp.bad_transmits.UIContextMenu=[];
-        axes_panel_comp.bottom_plot.UIContextMenu=[];
+        delete(axes_panel_comp.echo_obj.echo_bt_surf.UIContextMenu);
+        delete(axes_panel_comp.echo_obj.bottom_line_plot.UIContextMenu);
+        axes_panel_comp.echo_obj.echo_bt_surf.UIContextMenu=[];
+        axes_panel_comp.echo_obj.bottom_line_plot.UIContextMenu=[];
         
         switch tag
             case 'pan'
@@ -96,8 +96,8 @@ switch state
             case 'ed_bot'
                 replace_interaction(main_figure,'interaction','WindowButtonDownFcn','id',1,'interaction_fcn',{@edit_bottom,main_figure});
             case 'ed_bot_sup'
-                context_menu=uicontextmenu(ancestor(axes_panel_comp.bad_transmits,'figure'),'Tag','btCtxtMenu');
-                axes_panel_comp.bad_transmits.UIContextMenu=context_menu;
+                context_menu=uicontextmenu(ancestor(axes_panel_comp.echo_obj.echo_bt_surf,'figure'),'Tag','btCtxtMenu');
+                axes_panel_comp.echo_obj.echo_bt_surf.UIContextMenu=context_menu;
                 uimenu(context_menu,'Label','Small','userdata',5,'Callback',@check_only_one);
                 uimenu(context_menu,'Label','Medium','userdata',10,'Callback',@check_only_one,'checked','on');
                 uimenu(context_menu,'Label','Large','userdata',25,'Callback',@check_only_one);
@@ -107,8 +107,8 @@ switch state
                 %replace_interaction(main_figure,'interaction','WindowButtonMotionFcn','id',3,'interaction_fcn',{@display_rectangle_bot_brush,main_figure});
             case 'ed_bot_spline'
                 
-                context_menu=uicontextmenu(ancestor(axes_panel_comp.bad_transmits,'figure'),'Tag','btCtxtMenu');
-                axes_panel_comp.bad_transmits.UIContextMenu=context_menu;
+                context_menu=uicontextmenu(ancestor(axes_panel_comp.echo_obj.echo_bt_surf,'figure'),'Tag','btCtxtMenu');
+                axes_panel_comp.echo_obj.echo_bt_surf.UIContextMenu=context_menu;
                 uimenu(context_menu,'Label','Small radius (2px)','userdata',2,'Callback',@check_only_one);
                 uimenu(context_menu,'Label','Medium radius (5px)','userdata',5,'Callback',@check_only_one,'checked','on');
                 uimenu(context_menu,'Label','Large radius (10px)','userdata',10,'Callback',@check_only_one);
@@ -141,14 +141,14 @@ switch state
                 cursor_tools_comp.pointer.State='on';
 %                 iptPointerManager(main_figure,'enable');
                 create_context_menu_main_echo(main_figure);
-                create_context_menu_bottom(main_figure,axes_panel_comp.bottom_plot);
+                create_context_menu_bottom(main_figure,axes_panel_comp.echo_obj.bottom_line_plot);
         end
     case 'off'
         replace_interaction(main_figure,'interaction','WindowButtonDownFcn','id',1,'interaction_fcn',{@select_area_cback,main_figure});
         cursor_tools_comp.pointer.State='on';
         %iptPointerManager(main_figure,'enable');    
         create_context_menu_main_echo(main_figure);
-        create_context_menu_bottom(main_figure,axes_panel_comp.bottom_plot);
+        create_context_menu_bottom(main_figure,axes_panel_comp.echo_obj.bottom_line_plot);
         
 end
 order_stacks_fig(main_figure,curr_disp);

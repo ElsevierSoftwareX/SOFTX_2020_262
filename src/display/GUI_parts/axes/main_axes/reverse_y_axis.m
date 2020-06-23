@@ -6,8 +6,8 @@ reverse_y_axis_state=get(main_menu.reverse_y_axis,'checked');
 
 switch reverse_y_axis_state
     case 'off'
-        set(axes_panel_comp.main_axes,'YDir','reverse');
+        set(axes_panel_comp.echo_obj.main_ax,'YDir','reverse');
     case 'on'
-        set(axes_panel_comp.main_axes,'YDir','normal');
+        set(axes_panel_comp.echo_obj.main_ax,'YDir','normal');
 end
 

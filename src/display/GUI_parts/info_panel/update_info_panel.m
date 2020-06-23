@@ -64,7 +64,7 @@ try
     Long=trans_obj.GPSDataPing.Long;
     
     
-    ax_main=axes_panel_comp.main_axes;
+    ax_main=axes_panel_comp.echo_obj.main_ax;
     cp = ax_main.CurrentPoint;
     
     if force_update&&any(cp(1:2)<0)
@@ -78,14 +78,14 @@ try
     x_lim=double(get(ax_main,'xlim'));
     y_lim=double(get(ax_main,'ylim'));
     
-    set(axes_panel_comp.haxes,'xlim',x_lim);
-    set(axes_panel_comp.vaxes,'ylim',y_lim);
+    set(axes_panel_comp.echo_obj.hori_ax,'xlim',x_lim);
+    set(axes_panel_comp.echo_obj.vert_ax,'ylim',y_lim);
     
     
-    cdata=single(get(axes_panel_comp.main_echo,'CData'));
+    cdata=single(get(axes_panel_comp.echo_obj.echo_surf,'CData'));
     
-    xdata=double(get(axes_panel_comp.main_echo,'XData'));
-    ydata=double(get(axes_panel_comp.main_echo,'YData'));
+    xdata=double(get(axes_panel_comp.echo_obj.echo_surf,'XData'));
+    ydata=double(get(axes_panel_comp.echo_obj.echo_surf,'YData'));
     
     idx_x_keep=xdata>=x_lim(1)&xdata<=x_lim(2);
     idx_y_keep=ydata>=y_lim(1)&ydata<=y_lim(2);
@@ -289,11 +289,11 @@ try
         set(info_panel_comp.time_disp,'string',time_str);
         set(info_panel_comp.value,'string',val_str);
         
-        axh=axes_panel_comp.haxes;
+        axh=axes_panel_comp.echo_obj.hori_ax;
         axh_plot_high=axes_panel_comp.h_axes_plot_high;
         axh_plot_low=axes_panel_comp.h_axes_plot_low;
         
-        axv=axes_panel_comp.vaxes;
+        axv=axes_panel_comp.echo_obj.vert_ax;
         axv_plot=axes_panel_comp.v_axes_plot;
         axv_bot=axes_panel_comp.v_bot_val;
         axv_curr=axes_panel_comp.v_curr_val;
@@ -315,7 +315,9 @@ try
             str='';
         end
         
-        set(axv_curr,'value',idx_r);
+        set(axv_curr,'value',idx_r,'Label',sprintf('%.2fm',Range_trans(idx_r)));
+
+        
         if ~isnan(bot_val)
             set(axv_bot,'value',bot_val,'Label',str);
         end

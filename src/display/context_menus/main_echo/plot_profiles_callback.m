@@ -8,7 +8,7 @@ trans=trans_obj;
 
 Bottom=trans.Bottom;
 
-ax_main=axes_panel_comp.main_axes;
+ax_main=axes_panel_comp.echo_obj.main_ax;
 
 
 x_lim=double(get(ax_main,'xlim'));

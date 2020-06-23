@@ -45,7 +45,7 @@ end
 layer=get_current_layer();
 axes_panel_comp=getappdata(main_figure,'Axes_panel');
 curr_disp=get_esp3_prop('curr_disp');
-ah=axes_panel_comp.main_axes;
+ah=axes_panel_comp.echo_obj.main_ax;
 
 if gca~=ah
     return;
@@ -54,9 +54,9 @@ end
 clear_lines(ah);
 
 
-[~,idx_ping_ori]=get_ori(layer,curr_disp,axes_panel_comp.main_echo);
-xdata=double(get(axes_panel_comp.main_echo,'XData'));
-ydata=double(get(axes_panel_comp.main_echo,'YData'));
+[~,idx_ping_ori]=get_ori(layer,curr_disp,axes_panel_comp.echo_obj.echo_surf);
+xdata=double(get(axes_panel_comp.echo_obj.echo_surf,'XData'));
+ydata=double(get(axes_panel_comp.echo_obj.echo_surf,'YData'));
 
 [trans_obj,idx_freq]=layer.get_trans(curr_disp);
 ping_number=trans_obj.get_transceiver_pings();
@@ -76,7 +76,7 @@ end
  [cmap,col_ax,line_col,col_grid,col_bot,col_txt,~]=init_cmap(curr_disp.Cmap);
 
 
- switch axes_panel_comp.main_echo.Type
+ switch axes_panel_comp.echo_obj.echo_surf.Type
      case 'surface'
          xdata=xdata+1/2;
  end

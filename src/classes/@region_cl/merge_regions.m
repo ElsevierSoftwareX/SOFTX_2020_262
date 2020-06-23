@@ -80,9 +80,11 @@ for ireg=1:length(regions)
             if ~strcmp(regions(i).Name,'')&&i~=ireg
                 region_2=regions(i);
                 
-                
-                [poly_combined,Type]=region_1.get_combined_poly(region_2,'union');
-                
+                if overlap_only ==0
+                    [poly_combined,Type]=region_1.get_combined_poly(region_2,'union');
+                else
+                    [poly_combined,Type]=region_1.get_combined_poly(region_2,'intersect');
+                end
                 if overlap_only>0
                     if poly_combined.NumRegions==0
                         continue;

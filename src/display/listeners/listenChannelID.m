@@ -54,13 +54,13 @@ if found_ori==0
     return;
 end
 
-delete(findobj(axes_panel_comp.main_axes,'Tag','SelectLine','-or','Tag','SelectArea'));
+delete(findobj(axes_panel_comp.echo_obj.main_ax,'Tag','SelectLine','-or','Tag','SelectArea'));
 
 update_axis(main_figure,0,'main_or_mini','mini');
 set_alpha_map(main_figure,'main_or_mini','mini');
 display_regions(main_figure,'both');
 display_lines(main_figure);
-set(axes_panel_comp.main_axes,'ylim',y_lim);
+set(axes_panel_comp.echo_obj.main_ax,'ylim',y_lim);
 
 curr_disp.setActive_reg_ID({});
 update_reglist_tab(main_figure,1);

@@ -49,7 +49,7 @@ curr_disp=get_esp3_prop('curr_disp');
 
 mouse_state=1;
 
-ah=axes_panel_comp.main_axes;
+ah=axes_panel_comp.echo_obj.main_ax;
 
 clear_lines(ah);
 

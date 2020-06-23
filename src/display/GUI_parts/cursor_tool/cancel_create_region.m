@@ -46,7 +46,7 @@ switch callbackdata.Key
     case {'escape'}
         axes_panel_comp=getappdata(main_figure,'Axes_panel');
         
-        ah=axes_panel_comp.main_axes;
+        ah=axes_panel_comp.echo_obj.main_ax;
         
         u=findobj(ah,'Tag','reg_temp');
         delete(u);

@@ -6,7 +6,7 @@ curr_disp=get_esp3_prop('curr_disp');
 [trans_obj,~]=layer.get_trans(curr_disp);
 trans=trans_obj;
 
-ax_main=axes_panel_comp.main_axes;
+ax_main=axes_panel_comp.echo_obj.main_ax;
 x_lim=double(get(ax_main,'xlim'));
 
 cp = ax_main.CurrentPoint;

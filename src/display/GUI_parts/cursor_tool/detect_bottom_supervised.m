@@ -50,7 +50,7 @@ axes_panel_comp=getappdata(main_figure,'Axes_panel');
 curr_disp=get_esp3_prop('curr_disp');
 
 [trans_obj,idx_freq]=layer.get_trans(curr_disp);
-context_menu=axes_panel_comp.bad_transmits.UIContextMenu;
+context_menu=axes_panel_comp.echo_obj.echo_bt_surf.UIContextMenu;
 childs=findobj(context_menu,'Type','uimenu');
 
 for i=1:length(childs)
@@ -61,8 +61,8 @@ for i=1:length(childs)
     
 end
 
-ah=axes_panel_comp.main_axes;
-echo=axes_panel_comp.main_echo;
+ah=axes_panel_comp.echo_obj.main_ax;
+echo=axes_panel_comp.echo_obj.echo_surf;
 
 di=1/2;
 

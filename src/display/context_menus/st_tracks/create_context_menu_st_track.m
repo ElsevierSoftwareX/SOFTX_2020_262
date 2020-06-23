@@ -38,12 +38,12 @@ axes_panel_comp=getappdata(main_figure,'Axes_panel');
 
 for i=1:numel(uid)
     delete(findobj(main_figure,'Type','UIContextMenu','-and','Tag','stTrackCtxtMenu','-and','UserData',uid{i}));
-    id_reg=findobj(axes_panel_comp.main_axes,'tag','track','-and','UserData',uid{i});
+    id_reg=findobj(axes_panel_comp.echo_obj.main_ax,'tag','track','-and','UserData',uid{i});
     delete(id_reg);
 
 end
 
-objt=findobj(axes_panel_comp.main_axes,'Tag','tooltipt');
+objt=findobj(axes_panel_comp.echo_obj.main_ax,'Tag','tooltipt');
 delete(objt);
 
 trans_obj.Tracks=tracks;

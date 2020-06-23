@@ -198,7 +198,7 @@ curr_disp=get_esp3_prop('curr_disp');
 time=trans_obj.Time;
 
 
-ah=axes_panel_comp.haxes;
+ah=axes_panel_comp.echo_obj.hori_ax;
 
 
 % estimate shadow zone

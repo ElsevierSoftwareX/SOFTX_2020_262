@@ -21,7 +21,7 @@ secondary_freq=getappdata(main_figure,'Secondary_freq');
 if isempty(secondary_freq)
     new=1;
 else
-    if isempty(secondary_freq.axes)
+    if isempty(secondary_freq.echo_obj)
         new=1;
     end
 end
@@ -46,16 +46,16 @@ if new==0
     
     delete(secondary_freq.link_props_top_ax_internal);
     delete(secondary_freq.link_props_side_ax_internal);
-    delete(secondary_freq.axes);
-    delete(secondary_freq.side_ax);
-    delete(secondary_freq.top_ax);
-    delete(secondary_freq.echoes);
-    
+    delete(secondary_freq.echo_obj.get_main_ax());
+    delete(secondary_freq.echo_obj.get_vert_ax());
+    delete(secondary_freq.echo_obj.get_hori_ax());
+    delete(secondary_freq.echo_obj.get_echo_surf());
+    delete(secondary_freq.echo_obj.get_echo_bt_surf());
+    secondary_freq.echo_obj=echo_disp_cl.empty();
     if rotate>0
         fig_pos = get_dlg_position(main_figure,fig_pos, secondary_freq.fig.Units,'other');
         set(secondary_freq.fig,'units','norm');
-        set(secondary_freq.fig,'Position',fig_pos);
-        
+        set(secondary_freq.fig,'Position',fig_pos);      
     end
     
 else
@@ -73,102 +73,49 @@ if nb_chan==0
     curr_disp.SecFreqs(1)=layer.Frequencies(1);
 end
 
-secondary_freq.axes=gobjects(1,nb_chan);
-secondary_freq.top_ax=gobjects(1,nb_chan);
-secondary_freq.side_ax=gobjects(1,nb_chan);
-secondary_freq.echoes=gobjects(1,nb_chan);
-secondary_freq.echoes_bt=gobjects(1,nb_chan);
-secondary_freq.bottom_plots=gobjects(1,nb_chan);
 secondary_freq.names=gobjects(1,nb_chan);
 secondary_freq.link_props_side_ax_internal=[];
 secondary_freq.link_props_top_ax_internal=[];
-
-
-EchoType='surface';
-user_data.geometry_y='depth';
-y_grid_disp='on';
-
 
 disp_chan=ismember(layer.ChannelID,curr_disp.SecChannelIDs);
 checked_state=cell(1,nb_chan);
 checked_state(disp_chan)={'on'};
 checked_state(~disp_chan)={'off'};
 
-for i=1:nb_chan
+for iax=1:nb_chan
     
     switch curr_disp.DispSecFreqsOr
         case 'vert'
-            pos=[(i-1)/nb_chan 0 1/nb_chan 1];
+            pos=[(iax-1)/nb_chan 0 1/nb_chan 1];
         case 'horz'
-            pos=[0 1-i/nb_chan 1 1/nb_chan];
+            pos=[0 1-iax/nb_chan 1 1/nb_chan];
     end
     
-    user_data.geometry_x='pings';
-    
-    if strcmpi(curr_disp.DispSecFreqsOr,'vert')||i==1
+    if strcmpi(curr_disp.DispSecFreqsOr,'vert')||iax==1
         vis_top='on';
     else
         vis_top='off';
     end
     
-    if strcmpi(curr_disp.DispSecFreqsOr,'horz')||nb_chan==i&& strcmpi(user_data.geometry_y,'depth')
+    if strcmpi(curr_disp.DispSecFreqsOr,'horz')||iax==nb_chan
         vis_side='on';
     else
         vis_side='off';
     end
     
-    secondary_freq.top_ax(i)=axes(secondary_freq.fig,...
-        'Interactions',[],'Toolbar',[],...
-        'Units','Normalized','Position',[pos(1) pos(2)+pos(4) pos(3) 0],'Fontweight','Bold',...
-        'XTickMode','manual','YTickMode','manual',...
-        'Layer','top','XLimMode','manual','YLimMode','manual','XTickLabelRotation',-90,'SortMethod','childorder',...
-        'TickLength',[0.005 0.005],'XGrid','on','YGrid','off','ClippingStyle','rectangle','box','on','visible',vis_top,...
-        'UserData',user_data,'Tag',curr_disp.SecChannelIDs{i});
+    secondary_freq.echo_obj(iax) = echo_disp_cl(secondary_freq.fig,...
+        'geometry_y','depth',...
+        'visible_vert',vis_side,...
+        'visible_hori',vis_top,...
+        'vert_ax_pos','right',...
+        'ax_tag',curr_disp.SecChannelIDs{iax},...
+        'disp_colorbar',false,...
+        'pos_in_parent',pos,...
+        'uiaxes',false);
     
-    secondary_freq.side_ax(i)=axes(secondary_freq.fig,...
-        'Interactions',[],'Toolbar',[],...
-        'Units','Normalized','Position',[pos(1)+pos(3) pos(2) 0 pos(4)],'Fontweight','Bold',...
-        'XTickMode','manual','YTickMode','manual',...
-        'Layer','top','XLimMode','manual','YLimMode','manual','XTickLabelRotation',0,'YAxisLocation','left',...
-        'SortMethod','childorder',...
-        'TickLength',[0.005 0.005],'XGrid','on','YGrid',y_grid_disp,'ClippingStyle','rectangle','box','on','visible',vis_side,...
-        'UserData',user_data,'Tag',curr_disp.SecChannelIDs{i});
-    
-    secondary_freq.axes(i)=axes(secondary_freq.fig,...
-        'Interactions',[],'Toolbar',[],...
-        'Units','Normalized','Position',pos,'Fontweight','Bold',...
-        'XTickMode','manual','YTickMode','manual',...
-        'nextplot','add','Layer','top','XLimMode','manual','YLimMode','manual','XAxisLocation','top','XTickLabelRotation',-90,...
-        'SortMethod','childorder',...
-        'TickLength',[0.005 0.005],'XGrid','on','YGrid',y_grid_disp,'ClippingStyle','rectangle','box','on',...
-        'UserData',user_data,'XTickLabel',{},'YTickLabel',{},'Tag',curr_disp.SecChannelIDs{i});
-    
-    
-    if  strcmpi(user_data.geometry_y,'depth')
-        secondary_freq.side_ax(i).YAxis.TickLabelFormat  = '%g m';
-    end
-    
-    echo_init=zeros(2,2);
-    curr_disp=get_esp3_prop('curr_disp');
-    
-    %alpha_prop='texturemap';
-    alpha_prop='flat';
-    %alpha_prop_bt='texturemap';
-    alpha_prop_bt='flat';
-    
-    usrdata=init_echo_usrdata();
-    
-    
-    secondary_freq.echoes(i)=pcolor(secondary_freq.axes(i),echo_init);
-    set(secondary_freq.echoes(i),'Facealpha',alpha_prop,'FaceColor',alpha_prop,'LineStyle','none','tag',curr_disp.SecChannelIDs{i},'AlphaDataMapping','direct','UserData',usrdata);
-    secondary_freq.echoes_bt(i)=pcolor(secondary_freq.axes(i),zeros(size(echo_init),'uint8'));
-    set(secondary_freq.echoes_bt(i),'Facealpha',alpha_prop_bt,'FaceColor','k','LineStyle','none','tag','bad_transmits','AlphaDataMapping','direct');
-    
-    secondary_freq.names(i)=text(secondary_freq.axes(i),10,15,sprintf('%.0fkHz',curr_disp.SecFreqs(i)/1e3),'Units','Pixel','Fontweight','Bold','Fontsize',16,'ButtonDownFcn',{@change_cid,main_figure},'Tag',curr_disp.SecChannelIDs{i},'UserData',curr_disp.SecChannelIDs{i});
-    secondary_freq.bottom_plots(i)=plot(secondary_freq.axes(i),nan,nan,'tag','bottom');
-    
+    secondary_freq.names(iax)=text(secondary_freq.echo_obj(iax).main_ax,10,15,sprintf('%.0fkHz',curr_disp.SecFreqs(iax)/1e3),'Units','Pixel','Fontweight','Bold','Fontsize',14,'ButtonDownFcn',{@change_cid,main_figure},'Tag',curr_disp.SecChannelIDs{iax},'UserData',curr_disp.SecChannelIDs{iax});
+  
 end
-
 
 if curr_disp.DispSecFreqsWithOffset
     c='on';
@@ -188,18 +135,18 @@ for ifreq=1:numel(layer.ChannelID)
     uimenu(chan_menu,'Label',sprintf('%.0f kHz',layer.Frequencies(ifreq)/1e3),'Checked',checked_state{ifreq},...
         'Callback',{@set_secondary_channels_cback,main_figure,layer.ChannelID{ifreq}});
 end
-set(secondary_freq.echoes_bt,'UIContextMenu',context_menu);
+
+set(secondary_freq.echo_obj.get_echo_bt_surf(),'UIContextMenu',context_menu);
 
 enterFcn =  @(figHandle, currentPoint)...
     set(figHandle, 'Pointer', 'hand');
 iptSetPointerBehavior(secondary_freq.names,enterFcn);
 
-rm_axes_interactions([secondary_freq.axes secondary_freq.top_ax secondary_freq.side_ax]);
-
+uistack(secondary_freq.echo_obj.get_hori_ax(),'top');
+uistack(secondary_freq.echo_obj.get_vert_ax(),'top');
 setappdata(main_figure,'Secondary_freq',secondary_freq);
 
-uistack(secondary_freq.top_ax,'top');
-uistack(secondary_freq.side_ax,'top');
+
 
 end
 function toggle_offset_callback(src,~,main_figure)

@@ -13,14 +13,15 @@ axes_panel_comp=getappdata(main_figure,'Axes_panel');
 
 switch tag_ax
     case 'main'
-        main_axes=axes_panel_comp.main_axes;
-        haxes=axes_panel_comp.haxes;
-        vaxes=axes_panel_comp.vaxes;
+        main_axes=axes_panel_comp.echo_obj.main_ax;
+        haxes=axes_panel_comp.echo_obj.hori_ax;
+        vaxes=axes_panel_comp.echo_obj.vert_ax;
     case 'sec_ax'
         secondary_freq=getappdata(main_figure,'Secondary_freq');
-        main_axes=secondary_freq.axes(idx);
-        haxes=secondary_freq.top_ax(idx);
-        vaxes=secondary_freq.side_ax(idx);
+        
+        main_axes=secondary_freq.echo_obj.get_main_ax(idx);
+        haxes=secondary_freq.echo_obj.get_hori_ax(idx);
+        vaxes=secondary_freq.echo_obj.get_vert_ax(idx);
 end
 
 switch fileN
@@ -53,7 +54,7 @@ set(text_obj,'Fontsize',12);
 line_obj=findobj(new_fig,'Type','Line');
 set(line_obj,'Linewidth',1.5);
 
-linkprop([axes_panel_comp.main_axes new_axes],{'YColor','XColor','GridLineStyle','XTick','Clim','GridColor','MinorGridColor','YDir'});
+linkprop([axes_panel_comp.echo_obj.main_ax new_axes],{'YColor','XColor','GridLineStyle','XTick','Clim','GridColor','MinorGridColor','YDir'});
 
 drawnow;
 

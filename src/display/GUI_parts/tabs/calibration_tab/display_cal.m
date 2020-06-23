@@ -54,7 +54,6 @@ for uui=1:numel(layer.Frequencies)
     f_end_tot=union(f_end_tot,nanmax(layer.Transceivers(uui).get_params_value('FrequencyStart',1),layer.Transceivers(uui).get_params_value('FrequencyEnd',1)));
     
     
-    
     plot(ax_1,cal.freq_vec(:)/1e3,cal.Gf_th(:),'color',[0 0.8 0],'tag','theoritical');
     plot(ax_1,cal.freq_vec(:)/1e3,cal.Gf_file(:),'color',[0 0 0.8],'tag','file_value');
     plot(ax_1,cal.freq_vec(:)/1e3,cal.Gf(:),'color',[0.8 0 0],'tag','applied');

@@ -6,7 +6,7 @@ layer=get_current_layer();
 
 axes_panel_comp=getappdata(main_figure,'Axes_panel');
 patch_obj=src;
-ah=axes_panel_comp.main_axes;
+ah=axes_panel_comp.echo_obj.main_ax;
 
 if isempty(patch_obj.Vertices)||~ismember(curr_disp.CursorMode,{'Normal'})
     return;

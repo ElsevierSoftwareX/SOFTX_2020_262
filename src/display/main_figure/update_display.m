@@ -122,11 +122,11 @@ init_link_prop(main_figure);
 if new==1
     secondary_freq=getappdata(main_figure,'Secondary_freq');
     if ~isempty(secondary_freq)
-        if ~isempty(secondary_freq.axes)
-            if strcmpi(secondary_freq.axes(1).UserData.geometry_y,'depth')
-                ylim=get(secondary_freq.axes(1),'Ylim');
-                set(secondary_freq.axes,'ytick',floor((ylim(1):curr_disp.Grid_y:ylim(2))/curr_disp.Grid_y)*curr_disp.Grid_y);
-                set(secondary_freq.side_ax,'ytick',floor((ylim(1):curr_disp.Grid_y:ylim(2))/curr_disp.Grid_y)*curr_disp.Grid_y);
+        if ~isempty(secondary_freq.echo_obj)
+            if strcmpi(secondary_freq.echo_obj(1).main_ax.UserData.geometry_y,'depth')
+                ylim=get(secondary_freq.echo_obj(1).main_ax,'Ylim');
+                set(secondary_freq.echo_obj.get_main_ax(),'ytick',floor((ylim(1):curr_disp.Grid_y:ylim(2))/curr_disp.Grid_y)*curr_disp.Grid_y);
+                set(secondary_freq.echo_obj.get_hori_ax(),'ytick',floor((ylim(1):curr_disp.Grid_y:ylim(2))/curr_disp.Grid_y)*curr_disp.Grid_y);
             end
         end
     end
@@ -139,7 +139,6 @@ display_lines(main_figure);
 display_regions(main_figure);
 display_survdata_lines(main_figure);
 
-order_axes(main_figure);
 
 update_info_panel([],[],1);
 

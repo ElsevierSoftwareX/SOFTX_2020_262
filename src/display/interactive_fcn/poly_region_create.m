@@ -41,7 +41,7 @@ layer=get_current_layer();
 axes_panel_comp=getappdata(main_figure,'Axes_panel');
 curr_disp=get_esp3_prop('curr_disp');
 
-ah=axes_panel_comp.main_axes;
+ah=axes_panel_comp.echo_obj.main_ax;
 
 
 switch main_figure.SelectionType
@@ -51,8 +51,8 @@ switch main_figure.SelectionType
 
         return;
 end
-axes_panel_comp.bad_transmits.UIContextMenu=[];
-axes_panel_comp.bottom_plot.UIContextMenu=[];
+axes_panel_comp.echo_obj.echo_bt_surf.UIContextMenu=[];
+axes_panel_comp.echo_obj.bottom_line_plot.UIContextMenu=[];
 clear_lines(ah);
  [cmap,col_ax,col_line,col_grid,col_bot,col_txt,~]=init_cmap(curr_disp.Cmap);
 

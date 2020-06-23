@@ -18,8 +18,8 @@ if ~isempty(layer)
     axes_panel_comp=getappdata(main_figure,'Axes_panel');
     
     if ~isempty(axes_panel_comp)
-        x=double(get(axes_panel_comp.main_axes,'xlim'));
-        y=double(get(axes_panel_comp.main_axes,'ylim'));
+        x=double(get(axes_panel_comp.echo_obj.main_ax,'xlim'));
+        y=double(get(axes_panel_comp.echo_obj.main_ax,'ylim'));
         up_lim=1;
     else
         up_lim=0;
@@ -41,8 +41,8 @@ if ~isempty(layer)
     
     if up_lim>0
         axes_panel_comp=getappdata(main_figure,'Axes_panel');
-        set(axes_panel_comp.main_axes,'xlim',x);
-        set(axes_panel_comp.main_axes,'ylim',y);
+        set(axes_panel_comp.echo_obj.main_ax,'xlim',x);
+        set(axes_panel_comp.echo_obj.main_ax,'ylim',y);
     end
     reverse_y_axis(main_figure);
     initialize_interactions_v2(main_figure);
