@@ -1,7 +1,12 @@
 function[cal_cw,cal_fm]=TS_calibration_curves_func(main_figure,layer,select)
 
 cal_cw=[];
-cal_fm=[];
+cal_fm={};
+
+
+int_meth='linear';
+ext_meth=nan;
+
 
 update_algos(main_figure,'algo_name',{'SingleTarget'});
 
@@ -54,16 +59,10 @@ cal_cw.BeamWidthAlongship=nan(1,numel(layer.Transceivers));
 cal_cw.BeamWidthAthwartship=nan(1,numel(layer.Transceivers));
 cal_cw.RMS=nan(1,numel(layer.Transceivers));
 
+cal_fm_tot=cell(1,numel(layer.Transceivers));
 
-cal_fm.cal_ts=cell(1,numel(layer.Transceivers));
-cal_fm.th_ts=cell(1,numel(layer.Transceivers));
-cal_fm.Gf=cell(1,numel(layer.Transceivers));
-cal_fm.freq_vec=cell(1,numel(layer.Transceivers));
-cal_fm.BeamWidthAlongship_f_fit=cell(1,numel(layer.Transceivers));
-cal_fm.BeamWidthAlongship_f_th=cell(1,numel(layer.Transceivers));
-cal_fm.BeamWidthAthwartship_f_fit=cell(1,numel(layer.Transceivers));
-cal_fm.BeamWidthAthwartship_f_th=cell(1,numel(layer.Transceivers));
-cal_fm.freq_vec=cell(1,numel(layer.Transceivers));
+fields_fm_cal = get_cal_fm_fields();
+           
 
 alpha=cell(1,numel(layer.Transceivers));
 
@@ -450,6 +449,7 @@ for uui=select
             Compensation_f(idx_rem,:)=[];
             f_vec(idx_rem,:)=[];
             f_corr(idx_rem)=[];
+            freq_vec=f_vec(:,1)';
             
             Compensation_f(Compensation_f>6)=nan;
             
@@ -459,14 +459,14 @@ for uui=select
             
             
             th_ts=arrayfun(@(x) spherets(x/c_at_sphere,sph.diameter/2, c_at_sphere, ...
-                sph.lont_c, sph.trans_c, density_at_sphere, sph.rho),2*pi*f_vec(:,1)');
+                sph.lont_c, sph.trans_c, density_at_sphere, sph.rho),2*pi*freq_vec);
             
             ts_fig=new_echo_figure(main_figure,'Name','TS','Tag',sprintf('TS%.0f',uui),'Toolbar','esp3','MenuBar','esp3');
             ax=axes(ts_fig,'box','on');
-            plot(f_vec/1e3,TS_f,'color',[0.8 0.2 0.8],'linewidth',0.5);
+            plot(freq_vec/1e3,TS_f,'linewidth',0.5);
             hold(ax,'on');
-            plot(ax,f_vec(:,1)/1e3,TS_f_mean,'color',[0.8 0 0],'linewidth',1.5);
-            plot(ax,f_vec(:,1)/1e3,th_ts,'k','linewidth',1.5)
+            plot(ax,freq_vec/1e3,TS_f_mean,'color',[0.8 0 0],'linewidth',1);
+            plot(ax,freq_vec/1e3,th_ts,'k','linewidth',1)
             grid(ax,'on');
             xlabel(ax,'kHz')
             ylabel(ax,'TS(dB)');
@@ -475,36 +475,44 @@ for uui=select
                 print(ts_fig,fullfile(path_out,generate_valid_filename(['ts_f' freq_str '.png'])),'-dpng','-r300');
             end
             
-            
-            
+             
             [cal_path,~,~]=fileparts(layer.Filename{1});
-            file_cal=fullfile(cal_path,generate_valid_filename(['Curve_' layer.ChannelID{uui} '.mat']));
+            file_cal=fullfile(cal_path,generate_valid_filename(['Calibration_FM_' layer.ChannelID{uui} '.xml']));
             
-            freq_vec=f_vec(:,1)';
+            
             cal_ts=TS_f_mean;
+              
             
-            
-            Gf_th=interp1(cal_struct.freq_vec,cal_struct.Gf,freq_vec,'linear','extrap');
+            Gf_th=interp1(cal_struct.Frequency,cal_struct.Gain,freq_vec,'linear','extrap'); 
             
             Gf=(cal_ts-th_ts)/2+Gf_th(:)';
             
+            save_bool = true;
+
             qstring=sprintf('Do you want to save those results for frequency %.0f kHz',Freq/1e3);
             choice=question_dialog_fig(main_figure,'Calibration',qstring,'opt',{'Yes' 'No'});
             
-            cal_fm.cal_ts{uui}=cal_ts(:)';
-            cal_fm.th_ts{uui}=th_ts(:)';
-            cal_fm.Gf{uui}=Gf(:)';
-            cal_fm.freq_vec{uui}=freq_vec(:)';
-            
-            % Handle response
+        
             switch choice
                 case 'No'
-                    
-                otherwise
-                    save(file_cal,'freq_vec','cal_ts','th_ts','Gf');
+                    save_bool = false;
             end
             
+            cal_fm.Frequency=freq_vec;
+            
+            for uif = 1:numel(fields_fm_cal)
+                cal_fm.(fields_fm_cal{uif})=interp1(cal_struct.Frequency,cal_struct.(fields_fm_cal{uif}),cal_fm.Frequency,'linear','extrap');
+            end
+            
+            if save_bool
+                cal_fm.Gain=Gf(:)';
+            else
+                cal_fm.Gain=Gf_th(:)';
+            end
+           
+            
             if trans_obj.Config.BeamType == 0
+                cal_fm_tot{uui} = cal_fm;
                 continue;
             end
             
@@ -514,16 +522,18 @@ for uui=select
             % Handle response
             switch choice
                 case 'No'
+                    if save_bool
+                        save_cal_to_xml(cal_fm_tmp,file_cal);
+                    end
+                    cal_fm_tot{uui} = cal_fm;
                     continue;
                 otherwise
                     
             end
             
-            
             idx_peak_tot = trans_obj.ST.idx_r(idx_keep);
             idx_pings = trans_obj.ST.Ping_number(idx_keep);
-            
-            
+    
             set(load_bar_comp.progress_bar, 'Minimum',0, 'Maximum',length(idx_pings), 'Value',0);
             load_bar_comp.progress_bar.setText(sprintf('Processing EQA estimation Frequency %.0fkHz',trans_obj.Config.Frequency/1e3));
             
@@ -531,7 +541,7 @@ for uui=select
             f_corr=nan(1,numel(idx_pings));
             
             for kk=1:length(idx_pings)
-                [sp,cp,f,~,f_corr(kk)]=trans_obj.processTS_f_v2(layer.EnvData,idx_pings(kk),range_tot(idx_peak_tot(kk)),[],att_m);
+                [sp,cp,f,~,f_corr(kk)]=trans_obj.processTS_f_v2(layer.EnvData,idx_pings(kk),range_tot(idx_peak_tot(kk)),cal_fm,att_m);
                 if kk==1
                     Sp_f=nan(numel(sp),numel(idx_pings));
                     Compensation_f=nan(numel(sp),numel(idx_pings));
@@ -552,68 +562,67 @@ for uui=select
             f_vec(idx_rem,:)=[];
             f_corr(idx_rem)=[];
             
-            
-            BeamWidthAlongship_f_th=layer.Transceivers(uui).Config.BeamWidthAlongship*(1+(Freq-f_vec(:,1))/Freq);
-            BeamWidthAthwartship_f_th=layer.Transceivers(uui).Config.BeamWidthAthwartship*(1+(Freq-f_vec(:,1))/Freq);
-            
-            BeamWidthAlongship_f_fit=nan(1,size(f_vec,1));
-            BeamWidthAthwartship_f_fit=nan(1,size(f_vec,1));
+            freq_vec_new=f_vec(:,1);
+
+            BeamWidthAlongship=nan(1,size(f_vec,1));
+            BeamWidthAthwartship=nan(1,size(f_vec,1));
             offset_Alongship=nan(1,size(f_vec,1));
             offset_Athwartship=nan(1,size(f_vec,1));
             peak=nan(1,size(f_vec,1));
             exitflag=nan(1,size(f_vec,1));
-            
+             
+            BeamWidthAlongship_th = interp1(cal_struct.Frequency,cal_struct.BeamWidthAlongship_th,freq_vec_new,int_meth,ext_meth);
+            BeamWidthAthwartship_th = interp1(cal_struct.Frequency,cal_struct.BeamWidthAthwartship_th,freq_vec_new,int_meth,ext_meth);
+                       
             set(load_bar_comp.progress_bar, 'Minimum',0, 'Maximum',size(f_vec,1), 'Value',0);
             load_bar_comp.progress_bar.setText(sprintf('Processing BeamWidth estimation Frequency %.0fkHz',layer.Transceivers(uui).Config.Frequency/1e3));
             
-            
             for tt=1:size(f_vec,1)
-                [offset_Alongship(tt), BeamWidthAlongship_f_fit(tt), offset_Athwartship(tt), BeamWidthAthwartship_f_fit(tt), ~, peak(tt), exitflag(tt)]...
-                    =fit_beampattern(Sp_f(tt,:), AcrossAngle_sph(idx_keep).*f_corr, AlongAngle_sph((idx_keep)).*f_corr,mean([BeamWidthAlongship_f_th(tt), BeamWidthAthwartship_f_th(tt)]), mean([BeamWidthAlongship_f_th(tt), BeamWidthAthwartship_f_th(tt)]));
+                [offset_Alongship(tt), BeamWidthAlongship(tt), offset_Athwartship(tt), BeamWidthAthwartship(tt), ~, peak(tt), exitflag(tt)]...
+                    =fit_beampattern(Sp_f(tt,:), AcrossAngle_sph(idx_keep).*f_corr, AlongAngle_sph((idx_keep)).*f_corr,mean([BeamWidthAlongship_th(tt), BeamWidthAthwartship_th(tt)]), mean([BeamWidthAlongship_th(tt), BeamWidthAthwartship_th(tt)]));
                 set(load_bar_comp.progress_bar,'Value',tt);
             end
+            
+            cal_fm.BeamWidthAlongship = interp1(freq_vec_new,BeamWidthAlongship(:)',cal_fm.Frequency,int_meth,ext_meth);
+            cal_fm.BeamWidthAthwartship = interp1(freq_vec_new,BeamWidthAthwartship(:)',cal_fm.Frequency,int_meth,ext_meth);
+
+            cal_fm.AngleOffsetAlongship = interp1(freq_vec_new, offset_Alongship(:)',cal_fm.Frequency,int_meth,ext_meth);
+            cal_fm.AngleOffsetAthwartship = interp1(freq_vec_new, offset_Athwartship(:)',cal_fm.Frequency,int_meth,ext_meth);
             
             
             b_width_fig=new_echo_figure(main_figure,'Name','BeamWidth','Tag',sprintf('Bwidth%.0f',uui),'Toolbar','esp3','MenuBar','esp3');
             ax=axes(b_width_fig);
             hold(ax,'on');
-            plot(ax,f_vec(:,1)/1e3,BeamWidthAlongship_f_fit,'color',[0 0.8 0],'linewidth',2);
-            plot(ax,f_vec(:,1)/1e3,BeamWidthAlongship_f_th,'color',[0 0 0],'linewidth',2);
-            plot(ax,f_vec(:,1)/1e3,BeamWidthAthwartship_f_fit,'color',[0.8 0 0],'linewidth',2);
-            plot(ax,f_vec(:,1)/1e3,BeamWidthAthwartship_f_th,'color',[0 0 0.8],'linewidth',2);
+            plot(ax,cal_fm.Frequency/1e3,cal_fm.BeamWidthAlongship,'color',[0 0.8 0],'linewidth',2);
+            plot(ax,cal_struct.Frequency/1e3,cal_struct.BeamWidthAlongship_th,'color',[0 0 0],'linewidth',2);
+            plot(ax,cal_fm.Frequency/1e3,cal_fm.BeamWidthAthwartship,'color',[0.8 0 0],'linewidth',2);
+            plot(ax,cal_struct.Frequency/1e3,cal_struct.BeamWidthAthwartship_th,'color',[0 0 0.8],'linewidth',2);
             xlabel(ax,'Frequency (kHz)')
             ylabel(ax,'BeamWidth(deg)')
             legend(ax,'Measured Alongship Beamwidth','Theoritical Alongship Beamwidth','Measured Athwardship Beamwidth','Theoritical Athwardship Beamwidth');
             grid(ax,'on');
             drawnow;
-            ylim([nanmin(BeamWidthAthwartship_f_th)*0.7 nanmax(BeamWidthAthwartship_f_th)*1.3]);
+            ylim([nanmin(cal_struct.BeamWidthAthwartship_th)*0.7 nanmax(cal_struct.BeamWidthAthwartship_th)*1.3]);
             
             if~isempty(path_out)
                 print(b_width_fig,fullfile(path_out,generate_valid_filename(['bw_f_' freq_str '.png'])),'-dpng','-r300');
             end
             
-            [cal_path,~,~]=fileparts(layer.Filename{1});
-            file_cal=fullfile(cal_path,generate_valid_filename(['Curve_EBA_' layer.ChannelID{uui} '.mat']));
-            
-            
-            freq_vec=f_vec(:,1);
-            
-            
+
             choice=question_dialog_fig(main_figure,'Calibration',sprintf('Do you want to save those results for frequency %.0f kHz',Freq/1e3));
-            
-            
-            cal_fm.BeamWidthAlongship_f_fit{uui}=BeamWidthAlongship_f_fit(:)';
-            cal_fm.BeamWidthAlongship_f_th{uui}=BeamWidthAlongship_f_fit(:)';
-            cal_fm.BeamWidthAthwartship_f_fit{uui}=BeamWidthAlongship_f_fit(:)';
-            cal_fm.BeamWidthAthwartship_f_th{uui}=BeamWidthAlongship_f_fit(:)';
-            cal_fm.freq_vec{uui}=freq_vec(:)';
-            
+
             % Handle response
             switch choice
                 case 'Yes'
-                    save(file_cal,'BeamWidthAlongship_f_fit','BeamWidthAlongship_f_th','BeamWidthAthwartship_f_fit','BeamWidthAthwartship_f_th','freq_vec');
+
+                    save_bool = true;
             end
             
+            if save_bool
+                save_cal_to_xml(cal_fm,file_cal);
+            end
+            
+            cal_fm_tot{uui} = cal_fm;
         case 'CW'
             
             
@@ -796,7 +805,7 @@ loadEcho(main_figure);
         zg = griddata(ac_a(idx_keep), al_a(idx_keep), sp(idx_keep), xg, yg);
         
         bpfig=new_echo_figure(main_figure,'Name',sprintf('%.0f kHz Beam Pattern',Freq/1e3),'Tag',sprintf('Bp%.0f',uui),'Toolbar','esp3','MenuBar','esp3');
-        ax_bp=axes(bpfig,'nextplot','add','outerposition',[0 0 0.5 1]);
+        ax_bp=axes(bpfig,'nextplot','add','outerposition',[0 0 0.5 1],'box','on');
         contourf(ax_bp,xg,yg,zg,c)
         hold(ax_bp,'on');
         plot(ax_bp,ac_a(idx_keep),al_a(idx_keep),'+','MarkerSize',1,'MarkerEdgeColor',[.5 .5 .5])
@@ -819,7 +828,7 @@ loadEcho(main_figure);
         
         zg_comp = griddata(ac_a(idx_keep), al_a(idx_keep), sp(idx_keep)+comp(idx_keep), xg, yg);
         
-        ax_bp=axes(bpfig,'nextplot','add','outerposition',[0.5 0 0.5 1]);
+        ax_bp=axes(bpfig,'nextplot','add','outerposition',[0.5 0 0.5 1],'box','on');
         surf(ax_bp,xg,yg, zg)
         surf(ax_bp,xg,yg, zg_comp)
         axis(ax_bp,'equal');

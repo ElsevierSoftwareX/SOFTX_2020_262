@@ -173,7 +173,7 @@ for ii = 1:length(layer_to_proc)
             layer.add_ping_data_to_db(idx_freq,0);
     end
     layers_Str_comp=list_layers(layer);
-    load_bar_comp.progress_bar.setText(sprintf('Processing %s',layers_Str_comp));
+    load_bar_comp.progress_bar.setText(sprintf('Processing %s',layers_Str_comp{1}));
     % process per frequency with algos to apply
     for kk = 1:length(process_list)
         

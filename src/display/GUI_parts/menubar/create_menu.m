@@ -459,7 +459,7 @@ layers=get_esp3_prop('layers');
 temp_files_in_use=layers.list_memaps();
 app_path=get_esp3_prop('app_path');
 
-files_in_temp=dir(app_path.data_temp);
+files_in_temp=dir(app_path.data_temp.Path_to_folder);
 
 idx_delete=[];
 for uu=1:length(files_in_temp)

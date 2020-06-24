@@ -4,8 +4,6 @@ range_tr=trans_obj.get_transceiver_range();
 [~,idx_ts_min]=nanmin(abs(range_tr-nanmin(r)));
 [~,idx_ts_max]=nanmin(abs(range_tr-nanmax(r)));
 
-
-
 if strcmp(trans_obj.Mode,'FM')
     if isempty(cal)
         cal=trans_obj.get_fm_cal('');
@@ -100,9 +98,10 @@ if strcmp(trans_obj.Mode,'FM')
     %
     
     
-    BeamWidthAlongship_f=interp1(cal.freq_vec,cal.BeamWidthAlongship_f_fit,f_vec,'linear','extrap');
-    BeamWidthAthwartship_f=interp1(cal.freq_vec,cal.BeamWidthAthwartship_f_fit,f_vec,'linear','extrap');
-    Gf=interp1(cal.freq_vec,cal.Gf,f_vec,'linear','extrap');
+    BeamWidthAlongship=interp1(cal.Frequency,cal.BeamWidthAlongship,f_vec,'linear','extrap');
+    BeamWidthAthwartship=interp1(cal.Frequency,cal.BeamWidthAthwartship,f_vec,'linear','extrap');
+    
+    Gf=interp1(cal.Frequency,cal.Gain,f_vec,'linear','extrap');
       
     alpha_f = arrayfun(@(x) seawater_absorption(x, EnvData.Salinity, EnvData.Temperature, r_tot,att_model),f_vec/1e3,'un',0);
     alpha_f=cell2mat(alpha_f);
@@ -119,7 +118,7 @@ if strcmp(trans_obj.Mode,'FM')
         AlongAngle_val_corr=AlongAngle_val/f_corr;
         AcrossAngle_val_corr=AcrossAngle_val/f_corr;
         
-        compensation_f =arrayfun(@(x,y)  simradBeamCompensation(x,y, AlongAngle_val_corr,AcrossAngle_val_corr),BeamWidthAlongship_f,BeamWidthAthwartship_f,'un',0);
+        compensation_f =arrayfun(@(x,y)  simradBeamCompensation(x,y, AlongAngle_val_corr,AcrossAngle_val_corr),BeamWidthAlongship,BeamWidthAthwartship,'un',0);
         compensation_f=cell2mat(compensation_f);
     else
         compensation_f = zeros(size(f_vec));

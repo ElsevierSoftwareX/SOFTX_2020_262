@@ -80,7 +80,8 @@ classdef sub_ac_data_cl < handle
                             curr_name=[memapname{icell} obj.Fieldname '.bin'];
                             
                             fileID = fopen(curr_name,'w+');
-                            while fileID==-1
+                            
+                            if fileID==-1
                                 continue;
                             end
                             

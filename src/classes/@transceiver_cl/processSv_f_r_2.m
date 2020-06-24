@@ -135,16 +135,16 @@ if strcmp(trans_obj.Mode,'FM')
             
             lambda=c./(f_vec);
                         
-            eq_beam_angle_f=interp1(cal.freq_vec,cal.eq_beam_angle_f,f_vec,'linear','extrap');
+            eq_beam_angle=interp1(cal.Frequency,cal.eq_beam_angle,f_vec,'linear','extrap');
 
-            Gf=interp1(cal.freq_vec,cal.Gf,f_vec,'linear','extrap');
+            Gf=interp1(cal.Frequency,cal.Gain,f_vec,'linear','extrap');
 
             Prx_fft_vol=nb_chan*(abs(fft_vol_norm)/(2*sqrt(2))).^2*((Rwt_rx+Ztrd)/Rwt_rx)^2/Ztrd;
             
             tw=nfft/f_s_sig;
             
-            % Sv_f=10*log10(Prx_fft_vol(:))+2*alpha_f(:).*r-10*log10(c*tw)-10*log10(ptx*lambda(:).^2/(16*pi^2))-2*(Gf(:))-eq_beam_angle_f(:);
-            Sv_f=bsxfun(@minus,10*log10(Prx_fft_vol)+bsxfun(@times,2*alpha_f,r),10*log10(c*tw/2)+10*log10(ptx*lambda.^2/(16*pi^2))+2*Gf+eq_beam_angle_f);
+            % Sv_f=10*log10(Prx_fft_vol(:))+2*alpha_f(:).*r-10*log10(c*tw)-10*log10(ptx*lambda(:).^2/(16*pi^2))-2*(Gf(:))-eq_beam_angle(:);
+            Sv_f=bsxfun(@minus,10*log10(Prx_fft_vol)+bsxfun(@times,2*alpha_f,r),10*log10(c*tw/2)+10*log10(ptx*lambda.^2/(16*pi^2))+2*Gf+eq_beam_angle);
     end
 %     df=nanmean(abs(diff(f_vec)));
 %     ds=round(2e3/df);

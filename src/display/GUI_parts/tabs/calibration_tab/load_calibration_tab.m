@@ -38,7 +38,7 @@ calibration_tab_comp.SACORRECT=uicontrol(calibration_tab_comp.cal_group,gui_fmt.
 
 uicontrol(calibration_tab_comp.cal_group,gui_fmt.pushbtnStyle,'String','Process TS Cal','callback',{@reprocess_TS_calibration,main_figure},'position',p_button);
 calibration_tab_comp.cw_proc(1)=uicontrol(calibration_tab_comp.cal_group,gui_fmt.pushbtnStyle,'String','Save CW  Cal','callback',{@save_CW_calibration_cback},'position',p_button+[0 -gui_fmt.box_h 0 0]);
-calibration_tab_comp.cw_proc(1)=uicontrol(calibration_tab_comp.cal_group,gui_fmt.pushbtnStyle,'String','Load FM Cal from .xml','callback',{@load_FM_cal_cback},'position',p_button+[0 -2*gui_fmt.box_h 0 0]);
+calibration_tab_comp.cw_proc(1)=uicontrol(calibration_tab_comp.cal_group,gui_fmt.pushbtnStyle,'String','Load FM Cal from .xml','callback',{@load_FM_cal_cback},'position',p_button+[p_button(3) 0 0 0]);
 calibration_tab_comp.fm_proc(1)=uicontrol(calibration_tab_comp.cal_group,gui_fmt.pushbtnStyle,'String','Disp.Cal.','callback',{@display_cal,main_figure},'position',p_button+[p_button(3) -gui_fmt.box_h 0 0]);
 
 uicontrol(calibration_tab_comp.cal_group,gui_fmt.txtStyle,'string','Sphere:','position',pos{5,1}{1});
@@ -138,14 +138,27 @@ end
 function load_FM_cal_cback(~,~)
 
 layer = get_current_layer();
-[path_f,~] = fileparts(layer.Filename{1});
+if isempty(layer)
+    return;
+end
+[path_file,~] = fileparts(layer.Filename{1});
 
-[filename, path_f] = uigetfile({fullfile(path_f,'*.xml')},'Select XML calibration file');
+[filename, path_f] = uigetfile({fullfile(path_file,'*.xml')},'Select XML calibration file');
 
 if isequal(filename,0)
-   return;
+    return;
 end
 
-
-
+if isfile(fullfile(path_f,filename))
+    calibration_results = parse_simrad_xml_calibration_file(fullfile(path_f,filename));   
 end
+
+[~,uui] = layer.get_trans(get_esp3_prop('curr_disp'));
+
+ file_cal=fullfile(path_file,generate_valid_filename(['Calibration_FM_' layer.ChannelID{uui} '.xml']));
+ 
+ save_cal_to_xml(calibration_results,file_cal);
+ update_calibration_tab(get_esp3_prop('main_figure'));
+    
+end
+

@@ -36,7 +36,7 @@ plot(ax_2,cal_cw.FREQ(:)/1e3,cal_cw.BeamWidthAlongship(:),'xk');
 plot(ax_3,cal_cw.FREQ(:)/1e3,cal_cw.EQA(:),'ok');
 plot(ax_3,cal_cw.FREQ(:)/1e3,cal_cw.EQA(:),'ok');
 
-cal_fm_cell=layer.get_fm_cal([]);
+[cal_fm_cell,~]=layer.get_fm_cal([]);
 f_vec_tot = cal_cw.FREQ;
 
 f_start_tot=[];
@@ -54,40 +54,40 @@ for uui=1:numel(layer.Frequencies)
     f_end_tot=union(f_end_tot,nanmax(layer.Transceivers(uui).get_params_value('FrequencyStart',1),layer.Transceivers(uui).get_params_value('FrequencyEnd',1)));
     
     
-    plot(ax_1,cal.freq_vec(:)/1e3,cal.Gf_th(:),'color',[0 0.8 0],'tag','theoritical');
-    plot(ax_1,cal.freq_vec(:)/1e3,cal.Gf_file(:),'color',[0 0 0.8],'tag','file_value');
-    plot(ax_1,cal.freq_vec(:)/1e3,cal.Gf(:),'color',[0.8 0 0],'tag','applied');
+    plot(ax_1,cal.Frequency(:)/1e3,cal.Gain_th(:),'color',[0 0.8 0],'tag','theoritical','linestyle','-');
+    plot(ax_1,cal.Frequency(:)/1e3,cal.Gain_file(:),'color',[0 0 0.8],'tag','file_value','linestyle','--');
+    plot(ax_1,cal.Frequency(:)/1e3,cal.Gain(:),'color',[0.8 0 0],'tag','applied','linestyle','-.');
     
    
-    plot(ax_2,cal.freq_vec(:)/1e3,cal.BeamWidthAlongship_f_th,'color',[0 0.8 0],'linestyle','--');
-    plot(ax_2,cal.freq_vec(:)/1e3,cal.BeamWidthAlongship_f_file,'color',[0 0 0.8],'linestyle','--');
-     plot(ax_2,cal.freq_vec/1e3,cal.BeamWidthAlongship_f_fit,'Color',[0.8 0 0],'linestyle','--');
+    plot(ax_2,cal.Frequency(:)/1e3,cal.BeamWidthAlongship_th,'color',[0 0.8 0],'linestyle','--');
+    plot(ax_2,cal.Frequency(:)/1e3,cal.BeamWidthAlongship_file,'color',[0 0 0.8],'linestyle','--');
+     plot(ax_2,cal.Frequency/1e3,cal.BeamWidthAlongship,'Color',[0.8 0 0],'linestyle','--');
      
     
-    plot(ax_2,cal.freq_vec(:)/1e3,cal.BeamWidthAthwartship_f_th,'color',[0 0.8 0],'linestyle','-.');
-    plot(ax_2,cal.freq_vec(:)/1e3,cal.BeamWidthAthwartship_f_file,'color',[0 0 0.8],'linestyle','-.');
-    plot(ax_2,cal.freq_vec/1e3,cal.BeamWidthAthwartship_f_fit,'Color',[0.8 0 0],'linestyle','-.');
+    plot(ax_2,cal.Frequency(:)/1e3,cal.BeamWidthAthwartship_th,'color',[0 0.8 0],'linestyle','-.');
+    plot(ax_2,cal.Frequency(:)/1e3,cal.BeamWidthAthwartship_file,'color',[0 0 0.8],'linestyle','-.');
+    plot(ax_2,cal.Frequency/1e3,cal.BeamWidthAthwartship,'Color',[0.8 0 0],'linestyle','-.');
     
    
-    plot(ax_3,cal.freq_vec(:)/1e3,cal.eq_beam_angle_f_th,'color',[0 0.8 0]);
-    plot(ax_3,cal.freq_vec(:)/1e3,cal.eq_beam_angle_f_file,'color',[0 0 0.8]);
-     plot(ax_3,cal.freq_vec/1e3,cal.eq_beam_angle_f,'color',[0.8 0 0]);
+    plot(ax_3,cal.Frequency(:)/1e3,cal.eq_beam_angle_th,'color',[0 0.8 0]);
+    plot(ax_3,cal.Frequency(:)/1e3,cal.eq_beam_angle_file,'color',[0 0 0.8]);
+     plot(ax_3,cal.Frequency/1e3,cal.eq_beam_angle,'color',[0.8 0 0]);
     if uui==1
-        new_ylim2=[nanmin(cal.BeamWidthAthwartship_f_th)*0.8 nanmax(cal.BeamWidthAlongship_f_th)*1.1];
-        new_ylim3=[1.1*nanmin(cal.eq_beam_angle_f) 0.9*nanmax(cal.eq_beam_angle_f)];
+        new_ylim2=[nanmin(cal.BeamWidthAthwartship_th)*0.8 nanmax(cal.BeamWidthAlongship_th)*1.1];
+        new_ylim3=[1.1*nanmin(cal.eq_beam_angle) 0.9*nanmax(cal.eq_beam_angle)];
     else
-        new_ylim2=[nanmin(cal.BeamWidthAthwartship_f_th)*0.8 nanmax(cal.BeamWidthAlongship_f_th)*1.1];
+        new_ylim2=[nanmin(cal.BeamWidthAthwartship_th)*0.8 nanmax(cal.BeamWidthAlongship_th)*1.1];
         old_ylim2=get(ax_2,'YLim');
         new_ylim2=[nanmin(old_ylim2(1),new_ylim2(1)) nanmax(old_ylim2(2),new_ylim2(2))];
         
-        new_ylim3=[1.1*nanmin(cal.eq_beam_angle_f) 0.9*nanmax(cal.eq_beam_angle_f)];
+        new_ylim3=[1.1*nanmin(cal.eq_beam_angle) 0.9*nanmax(cal.eq_beam_angle)];
         old_ylim3=get(ax_3,'YLim');
         new_ylim3=[nanmin(old_ylim3(1),new_ylim3(1)) nanmax(old_ylim3(2),new_ylim3(2))];
     end
     
     ylim(ax_2,new_ylim2);
     ylim(ax_3,new_ylim3);
-    f_vec_tot=union(f_vec_tot,cal.freq_vec);
+    f_vec_tot=union(f_vec_tot,cal.Frequency);
 end
 f_grid_tot=union(f_start_tot,f_end_tot);
 f_grid_tot=union(f_grid_tot,cal_cw.FREQ);
