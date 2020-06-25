@@ -6,7 +6,7 @@ curr_disp=get_esp3_prop('curr_disp');
 
 [trans_obj,idx_freq]=layer.get_trans(curr_disp);
 
-cal_fm_cell =layer.get_fm_cal(idx_freq);
+[cal_fm_cell,origin_used] =layer.get_fm_cal(idx_freq);
 show_status_bar(main_figure);
 load_bar_comp=getappdata(main_figure,'Loading_bar');
 

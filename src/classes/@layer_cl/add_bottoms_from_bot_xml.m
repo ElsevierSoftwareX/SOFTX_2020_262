@@ -48,6 +48,7 @@ for ix = 1:length(bot_file_str)
         
         if ~strcmp(deblank(trans_obj.Config.ChannelID),bottom_xml.Infos.ChannelID)
             fprintf('This bottom have been written for a different channel: %s.\n',deblank(bottom_xml.Infos.ChannelID));
+            continue;
         end
         
         bot_xml = bottom_xml.Bottom;

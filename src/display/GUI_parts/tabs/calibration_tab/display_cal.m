@@ -36,7 +36,7 @@ plot(ax_2,cal_cw.FREQ(:)/1e3,cal_cw.BeamWidthAlongship(:),'xk');
 plot(ax_3,cal_cw.FREQ(:)/1e3,cal_cw.EQA(:),'ok');
 plot(ax_3,cal_cw.FREQ(:)/1e3,cal_cw.EQA(:),'ok');
 
-[cal_fm_cell,~]=layer.get_fm_cal([]);
+[cal_fm_cell,origin_used]=layer.get_fm_cal([]);
 f_vec_tot = cal_cw.FREQ;
 
 f_start_tot=[];
@@ -50,28 +50,25 @@ for uui=1:numel(layer.Frequencies)
         continue;
     end
     
-    f_start_tot=union(f_start_tot,nanmin(layer.Transceivers(uui).get_params_value('FrequencyStart',1),layer.Transceivers(uui).get_params_value('FrequencyEnd',1)));
-    f_end_tot=union(f_end_tot,nanmax(layer.Transceivers(uui).get_params_value('FrequencyStart',1),layer.Transceivers(uui).get_params_value('FrequencyEnd',1)));
-    
-    
-    plot(ax_1,cal.Frequency(:)/1e3,cal.Gain_th(:),'color',[0 0.8 0],'tag','theoritical','linestyle','-');
-    plot(ax_1,cal.Frequency(:)/1e3,cal.Gain_file(:),'color',[0 0 0.8],'tag','file_value','linestyle','--');
-    plot(ax_1,cal.Frequency(:)/1e3,cal.Gain(:),'color',[0.8 0 0],'tag','applied','linestyle','-.');
-    
-   
-    plot(ax_2,cal.Frequency(:)/1e3,cal.BeamWidthAlongship_th,'color',[0 0.8 0],'linestyle','--');
-    plot(ax_2,cal.Frequency(:)/1e3,cal.BeamWidthAlongship_file,'color',[0 0 0.8],'linestyle','--');
-     plot(ax_2,cal.Frequency/1e3,cal.BeamWidthAlongship,'Color',[0.8 0 0],'linestyle','--');
+    f_start_tot=union(f_start_tot,layer.Transceivers(uui).Config.FrequencyMinimum);
+    f_end_tot=union(f_end_tot,layer.Transceivers(uui).Config.FrequencyMaximum);
+        
+    plot(ax_1,cal.Frequency/1e3,cal.Gain_th,'color',[0 0.8 0],'tag','th','linestyle','-');
+    plot(ax_1,cal.Frequency/1e3,cal.Gain_file,'color',[0 0 0.8],'tag','file','linestyle','-');
+    plot(ax_1,cal.Frequency/1e3,cal.Gain_xml,'color',[0.8 0 0],'tag','xml','linestyle','-');
      
+    plot(ax_2,cal.Frequency/1e3,cal.BeamWidthAlongship_th,'color',[0 0.8 0],'linestyle','--');
+    plot(ax_2,cal.Frequency/1e3,cal.BeamWidthAlongship_file,'color',[0 0 0.8],'linestyle','--');
+    plot(ax_2,cal.Frequency/1e3,cal.BeamWidthAlongship_xml,'Color',[0.8 0 0],'linestyle','--');
+        
+    plot(ax_2,cal.Frequency/1e3,cal.BeamWidthAthwartship_th,'color',[0 0.8 0],'linestyle','-.');
+    plot(ax_2,cal.Frequency/1e3,cal.BeamWidthAthwartship_file,'color',[0 0 0.8],'linestyle','-.');
+    plot(ax_2,cal.Frequency/1e3,cal.BeamWidthAthwartship_xml,'Color',[0.8 0 0],'linestyle','-.');
+      
+    plot(ax_3,cal.Frequency/1e3,cal.eq_beam_angle_th,'color',[0 0.8 0]);
+    plot(ax_3,cal.Frequency/1e3,cal.eq_beam_angle_file,'color',[0 0 0.8]);
+    plot(ax_3,cal.Frequency/1e3,cal.eq_beam_angle_xml,'color',[0.8 0 0]);
     
-    plot(ax_2,cal.Frequency(:)/1e3,cal.BeamWidthAthwartship_th,'color',[0 0.8 0],'linestyle','-.');
-    plot(ax_2,cal.Frequency(:)/1e3,cal.BeamWidthAthwartship_file,'color',[0 0 0.8],'linestyle','-.');
-    plot(ax_2,cal.Frequency/1e3,cal.BeamWidthAthwartship,'Color',[0.8 0 0],'linestyle','-.');
-    
-   
-    plot(ax_3,cal.Frequency(:)/1e3,cal.eq_beam_angle_th,'color',[0 0.8 0]);
-    plot(ax_3,cal.Frequency(:)/1e3,cal.eq_beam_angle_file,'color',[0 0 0.8]);
-     plot(ax_3,cal.Frequency/1e3,cal.eq_beam_angle,'color',[0.8 0 0]);
     if uui==1
         new_ylim2=[nanmin(cal.BeamWidthAthwartship_th)*0.8 nanmax(cal.BeamWidthAlongship_th)*1.1];
         new_ylim3=[1.1*nanmin(cal.eq_beam_angle) 0.9*nanmax(cal.eq_beam_angle)];
@@ -99,10 +96,10 @@ ax_2.XTick=unique(f_grid_tot)/1e3;
 ax_3.XTick=unique(f_grid_tot)/1e3;
 
 if numel(ax_1.Children)>=4
-    th=findobj(ax_1,'Tag','theoritical');
-    app=findobj(ax_1,'Tag','applied');
-    fv=findobj(ax_1,'Tag','file_value');
-    legend([th(1) fv(1) app(1)],{'Theoritical' 'File value' 'Used'},'Location','northoutside','Orientation','horizontal')
+    th=findobj(ax_1,'Tag','th');
+    xml=findobj(ax_1,'Tag','xml');
+    file=findobj(ax_1,'Tag','file');
+    legend([th(1) file(1) xml(1)],{'Theoritical' 'Raw File' 'Xml file'},'Location','northoutside','Orientation','horizontal');
 end
 
 

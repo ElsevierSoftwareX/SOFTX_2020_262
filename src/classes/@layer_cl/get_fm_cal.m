@@ -16,7 +16,7 @@ for uui=1:numel(idx_trans)
             case 'FM'
                 trans_obj=layer_obj.Transceivers(idx_trans(uui));
                 
-                [cal_fm_cell{uui},used{uui}]=trans_obj.get_fm_cal(cal_path);
+                [cal_fm_cell{uui},used{uui}]=trans_obj.get_fm_cal('cal_path',cal_path);
         end
         
     catch err

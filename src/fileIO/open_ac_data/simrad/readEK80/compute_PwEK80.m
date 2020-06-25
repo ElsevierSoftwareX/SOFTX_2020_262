@@ -11,6 +11,7 @@ if datatype(1)==dec2bin(0)
         
         y=y/nb_chan;
         
+        
         power=(nb_chan*(abs(y)/(2*sqrt(2))).^2*((Rwt_rx+Ztrd)/Rwt_rx)^2/Ztrd);
     else
         y=0;

@@ -47,21 +47,13 @@ for ix=1:length(reg_file_str)
             continue;
         end
         
-        
         if ~strcmpi(deblank(trans_obj.Config.ChannelID),region_xml.Infos.ChannelID)
-            fprintf('Those regions have been written for a different Channel: %s',region_xml.Infos.ChannelID);
-        end
-        
-        if isempty(trans_obj)
-            %fprintf('Region XML file was read but could not load data for frequency %.0f kHz.\n',bottom_xml.Infos.Freq/1e3);
+            fprintf('Those regions have been written for a different Channel: %s\n',region_xml.Infos.ChannelID);
             continue;
         end
+        
         iping_file=find(trans_obj.Data.FileId==ix);
         
-         
-        if ~strcmp(deblank(trans_obj.Config.ChannelID),region_xml.Infos.ChannelID)
-            fprintf('Those regions have been written for a different channel %.0f kHz\n',region_xml.Infos.Freq);
-        end
         
         t_max=nanmax(trans_obj.Time);
         t_min=nanmin(trans_obj.Time);

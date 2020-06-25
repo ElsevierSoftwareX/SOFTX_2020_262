@@ -48,7 +48,6 @@ if isempty(select)
     end
 end
 show_status_bar(main_figure);
-%cal_fm_cell=layer.get_fm_cal([]);
 
 cal_cw.SACORRECT=nan(1,numel(layer.Transceivers));
 cal_cw.G0=nan(1,numel(layer.Transceivers));
@@ -63,7 +62,6 @@ cal_fm_tot=cell(1,numel(layer.Transceivers));
 
 fields_fm_cal = get_cal_fm_fields();
            
-
 alpha=cell(1,numel(layer.Transceivers));
 
 for uui=select
@@ -71,7 +69,6 @@ for uui=select
     [tmp,~]=trans_obj.compute_absorption(layer.EnvData,'theoritical');
     alpha{uui}=tmp;
 end
-
 
 for uui=select
     
@@ -426,7 +423,7 @@ for uui=select
             f_corr=nan(1,numel(idx_pings));
             
             
-            cal_struct=trans_obj.get_fm_cal('');
+            cal_struct=trans_obj.get_fm_cal();
             
             for kk=1:length(idx_pings)
                 [sp,cp,f,~,f_corr(kk)]=processTS_f_v2(trans_obj,layer.EnvData,idx_pings(kk),range_tot(idx_peak_tot(kk)),cal_struct,att_m);
@@ -558,10 +555,10 @@ for uui=select
             end
             
             Sp_f(idx_rem,:)=[];
+            
             Compensation_f(idx_rem,:)=[];
             f_vec(idx_rem,:)=[];
             f_corr(idx_rem)=[];
-            
             freq_vec_new=f_vec(:,1);
 
             BeamWidthAlongship=nan(1,size(f_vec,1));

@@ -1,22 +1,38 @@
-function [cal_struct,used]=get_fm_cal(trans_obj,cal_path)
+function [cal_struct,ori_used]=get_fm_cal(trans_obj,varargin)
+
+p = inputParser;
+
+addRequired(p,'trans_obj',@(x) isa(x,'transceiver_cl'));
+addParameter(p,'cal_path','',@ischar);
+addParameter(p,'origin','xml',@(x) ismember(x,{'xml','file','th'}));
+addParameter(p,'f_res',50,@(x) x>0);
+
+
+parse(p,trans_obj,varargin{:});
 
 int_meth='linear';
 ext_meth=nan;
 
-FreqStart=(trans_obj.get_params_value('FrequencyStart',1));
-FreqEnd=(trans_obj.get_params_value('FrequencyEnd',1));
-f_nom=(trans_obj.Config.Frequency);
-gain=trans_obj.get_current_gain();
+FrequencyMinimum=trans_obj.Config.FrequencyMinimum;
+FrequencyMaximum=trans_obj.Config.FrequencyMaximum;
 eq_beam_angle=trans_obj.Config.EquivalentBeamAngle;
+f_nom=trans_obj.Config.Frequency;
+gain=trans_obj.get_current_gain();
 
-%%%%%%%%%%%%Frequency vector (10Hz resolution)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-cal_struct.Frequency=nanmin(FreqStart,FreqEnd):10:nanmax(FreqStart,FreqEnd);
+ori = {'xml','file','th'};
+ori_bool = false(size(ori));
+
+
+%%%%%%%%%%%%Frequency vector (50Hz resolution)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+cal_struct.Frequency=nanmin(FrequencyMinimum,FrequencyMaximum):p.Results.f_res:nanmax(FrequencyMinimum,FrequencyMaximum);
 
 %%%%%%%%%%%%%%%%Theoritical values%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 cal_struct.Gain_th=gain+20*log10(cal_struct.Frequency./f_nom);
+%cal_struct.Gain_th=gain+10*log10(cal_struct.Frequency./f_nom);
 cal_struct.eq_beam_angle_th=eq_beam_angle+20*log10(f_nom./cal_struct.Frequency);
 cal_struct.BeamWidthAlongship_th=trans_obj.Config.BeamWidthAlongship*10.^((f_nom-cal_struct.Frequency)/f_nom/2.2578);
 cal_struct.BeamWidthAthwartship_th=trans_obj.Config.BeamWidthAthwartship*10.^((f_nom-cal_struct.Frequency)/f_nom/2.2578);
+ori_bool(strcmpi(ori,'th')) = true;
 
 %%%%%%%%%%%%%%%%Raw File values%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 cal_struct.Gain_file=nan(size(cal_struct.Frequency));
@@ -24,11 +40,31 @@ cal_struct.BeamWidthAlongship_file=nan(size(cal_struct.Frequency));
 cal_struct.BeamWidthAthwartship_file=nan(size(cal_struct.Frequency));
 cal_struct.eq_beam_angle_file=nan(size(cal_struct.Frequency));
 
-if ~isempty(trans_obj.Config.Cal_FM)    
-    cal_struct.Gain_file = interp1(trans_obj.Config.Cal_FM.Frequency,trans_obj.Config.Cal_FM.Gain,cal_struct.Frequency,int_meth,ext_meth);    
-    cal_struct.BeamWidthAlongship_file = interp1(trans_obj.Config.Cal_FM.Frequency,trans_obj.Config.Cal_FM.BeamWidthAlongship,cal_struct.Frequency,int_meth,ext_meth);    
-    cal_struct.BeamWidthAthwartship_file = interp1(trans_obj.Config.Cal_FM.Frequency,trans_obj.Config.Cal_FM.BeamWidthAthwartship,cal_struct.Frequency,int_meth,ext_meth);    
-    cal_struct.eq_beam_angle_file=10*log10(2.2578*sind(cal_struct.BeamWidthAlongship_file/4+cal_struct.BeamWidthAthwartship_file/4).^2);
+if ~isempty(trans_obj.Config.Cal_FM)
+    cal_struct.Gain_file = interp1(trans_obj.Config.Cal_FM.Frequency,trans_obj.Config.Cal_FM.Gain,cal_struct.Frequency,int_meth,ext_meth);
+    cal_struct.BeamWidthAlongship_file = interp1(trans_obj.Config.Cal_FM.Frequency,trans_obj.Config.Cal_FM.BeamWidthAlongship,cal_struct.Frequency,int_meth,ext_meth);
+    cal_struct.BeamWidthAthwartship_file = interp1(trans_obj.Config.Cal_FM.Frequency,trans_obj.Config.Cal_FM.BeamWidthAthwartship,cal_struct.Frequency,int_meth,ext_meth);
+    ori_bool(strcmpi(ori,'file')) = true;
+end
+
+%%%%%%%%%%%%%%%%XML File values%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+cal_struct.Gain_xml=nan(size(cal_struct.Frequency));
+cal_struct.BeamWidthAlongship_xml=nan(size(cal_struct.Frequency));
+cal_struct.BeamWidthAthwartship_xml=nan(size(cal_struct.Frequency));
+cal_struct.eq_beam_angle_file=nan(size(cal_struct.Frequency));
+
+%%%%%%%%%%%%%%%%%%%Read XML calibration file if available%%%%%%%%%%%%%%%%%%
+file_cal=fullfile(p.Results.cal_path,generate_valid_filename(['Calibration_FM_' trans_obj.Config.ChannelID '.xml']));
+if ~isfile(file_cal)
+    file_cal=fullfile(p.Results.cal_path,generate_valid_filename(['Calibration_FM_' num2str(f_nom,'%.0f') '.xml']));
+end
+
+if isfile(file_cal)
+    cal_xml = parse_simrad_xml_calibration_file(file_cal);
+    cal_struct.Gain_xml = interp1(cal_xml.Frequency,cal_xml.Gain,cal_struct.Frequency,int_meth,ext_meth);
+    cal_struct.BeamWidthAlongship_xml = interp1(cal_xml.Frequency,cal_xml.BeamWidthAlongship,cal_struct.Frequency,int_meth,ext_meth);
+    cal_struct.BeamWidthAthwartship_xml = interp1(cal_xml.Frequency,cal_xml.BeamWidthAthwartship,cal_struct.Frequency,int_meth,ext_meth);
+    ori_bool(strcmpi(ori,'xml')) = true;
 end
 
 %%%%%%%%%%%%%%%%Values to be used File%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -39,38 +75,44 @@ cal_struct.BeamWidthAthwartship=nan(size(cal_struct.Frequency));
 cal_struct.AngleOffsetAlongship = zeros(size(cal_struct.Frequency));
 cal_struct.AngleOffsetAthwartship = zeros(size(cal_struct.Frequency));
 
-
-%%%%%%%%%%%%%%%%%%%Read XML calibration file if available%%%%%%%%%%%%%%%%%%
-file_cal=fullfile(cal_path,generate_valid_filename(['Calibration_FM_' trans_obj.Config.ChannelID '.xml']));
-if ~isfile(file_cal)
-    file_cal=fullfile(cal_path,generate_valid_filename(['Calibration_FM_' num2str(f_nom,'%.0f') '.xml']));
-end
-
 %%%%%%%%%%%%%%%%%%%Populate values to be used%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-if isfile(file_cal)
-    disp_perso([],sprintf('Gain Calibration file for Channel %s found',trans_obj.Config.ChannelID));
-    used = 'XML file';
-    cal_f = parse_simrad_xml_calibration_file(file_cal);
-    
-    cal_struct.Gain = interp1(cal_f.Frequency,cal_f.Gain,cal_struct.Frequency,int_meth,ext_meth);
-    cal_struct.BeamWidthAlongship = interp1(cal_f.Frequency,cal_f.BeamWidthAlongship,cal_struct.Frequency,int_meth,ext_meth);
-    cal_struct.BeamWidthAthwartship = interp1(cal_f.Frequency,cal_f.BeamWidthAthwartship,cal_struct.Frequency,int_meth,ext_meth);
-    cal_struct.eq_beam_angle=10*log10(2.2578*sind(cal_struct.BeamWidthAthwartship/4+cal_struct.BeamWidthAlongship/4).^2);
-elseif ~isempty(trans_obj.Config.Cal_FM)
-    disp_perso([],sprintf('Gain Calibration for Channel %s using file values',trans_obj.Config.ChannelID));
-    used = 'Raw file values';
-    cal_struct.Gain = cal_struct.Gain_file;
-    cal_struct.BeamWidthAlongship=cal_struct.BeamWidthAlongship_file;
-    cal_struct.BeamWidthAthwartship=cal_struct.BeamWidthAthwartship_file;
-    cal_struct.eq_beam_angle=10*log10(2.2578*sind(cal_struct.BeamWidthAthwartship/4+cal_struct.BeamWidthAlongship/4).^2);
-else
-    used = 'Theoritical';
-    cal_struct.Gain=cal_struct.Gain_th;
-    disp_perso([],sprintf('Gain Calibration for Channel %s using theoritical values',trans_obj.Config.ChannelID));
-    cal_struct.BeamWidthAlongship=cal_struct.BeamWidthAlongship_th;
-    cal_struct.BeamWidthAthwartship=cal_struct.BeamWidthAthwartship_th;
-    cal_struct.eq_beam_angle=cal_struct.eq_beam_angle_th;
+
+idx_to_use = find(strcmpi(p.Results.origin ,'xml'));
+if ~ori_bool(idx_to_use)
+    idx_to_use = find(ori_bool,1);
 end
 
+ori_used = ori{idx_to_use};
+
+switch ori_used
+    case 'xml'
+        disp_perso([],sprintf('Gain Calibration for Channel %s using XML file values',trans_obj.Config.ChannelID));
+    case 'file'
+        disp_perso([],sprintf('Gain Calibration for Channel %s using embedded RAW file values',trans_obj.Config.ChannelID));
+    case 'th'
+        disp_perso([],sprintf('Gain Calibration for Channel %s using theoritical values',trans_obj.Config.ChannelID));
+end
+
+fm_fields = get_cal_fm_fields();
+
+for ui = 1:numel(fm_fields)
+    if isfield(cal_struct,sprintf('%s_%s',fm_fields{ui},ori_used))
+        cal_struct.(fm_fields{ui}) = cal_struct.(sprintf('%s_%s',fm_fields{ui},ori_used));
+    end
+end
+
+%%%%%%%%%Estimate resulting EBA%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+cal_struct.eq_beam_angle=estimate_eba(cal_struct.BeamWidthAthwartship,cal_struct.BeamWidthAlongship);
+
+for ui = 1:numel(ori)    
+   cal_struct.(sprintf('eq_beam_angle_%s',ori{ui})) = estimate_eba(cal_struct.(sprintf('BeamWidthAthwartship_%s',ori{ui})),cal_struct.(sprintf('BeamWidthAlongship_%s',ori{ui})));
+end
+
+end
+
+function eba = estimate_eba(bw_at,bw_al)
+eba = 10*log10(2.2578*sind(bw_at/4+bw_al/4).^2);
+
+end
 
 

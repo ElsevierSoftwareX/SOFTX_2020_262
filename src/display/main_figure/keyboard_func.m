@@ -76,10 +76,7 @@ try
             axes_panel_comp=getappdata(main_figure,'Axes_panel');
             main_axes=axes_panel_comp.echo_obj.main_ax;
             
-            if ~isfield(axes_panel_comp,'main_echo')
-                return;
-            end
-            
+
             x_lim=double(get(main_axes,'xlim'));
             y_lim=double(get(main_axes,'ylim'));
             dx=ceil((x_lim(2)-x_lim(1)));

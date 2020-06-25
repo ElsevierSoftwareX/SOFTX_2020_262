@@ -1,28 +1,35 @@
-function [f_vec,TS_f,SD_f]=TS_freq_response_func(main_figure,reg_obj,lbar)
+function [f_vec,TS_f,SD_f]=TS_freq_response_func(layer,varargin)
 
-layer=get_current_layer();
-curr_disp=get_esp3_prop('curr_disp');
-axes_panel_comp=getappdata(main_figure,'Axes_panel');
-if lbar
-    show_status_bar(main_figure); 
-    load_bar_comp=getappdata(main_figure,'Loading_bar');
+p = inputParser;
+
+addRequired(p,'layer',@(x) isa(x,'layer_cl'));
+addParameter(p,'reg_obj',region_cl.empty(),@(x) isa(x,'region_cl'));
+addParameter(p,'idx_freq',1,@isnumeric);
+addParameter(p,'load_bar_comp',[]);
+
+parse(p,layer,varargin{:});
+
+trans_obj = layer.Transceivers(p.Results.idx_freq);
+
+if isempty(p.Results.reg_obj)
+    idx_r=(1:length(trans_obj.get_transceiver_range()))';
+    idx_pings=1:length(trans_obj.get_transceiver_pings());
+    [~,Np_p]=trans_obj.get_pulse_length();
+    idx_r(idx_r<3*nanmax(Np_p))=[];
+    reg_obj=region_cl('Idx_r',idx_r,'Idx_pings',idx_pings);
 else
-    load_bar_comp=[];
+    reg_obj=p.Results.reg_obj;
 end
-ah=axes_panel_comp.echo_obj.main_ax;
-clear_lines(ah);
 
-
-
-[trans_obj,idx_freq]=layer.get_trans(curr_disp);
-
+load_bar_comp=p.Results.load_bar_comp;
 
 range_tr=trans_obj.get_transceiver_range();
+
 reg_bool=isa(reg_obj,'region_cl');
 
 if reg_bool
     reg_obj_main=reg_obj;
-    [regs,idx_freq_end]=layer.generate_regions_for_other_freqs(idx_freq,reg_obj,[]);
+    [regs,idx_freq_end]=layer.generate_regions_for_other_freqs(p.Results.idx_freq,reg_obj,[]);
 else
     idx_r=reg_obj.idx_r;
     range_peak=range_tr(idx_r);
@@ -36,9 +43,8 @@ SD_f=[];
 
 [~,idx_sort_f]=sort(layer.Frequencies);
 
-cal_fm_cell=layer.get_fm_cal([]);
+[cal_fm_cell,origin_used]=layer.get_fm_cal([]);
 
-pp=[];
 
 for uui=idx_sort_f
     
@@ -69,9 +75,7 @@ for uui=idx_sort_f
         TS_f=[TS_f;10*log10(tsf_f_tmp')];
         f_vec=[f_vec;f_vec_temp'];
     end
-    
-    clear Sp_f Compensation_f  f_vec_temp
-    
+  
 end
 
 
@@ -88,7 +92,7 @@ if ~isempty(f_vec)
             'Xunit','kHz',...
             'Yunit','dB',...
             'Tag',reg_obj.Tag,...
-            'Name',sprintf('%s %.0f %.0f kHz',reg_obj.Name,reg_obj.ID,layer.Frequencies(idx_freq)/1e3),...
+            'Name',sprintf('%s %.0f %.0f kHz',reg_obj.Name,reg_obj.ID,layer.Frequencies(p.Results.idx_freq)/1e3),...
             'Unique_ID',reg_obj.Unique_ID));
     else
         [f_vec,idx_sort]=sort(f_vec(:,1));
@@ -102,14 +106,12 @@ if ~isempty(f_vec)
                 'Xunit','kHz',...
                 'Yunit','dB',...
                 'Tag','ST',...
-                'Name',sprintf('%s %d %.0f kHz','Single Target',itt,layer.Frequencies(idx_freq)/1e3),...
+                'Name',sprintf('%s %d %.0f kHz','Single Target',itt,layer.Frequencies(p.Results.idx_freq)/1e3),...
                 'Unique_ID',['single_target' uid{itt}]));
         end
     end
     
 end
-delete(pp);
-if lbar
-    hide_status_bar(main_figure);
-end
+
+
 end

@@ -6,7 +6,7 @@ curr_disp=get_esp3_prop('curr_disp');
 
 [trans_obj,idx_freq]=layer.get_trans(curr_disp);
 
-cal=layer.get_fm_cal(idx_freq);
+[cal,origin_used]=layer.get_fm_cal(idx_freq);
 
 switch class(select_plot)
     case 'region_cl'

@@ -23,7 +23,7 @@ xdata=trans.get_transceiver_pings();
 [~,idx_sort]=sort(layer.Frequencies);
 
 
-cal_fm_cell=layer_obj.get_fm_cal([]);
+[cal_fm_cell,origin_used]=layer_obj.get_fm_cal([]);
 
 for uui=idx_sort
     if strcmp(layer.Transceivers(uui).Mode,'FM')

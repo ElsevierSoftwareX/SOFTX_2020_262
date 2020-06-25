@@ -45,9 +45,7 @@ end
 
 if ~isempty(abs_to_apply)
     for ichan=1:numel(layer_obj.Frequencies)
-        
-        
-        
+         
         idx_abs=find(layer_obj.Frequencies(ichan)==abs_to_apply_f,1);
         [alpha_curr,ori]=layer_obj.Transceivers(ichan).get_absorption();
         [alpha_comp,ori_comp]=layer_obj.Transceivers(ichan).compute_absorption(layer_obj.EnvData);
@@ -87,7 +85,7 @@ if ~isempty(abs_to_apply)
     end
 end
 
-%cal_fm=layer_obj.get_fm_cal();
+%[cal_fm,ori_cal_fm]=layer_obj.get_fm_cal([]);
 
 for ichan=1:numel(layer_obj.Frequencies)
     if ~isempty(p.Results.load_bar_comp)

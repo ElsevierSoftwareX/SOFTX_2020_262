@@ -4,7 +4,7 @@ p = inputParser;
 
 addRequired(p,'trans_obj',@(obj) isa(obj,'transceiver_cl'));
 addRequired(p,'env_data_obj',@(obj) isa(obj,'env_data_cl'));
-
+addParameter(p,'cal_fm',[]);
 addParameter(p,'load_bar_comp',[]);
 addParameter(p,'FieldNames',{},@iscell);
 addParameter(p,'Type','uncomp',@ischar);
@@ -30,18 +30,29 @@ cal_cw=trans_obj.get_cal();
 fprintf('Computing Sp and Sv values:\n');
 trans_obj.disp_calibration_env_params(env_data_obj);
 
-eq_beam_angle = trans_obj.Config.EquivalentBeamAngle;
 
-f_nom = trans_obj.Config.Frequency;
+if ~isempty(p.Results.cal_fm)
+    cal_fm = p.Results.cal_fm;
+else
+    if strcmpi(trans_obj.Mode,'FM')
+        cal_fm = trans_obj.get_fm_cal() ;
+    else
+       cal_fm=[]; 
+    end
+end
 
 f_c=trans_obj.get_center_frequency();
 
-eq_beam_angle_c=eq_beam_angle+20*log10(f_nom./f_c);
-
-G=cal_cw.G0+20*log10(f_c./f_nom);
-
-% G=cal_cw.G0
-% eq_beam_angle_c=eq_beam_angle
+if ~isempty(cal_fm)
+    [~,idx_f] = nanmin(abs(f_c-cal_fm.Frequency'),[],1);
+    eq_beam_angle_c=cal_fm.eq_beam_angle(idx_f);
+    G=cal_fm.Gain(idx_f);
+else
+    eq_beam_angle = trans_obj.Config.EquivalentBeamAngle;
+    f_nom = trans_obj.Config.Frequency;
+    G=cal_cw.G0+10*log10(f_c./f_nom);
+    eq_beam_angle_c=eq_beam_angle+20*log10(f_nom./f_c);
+end
 
 ptx = trans_obj.get_params_value('TransmitPower',[]);
 [t_eff,~]=trans_obj.get_pulse_Teff();
@@ -91,11 +102,9 @@ while u<ceil(nb_pings/bsize)
 
     
     switch trans_obj.Mode
-        
-        
+                
         case 'FM'
-
-            
+           
             [Sp,Sv]=convert_power_v2(pow,range_t,c,alpha,t_eff_comp(idx_pings),t_nom(idx_pings),ptx_idx_pings,c./f_c(idx_pings),G(idx_pings),eq_beam_angle_c(idx_pings),sacorr,trans_obj.Config.TransceiverName);
             
             if any(strcmpi(p.Results.FieldNames,'sp'))||isempty(p.Results.FieldNames)&&~isempty(powunmatched)

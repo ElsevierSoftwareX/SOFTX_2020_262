@@ -3,7 +3,7 @@ function set_ST(trans_obj,ST)
 block_len=get_block_len(100,'cpu');
 
 trans_obj.Data.replace_sub_data_v2('singletarget',-999,[],[]);
-    
+
 if ~isempty(ST)&&~isempty(ST.Ping_number)
     [~,np]=trans_obj.get_pulse_Teff(ST.Ping_number);
     idx_r=nanmin(ST.idx_r-nanmax(np)):nanmax(ST.idx_r+nanmax(np));
@@ -20,14 +20,19 @@ if ~isempty(ST)&&~isempty(ST.Ping_number)
         
         [~,np]=trans_obj.get_pulse_Teff(idx_pings);
         
-        np=ceil(np/4);
+        switch trans_obj.Mode
+            case 'CW'
+                np=ceil(np/4);
+            case 'FM'
+                np = ceil(np/8);
+        end
         
         idx_targets=find(ismember(ST.Ping_number,idx_pings));
         ping_num=ST.Ping_number(idx_targets);
         
         np_targets=np(1);
         idx_r_targets=ST.idx_r(idx_targets)-idx_r(1)+1;
-         
+        
         idx_r_s=idx_r_targets-np_targets();
         idx_r_s(idx_r_s<1)=1;
         idx_r_e=idx_r_targets+np_targets;
@@ -35,7 +40,7 @@ if ~isempty(ST)&&~isempty(ST.Ping_number)
         
         for it=1:numel(idx_r_e)
             dataMat(idx_r_s(it):idx_r_e(it),ping_num(it)-idx_pings(1)+1)=ST.TS_comp(idx_targets(it));
-        end   
+        end
         
         trans_obj.Data.replace_sub_data_v2('singletarget',dataMat,idx_r,idx_pings);
     end

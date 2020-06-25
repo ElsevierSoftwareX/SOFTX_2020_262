@@ -17,7 +17,7 @@ switch trans_obj.Mode
     case 'CW'
         
     case 'FM'
-        Np=Np/4;
+        Np=ceil(Np/4);
 end
 nb_samples=length(trans_obj.get_transceiver_range());
 nb_pings=length(trans_obj.Time);

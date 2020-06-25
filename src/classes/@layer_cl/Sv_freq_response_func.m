@@ -1,17 +1,30 @@
-function Sv_freq_response_func(main_figure,reg_obj,sliced)
+function Sv_freq_response_func(layer,varargin)
 
-layer=get_current_layer();
-curr_disp=get_esp3_prop('curr_disp');
-[~,idx_freq]=layer.get_trans(curr_disp);
-show_status_bar(main_figure);
-load_bar_comp=getappdata(main_figure,'Loading_bar');
-% f_vec=[];
-% Sv_f=[];
-% SD_f=[];
-% r_vec=[];
+p = inputParser;
 
+addRequired(p,'layer',@(x) isa(x,'layer_cl'));
+addParameter(p,'reg_obj',region_cl.empty(),@(x) isa(x,'region_cl'));
+addParameter(p,'idx_freq',1,@isnumeric);
+addParameter(p,'sliced',false,@islogical);
+addParameter(p,'load_bar_comp',[]);
 
-cal_fm_cell =layer.get_fm_cal([]);
+parse(p,layer,varargin{:});
+
+trans_obj = layer.Transceivers(p.Results.idx_freq);
+
+if isempty(p.Results.reg_obj)
+    idx_r=(1:length(trans_obj.get_transceiver_range()))';
+    idx_pings=1:length(trans_obj.get_transceiver_pings());
+    [~,Np_p]=trans_obj.get_pulse_length();
+    idx_r(idx_r<3*nanmax(Np_p))=[];
+    reg_obj=region_cl('Idx_r',idx_r,'Idx_pings',idx_pings);
+else
+    reg_obj=p.Results.reg_obj;
+
+end
+
+[cal_fm_cell,origin_used] =layer.get_fm_cal([]);
+
 [regs,idx_freq_end]=layer.generate_regions_for_other_freqs(idx_freq,reg_obj,[]);
 
 for uui=1:length(layer.Frequencies)
@@ -108,6 +121,4 @@ if~isempty(f_vec)
     end
 end
 
-
-hide_status_bar(main_figure);
 end

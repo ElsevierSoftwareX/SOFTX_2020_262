@@ -1,13 +1,13 @@
 
 function freq_response_reg_callback(src,evt,select_plot,main_figure,field,sliced)
 layer=get_current_layer();
+curr_disp=get_esp3_prop('curr_disp');
+[trans_obj,idx_freq]=layer.get_trans(curr_disp);
+
+load_bar_comp=getappdata(main_figure,'Loading_bar');
 
 switch class(select_plot)
     case 'region_cl'
-        curr_disp=get_esp3_prop('curr_disp');
-       
-        [trans_obj,~]=layer.get_trans(curr_disp);
-
         reg_obj=trans_obj.get_region_from_Unique_ID(curr_disp.Active_reg_ID);
     otherwise
         idx_pings=round(nanmin(select_plot.XData)):round(nanmax(select_plot.XData));
@@ -16,25 +16,26 @@ switch class(select_plot)
 end
 
 
-
-
-for i=1:length(reg_obj)
-    
+show_status_bar(main_figure);
+for i=1:length(reg_obj)    
     if~isempty(layer.Curves)
         layer.Curves(cellfun(@(x) strcmp(x,reg_obj(i).Unique_ID),{layer.Curves(:).Unique_ID}))=[];
     end
     %update_multi_freq_disp_tab(main_figure,'ts_f',0);
     switch(field)
         case {'sp','spdenoised','spunmatched'}
-            TS_freq_response_func(main_figure,reg_obj(i),true);
+            
+            layer.TS_freq_response_func('reg_obj',reg_obj(i),'lbar',true,'load_bar_comp',load_bar_comp,'idx_freq',idx_freq);
             update_multi_freq_disp_tab(main_figure,'ts_f',0);
         case {'sv','svdenoised','svunmatched'}
-            Sv_freq_response_func(main_figure,reg_obj(i),sliced);
+            layer.Sv_freq_response_func('reg_obj',reg_obj(i),'sliced',sliced,'load_bar_comp',load_bar_comp,'idx_freq',idx_freq);
             update_multi_freq_disp_tab(main_figure,'sv_f',0);
         otherwise
-            TS_freq_response_func(main_figure,reg_obj(i),true);
+            
+            layer.TS_freq_response_func('reg_obj',reg_obj(i),'lbar',true,'load_bar_comp',load_bar_comp,'idx_freq',idx_freq);
             update_multi_freq_disp_tab(main_figure,'ts_f',0);
     end
 end
+hide_status_bar(main_figure);
 
 end

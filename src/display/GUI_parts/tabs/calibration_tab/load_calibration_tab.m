@@ -93,12 +93,12 @@ end
 function apply_calibration(~,~,main_figure)
 curr_disp=get_esp3_prop('curr_disp');
 layer=get_current_layer();
+
 if ~isempty(layer)
     calibration_tab_comp=getappdata(main_figure,'Calibration_tab');
     
-    [trans_obj,~]=layer.get_trans(curr_disp);
-    
-    
+    [trans_obj,idx_freq]=layer.get_trans(curr_disp);
+
     old_cal=trans_obj.get_cal();
     
     if ~isnan(str2double(get(calibration_tab_comp.G0,'string')))
@@ -119,10 +119,15 @@ if ~isempty(layer)
         new_cal.EQA=old_cal.EQA;
     end
     
-    trans_obj.apply_cw_cal(new_cal);
+%     [cal_fm,origin_cal_fm]=layer.get_fm_cal(idx_freq);
+ 
+%     if ~isempty(cal_fm{1})&&strcmpi(origin_cal_fm{1},'th')
+%          trans_obj.apply_cw_cal(new_cal); 
+%     end
+    
+    trans_obj.apply_cw_cal(new_cal); 
+    
     update_calibration_tab(main_figure);
-    
-    
     update_axis(main_figure,0,'main_or_mini',union({'main','mini'},curr_disp.ChannelID,'stable'),'force_update',1);
     set_alpha_map(main_figure,'update_bt',0);
     

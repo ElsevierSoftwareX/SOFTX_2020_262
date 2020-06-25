@@ -716,10 +716,22 @@ if datatype(1)==dec2bin(1)
     end
     
 else
-    [~,powerunmatched]=compute_PwEK80(trans_obj.Config.Impedance,trans_obj.Config.Ztrd,datatype,data_tmp);
-    trans_obj.Config.NbQuadrants=sum(contains(fieldnames(data_tmp),'comp_sig'));
     
+   
+    
+    if trans_obj.Params.FrequencyStart(1)~=trans_obj.Params.FrequencyEnd(1)
+        [~,y_tx_matched]=generate_sim_pulse(trans_obj.Params,trans_obj.Filters(1),trans_obj.Filters(2));
+        Np=numel(y_tx_matched);
+        data_tmp  = structfun(@(x) circshift(x,-Np,1),data_tmp,'un',0);
+        ff=fieldnames(data_tmp);  
+        for uif=1:numel(ff)
+           data_tmp.(ff{uif})(end-Np:end,:)=0; 
+        end
+    end
+    [~,powerunmatched]=compute_PwEK80(trans_obj.Config.Impedance,trans_obj.Config.Ztrd,datatype,data_tmp);
+    trans_obj.Config.NbQuadrants=sum(contains(fieldnames(data_tmp),'comp_sig'));    
     [data_tmp,mode]=match_filter_data(data_tmp,trans_obj.Params,trans_obj.Filters);
+    
     if datatype(2)==dec2bin(1)||datatype(1)==dec2bin(0)&&trans_obj.Config.BeamType>0
         [AlongAngle,AcrossAngle]=computesPhasesAngles_v3(data_tmp,...
             trans_obj.Config.AngleSensitivityAlongship,...
@@ -727,9 +739,9 @@ else
             datatype,...
             trans_obj.Config.TransducerName,...
             trans_obj.Config.AngleOffsetAlongship,...
-            trans_obj.Config.AngleOffsetAthwartship);
-        
+            trans_obj.Config.AngleOffsetAthwartship);        
     end
+    
     switch mode
         case 'FM'
             [y,pow]=compute_PwEK80(trans_obj.Config.Impedance,trans_obj.Config.Ztrd,datatype,data_tmp);
@@ -751,4 +763,6 @@ else
     end
 end
 end
+
+
 

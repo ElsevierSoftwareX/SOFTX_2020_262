@@ -46,7 +46,7 @@ plot(calibration_tab_comp.ax_EQA,cal_cw.FREQ/1e3,cal_cw.EQA,'ob');
 
 f_vec_tot = cal_cw.FREQ;
 
-cal_fm_cell=layer.get_fm_cal([]);
+[cal_fm_cell,origin_used]=layer.get_fm_cal([]);
 
 for uui=1:numel(layer.Frequencies)
     
@@ -55,11 +55,11 @@ for uui=1:numel(layer.Frequencies)
         continue;
     end
     
-    plot(calibration_tab_comp.ax_G0,cal.Frequency(:)/1e3,cal.Gain(:),'color',[0.8 0 0]);
+    plot(calibration_tab_comp.ax_G0,cal.Frequency(:)/1e3,cal.Gain_xml(:),'color',[0.8 0 0]);
     plot(calibration_tab_comp.ax_G0,cal.Frequency(:)/1e3,cal.Gain_th(:),'color',[0 0.8 0]);
     plot(calibration_tab_comp.ax_G0,cal.Frequency(:)/1e3,cal.Gain_file(:),'color',[0 0 0.8]);
     
-    plot(calibration_tab_comp.ax_EQA,cal.Frequency/1e3,cal.eq_beam_angle,'color',[0.8 0 0]);
+    plot(calibration_tab_comp.ax_EQA,cal.Frequency/1e3,cal.eq_beam_angle_xml,'color',[0.8 0 0]);
     plot(calibration_tab_comp.ax_EQA,cal.Frequency(:)/1e3,cal.eq_beam_angle_th,'color',[0 0.8 0]);
     plot(calibration_tab_comp.ax_EQA,cal.Frequency(:)/1e3,cal.eq_beam_angle_file,'color',[0 0 0.8]);
     

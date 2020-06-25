@@ -6,7 +6,7 @@ range_tr=trans_obj.get_transceiver_range();
 
 if strcmp(trans_obj.Mode,'FM')
     if isempty(cal)
-        cal=trans_obj.get_fm_cal('');
+        cal=trans_obj.get_fm_cal();
     end
     
     Rwt_rx=trans_obj.Config.Impedance;

@@ -222,12 +222,12 @@ regs=trans_obj.Regions(idx);
 switch tab_name
     case 'sv_f'
         for i=1:length(regs)
-            Sv_freq_response_func(main_figure,regs(i),0) ;
+            layer.Sv_freq_response_func('reg_obj',regs(i),'load_bar_comp',load_bar_comp,'idx_freq',idx_freq);
         end
         
     case 'ts_f'
         for i=1:length(regs)
-            TS_freq_response_func(main_figure,regs(i),true) ;
+            layer.TS_freq_response_func('reg_obj',regs(i),'load_bar_comp',load_bar_comp,'idx_freq',idx_freq);
         end
         
 end

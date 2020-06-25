@@ -29,11 +29,11 @@ if params.FrequencyStart(1)~=params.FrequencyEnd(1)
             yc_temp =ifft(fft(y_tx_matched,n).*fft(s,n,1)/val_sq);
         end
         
-        %i0=ceil(Np/2);
-        i0=ceil(Np);
+        i0=ceil(Np/2);        
         d_t=yc_temp(i0:i0+nb_s-1,:);
         
         data.(sprintf('comp_sig_%1d',i))=d_t;
+
     end
     
 else
