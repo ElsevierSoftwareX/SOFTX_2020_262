@@ -5,7 +5,7 @@ trans_obj=layer_obj.get_trans(curr_disp);
 new_ss=layer_obj.EnvData.SoundSpeed;
 
 [new_abs,abs_ori]=trans_obj.get_absorption();
-
+f_c = trans_obj.get_center_frequency();
 switch layer_obj.EnvData.SVP.ori
     case 'constant'        
         ss_str=sprintf('Const. Soundspeed: %.2f m/s',new_ss);
@@ -25,5 +25,5 @@ switch abs_ori
 end
 
 
-str_disp=sprintf('Currently used values:\n%s\n%s\n',...
-    ss_str,abs_str);
+str_disp=sprintf('Center frequency: %.1fkHz\nCurrently used values:\n%s\n%s\n',...
+    f_c(1)/1e3,ss_str,abs_str);

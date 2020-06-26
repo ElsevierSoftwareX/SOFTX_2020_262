@@ -14,7 +14,7 @@ end
 load_bar_comp=getappdata(main_figure,'Loading_bar');
 
 show_status_bar(main_figure);
-layer.TS_freq_response_func('reg_obj',ST,'lbar',true,'load_bar_comp',load_bar_comp,'idx_freq',idx_freq);
+layer.TS_freq_response_func('reg_obj',ST,'load_bar_comp',load_bar_comp,'idx_freq',idx_freq);
 hide_status_bar(main_figure);
 
 update_multi_freq_disp_tab(main_figure,'ts_f',0);

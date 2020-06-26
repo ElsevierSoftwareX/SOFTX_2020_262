@@ -96,7 +96,7 @@ if strcmp(trans_obj.Mode,'FM')
     
     fft_vol = spectrogram(y_spread,w_h,n_overlap,nfft)/nfft;%/nansum(w_h)*nfft;
     
-    [~,y_tx_matched]=generate_sim_pulse(trans_obj.Params,trans_obj.Filters(1),trans_obj.Filters(2));
+    [sim_pulse,y_tx_matched,t_pulse]=trans_obj.get_pulse();
     
     y_tx_auto=xcorr(y_tx_matched)/nansum(abs(y_tx_matched).^2);
     

@@ -111,7 +111,7 @@ for uui=select
                 att_m='fandg';
         end
     else
-        att_m=[];
+        att_m='';
     end
     
     sphere_ts = spherets(2*pi*Freq_c/layer.EnvData.SoundSpeed,sph.diameter/2, c_at_sphere, ...
@@ -453,8 +453,7 @@ for uui=select
             TS_f=Sp_f+Compensation_f;
             
             TS_f_mean=10*log10(nanmean(10.^(TS_f'/10)));
-            
-            
+                        
             th_ts=arrayfun(@(x) spherets(x/c_at_sphere,sph.diameter/2, c_at_sphere, ...
                 sph.lont_c, sph.trans_c, density_at_sphere, sph.rho),2*pi*freq_vec);
             

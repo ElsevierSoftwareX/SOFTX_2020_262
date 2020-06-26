@@ -100,6 +100,7 @@ if ~isempty(layer)
     [trans_obj,idx_freq]=layer.get_trans(curr_disp);
 
     old_cal=trans_obj.get_cal();
+
     
     if ~isnan(str2double(get(calibration_tab_comp.G0,'string')))
         new_cal.G0=str2double(get(calibration_tab_comp.G0,'string'));

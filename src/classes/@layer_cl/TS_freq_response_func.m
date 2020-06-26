@@ -3,7 +3,7 @@ function [f_vec,TS_f,SD_f]=TS_freq_response_func(layer,varargin)
 p = inputParser;
 
 addRequired(p,'layer',@(x) isa(x,'layer_cl'));
-addParameter(p,'reg_obj',region_cl.empty(),@(x) isa(x,'region_cl'));
+addParameter(p,'reg_obj',region_cl.empty(),@(x) isa(x,'region_cl')||isstruct(x));
 addParameter(p,'idx_freq',1,@isnumeric);
 addParameter(p,'load_bar_comp',[]);
 
@@ -32,7 +32,7 @@ if reg_bool
     [regs,idx_freq_end]=layer.generate_regions_for_other_freqs(p.Results.idx_freq,reg_obj,[]);
 else
     idx_r=reg_obj.idx_r;
-    range_peak=range_tr(idx_r);
+    range_peak=range_tr(idx_r)';
     reg_obj_main.Target_range_disp=range_peak;
     reg_obj_main.Ping_number=reg_obj.Ping_number;
 end

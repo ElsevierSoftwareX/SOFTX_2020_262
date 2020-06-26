@@ -210,7 +210,7 @@ for i_cell=1:length(Filename_cell)
         params_obj.PulseLength(:)=nanmean(data.ChirpLength(idx_channel))/1e3;
         params_obj.SampleInterval(:)=1./data.sampFreq(idx_channel);
         params_obj.TransmitPower(:)=data.sourceLevel(idx_channel);
-        params_obj.Absorption(:)= seawater_absorption(params_obj.Frequency(1)/1e3, (envdata.Salinity), (envdata.Temperature), (envdata.Depth),'fandg')/1e3;
+        params_obj.Absorption(:)= seawater_absorption((params_obj.FrequencyStart+params_obj.FrequencyEnd(1))/2/1e3, (envdata.Salinity), (envdata.Temperature), (envdata.Depth),'fandg')/1e3;
         
         power_lin=zeros(nb_samples,nb_pings);
         

@@ -58,6 +58,7 @@ ptx = trans_obj.get_params_value('TransmitPower',[]);
 [t_eff,~]=trans_obj.get_pulse_Teff();
 [t_eff_comp,~]=trans_obj.get_pulse_comp_Teff();
 [t_nom,~]=trans_obj.get_pulse_length();
+
 sacorr = cal_cw.SACORRECT;
 
 pings=trans_obj.get_transceiver_pings();

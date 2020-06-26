@@ -216,9 +216,10 @@ end
 function add_curves_from_regions_cback(~,~,main_figure,tab_name)
 curr_disp=get_esp3_prop('curr_disp');
 layer=get_current_layer();
-[trans_obj,~]=layer.get_trans(curr_disp);
+[trans_obj,idx_freq]=layer.get_trans(curr_disp);
 idx=trans_obj.find_regions_type('Data');
 regs=trans_obj.Regions(idx);
+load_bar_comp = getappdata(main_figure,'Loading_bar');
 switch tab_name
     case 'sv_f'
         for i=1:length(regs)

@@ -1,10 +1,9 @@
-function [data,mode]=match_filter_data(data,params,filters)
+function data=match_filter_data(data,y_tx_matched)
 
-
-if params.FrequencyStart(1)~=params.FrequencyEnd(1)
-    mode='FM';
+if ~isempty(y_tx_matched)
     
-    [~,y_tx_matched]=generate_sim_pulse(params,filters(1),filters(2));
+    
+   
     Np=numel(y_tx_matched);
     
     nb_chan=sum(contains(fieldnames(data),'comp_sig'));
@@ -17,6 +16,7 @@ if params.FrequencyStart(1)~=params.FrequencyEnd(1)
         data.ping_num=(1:nb_pings);
         
         val_sq=sum(abs(y_tx_matched).^2);
+        
         n = Np + nb_s - 1;
         %gpu_comp=get_gpu_comp_stat();
         gpu_comp=0;
@@ -30,12 +30,11 @@ if params.FrequencyStart(1)~=params.FrequencyEnd(1)
         end
         
         i0=ceil(Np/2);        
-        d_t=yc_temp(i0:i0+nb_s-1,:);
+        d_t = yc_temp(i0:i0+nb_s-1,:);
+        d_t(end-i0:end,:) = 0;
         
-        data.(sprintf('comp_sig_%1d',i))=d_t;
+        data.(sprintf('comp_sig_%1d',i)) = d_t;
 
     end
-    
-else
-    mode='CW';
-end
+end  
+

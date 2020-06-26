@@ -656,7 +656,7 @@ id_rem=[];
 for i =1:nb_trans
     
     trans_obj(i).Params=trans_obj(i).Params.reduce_params();
-    
+    f_c = trans_obj(i).get_center_frequency();
     if ~any(trans_obj(i).Params.Frequency~=0)
         trans_obj(i).Params.Frequency = (trans_obj(i).Params.FrequencyStart+trans_obj(i).Params.FrequencyEnd)/2;
     end
@@ -670,7 +670,7 @@ for i =1:nb_trans
     end
     
     if ~any(trans_obj(i).Params.Absorption~=0)
-        alpha= seawater_absorption(trans_obj(i).Params.Frequency(1)/1e3, (envdata.Salinity), (envdata.Temperature), (envdata.Depth),'fandg')/1e3;
+        alpha= seawater_absorption(f_c(1)/1e3, (envdata.Salinity), (envdata.Temperature), (envdata.Depth),'fandg')/1e3;
         trans_obj(i).Params.Absorption(:)=alpha;
     end
     
@@ -716,21 +716,24 @@ if datatype(1)==dec2bin(1)
     end
     
 else
-    
-   
-    
-    if trans_obj.Params.FrequencyStart(1)~=trans_obj.Params.FrequencyEnd(1)
-        [~,y_tx_matched]=generate_sim_pulse(trans_obj.Params,trans_obj.Filters(1),trans_obj.Filters(2));
+       
+    if (trans_obj.Params.FrequencyStart(1)~=trans_obj.Params.FrequencyEnd(1))
+        [sim_pulse,y_tx_matched,t_pulse]=trans_obj.get_pulse();        
         Np=numel(y_tx_matched);
         data_tmp  = structfun(@(x) circshift(x,-Np,1),data_tmp,'un',0);
-        ff=fieldnames(data_tmp);  
+        ff=fieldnames(data_tmp);
         for uif=1:numel(ff)
-           data_tmp.(ff{uif})(end-Np:end,:)=0; 
+            data_tmp.(ff{uif})(end-Np:end,:)=0;
         end
+        mode = 'FM';
+    else
+        y_tx_matched = [];
+        mode = 'CW';
     end
+
     [~,powerunmatched]=compute_PwEK80(trans_obj.Config.Impedance,trans_obj.Config.Ztrd,datatype,data_tmp);
     trans_obj.Config.NbQuadrants=sum(contains(fieldnames(data_tmp),'comp_sig'));    
-    [data_tmp,mode]=match_filter_data(data_tmp,trans_obj.Params,trans_obj.Filters);
+    data_tmp=match_filter_data(data_tmp,y_tx_matched);
     
     if datatype(2)==dec2bin(1)||datatype(1)==dec2bin(0)&&trans_obj.Config.BeamType>0
         [AlongAngle,AcrossAngle]=computesPhasesAngles_v3(data_tmp,...

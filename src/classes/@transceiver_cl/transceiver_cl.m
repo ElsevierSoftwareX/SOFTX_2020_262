@@ -92,7 +92,12 @@ classdef transceiver_cl < handle
         end
         
         function p_out = get_params_value(trans_obj,param_name,idx)
+            
             nb_pings = numel(trans_obj.Time);
+            
+            if nb_pings == 0
+                nb_pings = 1;
+            end
             
             if isempty(idx)
                 idx=1:nb_pings;

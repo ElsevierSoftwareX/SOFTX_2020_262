@@ -18,6 +18,10 @@ if strcmp(trans_obj.Mode,'FM')
     FreqStart=(trans_obj.get_params_value('FrequencyStart',iPing));
     FreqEnd=(trans_obj.get_params_value('FrequencyEnd',iPing));
     
+    if isempty(att_model)
+        att_model = 'doonan';
+    end
+    
     if FreqEnd>=120000||FreqStart>=120000
         att_model='fandg';
     end
@@ -46,7 +50,7 @@ if strcmp(trans_obj.Mode,'FM')
     
     r_ts=range_tr(idx_ts);
     
-    [~,y_tx_matched]=generate_sim_pulse(trans_obj.Params,trans_obj.Filters(1),trans_obj.Filters(2));
+    [sim_pulse,y_tx_matched,t_pulse]=trans_obj.get_pulse();
         
     y_tx_auto=xcorr(y_tx_matched)/nansum(abs(y_tx_matched).^2);
     
@@ -109,14 +113,17 @@ if strcmp(trans_obj.Mode,'FM')
     
     Prx_fft=nb_chan/2*(abs(s_norm)/(2*sqrt(2))).^2*((Rwt_rx+Ztrd)/Rwt_rx)^2/Ztrd;
     
-    %correction factor based on frequency response of targets to acount for
+    %correction factor based on frequency response of targets to account for
     %positionning "error", not sure so not applying it...
-    %f_corr=nansum((1+(f_nom-f_vec)/f_nom).*Prx_fft.^2)/nansum(Prx_fft.^2);
+    f_nom = trans_obj.Config.Frequency;
+    %f_c = trans_obj.get_center_frequency();
+    f_corr=nansum((1+(f_nom-f_vec)/f_nom).*Prx_fft.^2)/nansum(Prx_fft.^2);
+    %f_corr=nansum((1+(f_c(1)-f_vec)/f_nom).*Prx_fft.^2)/nansum(Prx_fft.^2);
     
-    f_corr=1;
+    %f_corr=1;
     if ~isempty(AlongAngle_val)
-        AlongAngle_val_corr=AlongAngle_val/f_corr;
-        AcrossAngle_val_corr=AcrossAngle_val/f_corr;
+        AlongAngle_val_corr=AlongAngle_val*f_corr;
+        AcrossAngle_val_corr=AcrossAngle_val*f_corr;
         
         compensation_f =arrayfun(@(x,y)  simradBeamCompensation(x,y, AlongAngle_val_corr,AcrossAngle_val_corr),BeamWidthAlongship,BeamWidthAthwartship,'un',0);
         compensation_f=cell2mat(compensation_f);

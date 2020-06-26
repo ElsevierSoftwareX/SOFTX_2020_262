@@ -1,6 +1,6 @@
 function [f_min_3dB,f_max_3dB]=get_3dB_f(trans_obj)
 
-        [~,y_tx_matched,t_sim_pulse_2]=generate_sim_pulse(trans_obj.Params,trans_obj.Filters(1),trans_obj.Filters(2));
+        [sim_pulse,y_tx_matched,t_pulse]=trans_obj.get_pulse();
         
         idx_3db=abs(y_tx_matched.^2)>=nanmax(abs(y_tx_matched.^2)/2);
         FreqStart=(trans_obj.get_params_value('FrequencyStart',1));

@@ -1,23 +1,25 @@
-function [sim_pulse_2,y_tx_matched,t_sim_pulse_2]=generate_sim_pulse (params,F1,F2)
+function [sim_pulse_2,y_tx_matched,t_sim_pulse_2]=generate_WBT_pulse(trans_obj)
+
+f_s_sig=(1/(trans_obj.Params.SampleInterval(1)));
+FreqStart=(trans_obj.Params.FrequencyStart(1));
+FreqEnd=(trans_obj.Params.FrequencyEnd(1));
+pulse_length=(trans_obj.Params.PulseLength(1));
+pulse_slope=(trans_obj.Params.Slope(1));
+
+F1 = trans_obj.Filters(1);
+F2 = trans_obj.Filters(2);
 
 f_s_ori=1.5*1e6;
 
 D_1=nanmax(F1.DecimationFactor,1);
 D_2=nanmax(F2.DecimationFactor,1);
+
 filt_1=(F1.Coefficients(1:2:end)+1j*F1.Coefficients(2:2:end));
 filt_2=(F2.Coefficients(1:2:end)+1j*F2.Coefficients(2:2:end));
 
-f_s_sig=(1/(params.SampleInterval(1)));
-FreqStart=(params.FrequencyStart(1));
-FreqEnd=(params.FrequencyEnd(1));
-
-pulse_length=(params.PulseLength(1));
-pulse_slope=(params.Slope(1));
-
-t_sim_pulse=linspace(0,pulse_length,(pulse_length*f_s_ori))';
+t_sim_pulse=linspace(1/f_s_ori,pulse_length,(pulse_length*f_s_ori))';
 
 np=length(t_sim_pulse);
-
 
 nwtx=2*floor(pulse_slope*np);
 wtxtmp  = hann(nwtx);
@@ -30,12 +32,9 @@ env_pulse = [wtxtmp(1:nwtxh); ones(np-nwtx,1); wtxtmp(nwtxh+1:end)];
 % sim_pulse_2=env_pulse.*((exp(1i*phi_sweep)));
 
 f_sweep=chirp(t_sim_pulse,FreqStart,t_sim_pulse(end),FreqEnd);
-sim_pulse=env_pulse.*f_sweep;
-
+sim_pulse=(env_pulse.*f_sweep);
 
 %Filter simulated pulse to create match filter%
-
-
 f_s_dec(1)=f_s_ori/D_1;
 f_s_dec(2)=f_s_dec(1)/D_2;
 d_fact=f_s_dec(2)/f_s_sig;
@@ -71,12 +70,12 @@ t_sim_pulse_2=downsample(t_sim_pulse_1,D_2);
 % grid on;
 % xlabel('Time(ms)');
 
-
 d_fact=round(d_fact);
 
 t_sim_pulse_2=t_sim_pulse_2(1:d_fact:end);
 sim_pulse_2=sim_pulse_2(1:d_fact:end);
 y_tx_matched=y_tx_matched(1:d_fact:end);
+
 
 
 

@@ -25,7 +25,7 @@ for i=1:length(reg_obj)
     switch(field)
         case {'sp','spdenoised','spunmatched'}
             
-            layer.TS_freq_response_func('reg_obj',reg_obj(i),'lbar',true,'load_bar_comp',load_bar_comp,'idx_freq',idx_freq);
+            layer.TS_freq_response_func('reg_obj',reg_obj(i),'load_bar_comp',load_bar_comp,'idx_freq',idx_freq);
             update_multi_freq_disp_tab(main_figure,'ts_f',0);
         case {'sv','svdenoised','svunmatched'}
             layer.Sv_freq_response_func('reg_obj',reg_obj(i),'sliced',sliced,'load_bar_comp',load_bar_comp,'idx_freq',idx_freq);

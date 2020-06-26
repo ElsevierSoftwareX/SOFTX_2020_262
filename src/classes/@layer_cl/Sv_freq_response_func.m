@@ -25,7 +25,7 @@ end
 
 [cal_fm_cell,origin_used] =layer.get_fm_cal([]);
 
-[regs,idx_freq_end]=layer.generate_regions_for_other_freqs(idx_freq,reg_obj,[]);
+[regs,idx_freq_end]=layer.generate_regions_for_other_freqs(p.Results.idx_freq,reg_obj,[]);
 
 for uui=1:length(layer.Frequencies)
     reg=regs(idx_freq_end==uui);
@@ -36,14 +36,14 @@ for uui=1:length(layer.Frequencies)
     
     cal=cal_fm_cell{uui};
 
-    if sliced>0
+    if p.Results.sliced
         cell_h=reg.Cell_h;
     else
         cell_h=0;
     end
     output_size='2D';
     [Sv_f_out,f_vec_temp,pings,r_f]=layer.Transceivers(uui).sv_f_from_region(reg,...
-        'envdata',layer.EnvData,'cal',cal,'output_size',output_size,'sliced_output',cell_h,'load_bar_comp',load_bar_comp);
+        'envdata',layer.EnvData,'cal',cal,'output_size',output_size,'sliced_output',cell_h,'load_bar_comp',p.Results.load_bar_comp);
     
     sv_f_temp=10.^(Sv_f_out/10);
     
@@ -51,7 +51,7 @@ for uui=1:length(layer.Frequencies)
         continue;
     end
     
-    if sliced==0
+    if ~p.Results.sliced
         if size(sv_f_temp,2)>1
             Sv_f_temp=10*log10(nanmean(nanmean(sv_f_temp)));
             SD_f_temp=nanstd(10*log10(nanmean(sv_f_temp)));
@@ -116,7 +116,7 @@ if~isempty(f_vec)
             'Xunit','kHz',...
             'Yunit','dB',...
             'Tag',reg_obj.Tag,...
-            'Name',sprintf('%s %.0f %.0f kHz @ %.1fm',reg_obj.Name,reg_obj.ID,layer.Frequencies(idx_freq)/1e3,r_vec(i,1)),...
+            'Name',sprintf('%s %.0f %.0f kHz @ %.1fm',reg_obj.Name,reg_obj.ID,layer.Frequencies(p.Results.idx_freq)/1e3,r_vec(i,1)),...
             'Unique_ID',sprintf('%s_%.0f',reg_obj.Unique_ID,r_vec(i,1))));
     end
 end

@@ -103,9 +103,9 @@ end
 uimenu(analysis_menu,'Label','Spectral Analysis (noise)','Callback',{@noise_analysis_callback,select_plot,main_figure});
 
 freq_analysis_menu=uimenu(context_menu,'Label','Frequency Analysis');
-uimenu(freq_analysis_menu,'Label','Display TS Frequency response','Callback',{@freq_response_reg_callback,select_plot,main_figure,'sp',0});
-uimenu(freq_analysis_menu,'Label','Display Sv Frequency response','Callback',{@freq_response_reg_callback,select_plot,main_figure,'sv',0});
-uimenu(freq_analysis_menu,'Label','Display Sliced Sv Frequency response','Callback',{@freq_response_reg_callback,select_plot,main_figure,'sv',1});
+uimenu(freq_analysis_menu,'Label','Display TS Frequency response','Callback',{@freq_response_reg_callback,select_plot,main_figure,'sp',false});
+uimenu(freq_analysis_menu,'Label','Display Sv Frequency response','Callback',{@freq_response_reg_callback,select_plot,main_figure,'sv',false});
+uimenu(freq_analysis_menu,'Label','Display Sliced Sv Frequency response','Callback',{@freq_response_reg_callback,select_plot,main_figure,'sv',true});
 
 if strcmp(trans_obj.Mode,'FM')
     uimenu(freq_analysis_menu,'Label','Create Frequency Matrix Sv','Callback',{@freq_response_mat_callback,select_plot,main_figure});
