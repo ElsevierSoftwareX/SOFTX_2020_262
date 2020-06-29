@@ -33,7 +33,7 @@ if reg_bool
 else
     idx_r=reg_obj.idx_r;
     range_peak=range_tr(idx_r)';
-    reg_obj_main.Target_range_disp=range_peak;
+    reg_obj_main.Target_range=range_peak;
     reg_obj_main.Ping_number=reg_obj.Ping_number;
 end
 

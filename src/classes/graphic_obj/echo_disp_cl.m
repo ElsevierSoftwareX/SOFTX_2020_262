@@ -278,13 +278,14 @@ classdef echo_disp_cl < handle
                     end
                 end
             end
-            zoom_area=findobj(obj.main_ax,'tag','zoom_area','-or','Tag','disp_area');
-                       
-            if p.Results.bt_on_top==0
+                              
+            if p.Results.bt_on_top==0 
+                zoom_area=findobj(obj.main_ax,'tag','zoom_area','-or','Tag','disp_area');
                 uistack([zoom_area;text_disp;lines;select_area;regions;bt_im;echo_im],'top');
             else
                 uistack([bt_im;text_disp;lines;select_area;regions;echo_im],'top');
             end
+            
             obj.main_ax.Layer='top';
         end
         

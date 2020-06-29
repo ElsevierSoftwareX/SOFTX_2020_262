@@ -7,8 +7,6 @@ if isempty(patch_obj.Vertices)
 end
 
 
-
-
 ah=mini_axes_comp.echo_obj.main_ax;
 
 if evt.Button==1
@@ -44,7 +42,6 @@ if evt.Button==1
     
     patch_obj.Vertices=new_vert;
 
-    
     
     axes_panel_comp=getappdata(main_figure,'Axes_panel');
     main_axes=axes_panel_comp.echo_obj.main_ax;

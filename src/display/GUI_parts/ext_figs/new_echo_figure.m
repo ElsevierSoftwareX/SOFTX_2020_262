@@ -65,7 +65,7 @@ switch lower(p.Results.Units)
         pos_u=units;
         pos_final=p.Results.Position.*[size_max(end,3:4) size_max(end,3:4)]+[size_max(end,1:2) 0 0];
     otherwise
-        pos_u=p.Results.Units;
+        pos_u='pixels';
         pos_final=p.Results.Position;
 end
 
@@ -178,7 +178,10 @@ else
 end
 
 if ~strcmp(fig_handle.WindowStyle,'docked')
-    set(fig_handle,'Position',get_dlg_position(main_figure,pos_final,get(fig_handle,'Units'),p.Results.WhichScreen));
+    switch lower(p.Results.Units)
+        case {'normalized' 'norm' 'pixels'}
+            set(fig_handle,'Position',get_dlg_position(main_figure,pos_final,get(fig_handle,'Units'),p.Results.WhichScreen));    
+    end
 end
 
 if~isempty(font)

@@ -66,6 +66,7 @@ cids=union({'main'},curr_disp.SecChannelIDs,'stable');
 up=update_axis(main_figure,0,'main_or_mini',cids);
 
 mini_ax_comp=getappdata(main_figure,'Mini_axes');
+main_ax=getappdata(main_figure,'Axes_panel');
 
 patch_obj=mini_ax_comp.patch_obj;
 new_vert=patch_obj.Vertices;
@@ -73,9 +74,8 @@ new_vert(:,1)=[x_lim(1) x_lim(2) x_lim(2) x_lim(1)];
 new_vert(:,2)=[y_lim(1) y_lim(1) y_lim(2) y_lim(2)];
 set(patch_obj,'Vertices',new_vert);
 
-ah=findobj(ax,'Tag','echo');
-xd=get(ah,'xdata');
-yd=get(ah,'ydata');
+xd=get(main_ax.echo_obj.echo_surf,'xdata');
+yd=get(main_ax.echo_obj.echo_surf,'ydata');
 
 v2 = [nanmin(xd) nanmin(yd);nanmax(xd) nanmin(yd);nanmax(xd) nanmax(yd);nanmin(xd) nanmax(yd)];
 

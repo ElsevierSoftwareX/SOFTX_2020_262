@@ -1,11 +1,10 @@
 function update_boat_position(main_figure,idx_ping,force)
 try
-    
-    
+        
     if ~isappdata(main_figure,'Map_tab')
         return;
     end
-    
+   
     
     layer=get_current_layer();
     
@@ -42,8 +41,7 @@ try
     idx_ping=nanmin(nb_pings,idx_ping);
     idx_ping=nanmax(1,idx_ping);
     
-    
-    
+       
     map_tab_comp=getappdata(main_figure,'Map_tab');
     
     if map_tab_comp.update_boat_pos.Value==0&&~force

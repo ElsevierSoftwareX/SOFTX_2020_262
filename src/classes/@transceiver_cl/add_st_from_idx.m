@@ -10,11 +10,11 @@ BW_athwart=trans_obj.Config.BeamWidthAthwartship;
 BW_along=trans_obj.Config.BeamWidthAlongship;
 
 [T,Np_t]=trans_obj.get_pulse_Teff(idx_p);
+
 dt=trans_obj.get_params_value('SampleInterval',idx_pings(1));
 dr=dt*nanmean(trans_obj.get_soundspeed(idx_r))/2;
 
 single_targets.Target_range=range_t(idx_r);
-single_targets.Target_range_disp=range_t(idx_r)'+dr*Np_t/2;
 single_targets.idx_r= idx_r;
 single_targets.Target_range_min=range_t(idx_r)'-Np_t/2*dr;
 single_targets.Target_range_max=range_t(idx_r)'-Np_t/2*dr;

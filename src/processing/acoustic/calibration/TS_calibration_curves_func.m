@@ -222,6 +222,7 @@ for uui=select
     AlongAngle_sph = trans_obj.ST.Angle_minor_axis;
     AcrossAngle_sph = trans_obj.ST.Angle_major_axis;
     
+
     
     Sp_sph = trans_obj.ST.TS_uncomp;
     %Power_norm = trans_obj.ST.Power_norm;
@@ -519,7 +520,7 @@ for uui=select
             switch choice
                 case 'No'
                     if save_bool
-                        save_cal_to_xml(cal_fm_tmp,file_cal);
+                        save_cal_to_xml(cal_fm,file_cal);
                     end
                     cal_fm_tot{uui} = cal_fm;
                     continue;

@@ -48,7 +48,7 @@ switch class(reg_obj)
         
     case 'struct'
         if ~isfield(reg_obj,'Range')
-            range_tr=reg_obj.Target_range_disp;
+            range_tr=reg_obj.Target_range;
             pings=reg_obj.Ping_number;
         end
 end

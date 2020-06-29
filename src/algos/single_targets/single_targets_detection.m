@@ -142,8 +142,9 @@ if ~ismember(field,trans_obj.Data.Fieldname)
 end
 
 
-    BW_athwart=trans_obj.Config.BeamWidthAthwartship;
-    BW_along=trans_obj.Config.BeamWidthAlongship;
+BW_athwart=trans_obj.Config.BeamWidthAthwartship;
+BW_along=trans_obj.Config.BeamWidthAlongship;
+
 for ui=1:num_ite
     idx_pings=idx_pings_tot((ui-1)*block_size+1:nanmin(ui*block_size,numel(idx_pings_tot)));
     
@@ -444,7 +445,6 @@ for ui=1:num_ite
             single_targets.TS_comp=target_TS_comp(idx_keep_final);
             single_targets.TS_uncomp=target_TS_uncomp(idx_keep_final);
             single_targets.Target_range=target_range(idx_keep_final);
-            single_targets.Target_range_disp=target_range(idx_keep_final)+2*dr;
             single_targets.idx_r=target_idx_r(idx_keep_final);
             single_targets.Target_range_min=target_range_min(idx_keep_final);
             single_targets.Target_range_max=target_range_max(idx_keep_final);
@@ -485,12 +485,11 @@ for ui=1:num_ite
         case 'FM'
             dt=trans_obj.get_params_value('SampleInterval',idx_pings(1));
             dr=dt*nanmean(trans_obj.get_soundspeed(idx_r))/2;
-   
-            [T,Np_t]=trans_obj.get_pulse_Teff(idx_pings(1));
-            T=T/4;
-            Np_t=ceil(Np_t/4);
             
-            peak_mat(peak_mat==-999)=nan;
+  
+            [T,Np_t]=trans_obj.get_pulse_length(idx_pings(1));      
+            %peak_mat(peak_mat==-999)=nan;
+            
 %             tic;
 %             peak_mat_cell=mat2cell(peak_mat,size(peak_mat,1),ones(1,size(peak_mat,2)));
 %             [~,idx_peaks_lin_cell,width_peaks_cell,~]=cellfun(@(x) findpeaks(x,...
@@ -502,22 +501,20 @@ for ui=1:num_ite
 %             
 %             toc
 %             tic
-%             
+
+            peak_mat(peak_mat<min_TS-p.Results.MaxBeamComp) = min_TS-p.Results.MaxBeamComp;
             [~,idx_peaks_lin,width_peaks ,~] = findpeaks(peak_mat(:),...
                 'MinPeakHeight',min_TS-p.Results.MaxBeamComp,...
                 'WidthReference','halfprom',...
-                'MinPeakDistance',(p.Results.MaxNormPL*Np_t),...
-                'MinPeakWidth',(p.Results.MinNormPL*Np_t*2),...
-                'MaxPeakWidth',(p.Results.MaxNormPL*Np_t*3));
+                'MinPeakDistance',(p.Results.MaxNormPL*Np_t/2),...
+                'MinPeakWidth',2,...
+                'MaxPeakWidth',p.Results.MaxNormPL*Np_t);
             %toc
             %figure();plot(peak_mat(:));hold on;plot(idx_peaks_lin,peak_vals,'+');xlim([1 1e4])
-%             
-%             figure();findpeaks(peak_mat(:),...
-%                 'MinPeakHeight',min_TS-p.Results.MaxBeamComp,...
-%                 'MinPeakDistance',T/dt,...
-%                 'MinPeakProminence',p.Results.PLDL,...
-%                 'MinPeakWidth',(p.Results.MinNormPL*Np_t)*5,...
-%                 'MaxPeakWidth',(p.Results.MaxNormPL*Np_t)*15);
+%             peak_mat(peak_mat<-80)=-80;
+%             figure();findpeaks(peak_mat(:,1),1:numel(peak_mat(:,1)),...
+%                 'WidthReference','halfprom',...
+%                 'Annotate','extents');
             
             comp=simradBeamComp(idx_peaks_lin);
             idx_rem=comp>p.Results.MaxBeamComp;
@@ -531,12 +528,9 @@ for ui=1:num_ite
 
             idx_pings=Ping(idx_peaks_lin);
 
-  
-            
             single_targets.TS_comp=TS(idx_peaks_lin)'+simradBeamComp(idx_peaks_lin)';
             single_targets.TS_uncomp=TS(idx_peaks_lin)';
             single_targets.Target_range=Range(idx_peaks_lin)';
-            single_targets.Target_range_disp=Range(idx_peaks_lin)'+c*T/2;
             single_targets.idx_r= (idx_r_tot(idx_samples)+idx_r_min-1)';
             single_targets.Target_range_min=Range(idx_peaks_lin)'-width_peaks'/2*dr;
             single_targets.Target_range_max=Range(idx_peaks_lin)'-width_peaks'/2*dr;
