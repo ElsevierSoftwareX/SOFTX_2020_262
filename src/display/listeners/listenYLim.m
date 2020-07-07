@@ -98,7 +98,6 @@ display_survdata_lines(main_figure);
 
 set_alpha_map(main_figure,'main_or_mini',cids);
 
-
 update_info_panel([],[],1);
 drawnow;
 

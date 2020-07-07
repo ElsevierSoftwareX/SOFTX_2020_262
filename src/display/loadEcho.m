@@ -92,6 +92,7 @@ catch
 end
 
 if up_curr_disp>=1
+    lim_att = get_lim_config_att();
     [display_config_file,~,~]=get_config_files();
     [~,fname,fext]=fileparts(display_config_file);
     filepath=fileparts(layer.Filename{1});
@@ -102,7 +103,7 @@ if up_curr_disp>=1
         props=properties(curr_disp);
         
         for i=1:numel(props)
-            if ~ismember((props{i}),{'Basemap' 'Basemaps' 'Fieldnames' 'Fieldname' 'Type' 'Xaxes_current' 'Cax' 'Caxes' 'Freq' 'DispSecFreqs' 'Cmap' 'DispSecFreqsOr' 'DispSecFreqsWithOffset' 'EchoType' 'EchoQuality'})
+            if ismember((props{i}),lim_att)
                 curr_disp.(props{i})=curr_disp_new.(props{i});
             end
         end
@@ -156,6 +157,7 @@ if nargin>=3
 else
    f_update=0; 
 end
+
 update_display(main_figure,flag,f_update);
 
 waitfor(curr_disp,'UIupdate',0);

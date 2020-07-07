@@ -95,12 +95,6 @@ if strcmp(trans_obj.Mode,'FM')
         AcrossAngle_val=AcrossAngle_val(idx_val);
     end
     
-    %eq_beam_angle_f=eq_beam_angle-20*log10(f_vec/Freq);
-    
-    %     BeamWidthAlongship_f=trans_obj.Config.BeamWidthAlongship*acos(1-(10.^(eq_beam_angle_f/10))/(2*pi))/acos(1-(10.^(eq_beam_angle/20))/(2*pi));
-    %     BeamWidthAthwartship_f=trans_obj.Config.BeamWidthAthwartship*acos(1-(10.^(eq_beam_angle_f/10))/(2*pi))/acos(1-(10.^(eq_beam_angle/20))/(2*pi));
-    %
-    
     
     BeamWidthAlongship=interp1(cal.Frequency,cal.BeamWidthAlongship,f_vec,'linear','extrap');
     BeamWidthAthwartship=interp1(cal.Frequency,cal.BeamWidthAthwartship,f_vec,'linear','extrap');
@@ -114,7 +108,7 @@ if strcmp(trans_obj.Mode,'FM')
     Prx_fft=nb_chan/2*(abs(s_norm)/(2*sqrt(2))).^2*((Rwt_rx+Ztrd)/Rwt_rx)^2/Ztrd;
     
     %correction factor based on frequency response of targets to account for
-    %positionning "error", not sure so not applying it...
+    %positionning "error"... Not too sure though but seems to work.
     f_nom = trans_obj.Config.Frequency;
     %f_c = trans_obj.get_center_frequency();
     f_corr=nansum((1+(f_nom-f_vec)/f_nom).*Prx_fft.^2)/nansum(Prx_fft.^2);
@@ -166,9 +160,9 @@ else
     idx_r=idx_ts_min:idx_ts_max;
     r_tot=range_tr(idx_r);
     f_corr=ones(size(idx_r));
-    BeamWidthAlongship=trans_obj.Config.BeamWidthAlongship;
-    BeamWidthAthwartship=trans_obj.Config.BeamWidthAthwartship;
-    
+
+    [faBW,psBW] = trans_obj.get_beamwidth_at_f_c([]);
+
     f_vec=trans_obj.get_params_value('Frequency',iPing);
     Sp_f=trans_obj.Data.get_subdatamat(idx_r,iPing,'field','spdenoised');
     if isempty(Sp_f)
@@ -178,7 +172,7 @@ else
     al_angle=trans_obj.Data.get_subdatamat(idx_r,iPing,'field','AlongAngle');
     
     if ~isempty(ac_angle)
-        compensation_f=simradBeamCompensation(BeamWidthAlongship,BeamWidthAthwartship , ac_angle, al_angle);
+        compensation_f=simradBeamCompensation(faBW,psBW , ac_angle, al_angle);
     else
         compensation_f=zeros(size(Sp_f));
     end

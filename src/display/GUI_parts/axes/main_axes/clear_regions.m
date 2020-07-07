@@ -48,20 +48,20 @@ end
 layer=get_current_layer();
 
 if isempty(channelIDS)
-    [~,main_axes_tot,~,~,~,~]=get_axis_from_cids(main_figure,union({'main' 'mini'}, layer.ChannelID));
+    [echo_obj,~,~,~]=get_axis_from_cids(main_figure,union({'main' 'mini'}, layer.ChannelID));
 else
-    [~,main_axes_tot,~,~,~,~]=get_axis_from_cids(main_figure,channelIDS);
+    [echo_obj,~,~,~]=get_axis_from_cids(main_figure,channelIDS);
 end
 
 
-for iax=1:length(main_axes_tot)
+for iax=1:length(echo_obj)
     if isempty(ids)
-        delete(findobj(ancestor(main_axes_tot(iax),'figure'),'Type','UiContextMenu','-and','Tag','RegionContextMenu'));
-        delete(findobj(main_axes_tot(iax),'tag','region','-or','tag','region_text'));
+        delete(findobj(ancestor(echo_obj.get_main_ax(iax),'figure'),'Type','UiContextMenu','-and','Tag','RegionContextMenu'));
+        delete(findobj(echo_obj.get_main_ax(iax),'tag','region','-or','tag','region_text'));
     else
         for i=1:numel(ids)
-            delete(findobj(main_axes_tot(iax),{'tag','region','-or','tag','region_text'},'-and','UserData',ids{i}));
-            delete(findobj(ancestor(main_axes_tot(iax),'figure'),'Type','UiContextMenu','-and','Tag','RegionContextMenu','-and','UserData',ids{i}));
+            delete(findobj(echo_obj.get_main_ax(iax),{'tag','region','-or','tag','region_text'},'-and','UserData',ids{i}));
+            delete(findobj(ancestor(echo_obj.get_main_ax(iax),'figure'),'Type','UiContextMenu','-and','Tag','RegionContextMenu','-and','UserData',ids{i}));
         end
     end
 

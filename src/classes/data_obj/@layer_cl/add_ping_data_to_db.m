@@ -93,9 +93,6 @@ for ilay=1:length(layers_obj)
                     print_errors_and_warnings([],'error',err);
                 end
                 
-                
-
-                
                 close(dbconn);
                 
             end

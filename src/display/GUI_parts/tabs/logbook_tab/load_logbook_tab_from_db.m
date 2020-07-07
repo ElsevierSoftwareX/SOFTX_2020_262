@@ -202,7 +202,7 @@ try
                 'Data', survDataSummary,...
                 'ColumnName', columnname,...
                 'ColumnFormat', columnformat,...
-                'CellSelectionCallback',{@cell_select_cback,surv_data_tab,main_figure},...
+                'CellSelectionCallback',{@cell_select_cback,surv_data_tab},...
                 'ColumnEditable', [true false true true true true false false true false false false],...
                 'Units','Normalized','Position',[0 0 1 0.94],...
                 'RowName',[]);
@@ -489,7 +489,7 @@ disp('Done.')
 end
 
 %%
-function cell_select_cback(src,evt,surv_data_tab,main_figure)
+function cell_select_cback(src,evt,surv_data_tab)
 parent=ancestor(src,'figure');
 pathf=getappdata(surv_data_tab,'path_data');
 src.UserData.highlighted_idx=unique(evt.Indices(:,1));
@@ -498,7 +498,8 @@ src.UserData.highlighted_files=src.Data(unique(evt.Indices(:,1)),2);
 switch parent.SelectionType
     case 'open'
         if ~isempty(evt.Indices)
-            open_file([],[],fullfile(pathf,src.Data{evt.Indices(1,1),2}),main_figure)
+            esp3_obj=getappdata(groot,'esp3_obj');
+            esp3_obj.open_file(fullfile(pathf,src.Data{evt.Indices(1,1),2}));
         end
 end
 
@@ -746,7 +747,7 @@ if ~isempty(idx_deleted)
 end
 
 if isempty(files)
-    if any(idx_already_open)
+    if all(idx_already_open)
         idx_open=find(strcmpi(files_open{end},old_files));
         [idx_lay,~]=find_layer_idx(layers,lay_IDs{idx_open(end)});
         set_current_layer(layers(idx_lay));
@@ -755,11 +756,8 @@ if isempty(files)
         return;
     end
 end
-
-open_file([],[],files,main_figure);
-load_bar_comp=getappdata(main_figure,'Loading_bar');
-
-
+esp3_obj=getappdata(groot,'esp3_obj');
+esp3_obj.open_file(files);
 
 end
 

@@ -46,7 +46,7 @@ classdef test_esp3_cl < matlab.unittest.TestCase
             fprintf(1,'Openning files: \n')
             cellfun(@(x) fprintf(1,'%s\n',x),file_list);
             
-            output=open_file([],[],fullfile(file_path,file_list),testCase.esp3_obj.main_figure);
+            output=testCase.esp3_obj.open_file(fullfile(file_path,file_list));
             
             
             testCase.verifyEqual(all(output), true, ...
@@ -61,8 +61,8 @@ classdef test_esp3_cl < matlab.unittest.TestCase
             f=dir(fullfile(script_path,'*.xml'));
             scripts_to_run = {f([f(:).isdir]==0).name};
             
-            [~,surv_objs_out] = process_surveys(fullfile(script_path,scripts_to_run),...
-                'origin','xml','gui_main_handle',testCase.esp3_obj.main_figure,'PathToResults',PathToResults,'update_display_at_loading',false);
+            surv_objs_out = testCase.esp3_obj.run_scripts(fullfile(script_path,scripts_to_run),...
+                'PathToResults',PathToResults,'update_display_at_loading',false);
             
             
             testCase.verifyEqual(numel(surv_objs_out)==numel(scripts_to_run), true, ...
@@ -110,7 +110,7 @@ classdef test_esp3_cl < matlab.unittest.TestCase
             
             cal_file = fullfile(testCase.esp3_obj.app_path.test_folder.Path_to_folder,'cw_calibration','tan1610-D20160826-T224922.raw');
             if isfile(cal_file)
-                open_file([],[],cal_file,testCase.esp3_obj.main_figure);
+                testCase.esp3_obj.open_file(cal_file);
                 
                 layers=get_esp3_prop('layers');
                 [idx_lay,found]=layers.find_layer_idx_files(cal_file);
@@ -177,7 +177,7 @@ classdef test_esp3_cl < matlab.unittest.TestCase
             
             fff=fullfile(file_path,files(idx_proc));
             
-            open_file([],[],fff,testCase.esp3_obj.main_figure);
+            testCase.esp3_obj.open_file(fff);
             
             layers=testCase.esp3_obj.layers;
             

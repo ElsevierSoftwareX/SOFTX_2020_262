@@ -43,8 +43,8 @@ addRequired(p,'trans_obj',@(x) isa(x,'transceiver_cl'));
 parse(p,trans_obj,varargin{:});
 
 % get beam angle
-faBW = trans_obj.Config.BeamWidthAlongship;
-psBW = trans_obj.Config.BeamWidthAthwartship;
+[faBW,psBW] = trans_obj.get_beamwidth_at_f_c([]);
+
 beam_angle = nanmean(faBW+psBW)/2;
 
 % get slope

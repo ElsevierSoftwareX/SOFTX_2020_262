@@ -5,7 +5,8 @@ p = inputParser;
 addRequired(p,'trans_obj',@(x) isa(x,'transceiver_cl'));
 addParameter(p,'cal_path','',@ischar);
 addParameter(p,'origin','xml',@(x) ismember(x,{'xml','file','th'}));
-addParameter(p,'f_res',50,@(x) x>0);
+addParameter(p,'verbose',true,@islogical);
+addParameter(p,'f_res',10,@(x) x>0);
 
 
 parse(p,trans_obj,varargin{:});
@@ -83,16 +84,16 @@ if ~ori_bool(idx_to_use)
 end
 
 ori_used = ori{idx_to_use};
-
-switch ori_used
-    case 'xml'
-        disp_perso([],sprintf('Gain Calibration for Channel %s using XML file values',trans_obj.Config.ChannelID));
-    case 'file'
-        disp_perso([],sprintf('Gain Calibration for Channel %s using embedded RAW file values',trans_obj.Config.ChannelID));
-    case 'th'
-        disp_perso([],sprintf('Gain Calibration for Channel %s using theoritical values',trans_obj.Config.ChannelID));
+if p.Results.verbose
+    switch ori_used
+        case 'xml'
+            disp_perso([],sprintf('Gain Calibration for Channel %s using XML file values',trans_obj.Config.ChannelID));
+        case 'file'
+            disp_perso([],sprintf('Gain Calibration for Channel %s using embedded RAW file values',trans_obj.Config.ChannelID));
+        case 'th'
+            disp_perso([],sprintf('Gain Calibration for Channel %s using theoritical values',trans_obj.Config.ChannelID));
+    end
 end
-
 fm_fields = get_cal_fm_fields();
 
 for ui = 1:numel(fm_fields)
@@ -104,8 +105,8 @@ end
 %%%%%%%%%Estimate resulting EBA%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 cal_struct.eq_beam_angle=estimate_eba(cal_struct.BeamWidthAthwartship,cal_struct.BeamWidthAlongship);
 
-for ui = 1:numel(ori)    
-   cal_struct.(sprintf('eq_beam_angle_%s',ori{ui})) = estimate_eba(cal_struct.(sprintf('BeamWidthAthwartship_%s',ori{ui})),cal_struct.(sprintf('BeamWidthAlongship_%s',ori{ui})));
+for ui = 1:numel(ori)
+    cal_struct.(sprintf('eq_beam_angle_%s',ori{ui})) = estimate_eba(cal_struct.(sprintf('BeamWidthAthwartship_%s',ori{ui})),cal_struct.(sprintf('BeamWidthAlongship_%s',ori{ui})));
 end
 
 end

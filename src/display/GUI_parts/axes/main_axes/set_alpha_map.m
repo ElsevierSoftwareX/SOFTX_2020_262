@@ -11,7 +11,6 @@ end
 curr_disp=get_esp3_prop('curr_disp');
 p = inputParser;
 
-
 addRequired(p,'main_figure',@ishandle);
 addParameter(p,'main_or_mini',union({'main','mini'},curr_disp.ChannelID,'stable'));
 addParameter(p,'update_bt',1);
@@ -32,90 +31,21 @@ else
     main_or_mini=p.Results.main_or_mini;
 end
 
-[echo_im_tot,echo_ax_tot,echo_im_bt_tot,trans_obj,~,~]=get_axis_from_cids(main_figure,main_or_mini);
+[echo_obj,trans_obj,~,~]=get_axis_from_cids(main_figure,main_or_mini);
 
-if isempty(echo_im_tot)
+if isempty(echo_obj)
     return;
 end
 
-min_axis=curr_disp.Cax(1);
 
-for iax=1:length(echo_ax_tot)
+for iax=1:length(echo_obj)
     
-    echo_im=echo_im_tot(iax);
-    echo_ax=echo_ax_tot(iax);
-    echo_im_bt=echo_im_bt_tot(iax);
+    echo_obj(iax).set_echo_alphamap(trans_obj{iax},...
+        'curr_disp',curr_disp,...
+        'update_under_bot',update_under_bot,...
+        'update_bt',update_bt,...
+        'update_cmap',update_cmap)
     
-    
-    data=double(get(echo_im,'CData'));
-    xdata=double(get(echo_im,'XData'));
-    
-    
-    xdata_ori=xdata;
-    
-    idx_pings=echo_im.UserData.Idx_pings;
-    
-    idx_r=echo_im.UserData.Idx_r(:);
-    
-    prec='uint8';
-        
-    switch echo_ax_tot(iax).UserData.geometry_y
-        case'samples'
-            ydata=idx_r+1/2;
-        case 'depth'
-            ydata=double(get(echo_im,'YData'));
-    end
-    
-    
-    if update_under_bot>0
-        alpha_map=ones(size(data),prec)*6;
-        switch echo_ax_tot(iax).UserData.geometry_y
-            case'samples'
-                bot_vec_red=trans_obj{iax}.get_bottom_idx(idx_pings);
-            case 'depth'
-                if curr_disp.DispSecFreqsWithOffset>0
-                    bot_vec_red=trans_obj{iax}.get_bottom_depth(idx_pings);
-                else
-                    bot_vec_red=trans_obj{iax}.get_bottom_range(idx_pings);
-                end
-        end
-        
-        idx_bot_red=bsxfun(@le,bot_vec_red,ydata);
-        alpha_map(idx_bot_red)=2;
-    else
-        alpha_map=double(get(echo_im,'AlphaData'));
-    end
-    
-    %alpha_map(:,idx_bad_red)=3;
-    
-    if update_bt>0
-        
-        idxBad=find(trans_obj{iax}.Bottom.Tag==0);
-        idx_bad_red=(ismember(idx_pings,idxBad));
-       
-
-        alpha_map_bt=zeros(size(data),prec);
-        alpha_map_bt(:,idx_bad_red)=3;
-        
-        mask_sp=trans_obj{iax}.get_spikes(idx_r,idx_pings);
-
-        if~isempty(mask_sp)&&all(size(mask_sp)==size(data))
-            alpha_map_bt(mask_sp>0)=5;
-        end
-        
-        set(echo_im_bt,'XData',xdata_ori,'YData',ydata,'CData',alpha_map_bt,'ZData',zeros(size(alpha_map_bt),'uint8'),'AlphaData',single(alpha_map_bt));
-         
-    end
-    
-    if update_cmap>0
-        alpha_map(data<min_axis|isnan(data))=1;
-        if strcmp(echo_ax.Tag,'main')
-            set(echo_ax,'CLim',curr_disp.Cax);
-        end
-    end
-    if update_cmap>0||update_under_bot>0
-        set(echo_im,'AlphaData',single(alpha_map));
-    end
 end
 
 end

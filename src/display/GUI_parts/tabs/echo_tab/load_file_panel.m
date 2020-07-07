@@ -308,7 +308,8 @@ switch char(eventData.getActionCommand)
         if isempty(files)
             files = char(FileChooser.getSelectedFile);
         end
-        open_file([],[],files,main_figure)
+        esp3_obj=getappdata(groot,'esp3_obj');
+        esp3_obj.open_file(files);
         
     otherwise
         % should never happen

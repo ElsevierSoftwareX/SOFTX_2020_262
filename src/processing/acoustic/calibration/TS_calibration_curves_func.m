@@ -1,4 +1,4 @@
-function[cal_cw,cal_fm]=TS_calibration_curves_func(main_figure,layer,select)
+referefunction[cal_cw,cal_fm]=TS_calibration_curves_func(main_figure,layer,select)
 
 cal_cw=[];
 cal_fm={};
@@ -211,18 +211,13 @@ for uui=select
     % the fitted beam pattern.
     onAxisMethod = {'mean','max','beam fitting'};
     
-    
-    faBW = trans_obj.Config.BeamWidthAlongship; % [degrees]
-    psBW = trans_obj.Config.BeamWidthAthwartship; % [degrees]
-    
-    
+    [faBW,psBW] = trans_obj.get_beamwidth_at_f_c([]);
+      
     % Calculate the mean_ts from echoes that are on-axis
     on_axis = onAxisFactor * mean(faBW + psBW);
     
     AlongAngle_sph = trans_obj.ST.Angle_minor_axis;
     AcrossAngle_sph = trans_obj.ST.Angle_major_axis;
-    
-
     
     Sp_sph = trans_obj.ST.TS_uncomp;
     %Power_norm = trans_obj.ST.Power_norm;
@@ -286,9 +281,10 @@ for uui=select
             switch trans_obj.Config.BeamType
                 case 0
                     offset_fa = trans_obj.Config.AngleOffsetAlongship;
-                    faBW = trans_obj.Config.BeamWidthAlongship;
                     offset_ps = trans_obj.Config.AngleOffsetAthwartship;
-                    psBW = trans_obj.Config.BeamWidthAthwartship;
+                    
+                    [faBW,psBW] = trans_obj.get_beamwidth_at_f_c([]);
+
                     peak_ts = nanmax(Sp_sph(idx_keep));
                     exitflag=1;
                 otherwise
@@ -422,8 +418,7 @@ for uui=select
             
             idx_rem=[];
             f_corr=nan(1,numel(idx_pings));
-            
-            
+                       
             cal_struct=trans_obj.get_fm_cal();
             
             for kk=1:length(idx_pings)

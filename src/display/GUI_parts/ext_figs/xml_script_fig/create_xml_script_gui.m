@@ -49,7 +49,7 @@ if use_defaults
         cal.EQA=-21*ones(size(cal.FREQ));
         cal.SACORRECT=zeros(size(cal.FREQ));
         str_box='No layers from the trip you are trying to build a script on are currently open, it will not know which Frequencies and calibration parameters to initialize.';
-        disp_done_figure(p.Results.main_figure,str_box);
+        warndlg_perso(p.Results.main_figure,'No layers',str_box)
     end
 
 end
@@ -174,11 +174,8 @@ uicontrol(panel1,gui_fmt.txtTitleStyle,'String','Main Channel','Position',pos{1,
 xml_scrip_h.Options.Frequency=uicontrol(panel1,gui_fmt.popumenuStyle,'String',num2cell(survey_input_obj.Options.FrequenciesToLoad),...
     'Value',find(survey_input_obj.Options.Frequency==survey_input_obj.Options.FrequenciesToLoad),'Position',pos{1,1}{2}+[0 0 gui_fmt.box_w 0],'Tag','Frequency');
 
-if ~isempty(p.Results.main_figure)
-    curr_disp=init_grid_val(p.Results.main_figure);
-else
-    curr_disp=[];
-end
+curr_disp=get_esp3_prop('curr_disp');
+
 if ~isempty(curr_disp)
     [dx,dy]=curr_disp.get_dx_dy();
 else

@@ -91,23 +91,23 @@ classdef layer_cl < matlab.mixin.Copyable
             
         end
         
-        function set_EnvData(layer_obj,env_data_obj)
+        function set_EnvData(obj,env_data_obj)
             props=properties(env_data_obj);
             
             for ipp=1:numel(props)
                 if isnumeric(env_data_obj.(props{ipp}))
                     if ~isnan(env_data_obj.(props{ipp}))
-                        layer_obj.EnvData.(props{ipp})=env_data_obj.(props{ipp});
+                        obj.EnvData.(props{ipp})=env_data_obj.(props{ipp});
                     end
                 else
-                    layer_obj.EnvData.(props{ipp})=env_data_obj.(props{ipp});
+                    obj.EnvData.(props{ipp})=env_data_obj.(props{ipp});
                 end
                 
             end
         end
         
-        function regenerate_ID_num(layer_obj)
-            layer_obj.Unique_ID=generate_Unique_ID([]);
+        function regenerate_ID_num(obj)
+            obj.Unique_ID=generate_Unique_ID([]);
         end
         
         function setNotchFilter(obj,bandstops,load_bar_comp)
@@ -124,8 +124,8 @@ classdef layer_cl < matlab.mixin.Copyable
             obj.AvailableChannelIDs=deblank(cid);
         end
         
-        function [f_min,f_max,f_nom,f_start,f_end]=get_freq_min_max_nom_start_end(layer_obj)
-            nb_c=numel(layer_obj.Frequencies);
+        function [f_min,f_max,f_nom,f_start,f_end]=get_freq_min_max_nom_start_end(obj)
+            nb_c=numel(obj.Frequencies);
             f_min=nan(1,nb_c);
             f_max=nan(1,nb_c);
             f_nom=nan(1,nb_c);
@@ -133,11 +133,11 @@ classdef layer_cl < matlab.mixin.Copyable
             f_end=nan(1,nb_c);
             
             for it=1:nb_c
-                f_min(it)=layer_obj.Transceivers(it).Config.FrequencyMinimum(1);
-                f_max(it)=layer_obj.Transceivers(it).Config.FrequencyMaximum(1);
-                f_nom(it)=layer_obj.Transceivers(it).Config.Frequency;
-                f_start(it)=layer_obj.Transceivers(it).get_params_value('FrequencyStart',1);
-                f_end(it)=layer_obj.Transceivers(it).get_params_value('FrequencyEnd',1);
+                f_min(it)=obj.Transceivers(it).Config.FrequencyMinimum(1);
+                f_max(it)=obj.Transceivers(it).Config.FrequencyMaximum(1);
+                f_nom(it)=obj.Transceivers(it).Config.Frequency;
+                f_start(it)=obj.Transceivers(it).get_params_value('FrequencyStart',1);
+                f_end(it)=obj.Transceivers(it).get_params_value('FrequencyEnd',1);
             end
             
         end
@@ -252,51 +252,51 @@ classdef layer_cl < matlab.mixin.Copyable
         end
         
         
-        function line_obj=get_first_line(layer_obj)
-            if ~isempty(layer_obj.Lines)
-                line_obj=layer_obj.Lines(1);
+        function line_obj=get_first_line(obj)
+            if ~isempty(obj.Lines)
+                line_obj=obj.Lines(1);
             else
                 line_obj=[];
             end
         end
         
-        function [trans_obj,idx_cid]=get_trans(layer,curr_disp)
+        function [trans_obj,idx_cid]=get_trans(obj,curr_disp)
             trans_obj=[];
             idx_cid=[];
-            if isempty(layer)
+            if isempty(obj)
                 return;
             end
             switch class(curr_disp)
                 case {'struct' 'curr_state_disp_cl'}
                     if (isfield(curr_disp,'ChannelID')||isprop(curr_disp,'ChannelID'))&&~isempty(curr_disp.ChannelID)
-                        [idx_cid,found]=layer.find_cid_idx(deblank(curr_disp.ChannelID));
+                        [idx_cid,found]=obj.find_cid_idx(deblank(curr_disp.ChannelID));
                     else
                         found=0;
                     end
                     if found==1
-                        trans_obj=layer.Transceivers(idx_cid);
+                        trans_obj=obj.Transceivers(idx_cid);
                     else
-                        [idx_cid,found]=layer.find_freq_idx(curr_disp.Freq);
+                        [idx_cid,found]=obj.find_freq_idx(curr_disp.Freq);
                         
                         if found==1
-                            trans_obj=layer.Transceivers(idx_cid);
+                            trans_obj=obj.Transceivers(idx_cid);
                         else
                             trans_obj=[];
                             idx_cid=[];
                         end
                     end
                 case 'char'
-                    [idx_cid,found]=layer.find_cid_idx(deblank(curr_disp));
+                    [idx_cid,found]=obj.find_cid_idx(deblank(curr_disp));
                     if found==1
-                        trans_obj=layer.Transceivers(idx_cid);
+                        trans_obj=obj.Transceivers(idx_cid);
                     else
                         trans_obj=[];
                         idx_cid=[];
                     end
                 case {'double' 'single' 'int16' 'int8' 'uint16' 'uint8'}
-                    [idx_cid,found]=layer.find_freq_idx(curr_disp);
+                    [idx_cid,found]=obj.find_freq_idx(curr_disp);
                     if found==1
-                        trans_obj=layer.Transceivers(idx_cid);
+                        trans_obj=obj.Transceivers(idx_cid);
                     else
                         trans_obj=[];
                         idx_cid=[];
@@ -305,8 +305,8 @@ classdef layer_cl < matlab.mixin.Copyable
         end
         
         
-        function fold_lay=get_folder(layer)
-            [folders,~,~]=cellfun(@fileparts,layer.Filename,'UniformOutput',0);
+        function fold_lay=get_folder(obj)
+            [folders,~,~]=cellfun(@fileparts,obj.Filename,'UniformOutput',0);
             
             fold_lay=unique(folders);
             
@@ -316,15 +316,15 @@ classdef layer_cl < matlab.mixin.Copyable
             
         end
         
-        function memap_files=list_memaps(layers)
+        function memap_files=list_memaps(obj)
             memap_files={};
             ifile=0;
-            for ilay=1:length(layers)
-                for itr=1:length(layers(ilay).Transceivers)
-                    for i_sub_data=1:length(layers(ilay).Transceivers(itr).Data.SubData)
-                        for imap=1:length(layers(ilay).Transceivers(itr).Data.SubData(i_sub_data).Memap)
+            for ilay=1:length(obj)
+                for itr=1:length(obj(ilay).Transceivers)
+                    for i_sub_data=1:length(obj(ilay).Transceivers(itr).Data.SubData)
+                        for imap=1:length(obj(ilay).Transceivers(itr).Data.SubData(i_sub_data).Memap)
                             ifile=ifile+1;
-                            memap_files{ifile}=layers(ilay).Transceivers(itr).Data.SubData(i_sub_data).Memap{imap}.Filename;
+                            memap_files{ifile}=obj(ilay).Transceivers(itr).Data.SubData(i_sub_data).Memap{imap}.Filename;
                         end
                     end
                 end
@@ -332,9 +332,9 @@ classdef layer_cl < matlab.mixin.Copyable
         end
         
         
-        function rm_region_across_id(layer,ID)
-            for i=1:length(layer.Transceivers)
-                layer.Transceivers(i).rm_region_id(ID);
+        function rm_region_across_id(obj,ID)
+            for i=1:length(obj.Transceivers)
+                obj.Transceivers(i).rm_region_id(ID);
             end
         end
         
@@ -417,19 +417,19 @@ classdef layer_cl < matlab.mixin.Copyable
             tags=unique(tags);
         end
         
-        function curves_obj=get_curves_per_type(layer_obj,type)
-            if isempty(layer_obj.Curves)
+        function curves_obj=get_curves_per_type(obj,type)
+            if isempty(obj.Curves)
                 curves_obj=[];
             else
-                curves_obj=layer_obj.Curves(strcmp({layer_obj.Curves(:).Type},type));
+                curves_obj=obj.Curves(strcmp({obj.Curves(:).Type},type));
             end
-            if ~isempty(layer_obj.NotchFilter)              
+            if ~isempty(obj.NotchFilter)              
                 for uic=1:numel(curves_obj)
                     switch curves_obj(uic).Type
                         case {'ts_f' 'sv_f'}
                             idx_nan=false(size(curves_obj(uic).XData));
-                            for ib=1:size(layer_obj.NotchFilter,1)
-                                idx_nan=idx_nan|(curves_obj(uic).XData*1e3>=layer_obj.NotchFilter(ib,1)&curves_obj(uic).XData*1e3<=layer_obj.NotchFilter(ib,2));  
+                            for ib=1:size(obj.NotchFilter,1)
+                                idx_nan=idx_nan|(curves_obj(uic).XData*1e3>=obj.NotchFilter(ib,1)&curves_obj(uic).XData*1e3<=obj.NotchFilter(ib,2));  
                             end
                             curves_obj(uic).YData(idx_nan)=nan;
                     end

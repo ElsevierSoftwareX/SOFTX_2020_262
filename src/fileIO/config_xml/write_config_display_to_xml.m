@@ -22,19 +22,32 @@ if isempty(curr_disp)
     return;
 end
 
-lim_att={'Grid_x' 'Grid_y' 'UnderBotTransparency' 'DispUnderBottom' 'Xaxes_current'};
 
+lim_att = get_lim_config_att();
 disp_node = docNode.createElement('Display');
 fields=properties(curr_disp);
+
 for ifi=1:length(fields)
     if p.Results.limited&&~ismember(fields{ifi},lim_att)
         continue;
     end
         
-    if ~ismember(fields{ifi},{'ChannelID' 'SecFreqs' 'Type','Fieldname',...
-            'CursorMode','NbLayers','Cax','CurrLayerID','Fieldnames','Caxes',...
-            'R_disp','UIupdate','Reg_changed_flag','Bot_changed_flag',...
-            'Active_line_ID','Active_reg_ID','ForceUpdate'})
+    if ~ismember(fields{ifi},...
+            {'ChannelID'
+            'SecFreqs'
+            'Type'
+            'Fieldname'
+            'CursorMode'
+            'NbLayers'
+            'Cax'
+            'CurrLayerID'
+            'R_disp'
+            'UIupdate'
+            'Reg_changed_flag'
+            'Bot_changed_flag'
+            'Active_line_ID'
+            'Active_reg_ID'
+            'ForceUpdate'})
         
         val=curr_disp.(fields{ifi});
         if isnumeric(val)||islogical(val)

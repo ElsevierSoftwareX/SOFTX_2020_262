@@ -15,6 +15,7 @@ end
 %drawnow;
 curr_disp=get_esp3_prop('curr_disp');
 layer_obj=get_current_layer();
+trans_obj = layer_obj.get_trans(curr_disp);
 
 opt_panel_size=[0 pos_tab(4)-500+1 300 500];
 ax_panel_size=[opt_panel_size(3) 0 pos_tab(3)-opt_panel_size(3) pos_tab(4)];
@@ -71,7 +72,9 @@ uicontrol(echo_int_tab_comp.opt_panel,gui_fmt.txtTitleStyle,'String','Parameters
 
 uicontrol(echo_int_tab_comp.opt_panel,gui_fmt.txtStyle,'String','Main Chan.','Position',pos{2,1}{1});
 echo_int_tab_comp.tog_freq=uicontrol(echo_int_tab_comp.opt_panel,gui_fmt.popumenuStyle,'String','--','Value',1,'Position',pos{2,1}{2}+[0 0 gui_fmt.box_w 0]);
-curr_disp=init_grid_val(main_figure);
+
+curr_disp.init_grid_val(trans_obj);
+
 [dx,dy]=curr_disp.get_dx_dy();
 uicontrol(echo_int_tab_comp.opt_panel,gui_fmt.txtStyle,'String','Cell Width','Position',pos{3,1}{1});
 echo_int_tab_comp.cell_w=uicontrol(echo_int_tab_comp.opt_panel,gui_fmt.edtStyle,'position',pos{3,1}{2},'string',dx,'Tag','w');
@@ -269,8 +272,7 @@ load_bar_comp=show_status_bar(main_figure);
 load_bar_comp.progress_bar.setText('Exporting Sliced transect...');
 layer_obj.export_slice_transect_to_xls('use_int',1,'idx_main_freq',idx_main,'output_f',fullfile(path_tmp,fileN));
 
-disp_done_figure(main_figure,'Echo-integration finished and exported... Done')
-hide_status_bar(main_figure);
+warndlg_perso(main_figure,'Done','Echo-integration finished and exported... Done');
 end
 
 

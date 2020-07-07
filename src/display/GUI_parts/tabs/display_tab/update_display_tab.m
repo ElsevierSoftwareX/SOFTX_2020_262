@@ -20,7 +20,7 @@ if isempty(idx_axes)
 end
 
 [idx_field,~]=trans_obj.Data.find_field_idx(curr_disp.Fieldname);
-curr_disp=init_grid_val(main_figure);
+curr_disp.init_grid_val(trans_obj);
 [dx,dy]=curr_disp.get_dx_dy();
 
 set(display_tab_comp.grid_x,'String',int2str(dx));

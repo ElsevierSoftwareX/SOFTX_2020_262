@@ -29,7 +29,7 @@ if isempty(VarName)
             VarName = 'school';
         case 'cell by cell'
             VarName = 'cell';
-    end
+    end 
 end
 
 

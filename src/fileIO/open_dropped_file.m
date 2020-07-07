@@ -40,13 +40,15 @@ switch p.Results.fType
         ftype{1}={p.Results.fType};
         files{1}=evt.Data;
 end
+
 layer=get_current_layer();
 
 for ifi=1:length(ftype)
     try
         switch ftype{ifi}
             case {'acoustic' 'logbook'}
-                open_file([],[],files{ifi},main_figure);
+                esp3_obj=getappdata(groot,'esp3_obj');
+                esp3_obj.open_file(files{ifi});
             case 'line'
                 if isempty(layer)
                     continue

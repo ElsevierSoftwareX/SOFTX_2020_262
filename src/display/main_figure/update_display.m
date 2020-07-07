@@ -40,7 +40,7 @@ function update_display(main_figure,new,force_update)
 if ~isdeployed
     disp_perso(main_figure,'Update Display');
 end
-
+up_ax_panel = false;
 if ~isappdata(main_figure,'Axes_panel')
     
     echo_tab_panel=getappdata(main_figure,'echo_tab_panel');
@@ -51,11 +51,17 @@ if ~isappdata(main_figure,'Axes_panel')
 %     axes_panel.Alphamap = main_figure.Alphamap;  
 %     initialize_interactions_v2(axes_panel);
 %     
+
     load_axis_panel(main_figure,axes_panel);
+    
+%     ff = new_echo_figure(gcf,'UiFigureBool',true);
+%     load_axis_panel([],ff);
+    
     display_tab_comp=getappdata(main_figure,'Display_tab');
     load_mini_axes(main_figure,display_tab_comp.display_tab,[0 0 1 0.77]);
     enabled_obj=findobj(main_figure,'Enable','off');
     set(enabled_obj,'Enable','on');
+    up_ax_panel = true;
 end
 
 
@@ -109,9 +115,11 @@ curr_disp=get_esp3_prop('curr_disp');
 if new==1
     init_sec_link_props(main_figure);
 end
+
 upped=update_axis(main_figure,new,'main_or_mini',curr_disp.SecChannelIDs,'force_update',force_update);
 
 set_alpha_map(main_figure,'main_or_mini',union({'main','mini'},curr_disp.SecChannelIDs(upped>0),'stable'));
+
 if ~isempty(sel_tab)
     opt_panel.SelectedTab=sel_tab;
 end
@@ -144,6 +152,10 @@ update_info_panel([],[],1);
 
 curr_disp=get_esp3_prop('curr_disp');
 disp_perso(main_figure,'');
+
+if up_ax_panel
+    set(echo_tab_panel,'SelectedTab',axes_panel);
+end
 
 curr_disp.UIupdate=0;
 

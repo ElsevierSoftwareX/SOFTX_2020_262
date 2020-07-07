@@ -133,7 +133,7 @@ end
 
 %%
 function copy_echo_to_clipboard_callback(src,~,main_figure)
-save_echo(main_figure,[],'-clipboard','main');
+save_echo('fileN','-clipboard','cid','main');
 end
 
 

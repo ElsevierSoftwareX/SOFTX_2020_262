@@ -37,16 +37,18 @@
 %% Function
 function load_axis_panel(main_figure,axes_panel)
 
-if isappdata(main_figure,'Axes_panel')
+if ~isempty(main_figure)&&isappdata(main_figure,'Axes_panel')
     axes_panel_comp=getappdata(main_figure,'Axes_panel');
     delete(axes_panel_comp.axes_panel);
     rmappdata(main_figure,'Axes_panel');
     axes_panel_comp=[];
 end
 
+curr_disp=get_esp3_prop('curr_disp');
+
 axes_panel_comp.axes_panel=axes_panel;
 
-axes_panel_comp.echo_obj = echo_disp_cl(axes_panel_comp.axes_panel);
+axes_panel_comp.echo_obj = echo_disp_cl(axes_panel_comp.axes_panel,'cmap',curr_disp.Cmap);
 
 axes_panel_comp.v_axes_plot=plot(axes_panel_comp.echo_obj.vert_ax,nan,nan,'r');
 axes_panel_comp.v_bot_val=yline(axes_panel_comp.echo_obj.vert_ax,0,'-k','Tag','bot_val','Interpreter','none');
@@ -70,23 +72,14 @@ axes_panel_comp.h_curr_val=xline(axes_panel_comp.echo_obj.hori_ax,0,'--b','Tag',
 pt_int.enterFcn =  @(figHandle, currentPoint)...
 replace_interaction(figHandle,'interaction','WindowButtonMotionFcn','id',1,'interaction_fcn',{@update_info_panel,0});
 
-% pt_int.enterFcn=@(figHandle, currentPoint) disp('Entering');
-% pt_int.traverseFcn = [];
-% % 
-% % pt_int.exitFcn =  @(figHandle, currentPoint)...
-% %     replace_interaction(figHandle,'interaction','WindowButtonMotionFcn','id',1);
-% pt_int.exitFcn=@(figHandle, currentPoint) disp('Exiting');
-%                 ipt.exitFcn =  @(figHandle, currentPoint)...
-%                     set(figHandle, 'Pointer', 'hand');
 pt_int.traverseFcn = [];
 pt_int.exitFcn = [];
-iptSetPointerBehavior(axes_panel_comp.axes_panel,pt_int);
 
-%set(axes_panel_comp.echo_obj.main_ax,'xlim',[1 size(echo_init,1)],'ylim',[1 size(echo_init,2)]);
+iptSetPointerBehavior(axes_panel_comp.axes_panel,pt_int);
 
 axes_panel_comp.echo_obj.bottom_line_plot=plot(axes_panel_comp.echo_obj.main_ax,nan,nan,'tag','bottom');
 
-create_context_menu_bottom(main_figure,axes_panel_comp.echo_obj.bottom_line_plot);
+%create_context_menu_bottom(main_figure,axes_panel_comp.echo_obj.bottom_line_plot);
 
 ipt.enterFcn    = @(src, evt) enter_bottom_plot_fcn(src, evt,axes_panel_comp.echo_obj.bottom_line_plot);
 ipt.exitFcn     = @(src, evt) exit_bottom_plot_fcn(src, evt,axes_panel_comp.echo_obj.bottom_line_plot);
@@ -97,8 +90,9 @@ axes_panel_comp.listeners=[];
 
 rm_axes_interactions([axes_panel_comp.echo_obj.main_ax axes_panel_comp.echo_obj.vert_ax axes_panel_comp.echo_obj.hori_ax]);
 
-setappdata(main_figure,'Axes_panel',axes_panel_comp);
-
+if ~isempty(main_figure)
+    setappdata(main_figure,'Axes_panel',axes_panel_comp);
+end
 end
 
 function exit_bottom_plot_fcn(src,~,hplot)

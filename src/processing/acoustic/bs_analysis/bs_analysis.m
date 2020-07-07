@@ -63,46 +63,49 @@ yaw_cal = att_cal(3);
 trans=layer.Transceivers(idx_freq);
 
 
-range = trans.get_transceiver_range();
+range = trans_obj.get_transceiver_range();
 
 dr = nanmean(diff(range));
 
-bw_mean = (trans.Config.BeamWidthAlongship+trans.Config.BeamWidthAthwartship)/4/180*pi;
-t_angle = atan(sqrt(tand(trans.Config.TransducerAlphaY).^2+tand(trans.Config.TransducerAlphaX).^2));
+[faBW,psBW] = trans_obj.get_beamwidth_at_f_c([]);
 
-%time=trans.Time;
-number = trans.get_transceiver_pings();
 
-bot_range = trans.get_bottom_range();
+bw_mean = (faBW+psBW)/4/180*pi;
+t_angle = atan(sqrt(tand(trans_obj.Config.TransducerAlphaY).^2+tand(trans_obj.Config.TransducerAlphaX).^2));
 
-sv = trans.Data.get_datamat('sv');
-sp = trans.Data.get_datamat('sp');
+%time=trans_obj.Time;
+number = trans_obj.get_transceiver_pings();
+
+bot_range = trans_obj.get_bottom_range();
+
+sv = trans_obj.Data.get_datamat('sv');
+sp = trans_obj.Data.get_datamat('sp');
 sp(sp==-999)=nan;
 sv(sv==-999)=nan;
 [nb_samples,nb_pings] = size(sv);
-time_r = (0:nb_samples-1) * trans.get_params_value('SampleInterval',1);
-%eq_beam_angle = trans.Config.EquivalentBeamAngle;
+time_r = (0:nb_samples-1) * trans_obj.get_params_value('SampleInterval',1);
+%eq_beam_angle = trans_obj.Config.EquivalentBeamAngle;
 
-acrossangle = trans.Data.get_datamat('acrossangle');
-alongangle  = trans.Data.get_datamat('alongangle');
+acrossangle = trans_obj.Data.get_datamat('acrossangle');
+alongangle  = trans_obj.Data.get_datamat('alongangle');
 
-[alongphi, acrossphi] = trans.get_phase();
+[alongphi, acrossphi] = trans_obj.get_phase();
 % 
-% alongangle = -trans.Data.get_datamat('acrossangle');
-% acrossangle  = -trans.Data.get_datamat('alongangle');
+% alongangle = -trans_obj.Data.get_datamat('acrossangle');
+% acrossangle  = -trans_obj.Data.get_datamat('alongangle');
 % 
-% [acrossphi, alongphi] = trans.get_phase();
+% [acrossphi, alongphi] = trans_obj.get_phase();
 
 
 
 
 idx_algo_bot = find_algo_idx(trans, 'BottomDetectionV2');
 
-algo = trans.Algo(idx_algo_bot);
+algo = trans_obj.Algo(idx_algo_bot);
 
-[PulseLength,~] = trans.get_pulse_length(1);
+[PulseLength,~] = trans_obj.get_pulse_length(1);
 [amp_est, across_est, along_est] = detec_bottom_bathymetric(sp, alongphi, acrossphi, ...
-    trans.get_transceiver_range(), 1/trans.get_params_value('SampleInterval',1), PulseLength, algo.Varargin.thr_bottom, -12, algo.Varargin.r_min);
+    trans_obj.get_transceiver_range(), 1/trans_obj.get_params_value('SampleInterval',1), PulseLength, algo.Varargin.thr_bottom, -12, algo.Varargin.r_min);
 z_max = nanmax(amp_est.range) * cos(t_angle);
 
 ext_len = floor(z_max*(tan(t_angle+bw_mean) - tan(t_angle-bw_mean)) / dr/4);
@@ -147,15 +150,15 @@ straight_range_bottom(~isnan(true_idx_bottom)) = range(true_idx_bottom(~isnan(tr
 true_time_bottom = nan(size(true_idx_bottom));
 true_time_bottom(~isnan(true_idx_bottom)) = time_r(true_idx_bottom(~isnan(true_idx_bottom)));
 
-time_recept = true_time_bottom / (24*60*60) + trans.Time;
-time_recept(isnan(time_recept)) = trans.Time(isnan(time_recept));
-time_trans = trans.Time;
+time_recept = true_time_bottom / (24*60*60) + trans_obj.Time;
+time_recept(isnan(time_recept)) = trans_obj.Time(isnan(time_recept));
+time_trans = trans_obj.Time;
 
 att_trans = layer.AttitudeNav.resample_attitude_nav_data(time_trans);
-Pitch = att_trans.Pitch(:)'+pitch_cal;
-Roll  = att_trans.Roll(:)'+roll_cal;
-Heave = att_trans.Heave(:)';
-Yaw = att_trans.Yaw(:)'+yaw_cal;
+Pitch = att_trans_obj.Pitch(:)'+pitch_cal;
+Roll  = att_trans_obj.Roll(:)'+roll_cal;
+Heave = att_trans_obj.Heave(:)';
+Yaw = att_trans_obj.Yaw(:)'+yaw_cal;
 
 att_recept = layer.AttitudeNav.resample_attitude_nav_data(time_recept);
 Pitch_r = att_recept.Pitch(:)' + pitch_cal;
@@ -185,8 +188,8 @@ legend('Across Slope','Along Slope');
 
 Range_mat = repmat(range,1, nb_pings);
 dr=nanmean(diff(range));
-[~,Np]=trans.get_pulse_length(1);
-transmit_angles = pi/2-atan(sqrt(tand(Roll_r + trans.Config.TransducerAlphaX) .^2 + tand(Pitch_r + trans.Config.TransducerAlphaY) .^2));
+[~,Np]=trans_obj.get_pulse_length(1);
+transmit_angles = pi/2-atan(sqrt(tand(Roll_r + trans_obj.Config.TransducerAlphaX) .^2 + tand(Pitch_r + trans_obj.Config.TransducerAlphaY) .^2));
 
 BS = sp - 10*log10(Np/2*dr*Range_mat*sin(bw_mean)./cos(repmat(transmit_angles, nb_samples,1)));
 
@@ -228,8 +231,8 @@ end
 
 extended_along_angle=zeros(2*ext_len+1,nb_pings);
 
-BW_across=trans.Config.BeamWidthAthwartship;
-BW_along=trans.Config.BeamWidthAlongship;
+BW_across=psBW;
+BW_along=faBW;
 
 
 compensationAtt =  attCompensation(BW_along, BW_across, Roll, Pitch,Roll_r,Pitch_r);
@@ -428,12 +431,12 @@ linkaxes([ap1 ap2]);
 
 
 true_z_bottom(true_z_bottom<10)=nan;
-true_y_along = true_r_bottom.*sind(Pitch_r+trans.Config.TransducerAlphaX);
-true_x_across = sign(Roll_r+trans.Config.TransducerAlphaY).*true_r_bottom.*cosd(Pitch_r+trans.Config.TransducerAlphaX);
+true_y_along = true_r_bottom.*sind(Pitch_r+trans_obj.Config.TransducerAlphaX);
+true_x_across = sign(Roll_r+trans_obj.Config.TransducerAlphaY).*true_r_bottom.*cosd(Pitch_r+trans_obj.Config.TransducerAlphaX);
 
 straight_z_bottom(straight_z_bottom<10)=nan;
-straight_y_along = straight_r_bottom.*sind(Pitch_r+trans.Config.TransducerAlphaX);
-straight_x_across = sign(Roll_r+trans.Config.TransducerAlphaY).*straight_r_bottom.*cosd(Pitch_r+trans.Config.TransducerAlphaX);
+straight_y_along = straight_r_bottom.*sind(Pitch_r+trans_obj.Config.TransducerAlphaX);
+straight_x_across = sign(Roll_r+trans_obj.Config.TransducerAlphaY).*straight_r_bottom.*cosd(Pitch_r+trans_obj.Config.TransducerAlphaX);
 
 err=sqrt((true_z_bottom-straight_z_bottom).^2+(straight_y_along-true_y_along).^2+(straight_x_across-true_x_across).^2);
 
@@ -449,8 +452,8 @@ trans_mov=nan(3,nb_pings);
 for i=1:nb_pings
     attitude_mat_t=create_attitude_matrix(Pitch(i),Roll(i),Yaw(i));
     attitude_mat_r=create_attitude_matrix(Pitch_r(i),Roll_r(i),Yaw_r(i));
-    trans_mov(:,i)=-(attitude_mat_t*trans.get_position()-[0;0;Heave(i)])+(attitude_mat_r*trans.get_position()-[0;0;Heave_r(i)]);
-    pos_mat(:,i)=[true_y_along(i);true_x_across(i);true_z_bottom(i)]+attitude_mat_r*trans.get_position()-[0;0;Heave_r(i)];
+    trans_mov(:,i)=-(attitude_mat_t*trans_obj.get_position()-[0;0;Heave(i)])+(attitude_mat_r*trans_obj.get_position()-[0;0;Heave_r(i)]);
+    pos_mat(:,i)=[true_y_along(i);true_x_across(i);true_z_bottom(i)]+attitude_mat_r*trans_obj.get_position()-[0;0;Heave_r(i)];
 end
 
 
@@ -459,12 +462,12 @@ end
     zeros(size(straight_range_bottom)),...
     zeros(size(straight_range_bottom)),...
     zeros(size(straight_range_bottom)),...
-    trans.Config.TransducerAlphaX*ones(size(straight_range_bottom)),...
-    trans.Config.TransducerAlphaY*ones(size(straight_range_bottom)),...
-    trans.Config.TransducerAlphaZ*ones(size(straight_range_bottom)),...
-    trans.Config.TransducerOffsetX*ones(size(straight_range_bottom)),...
-    trans.Config.TransducerOffsetY*ones(size(straight_range_bottom)),...
-    trans.Config.TransducerOffsetZ*ones(size(straight_range_bottom)));
+    trans_obj.Config.TransducerAlphaX*ones(size(straight_range_bottom)),...
+    trans_obj.Config.TransducerAlphaY*ones(size(straight_range_bottom)),...
+    trans_obj.Config.TransducerAlphaZ*ones(size(straight_range_bottom)),...
+    trans_obj.Config.TransducerOffsetX*ones(size(straight_range_bottom)),...
+    trans_obj.Config.TransducerOffsetY*ones(size(straight_range_bottom)),...
+    trans_obj.Config.TransducerOffsetZ*ones(size(straight_range_bottom)));
 
 pos_mat_extended=nan(size(extended_range,1),nb_pings,3);
 
@@ -473,12 +476,12 @@ pos_mat_extended=nan(size(extended_range,1),nb_pings,3);
     Pitch_r,...
     Roll_r,...
     Yaw_r,...
-    trans.Config.TransducerAlphaX*ones(size(straight_range_bottom)),...
-    trans.Config.TransducerAlphaY*ones(size(straight_range_bottom)),...
-    trans.Config.TransducerAlphaZ*ones(size(straight_range_bottom)),...
-    trans.Config.TransducerOffsetX*ones(size(straight_range_bottom)),...
-    trans.Config.TransducerOffsetY*ones(size(straight_range_bottom)),...
-    trans.Config.TransducerOffsetZ*ones(size(straight_range_bottom)));
+    trans_obj.Config.TransducerAlphaX*ones(size(straight_range_bottom)),...
+    trans_obj.Config.TransducerAlphaY*ones(size(straight_range_bottom)),...
+    trans_obj.Config.TransducerAlphaZ*ones(size(straight_range_bottom)),...
+    trans_obj.Config.TransducerOffsetX*ones(size(straight_range_bottom)),...
+    trans_obj.Config.TransducerOffsetY*ones(size(straight_range_bottom)),...
+    trans_obj.Config.TransducerOffsetZ*ones(size(straight_range_bottom)));
 
 for ii=1:size(extended_range,1)
         [x_temp,y_temp,z_temp]=arrayfun(@angles_to_pos_single,extended_range(ii,:),-extended_along_angle(ii,:),-extended_across_angle(ii,:),...
@@ -486,19 +489,19 @@ for ii=1:size(extended_range,1)
         Pitch_r,...
         Roll_r,...
         Yaw_r,...
-        trans.Config.TransducerAlphaX*ones(size(Pitch_r)),...
-        trans.Config.TransducerAlphaY*ones(size(Pitch_r)),...
-        trans.Config.TransducerAlphaZ*ones(size(Pitch_r)),...
-        trans.Config.TransducerOffsetX*ones(size(Pitch_r)),...
-        trans.Config.TransducerOffsetY*ones(size(Pitch_r)),...
-        trans.Config.TransducerOffsetZ*ones(size(Pitch_r)));
+        trans_obj.Config.TransducerAlphaX*ones(size(Pitch_r)),...
+        trans_obj.Config.TransducerAlphaY*ones(size(Pitch_r)),...
+        trans_obj.Config.TransducerAlphaZ*ones(size(Pitch_r)),...
+        trans_obj.Config.TransducerOffsetX*ones(size(Pitch_r)),...
+        trans_obj.Config.TransducerOffsetY*ones(size(Pitch_r)),...
+        trans_obj.Config.TransducerOffsetZ*ones(size(Pitch_r)));
     
     pos_mat_extended(ii,:,:)=([x_temp-x_center;y_temp-y_center;z_temp-z_center]+pos_mat)';
     
 end
 
-lat_ship=trans.GPSDataPing.Lat;
-long_ship=trans.GPSDataPing.Long;
+lat_ship=trans_obj.GPSDataPing.Lat;
+long_ship=trans_obj.GPSDataPing.Long;
 
 x_ext=pos_mat_extended(:,:,1);
 y_ext=pos_mat_extended(:,:,2);
@@ -564,7 +567,7 @@ linkaxes([aa2 aa3 aa4],'x');
 
 [x_ship,y_ship,Zone]=deg2utm(lat_ship,long_ship);
 
-heading=90-trans.AttitudeNavPing.Heading(:)';%TOFIX when there is no attitude data...
+heading=90-trans_obj.AttitudeNavPing.Heading(:)';%TOFIX when there is no attitude data...
 
 Y_Bottom_ext=repmat(y_ship',size(y_ext,1),1)+y_ext.*cosd(repmat(heading,size(y_ext,1),1))+x_ext.*sind(repmat(heading,size(x_ext,1),1));%E
 X_Bottom_ext=repmat(x_ship',size(x_ext,1),1)+x_ext.*cosd(repmat(heading,size(y_ext,1),1))-y_ext.*sind(repmat(heading,size(y_ext,1),1));%N

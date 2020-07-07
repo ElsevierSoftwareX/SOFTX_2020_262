@@ -38,7 +38,8 @@ else
     % Handle response
     switch choice
         case 'Yes'
-            open_file([],[],files,main_figure);
+            esp3_obj=getappdata(groot,'esp3_obj');
+            esp3_obj.open_file(files);
         case 'No'
             
         otherwise

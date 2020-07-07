@@ -25,7 +25,7 @@
 % * 2017-03-28: header (Alex Schimel)
 % * 2015-06-25: first version (Yoann Ladroit)
 %
-% *EXAMPLE*
+% *EXAMPLE
 %
 % TODO: write examples
 %
@@ -50,9 +50,9 @@ end
 curr_disp=get_esp3_prop('curr_disp');
 
 main_menu.files = uimenu(main_figure,'Label','File(s)');
-uimenu(main_menu.files,'Label','Open file','Callback',{@open_file,0,main_figure});
-uimenu(main_menu.files,'Label','Open next file','Callback',{@open_file,1,main_figure});
-uimenu(main_menu.files,'Label','Open previous file','Callback',{@open_file,2,main_figure});
+uimenu(main_menu.files,'Label','Open file','Callback',{@open_file_cback,0});
+uimenu(main_menu.files,'Label','Open next file','Callback',{@open_file_cback,1});
+uimenu(main_menu.files,'Label','Open previous file','Callback',{@open_file_cback,2});
 %uimenu(main_menu.files,'Label','Reload Current file(s)','Callback',{@reload_file,main_figure});
 uimenu(main_menu.files,'Label','Index Files','Callback',{@index_files_callback,main_figure});
 uimenu(main_menu.files,'Label','Clean temp. files','Callback',{@clean_temp_files_callback,main_figure});
@@ -86,7 +86,7 @@ uimenu(main_menu.bottom_menu_db,'Label','Load Bottom and/or Regions from db','Ca
 %% Export tab
 main_menu.export = uimenu(main_figure,'Label','Export','Tag','menuexport');
 
-uimenu(main_menu.export,'Label','Save Echogram','Callback',{@save_echo_callback,main_figure});
+uimenu(main_menu.export,'Label','Save Echogram','Callback',@save_echo_callback);
 
 exp_values_menu = uimenu(main_menu.export,'Label','Export Echogram Data to .xlsx');
 uimenu(exp_values_menu,'Label','Sv values ','Callback',{@export_regions_values_callback,main_figure,'wc','sv'});
@@ -257,6 +257,15 @@ setappdata(main_figure,'main_menu',main_menu);
 
 end
 
+function open_file_cback(~,~,id)
+esp3_obj = getappdata(groot,'esp3_obj');
+
+if ~isempty(esp3_obj)
+    esp3_obj.open_file(id);
+end
+
+end
+
 function display_survey_results_cback(src,evt,main_figure)
 app_path=get_esp3_prop('app_path');
 
@@ -361,7 +370,7 @@ if isempty(layer)
 end
 
 filepath=fileparts(layer.Filename{1});
-write_config_display_to_xml(curr_disp,'file_path',filepath);
+write_config_display_to_xml(curr_disp,'file_path',filepath,'limited',1);
 
 end
 

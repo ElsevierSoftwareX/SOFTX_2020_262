@@ -1,10 +1,8 @@
-function curr_disp=init_grid_val(main_figure)
-layer=get_current_layer();
-curr_disp=get_esp3_prop('curr_disp');
-if isempty(layer)
-    return;
+function init_grid_val(curr_disp,trans_obj)
+
+if isempty(trans_obj)
+    return;;
 end
-[trans_obj,~]=layer.get_trans(curr_disp);
 
 [dx,dy]=curr_disp.get_dx_dy();
 

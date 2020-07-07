@@ -3,8 +3,8 @@ function upped=update_axis(main_figure,new,varargin)
 if ~isdeployed
     disp('update_axis')
 end
-layer=get_current_layer();
-if isempty(layer)
+layer_obj=get_current_layer();
+if isempty(layer_obj)
     return;
 end
 curr_disp=get_esp3_prop('curr_disp');
@@ -26,16 +26,17 @@ end
 axes_panel_comp=getappdata(main_figure,'Axes_panel');
 mini_axes_comp=getappdata(main_figure,'Mini_axes');
 
-[echo_im_tot,echo_ax_tot,~,trans_obj_tot,~,cids]=get_axis_from_cids(main_figure,main_or_mini);
+[echo_obj,trans_obj_tot,~,cids]=get_axis_from_cids(main_figure,main_or_mini);
 
-upped=zeros(1,numel(echo_im_tot));
+upped=zeros(1,numel(echo_obj));
 xlim_sec=[nan nan];
 ylim_sec=[nan nan];
 idx_sec=[];
-for iax=1:length(echo_ax_tot)
+
+for iax=1:length(echo_obj)
     
-    echo_im=echo_im_tot(iax);
-    echo_ax=echo_ax_tot(iax);
+    echo_im=echo_obj.get_echo_surf(iax);
+    echo_ax=echo_obj.get_main_ax(iax);
     trans_obj=trans_obj_tot{iax};
     pings=trans_obj.get_transceiver_pings();
     samples=trans_obj.get_transceiver_samples();
@@ -56,14 +57,7 @@ for iax=1:length(echo_ax_tot)
                 u=findobj(echo_ax,'Tag','SelectLine','-or','Tag','SelectArea');
                 delete(u);
             end
-            
-            switch class(axes_panel_comp.axes_panel)
-                case 'matlab.ui.container.Tab'
-                    axes_panel_comp.axes_panel.Title = sprintf('%s: %.0f kHz %s',curr_disp.Type,curr_disp.Freq/1e3,cids{iax});     
-                case 'matlab.ui.Figure'
-                    axes_panel_comp.axes_panel.Name = sprintf('%s: %.0f kHz %s',curr_disp.Type,curr_disp.Freq/1e3,cids{iax});
-            end
-            
+           
             axes_panel_comp.axes_panel.UserData = curr_disp.ChannelID;
             delete(axes_panel_comp.listeners);
             axes_panel_comp.listeners=[];
@@ -85,15 +79,15 @@ for iax=1:length(echo_ax_tot)
     end
     
     if ~isempty(echo_im)
-        struct_temp=[];
-        struct_temp.ChannelID=cids{iax};
-        struct_temp.Freq=layer.Frequencies(strcmpi(layer.ChannelID,cids{iax}));
-        struct_temp.DispSpikes=curr_disp.DispSpikes;
-        struct_temp.EchoQuality=curr_disp.EchoQuality;
-        struct_temp.Disp_dy_dx=curr_disp.Disp_dy_dx;
-        [dr,dp,upped(iax)]=layer.display_layer(struct_temp,curr_disp.Fieldname,echo_ax,echo_im,x,y,off_disp,p.Results.force_update);  
+
+        [dr,dp,upped(iax)]=echo_obj(iax).display_echogram(trans_obj,...
+            'Unique_ID',layer_obj.Unique_ID,...
+            'curr_disp',curr_disp,...
+            'Fieldname',curr_disp.Fieldname,...
+            'x',x,'y',y,...
+            'off_disp',off_disp>0,...
+            'force_update',p.Results.force_update>0);  
     end
-    
     
     switch main_or_mini{iax}
         case 'main'
@@ -105,11 +99,11 @@ for iax=1:length(echo_ax_tot)
                 set(info_panel_comp.display_subsampling,'String',str_subsampling,'ForegroundColor',[0 0.5 0],'Fontweight','normal');
             end
             
-            if diff(echo_ax_tot(iax).UserData.xlim)>0
-                echo_ax_tot(iax).XLim=echo_ax_tot(iax).UserData.xlim;
+            if diff(echo_obj.get_main_ax(iax).UserData.xlim)>0
+                echo_obj.get_main_ax(iax).XLim=echo_obj.get_main_ax(iax).UserData.xlim;
             end
-            if diff(echo_ax_tot(iax).UserData.ylim)>0
-                echo_ax_tot(iax).YLim=echo_ax_tot(iax).UserData.ylim;
+            if diff(echo_obj.get_main_ax(iax).UserData.ylim)>0
+                echo_obj.get_main_ax(iax).YLim=echo_obj.get_main_ax(iax).UserData.ylim;
             end
             ylim_ax=get(axes_panel_comp.echo_obj.main_ax,'YLim');
             
@@ -130,11 +124,11 @@ for iax=1:length(echo_ax_tot)
             setappdata(main_figure,'Axes_panel',axes_panel_comp);
         case 'mini'
 
-             if diff(echo_ax_tot(iax).UserData.xlim)>0
-                echo_ax_tot(iax).XLim=echo_ax_tot(iax).UserData.xlim;
+             if diff(echo_obj.get_main_ax(iax).UserData.xlim)>0
+                echo_obj.get_main_ax(iax).XLim=echo_obj.get_main_ax(iax).UserData.xlim;
             end
-            if diff(echo_ax_tot(iax).UserData.ylim)>0
-                echo_ax_tot(iax).YLim=echo_ax_tot(iax).UserData.ylim;
+            if diff(echo_obj.get_main_ax(iax).UserData.ylim)>0
+                echo_obj.get_main_ax(iax).YLim=echo_obj.get_main_ax(iax).UserData.ylim;
             end
             x_lim=get(axes_panel_comp.echo_obj.main_ax,'xlim');
             y_lim=get(axes_panel_comp.echo_obj.main_ax,'ylim');
@@ -149,12 +143,12 @@ for iax=1:length(echo_ax_tot)
             set(mini_axes_comp.patch_lim_obj,'Faces',f2,'Vertices',v2);
             
         otherwise
-            if diff(echo_ax_tot(iax).UserData.ylim)>0&&diff(echo_ax_tot(iax).UserData.ylim)>0
+            if diff(echo_obj.get_main_ax(iax).UserData.ylim)>0&&diff(echo_obj.get_main_ax(iax).UserData.ylim)>0
                 idx_sec=iax;
-                xlim_sec=[nanmin(xlim_sec(1),echo_ax_tot(iax).UserData.xlim(1))...
-                    nanmax(xlim_sec(2),echo_ax_tot(iax).UserData.xlim(2))];
-               ylim_sec=[nanmin(ylim_sec(1),echo_ax_tot(iax).UserData.ylim(1))...
-                    nanmax(ylim_sec(2),echo_ax_tot(iax).UserData.ylim(2))];
+                xlim_sec=[nanmin(xlim_sec(1),echo_obj.get_main_ax(iax).UserData.xlim(1))...
+                    nanmax(xlim_sec(2),echo_obj.get_main_ax(iax).UserData.xlim(2))];
+               ylim_sec=[nanmin(ylim_sec(1),echo_obj.get_main_ax(iax).UserData.ylim(1))...
+                    nanmax(ylim_sec(2),echo_obj.get_main_ax(iax).UserData.ylim(2))];
             end
             
 
@@ -162,18 +156,18 @@ for iax=1:length(echo_ax_tot)
 end
 
 if ~isempty(idx_sec)
-    if any(echo_ax_tot(idx_sec).XLim~=xlim_sec)&&xlim_sec(2)>xlim_sec(1)
-        echo_ax_tot(idx_sec).XLim=xlim_sec;
+    if any(echo_obj.get_main_ax(idx_sec).XLim~=xlim_sec)&&xlim_sec(2)>xlim_sec(1)
+        echo_obj.get_main_ax(idx_sec).XLim=xlim_sec;
     end
-    if any(echo_ax_tot(idx_sec).YLim~=ylim_sec)&&ylim_sec(2)>ylim_sec(1)
-        echo_ax_tot(idx_sec).YLim=ylim_sec;
+    if any(echo_obj.get_main_ax(idx_sec).YLim~=ylim_sec)&&ylim_sec(2)>ylim_sec(1)
+        echo_obj.get_main_ax(idx_sec).YLim=ylim_sec;
     end
 end
-
 
 if any(strcmpi(main_or_mini,'main'))
     update_grid(main_figure);
 end
+
 if any(strcmpi(main_or_mini,'mini'))
     update_grid_mini_ax(main_figure);
 end

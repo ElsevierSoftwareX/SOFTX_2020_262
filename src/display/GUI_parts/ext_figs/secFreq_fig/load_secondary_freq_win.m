@@ -111,6 +111,7 @@ for iax=1:nb_chan
         'ax_tag',curr_disp.SecChannelIDs{iax},...
         'disp_colorbar',false,...
         'pos_in_parent',pos,...
+        'cmap',curr_disp.Cmap,...
         'uiaxes',false);
     
     secondary_freq.names(iax)=text(secondary_freq.echo_obj(iax).main_ax,10,15,sprintf('%.0fkHz',curr_disp.SecFreqs(iax)/1e3),'Units','Pixel','Fontweight','Bold','Fontsize',14,'ButtonDownFcn',{@change_cid,main_figure},'Tag',curr_disp.SecChannelIDs{iax},'UserData',curr_disp.SecChannelIDs{iax});
@@ -136,7 +137,10 @@ for ifreq=1:numel(layer.ChannelID)
         'Callback',{@set_secondary_channels_cback,main_figure,layer.ChannelID{ifreq}});
 end
 
-set(secondary_freq.echo_obj.get_echo_bt_surf(),'UIContextMenu',context_menu);
+for ui = 1:numel(secondary_freq.echo_obj)
+    context_menu.UserData.ChannelID = secondary_freq.echo_obj(ui).echo_surf.Tag;
+    set(secondary_freq.echo_obj(ui).echo_bt_surf,'UIContextMenu',context_menu);
+end
 
 enterFcn =  @(figHandle, currentPoint)...
     set(figHandle, 'Pointer', 'hand');
@@ -219,14 +223,14 @@ end
 function save_sec_echo_callback(src,evt,main_figure,tag)
 
 layer=get_current_layer();
+
 if isempty(layer)
     return;
 end
-
+uiCTM = gco;
 switch tag
     case 'clipboard'
-        save_echo(main_figure,[],'-clipboard','sec_ax');
-        
+        save_echo('fileN','-clipboard','cid',uiCTM.Tag);
     otherwise
         [path_tmp,~,~]=fileparts(layer.Filename{1});
         layers_Str=list_layers(layer,'nb_char',80);
@@ -238,7 +242,8 @@ switch tag
         if isequal(path_tmp,0)
             return;
         else
-            save_echo(main_figure,path_tmp,fileN,'sec_ax');
+            save_echo('path_echo',path_tmp,'fileN',fileN,'cid',uiCTM.Tag);
+
         end
 end
 

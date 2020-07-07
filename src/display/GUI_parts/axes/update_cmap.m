@@ -6,7 +6,6 @@ curr_disp=get_esp3_prop('curr_disp');
 layer=get_current_layer();
 mini_axes_comp=getappdata(main_figure,'Mini_axes');
 %st_tracks_tab_comp=getappdata(main_figure,'ST_Tracks');
-echo_int_tab_comp=getappdata(main_figure,'EchoInt_tab');
 
 if isempty(axes_panel_comp)
     return;
@@ -16,10 +15,10 @@ end
 set(axes_panel_comp.echo_obj.main_ax,'Color',col_ax,...
     'GridColor',col_grid,'MinorGridColor',col_grid,'XColor',col_lab,'YColor',col_lab);
 
-[~,~,echo_im_bt,~,~,~]=get_axis_from_cids(main_figure,union({'main' 'mini'}, layer.ChannelID));
+[echo_obj,~,~,~]=get_axis_from_cids(main_figure,union({'main' 'mini'}, layer.ChannelID));
 
-for iim=1:numel(echo_im_bt)
-    set(echo_im_bt(iim),'FaceColor',col_lab);
+for iim=1:numel(echo_obj)
+    set(echo_obj.get_echo_bt_surf(iim),'FaceColor',col_lab);
 end
 
 set(axes_panel_comp.echo_obj.bottom_line_plot,'Color',col_bot);
@@ -44,25 +43,13 @@ set(txt_obj,'Color',col_txt,'EdgeColor',col_txt,'BackgroundColor',col_ax);
 
 set(axes_panel_comp.v_bot_val,'color',col_grid);
 
-
-
 set(axes_panel_comp.echo_obj.main_ax,'Color',col_ax,...
     'GridColor',col_grid,'MinorGridColor',col_grid,'XColor',col_lab,'YColor',col_lab);
 
 
-% set(st_tracks_tab_comp.ax_pos,'Color',col_ax,...
-%     'GridColor',col_grid,'MinorGridColor',col_grid,'XColor',col_lab,'YColor',col_lab);
-% set(st_tracks_tab_comp.ax_pdf,'Color',col_ax,...
-%     'GridColor',col_grid,'MinorGridColor',col_grid,'XColor',col_lab,'YColor',col_lab);
+axes_panel_comp.echo_obj.main_ax.Colormap = cmap;
 
-% colormap(st_tracks_tab_comp.ax_pdf,cmap);
-% colormap(st_tracks_tab_comp.ax_pos,cmap);
-
-
-colormap(mini_axes_comp.echo_obj.main_ax,cmap);
-colormap(axes_panel_comp.echo_obj.main_ax,cmap);
 update_st_tracks_tab(main_figure);
-colormap(echo_int_tab_comp.main_ax,cmap);
 
 if isappdata(main_figure,'Secondary_freq')&&curr_disp.DispSecFreqs>0
     secondary_freq=getappdata(main_figure,'Secondary_freq');

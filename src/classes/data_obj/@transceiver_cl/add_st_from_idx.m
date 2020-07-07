@@ -6,8 +6,8 @@ idx_r=idx_r(:)';
 idx_p=idx_p(:)';
 single_targets=init_st_struct();
 idx_targets_lin=idx_r+(idx_p-1)*numel(range_t);
-BW_athwart=trans_obj.Config.BeamWidthAthwartship;
-BW_along=trans_obj.Config.BeamWidthAlongship;
+
+[BW_along,BW_athwart] = trans_obj.get_beamwidth_at_f_c([]);
 
 [T,Np_t]=trans_obj.get_pulse_Teff(idx_p);
 

@@ -1,66 +1,62 @@
-%% display_layer.m
-%
-% TODO: write short description of function
-%
-%% Help
-%
-% *USE*
-%
-% TODO: write longer description of function
-%
-% *INPUT VARIABLES*
-%
-% * |layer|: TODO: write description and info on variable
-% * |curr_disp|: TODO: write description and info on variable
-% * |fieldname|: TODO: write description and info on variable
-% * |ax|: TODO: write description and info on variable
-% * |echo_h|: TODO: write description and info on variable
-% * |x|: TODO: write description and info on variable
-% * |y|: TODO: write description and info on variable
-% * |new|: TODO: write description and info on variable
-%
-% *OUTPUT VARIABLES*
-%
-% * |dr|: TODO: write description and info on variable
-% * |dp|: TODO: write description and info on variable
-%
-% *RESEARCH NOTES*
-%
-% TODO: write research notes
-%
-% *NEW FEATURES*
-%
-% * 2017-04-02: header (Alex Schimel).
-% * YYYY-MM-DD: first version (Yoann Ladroit). TODO: complete date and comment
-%
-% *EXAMPLE*
-%
-% TODO: write examples
-%
-% *AUTHOR, AFFILIATION & COPYRIGHT*
-%
-% Yoann Ladroit, NIWA. Type |help EchoAnalysis.m| for copyright information.
-
 %% Function
-function [dr,dp,up]=display_layer(layer,curr_disp,fieldname,ax,echo_h,x,y,off_disp,force_update)
+function [dr,dp,up]=display_echogram(echo_obj,trans_obj,varargin)
 up=0;
+curr_disp_default=curr_state_disp_cl();
 
-[trans_obj,idx_t]=layer.get_trans(curr_disp);
-if isempty(trans_obj)
-    return;
+p = inputParser;
+addRequired(p,'echo_obj',@(x) isa(x,'echo_disp_cl'));
+addRequired(p,'trans_obj',@(x) isa(x,'transceiver_cl'));
+addParameter(p,'curr_disp',curr_disp_default,@(x) isa(x,'curr_state_disp_cl'));
+addParameter(p,'main_figure',[],@(x) isempty(x)||ishandle(x));
+addParameter(p,'fieldname','sv',@ischar);
+addParameter(p,'Unique_ID',generate_Unique_ID([]),@ischar);
+addParameter(p,'x',[],@isnumeric);
+addParameter(p,'y',[],@isnumeric);
+addParameter(p,'off_disp',true,@islogical);
+addParameter(p,'force_update',true,@islogical);
+
+parse(p,echo_obj,trans_obj,varargin{:});
+
+% cur_ver=ver('Matlab');
+% cur_ver_num = str2double(cur_ver.Version);
+
+curr_disp = p.Results.curr_disp;
+
+x = p.Results.x;
+y = p.Results.y;
+echo_obj = p.Results.echo_obj;
+
+fieldname = p.Results.fieldname;
+
+off_disp = p.Results.off_disp;
+force_update = p.Results.force_update;
+
+
+switch class(echo_obj.main_ax.Parent)
+    case 'matlab.ui.container.Tab'
+        if ~strcmpi(echo_obj.main_ax.Tag,'mini')
+            echo_obj.main_ax.Parent.Title = sprintf('%s: %.0f kHz %s',curr_disp.Type,trans_obj.Config.Frequency/1e3,trans_obj.Config.ChannelID);
+        end
+    case 'matlab.ui.Figure'
+        if isempty(echo_obj.main_ax.Parent.Name)
+            echo_obj.main_ax.Parent.Name = sprintf('%s: %.0f kHz %s',curr_disp.Type,trans_obj.Config.Frequency,trans_obj.Config.ChannelID);
+        end
 end
 
 
+ax = echo_obj.main_ax;
+echo_h = echo_obj.echo_surf;
 
 xdata=trans_obj.get_transceiver_pings();
-%xdata=trans_obj.get_dist();
 ydata=trans_obj.get_transceiver_samples();
 
-% ydata_r=trans_obj.get_transceiver_range();
+if isempty(x)
+    x = xdata;
+end
 
-% x=x+diff(x)*[-1/2 1/2];
-% y=y+diff(y)*[-1/2 1/2];
-
+if isempty(y)
+    y = ydata;
+end
 
 idx_ping_min=find((xdata-x(1)>=0),1);
 idx_r_min=find((ydata-y(1)>=0),1);
@@ -105,18 +101,18 @@ idx_r_red_ori=(idx_r(1:dr:end));
 idx_ping_red_ori=idx_ping(1):dp:idx_ping(end);
 
 if force_update==0
-    update_echo=get_update_echo(echo_h,layer.Unique_ID,layer.ChannelID{idx_t},fieldname,idx_r_red_ori,idx_ping_red_ori,dr,dp);
+    update_echo=get_update_echo(echo_h,p.Results.Unique_ID,trans_obj.Config.ChannelID,fieldname,idx_r_red_ori,idx_ping_red_ori,dr,dp);
 else
     update_echo=1;
 end
 
 if update_echo>0
     
-%     mem_struct=memory;
-%     size_tot=ceil(mem_struct.MaxPossibleArrayBytes/(8*32));
-%     ip_size_max=(ceil(sqrt(size_tot))*sqrt(screen_ratio)-numel(numel(idx_ping_red_ori)))/2;
-%     ir_size_max=(ceil(sqrt(size_tot))/sqrt(screen_ratio)-numel(numel(idx_r_red_ori)))/2;
-%     
+    %     mem_struct=memory;
+    %     size_tot=ceil(mem_struct.MaxPossibleArrayBytes/(8*32));
+    %     ip_size_max=(ceil(sqrt(size_tot))*sqrt(screen_ratio)-numel(numel(idx_ping_red_ori)))/2;
+    %     ir_size_max=(ceil(sqrt(size_tot))/sqrt(screen_ratio)-numel(numel(idx_r_red_ori)))/2;
+    %
     i_p=ceil(numel(idx_ping_red_ori)*curr_disp.Disp_dy_dx(2));
     %i_p=nanmax(ip_size_max,200)
     buffer_p=0:dp:i_p*dp;
@@ -191,10 +187,10 @@ if update_echo>0
     
     usrdata.Idx_r=idx_r_red;
     usrdata.Idx_pings=idx_ping_red;
-    usrdata.CID=layer.ChannelID{idx_t};
+    usrdata.CID=trans_obj.Config.ChannelID;
     usrdata.Fieldname=fieldname;
-    usrdata.Layer_ID=layer.Unique_ID;
-     
+    usrdata.Layer_ID=p.Results.Unique_ID;
+    
     switch ax.UserData.geometry_y
         case 'samples'
             y_data_disp=y_data_disp-1/2;
@@ -210,12 +206,17 @@ else
     end
     x_data_disp=echo_h.XData;
     y_data_disp=echo_h.YData;
-
+    
 end
 
 idx_p=echo_h.UserData.Idx_pings>=idx_ping_red_ori(1)&echo_h.UserData.Idx_pings<=idx_ping_red_ori(end);
 idx_r=echo_h.UserData.Idx_r>=idx_r_red_ori(1)&echo_h.UserData.Idx_r<=idx_r_red_ori(end);
 
+
+if isempty(p.Results.x)||isempty(p.Results.y)
+    echo_obj.main_ax.XLim = [1 numel(trans_obj.Time)];
+    echo_obj.main_ax.YLim = [1 numel(trans_obj.Range)];
+end
 
 if length(x)>1
     x=x_data_disp(:,idx_p);
@@ -233,11 +234,11 @@ if length(y_data_disp)>1
     if size(y,2)>1
         y=y(:,idx_p);
     end
-        y_lim=[nanmin(y(:)) nanmax(y(:))];
+    y_lim=[nanmin(y(:)) nanmax(y(:))];
     if y_lim(2)>y_lim(1)&&~any(isinf(y_lim))&&~any(isnan(y_lim))
         ax.UserData.ylim=y_lim;
     else
-       ax.UserData.ylim=[nan nan]; 
+        ax.UserData.ylim=[nan nan];
     end
 end
 

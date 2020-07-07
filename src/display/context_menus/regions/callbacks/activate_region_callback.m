@@ -51,23 +51,23 @@ end
 
 [ac_data_col,ac_bad_data_col,in_data_col,in_bad_data_col,txt_col]=set_region_colors(curr_disp.Cmap);
 
-[~,ah,~,trans_ax,~,~]=get_axis_from_cids(main_figure,union({'main' 'mini'},layer.ChannelID));
+[echo_obj,trans_ax,~,~]=get_axis_from_cids(main_figure,union({'main' 'mini'},layer.ChannelID));
 reg_uid=layer.get_layer_reg_uid();
 
-for i=1:length(ah)
-    reg_text=findobj(ah(i),'Tag','region_text');
+for iax=1:length(echo_obj)
+    reg_text=findobj(echo_obj.get_main_ax(iax),'Tag','region_text');
     if isempty(reg_text)
         continue;
     end
     reg_text(isempty(reg_text))=[];
     [uid_rem,id_rem]=setdiff({reg_text(:).UserData},reg_uid);
     for iuid=1:numel(uid_rem) 
-        delete(findobj(ah(i),'UserData',uid_rem{iuid}));
+        delete(findobj(echo_obj.get_main_ax(iax),'UserData',uid_rem{iuid}));
     end
     reg_text(id_rem)=[];
     
     set(reg_text,'color',txt_col,'FontWeight','Normal');
-    trans_obj=trans_ax{i};
+    trans_obj=trans_ax{iax};
     if isempty(trans_obj)
         continue;
     end
@@ -97,7 +97,7 @@ for i=1:length(ah)
             end
         end
         
-        reg_patch_ac=findobj(ah(i),{'Tag','region'},...
+        reg_patch_ac=findobj(echo_obj.get_main_ax(iax),{'Tag','region'},...
             '-and','UserData',trans_obj.Regions(ireg).Unique_ID,'-and','Type','Polygon','-not','FaceColor',col);
         
         set(reg_patch_ac,'FaceColor',col,'EdgeColor',col);

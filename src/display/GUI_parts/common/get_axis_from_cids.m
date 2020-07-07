@@ -1,8 +1,7 @@
-function [echo_im_tot,echo_ax_tot,echo_im_bt_tot,trans_obj,text_size,cids]=get_axis_from_cids(main_figure,main_or_mini)
+function [echo_obj,trans_obj,text_size,cids]=get_axis_from_cids(main_figure,main_or_mini)
 
-echo_im_tot=[];
-echo_ax_tot=[];
-echo_im_bt_tot=[];
+echo_obj=[];
+
 trans_obj={};
 text_size=[];
 cids={};
@@ -17,10 +16,10 @@ for im=1:length(main_or_mini)
     switch main_or_mini{im}
         case 'main'
             axes_panel_comp=getappdata(main_figure,'Axes_panel');
-            echo_im_tmp=axes_panel_comp.echo_obj.echo_surf;
-            echo_ax_tmp=axes_panel_comp.echo_obj.main_ax;
-            echo_im_bt_tmp=axes_panel_comp.echo_obj.echo_bt_surf;
+            echo_obj_tmp=axes_panel_comp.echo_obj;
+
             set(axes_panel_comp.echo_obj.bottom_line_plot,'vis',curr_disp.DispBottom);
+            
             [trans_obj_temp,~]=layer.get_trans(curr_disp);
             
             if isempty(trans_obj_temp)
@@ -31,10 +30,7 @@ for im=1:length(main_or_mini)
             text_size(numel(text_size)+1)=8;
         case 'mini'
             mini_axes_comp=getappdata(main_figure,'Mini_axes');
-            echo_im_tmp=mini_axes_comp.echo_obj.echo_surf;
-            echo_ax_tmp=mini_axes_comp.echo_obj.main_ax;
-            echo_im_bt_tmp=mini_axes_comp.echo_obj.echo_bt_surf;
-            
+            echo_obj_tmp=mini_axes_comp.echo_obj;            
             [trans_obj_temp,~]=layer.get_trans(curr_disp);
             
             if isempty(trans_obj_temp)
@@ -49,11 +45,9 @@ for im=1:length(main_or_mini)
                     tags = secondary_freq.echo_obj.get_tags();
                     idx=(strcmp(main_or_mini{im},tags));
                     
-                    echo_ax_tmp=secondary_freq.echo_obj.get_main_ax(idx);
-                    echo_im_tmp=secondary_freq.echo_obj.get_echo_surf(idx);
-                    echo_im_bt_tmp=secondary_freq.echo_obj.get_echo_bt_surf(idx);
+                    echo_obj_tmp=secondary_freq.echo_obj(idx);
                     
-                    for i=1:length(echo_ax_tmp)
+                    for i=1:length(echo_obj_tmp)
                         [trans_obj_temp,~]=layer.get_trans(main_or_mini{im});
                         if isempty(trans_obj_temp)
                             continue;
@@ -69,7 +63,5 @@ for im=1:length(main_or_mini)
                 continue;
             end
     end
-    echo_im_tot=[echo_im_tot echo_im_tmp];
-    echo_ax_tot=[echo_ax_tot echo_ax_tmp];
-    echo_im_bt_tot=[echo_im_bt_tot echo_im_bt_tmp];
+    echo_obj=[echo_obj echo_obj_tmp];
 end

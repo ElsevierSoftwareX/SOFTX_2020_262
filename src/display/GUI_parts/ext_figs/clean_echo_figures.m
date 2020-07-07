@@ -45,14 +45,8 @@ parse(p,main_figure,varargin{:});
 if ~isempty(main_figure)
     hfigs=getappdata(main_figure,'ExternalFigures');
     if isempty(p.Results.Tag)
-        for uuui=1:length(hfigs)
-            if isvalid(hfigs(uuui))
-                close(hfigs(uuui));
-            end
-        end
-        delete(hfigs);  
-    else
-        
+         hfigs(~isvalid(hfigs))=[]; 
+    else 
         if ischar(p.Results.Tag)
             Tag={p.Results.Tag};
         else

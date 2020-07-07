@@ -365,8 +365,9 @@ for ui = 1:num_ite
 
     bot_r=nan(size(bot_idx));
     bot_r(~isnan(bot_idx))=range_tot(bot_idx(~isnan(bot_idx)));
-    
-    echolength_theory = echo_length(range(Np),1/2*(trans_obj.Config.BeamWidthAlongship+trans_obj.Config.BeamWidthAthwartship),10,bot_r);
+    [faBW,psBW] = trans_obj.get_beamwidth_at_f_c([]);
+
+    echolength_theory = echo_length(range(Np),1/2*(faBW+psBW),10,bot_r);
     
     win_size=ceil(mode(echolength_theory)/nanmean(diff(range_tot)));
     win_size =  nanmax(win_size,5);

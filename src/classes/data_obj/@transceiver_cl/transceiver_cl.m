@@ -21,7 +21,7 @@ classdef transceiver_cl < handle
         Mode
         TransducerImpedance={};
         TransducerDepth double
-        Spikes 
+        Spikes
     end
     
     methods
@@ -49,7 +49,7 @@ classdef transceiver_cl < handle
             addParameter(p,'Algo',algo_cl.empty(),@(x) isa(x,'algo_cl')||isempty(x));
             addParameter(p,'ComputeImpedance',false,@islogical);
             addParameter(p,'Mode','CW',@ischar);
-
+            
             parse(p,varargin{:});
             results = p.Results;
             props = fieldnames(results);
@@ -71,16 +71,16 @@ classdef transceiver_cl < handle
                 end
             end
             
-             if isempty(trans_obj.TransducerDepth)
-                 trans_obj.TransducerDepth=zeros(size(trans_obj.Time));
-             end
-             
-             if isempty(trans_obj.TransducerImpedance)&&p.Results.ComputeImpedance
-                 trans_obj.TransducerImpedance=cell(size(trans_obj.Time));
-             else
-                 trans_obj.TransducerImpedance = [];
-             end
-             
+            if isempty(trans_obj.TransducerDepth)
+                trans_obj.TransducerDepth=zeros(size(trans_obj.Time));
+            end
+            
+            if isempty(trans_obj.TransducerImpedance)&&p.Results.ComputeImpedance
+                trans_obj.TransducerImpedance=cell(size(trans_obj.Time));
+            else
+                trans_obj.TransducerImpedance = [];
+            end
+            
             trans_obj.Params=trans_obj.Params.reduce_params();
             trans_obj.Bottom = p.Results.Bottom;
             if ~isempty(trans_obj.Params.PingNumber)
@@ -127,9 +127,9 @@ classdef transceiver_cl < handle
             
             if isempty(idx_pings)
                 idx_pings=1:numel(trans_obj.Time);
-            end  
+            end
             mask_spikes=trans_obj.Spikes(idx_r,idx_pings);
-                
+            
         end
         
         function set_spikes(trans_obj,idx_r,idx_pings,mask)
@@ -143,9 +143,9 @@ classdef transceiver_cl < handle
             end
             
             if isscalar(mask)&&isempty(idx_r)
-                 idx_r=1:numel(trans_obj.Range);  
+                idx_r=1:numel(trans_obj.Range);
             elseif ~isscalar(mask)&&isempty(idx_r)
-                 idx_r=1:size(mask,1); 
+                idx_r=1:size(mask,1);
             end
             
             if isscalar(mask)&&isempty(idx_pings)
@@ -153,7 +153,7 @@ classdef transceiver_cl < handle
             elseif ~isscalar(mask)&&isempty(idx_pings)
                 idx_pings=1:size(mask,1);
             end
- 
+            
             trans_obj.Spikes(idx_r,idx_pings) = sparse(mask);
             
         end
@@ -166,7 +166,7 @@ classdef transceiver_cl < handle
             if isempty(bottom_obj)
                 bottom_obj = bottom_cl();
             end
-
+            
             % indices of bad pings in the new bottom object
             IdxBad = find(bottom_obj.Tag==0);
             IdxBad(IdxBad<=0) = [];
@@ -215,23 +215,23 @@ classdef transceiver_cl < handle
             % bottom at the last sample
             new_bot_sple(isnan(new_bot_sple(:))&tag(:)==1) = length(samples);
             
-%             if ~isempty(obj.Bottom)
-%                 old_bot_sple=obj.Bottom.Sample_idx;
-%             else
-%                 old_bot_sple=[];
-%             end
+            %             if ~isempty(obj.Bottom)
+            %                 old_bot_sple=obj.Bottom.Sample_idx;
+            %             else
+            %                 old_bot_sple=[];
+            %             end
             
-%             if all(size(new_bot_sple)==size(old_bot_sple))
-%                 idx_pings_mod=find((new_bot_sple~=old_bot_sple)&~(isnan(new_bot_sple)&isnan(old_bot_sple)));
-%             else
-%                 idx_pings_mod=pings;
-%             end
+            %             if all(size(new_bot_sple)==size(old_bot_sple))
+            %                 idx_pings_mod=find((new_bot_sple~=old_bot_sple)&~(isnan(new_bot_sple)&isnan(old_bot_sple)));
+            %             else
+            %                 idx_pings_mod=pings;
+            %             end
             
             % setting E1
             if isempty(new_bot_sple)
                 % brand new bottom object
                 E1 = [];
-            else               
+            else
                 % get the old and new values
                 if isprop(obj,'Bottom')
                     old_E1 = obj.Bottom.E1;
@@ -247,7 +247,7 @@ classdef transceiver_cl < handle
                     E1 = -999.*ones(size(new_bot_sple));
                     %idx_pings_mod = pings;
                 end
-                 
+                
                 if ~isempty(new_E1) && all(size(new_E1)==size(new_bot_sple))
                     E1 = new_E1;
                 end
@@ -276,14 +276,14 @@ classdef transceiver_cl < handle
                     E2 = -999.*ones(size(new_bot_sple));
                     %idx_pings_mod = pings;
                 end
-                 
+                
                 if ~isempty(new_E2) && all(size(new_E2)==size(new_bot_sple))
                     E2 = new_E2;
                 end
                 
             end
-%                  E1(IdxBad)=-999; 
-%                  E2(IdxBad)=-999; 
+            %                  E1(IdxBad)=-999;
+            %                  E2(IdxBad)=-999;
             % create the bottom object and add to trans object
             obj.Bottom = bottom_cl('Origin',bottom_obj.Origin(:)',...
                 'Sample_idx',new_bot_sple(:)',...
@@ -293,20 +293,20 @@ classdef transceiver_cl < handle
                 'Version',bottom_obj.Version);
             
             
-%             if ~isempty(idx_pings_mod)
-% %                 profile on;
-%                 obj.apply_algo('BottomFeatures','reg_obj',region_cl('Idx_pings',idx_pings_mod,'Idx_r',[1 10]));
-% %                 profile off;
-% %                 profile viewer;
-%             end
-                     
+            %             if ~isempty(idx_pings_mod)
+            % %                 profile on;
+            %                 obj.apply_algo('BottomFeatures','reg_obj',region_cl('Idx_pings',idx_pings_mod,'Idx_r',[1 10]));
+            % %                 profile off;
+            % %                 profile viewer;
+            %             end
+            
         end
         
         function f_c=get_center_frequency(trans_obj)
-           
+            
             switch trans_obj.Mode
                 case 'FM'
-                    f_c=(trans_obj.get_params_value('FrequencyStart',[])+trans_obj.get_params_value('FrequencyEnd',[]))/2;                    
+                    f_c=(trans_obj.get_params_value('FrequencyStart',[])+trans_obj.get_params_value('FrequencyEnd',[]))/2;
                 case 'CW'
                     f_c=trans_obj.get_params_value('Frequency',[]);
                 otherwise
@@ -340,11 +340,11 @@ classdef transceiver_cl < handle
             end
             
         end
-      
+        
         
         function depth=get_transceiver_depth(trans_obj,idx_r,idx_pings)
             t_angle=trans_obj.get_transducer_pointing_angle();
-            depth=bsxfun(@plus,trans_obj.get_transceiver_range(idx_r)*sin(t_angle),trans_obj.get_transducer_depth(idx_pings)); 
+            depth=bsxfun(@plus,trans_obj.get_transceiver_range(idx_r)*sin(t_angle),trans_obj.get_transducer_depth(idx_pings));
         end
         
         function t_angle=get_transducer_pointing_angle(trans_obj)
@@ -391,7 +391,7 @@ classdef transceiver_cl < handle
         end
         
         function set_transceiver_time(trans_obj,time)
-             trans_obj.Time=time(:)';
+            trans_obj.Time=time(:)';
         end
         
         function samples=get_transceiver_samples(trans_obj,varargin)
@@ -770,7 +770,17 @@ classdef transceiver_cl < handle
             
         end
         
-        %% ?
+        function [BW_al,BW_at] = get_beamwidth_at_f_c(trans_obj,cal_struct)
+            f_c = nanmean(trans_obj.get_center_frequency());
+            if isempty(cal_struct)
+                [cal_struct,~]=trans_obj.get_fm_cal('verbose',false);
+            end
+            [~,idx] = nanmin(abs(cal_struct.Frequency-f_c));
+            BW_al = cal_struct.BeamWidthAlongship(idx);
+            BW_at = cal_struct.BeamWidthAthwartship(idx);
+        end
+        
+        %% Set transducer position
         function set_position(trans_obj,pos_trans,trans_angle)
             trans_obj.Config.TransducerOffsetX=pos_trans(1);
             trans_obj.Config.TransducerOffsetY=pos_trans(2);

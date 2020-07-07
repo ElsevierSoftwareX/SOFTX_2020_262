@@ -39,14 +39,14 @@
 % Yoann Ladroit, NIWA. Type |help EchoAnalysis.m| for copyright information.
 
 %% Function
-function output=open_file(~,~,file_id,main_figure)
+function output=open_file(esp3_obj,file_id)
 
 %profile on;
 %%% Grab current layer (files data) and paths
-layer = get_current_layer();
-layers = get_esp3_prop('layers');
-app_path = get_esp3_prop('app_path');
-esp3_obj=getappdata(groot,'esp3_obj');
+layer = esp3_obj.get_layer();
+layers = esp3_obj.layers;
+app_path = esp3_obj.app_path;
+main_figure = esp3_obj.main_figure;
 
 output=[];
 %%% Check if there are unsaved new bottom and regions
@@ -342,7 +342,7 @@ try
     
     if ~(isempty(esp3_obj.layers)||~exist('files_lay','var'))
         [idx,~]=esp3_obj.layers.find_layer_idx_files(files_lay);
-        set_current_layer(esp3_obj.layers(idx(1)));
+        esp3_obj.set_layer(esp3_obj.layers(idx(1)));
         up_disp=1;
     end
     

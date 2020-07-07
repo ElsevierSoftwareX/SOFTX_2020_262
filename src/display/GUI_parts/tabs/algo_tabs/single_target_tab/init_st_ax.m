@@ -19,10 +19,11 @@ colormap(ax,cmap);
 
 x0=trans_obj.Config.AngleOffsetAthwartship;
 y0=trans_obj.Config.AngleOffsetAlongship;
+[faBW,psBW] = trans_obj.get_beamwidth_at_f_c([]);
 
-[x1,y1]=get_ellipse_xy(trans_obj.Config.BeamWidthAthwartship,trans_obj.Config.BeamWidthAlongship,...
+[x1,y1]=get_ellipse_xy(psBW,faBW,...
     x0,y0,100);
-[x2,y2]=get_ellipse_xy(trans_obj.Config.BeamWidthAthwartship/2,trans_obj.Config.BeamWidthAlongship/2,...
+[x2,y2]=get_ellipse_xy(psBW/2,faBW/2,...
     x0,y0,100);
 
 ax.Color=col_ax;

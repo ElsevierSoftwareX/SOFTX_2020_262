@@ -96,9 +96,9 @@ switch field
         
         AlongAngle=trans_obj.Data.get_subdatamat(idx_r,idx_pings,'field','AlongAngle');
         AcrossAngle=trans_obj.Data.get_subdatamat(idx_r,idx_pings,'field','AcrossAngle');
-        
-        compensation = simradBeamCompensation(trans_obj.Config.BeamWidthAlongship,...
-            trans_obj.Config.BeamWidthAthwartship, AlongAngle, AcrossAngle);
+        [faBW,psBW] = trans_obj.get_beamwidth_at_f_c([]);
+        compensation = simradBeamCompensation(faBW,...
+            psBW, AlongAngle, AcrossAngle);
         
 
 end

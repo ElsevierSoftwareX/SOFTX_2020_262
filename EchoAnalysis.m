@@ -81,7 +81,7 @@ function esp3_obj=EchoAnalysis(varargin)
 global DEBUG;
 global PROF;
 PROF = false & ~isdeployed();
-DEBUG = false &~isdeployed();
+DEBUG = false & ~isdeployed();
 
 %% Software main path
 if ~isdeployed
@@ -106,17 +106,22 @@ addOptional(p,'SaveEcho',0,@isnumeric);
 parse(p,varargin{:});
 
 files_to_load=p.Results.Filenames;
+scripts={};
 
 if ~isempty(files_to_load)
     if ischar(files_to_load)
         files_to_load=cellstr(files_to_load);
     end
+    
     [~,~,tmp]=cellfun(@fileparts,files_to_load,'un',0);
+    
     idx_xml=strcmpi(tmp,'.xml');
     scripts_tmp=files_to_load(idx_xml);
+    
     [folder_xml,f_name,~]=cellfun(@fileparts,scripts_tmp,'un',0);
     files_to_load(idx_xml)=[];
-    scripts={};
+    
+    
     for ifo=1:numel(folder_xml)
         if contains(f_name{ifo},'*')
             tmp_scr=dir(fullfile(folder_xml{ifo},[f_name{ifo} '.xml']));
@@ -126,14 +131,7 @@ if ~isempty(files_to_load)
             scripts=union(scripts,fullfile(folder_xml{ifo},[f_name{ifo} '.xml']));
         end
     end
-    
-    if ~isempty(scripts)
-        process_surveys(scripts,'discard_loaded_layers',1,'update_display_at_loading',0) ;
-    end
-    
-    if isempty(files_to_load)
-        return;
-    end
+
 end
 
 %% Default font size for Controls and Panels and db prefs
@@ -181,7 +179,17 @@ if ~isdeployed()&&isappdata(groot,'esp3_obj')
     end
 end
 
-esp3_obj=esp3_cl('nb_esp3_instances',nb_esp3_instances,'files_to_load',files_to_load,'SaveEcho',p.Results.SaveEcho);
+if ~isempty(scripts)&&isempty(files_to_load)&&p.Results.SaveEcho==0
+    nodisplay = true;
+else
+    nodisplay  =false;
+end
+
+esp3_obj=esp3_cl('nb_esp3_instances',nb_esp3_instances,...
+    'files_to_load',files_to_load,...
+    'scripts_to_run',scripts,...
+    'nodisplay',nodisplay,...
+    'SaveEcho',p.Results.SaveEcho);
 
 % profile off;
 % profile viewer;

@@ -33,6 +33,7 @@ classdef esp3_cl < handle
                 p = inputParser;
                 addParameter(p,'nb_esp3_instances',0,@isnumeric);
                 addParameter(p,'files_to_load',{},@iscell);
+                addParameter(p,'scripts_to_run',{},@iscell);
                 addParameter(p,'nodisplay',false,@islogical);
                 addParameter(p,'online',true,@islogical);
                 addParameter(p,'SaveEcho',0,@isnumeric);
@@ -156,7 +157,7 @@ classdef esp3_cl < handle
                     select_area.uictxt_menu_h=[];
                     setappdata(obj.main_figure,'SelectArea',select_area);
                     
-                    setappdata(obj.main_figure,'ExternalFigures',matlab.ui.Figure.empty())
+                    setappdata(obj.main_figure,'ExternalFigures',matlab.ui.Figure.empty());
                     
                     obj.main_figure.Alphamap=obj.get_alphamap();
                     
@@ -167,26 +168,39 @@ classdef esp3_cl < handle
                     init_java_fcn(obj.main_figure);
                     update_cursor_tool(obj.main_figure);
                     init_listeners(obj);
-                    
-                    
+                                      
                     obj.main_figure.UserData = main_figure_userData;
                     obj.main_figure.UserData.timer=[];
                 end
                 
                 %% If files were loaded in input, load them now
-                if ~isempty(p.Results.files_to_load)
-                    % If request was made to print display: print and close ESP3
-                    
-                    open_file([],[],p.Results.files_to_load,obj.main_figure);
-                    
-                    if p.Results.SaveEcho>0
-                        save_echo(obj.main_figure,'','','main');
-                        cleanup_echo(obj.main_figure);
-                        delete(obj.main_figure);
-                        return;
-                    end
+                if ~isempty(p.Results.files_to_load)                 
+                    obj.open_file(p.Results.files_to_load);
                 end
                 
+                if ~isempty(p.Results.scripts_to_run)
+                    obj.run_scripts(p.Results.scripts_to_run,'discard_loaded_layers',p.Results.SaveEcho==0,'update_display_at_loading',0) ;
+                end
+                                
+                if p.Results.SaveEcho>0   
+                    layers = obj.layers;
+                    for uil = 1:numel(layers)         
+                        obj.set_layer(layers(uil));
+                        loadEcho(obj.main_figure);   
+                        ax_panel=getappdata(obj.main_figure,'Axes_panel');
+ 
+                        x_lim=[nanmin(ax_panel.echo_obj.echo_surf.XData(:)) nanmax(ax_panel.echo_obj.echo_surf.XData(:))];
+                        y_lim=[nanmin(ax_panel.echo_obj.echo_surf.YData(:)) nanmax(ax_panel.echo_obj.echo_surf.YData(:))];
+                        ax = ax_panel.echo_obj.get_main_ax();
+                        if diff(x_lim)>0 && diff(y_lim)>0
+                            ax.XLim = x_lim;
+                            ax.YLim = y_lim;
+                        end
+
+                        save_echo('vis','off');
+                    end
+                    cleanup_echo(obj.main_figure);
+                end
                 
             catch err
                 warndlg_perso([],'Fatal Error','Failed to start ESP3');
@@ -248,10 +262,10 @@ classdef esp3_cl < handle
                 end
                 nb_l=nb_l-1;
             end
-            
-            dndobj=getappdata(obj.main_figure,'Dndobj');
-            delete(dndobj);
-            
+            if ishandle(obj.main_figure)
+                dndobj=getappdata(obj.main_figure,'Dndobj');
+                delete(dndobj);
+            end
             appdata = get(obj.main_figure,'ApplicationData');
             fns = fieldnames(appdata);
             

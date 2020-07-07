@@ -12,8 +12,7 @@ time_att=layer.AttitudeNav.Time;
 time_pings_start=trans_obj.Time;
 time_ping_vec=(trans_obj.Data.get_samples()-1)*trans_obj.get_params_value('SampleInterval',1);
 
-faBW=trans_obj.Config.BeamWidthAlongship;
-psBW=trans_obj.Config.BeamWidthAthwartship;
+[faBW,psBW] = trans_obj.get_beamwidth_at_f_c([]);
 
 compensation=create_motion_comp(pitch,roll,time_att,time_pings_start,time_ping_vec,faBW,psBW);
 compensation(abs(compensation)>12)=0;

@@ -18,7 +18,7 @@ ydata=get(mini_axes_comp.echo_obj.echo_surf,'YData');
 idx_pings=ceil(mini_axes_comp.echo_obj.echo_surf.XData);
 idx_r=ceil(mini_axes_comp.echo_obj.echo_surf.YData);
 
-curr_disp=init_grid_val(main_figure);
+curr_disp.init_grid_val(trans_obj);
 [dx,dy]=curr_disp.get_dx_dy();
 
 switch curr_disp.Xaxes_current

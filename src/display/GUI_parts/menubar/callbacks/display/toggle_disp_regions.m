@@ -7,9 +7,9 @@ if isempty(layer)
     return;
 end
 
-[~,main_axes_tot,~,~,~,~]=get_axis_from_cids(main_figure,union({'main' 'mini'},layer.ChannelID));
-for iax=1:length(main_axes_tot)
-    main_axes=main_axes_tot(iax);
+[echo_obj,~,~,~]=get_axis_from_cids(main_figure,union({'main' 'mini'},layer.ChannelID));
+for iax=1:length(echo_obj)
+    main_axes=echo_obj.get_main_ax(iax);
 
     u_reg_image=findobj(main_axes,'tag','region','-and',{'Type','Image','-or','Type','Patch'});
     set(u_reg_image,'visible',curr_disp.DispReg);
