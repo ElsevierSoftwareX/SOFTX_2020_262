@@ -34,7 +34,7 @@ end
 
 for iax=1:length(echo_obj)
     
-    trans_obj=trans_obj_tot{iax};
+    trans_obj=trans_obj_tot(iax);
     echo_obj(iax).display_echo_bottom(trans_obj,'curr_disp',curr_disp,'col_bot',col_bot);
    
 end

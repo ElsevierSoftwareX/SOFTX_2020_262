@@ -53,19 +53,7 @@ else
     [echo_obj,~,~,~]=get_axis_from_cids(main_figure,channelIDS);
 end
 
-
-for iax=1:length(echo_obj)
-    if isempty(ids)
-        delete(findobj(ancestor(echo_obj.get_main_ax(iax),'figure'),'Type','UiContextMenu','-and','Tag','RegionContextMenu'));
-        delete(findobj(echo_obj.get_main_ax(iax),'tag','region','-or','tag','region_text'));
-    else
-        for i=1:numel(ids)
-            delete(findobj(echo_obj.get_main_ax(iax),{'tag','region','-or','tag','region_text'},'-and','UserData',ids{i}));
-            delete(findobj(ancestor(echo_obj.get_main_ax(iax),'figure'),'Type','UiContextMenu','-and','Tag','RegionContextMenu','-and','UserData',ids{i}));
-        end
-    end
-
-end
+echo_obj.clear_echo_regions([]);
 
 if ~isdeployed
     disp_perso(main_figure,'')

@@ -13,9 +13,8 @@ parse(p,echo_obj,trans_obj,varargin{:});
 curr_disp = p.Results.curr_disp;
 
 [ac_data_col,ac_bad_data_col,in_data_col,in_bad_data_col,txt_col]=set_region_colors(curr_disp.Cmap);
-
 reg_plot_tot =[];
-cid = trans_obj.Config.ChannelID;
+
 switch curr_disp.DispReg
     case 'off'
         alpha_in=0;
@@ -37,8 +36,9 @@ if~isempty(reg_h)
     id_rem = setdiff(id_disp,id_reg);
     
     if~isempty(id_rem)
-        clear_regions(main_figure,id_rem,union({'main' 'mini'}, cid));
+        echo_obj.clear_echo_regions(id_rem)
     end
+    
 end
 
 nb_reg=numel(trans_obj.Regions);
@@ -77,7 +77,7 @@ for i=1:nb_reg
         
         poly=reg_curr.Poly;
         
-        switch main_axes.UserData.geometry_y
+        switch echo_obj.echo_usrdata.geometry_y
             case'samples'
                 %                     reg_trans_depth=zeros(size(reg_curr.Idx_pings));
                 %                     dr=1;

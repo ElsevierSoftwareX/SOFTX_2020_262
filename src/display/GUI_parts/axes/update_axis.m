@@ -26,7 +26,7 @@ end
 axes_panel_comp=getappdata(main_figure,'Axes_panel');
 mini_axes_comp=getappdata(main_figure,'Mini_axes');
 
-[echo_obj,trans_obj_tot,~,cids]=get_axis_from_cids(main_figure,main_or_mini);
+[echo_obj,trans_obj_tot,~,~]=get_axis_from_cids(main_figure,main_or_mini);
 
 upped=zeros(1,numel(echo_obj));
 xlim_sec=[nan nan];
@@ -37,7 +37,7 @@ for iax=1:length(echo_obj)
     
     echo_im=echo_obj.get_echo_surf(iax);
     echo_ax=echo_obj.get_main_ax(iax);
-    trans_obj=trans_obj_tot{iax};
+    trans_obj=trans_obj_tot(iax);
     pings=trans_obj.get_transceiver_pings();
     samples=trans_obj.get_transceiver_samples();
     range_t=trans_obj.get_transceiver_range();
@@ -99,17 +99,17 @@ for iax=1:length(echo_obj)
                 set(info_panel_comp.display_subsampling,'String',str_subsampling,'ForegroundColor',[0 0.5 0],'Fontweight','normal');
             end
             
-            if diff(echo_obj.get_main_ax(iax).UserData.xlim)>0
-                echo_obj.get_main_ax(iax).XLim=echo_obj.get_main_ax(iax).UserData.xlim;
+            if diff(echo_obj(iax).echo_usrdata.xlim)>0
+                echo_obj.get_main_ax(iax).XLim=echo_obj(iax).echo_usrdata.xlim;
             end
-            if diff(echo_obj.get_main_ax(iax).UserData.ylim)>0
-                echo_obj.get_main_ax(iax).YLim=echo_obj.get_main_ax(iax).UserData.ylim;
+            if diff(echo_obj(iax).echo_usrdata.ylim)>0
+                echo_obj.get_main_ax(iax).YLim=echo_obj(iax).echo_usrdata.ylim;
             end
             ylim_ax=get(axes_panel_comp.echo_obj.main_ax,'YLim');
             
             if new
                 if ~isempty(ylim_ax)
-                    if strcmpi(axes_panel_comp.echo_obj.main_ax.UserData.geometry_y,'samples')
+                    if strcmpi(axes_panel_comp.echo_obj.echo_usrdata.geometry_y,'samples')
                         curr_disp.R_disp=range_t(round(ylim_ax));
                     else
                         curr_disp.R_disp=ylim_ax;
@@ -124,11 +124,11 @@ for iax=1:length(echo_obj)
             setappdata(main_figure,'Axes_panel',axes_panel_comp);
         case 'mini'
 
-             if diff(echo_obj.get_main_ax(iax).UserData.xlim)>0
-                echo_obj.get_main_ax(iax).XLim=echo_obj.get_main_ax(iax).UserData.xlim;
+             if diff(echo_obj(iax).echo_usrdata.xlim)>0
+                echo_obj.get_main_ax(iax).XLim=echo_obj(iax).echo_usrdata.xlim;
             end
-            if diff(echo_obj.get_main_ax(iax).UserData.ylim)>0
-                echo_obj.get_main_ax(iax).YLim=echo_obj.get_main_ax(iax).UserData.ylim;
+            if diff(echo_obj(iax).echo_usrdata.ylim)>0
+                echo_obj.get_main_ax(iax).YLim=echo_obj(iax).echo_usrdata.ylim;
             end
             x_lim=get(axes_panel_comp.echo_obj.main_ax,'xlim');
             y_lim=get(axes_panel_comp.echo_obj.main_ax,'ylim');
@@ -143,12 +143,12 @@ for iax=1:length(echo_obj)
             set(mini_axes_comp.patch_lim_obj,'Faces',f2,'Vertices',v2);
             
         otherwise
-            if diff(echo_obj.get_main_ax(iax).UserData.ylim)>0&&diff(echo_obj.get_main_ax(iax).UserData.ylim)>0
+            if diff(echo_obj(iax).echo_usrdata.ylim)>0&&diff(echo_obj(iax).echo_usrdata.ylim)>0
                 idx_sec=iax;
-                xlim_sec=[nanmin(xlim_sec(1),echo_obj.get_main_ax(iax).UserData.xlim(1))...
-                    nanmax(xlim_sec(2),echo_obj.get_main_ax(iax).UserData.xlim(2))];
-               ylim_sec=[nanmin(ylim_sec(1),echo_obj.get_main_ax(iax).UserData.ylim(1))...
-                    nanmax(ylim_sec(2),echo_obj.get_main_ax(iax).UserData.ylim(2))];
+                xlim_sec=[nanmin(xlim_sec(1),echo_obj(iax).echo_usrdata.xlim(1))...
+                    nanmax(xlim_sec(2),echo_obj(iax).echo_usrdata.xlim(2))];
+               ylim_sec=[nanmin(ylim_sec(1),echo_obj(iax).echo_usrdata.ylim(1))...
+                    nanmax(ylim_sec(2),echo_obj(iax).echo_usrdata.ylim(2))];
             end
             
 

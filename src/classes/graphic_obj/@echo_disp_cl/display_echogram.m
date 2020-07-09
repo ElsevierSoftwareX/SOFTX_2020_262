@@ -101,10 +101,11 @@ idx_r_red_ori=(idx_r(1:dr:end));
 idx_ping_red_ori=idx_ping(1):dp:idx_ping(end);
 
 if force_update==0
-    update_echo=get_update_echo(echo_h,p.Results.Unique_ID,trans_obj.Config.ChannelID,fieldname,idx_r_red_ori,idx_ping_red_ori,dr,dp);
+    update_echo=echo_obj.get_update_echo(p.Results.Unique_ID,trans_obj.Config.ChannelID,fieldname,idx_r_red_ori,idx_ping_red_ori,dr,dp);
 else
     update_echo=1;
 end
+
 
 if update_echo>0
     
@@ -135,7 +136,7 @@ if update_echo>0
         fprintf('Pings to load %d to %d\n',idx_ping_red(1),idx_ping_red(end));
         fprintf('Pings to display %d to %d\n',idx_ping_red_ori(1),idx_ping_red_ori(end));
     end
-    if strcmp(ax.UserData.geometry_y,'depth')
+    if strcmp(echo_obj.echo_usrdata.geometry_y,'depth')
         if off_disp>0
             depth_trans=trans_obj.get_transducer_depth(idx_ping_red);
         else
@@ -162,7 +163,7 @@ if update_echo>0
             case 'svdenoised'
                 fieldname='sv';
         end
-        if strcmp(ax.UserData.geometry_y,'depth')
+        if strcmp(echo_obj.echo_usrdata.geometry_y,'depth')
             [x_data_disp,y_data_disp,data,sc]=trans_obj.apply_line_depth(fieldname,idx_r_red,idx_ping_red);
         end
     end
@@ -185,19 +186,20 @@ if update_echo>0
     
     data_mat=single(real(data_mat));
     
-    usrdata.Idx_r=idx_r_red;
-    usrdata.Idx_pings=idx_ping_red;
-    usrdata.CID=trans_obj.Config.ChannelID;
-    usrdata.Fieldname=fieldname;
-    usrdata.Layer_ID=p.Results.Unique_ID;
+
+    echo_obj.echo_usrdata.Idx_r=idx_r_red;
+    echo_obj.echo_usrdata.Idx_pings=idx_ping_red;
+    echo_obj.echo_usrdata.CID=trans_obj.Config.ChannelID;
+    echo_obj.echo_usrdata.Fieldname=fieldname;
+    echo_obj.echo_usrdata.Layer_ID=p.Results.Unique_ID;
     
-    switch ax.UserData.geometry_y
+    switch echo_obj.echo_usrdata.geometry_y
         case 'samples'
             y_data_disp=y_data_disp-1/2;
     end
     
     x_data_disp=x_data_disp-1/2;
-    set(echo_h,'XData',x_data_disp,'YData',y_data_disp,'CData',data_mat,'ZData',zeros(size(data_mat)),'AlphaData',ones(size(data_mat)),'UserData',usrdata);%,'UserData',data_mat
+    set(echo_h,'XData',x_data_disp,'YData',y_data_disp,'CData',data_mat,'ZData',zeros(size(data_mat)),'AlphaData',ones(size(data_mat)));%,'UserData',data_mat
     
     up=1;
 else
@@ -209,8 +211,8 @@ else
     
 end
 
-idx_p=echo_h.UserData.Idx_pings>=idx_ping_red_ori(1)&echo_h.UserData.Idx_pings<=idx_ping_red_ori(end);
-idx_r=echo_h.UserData.Idx_r>=idx_r_red_ori(1)&echo_h.UserData.Idx_r<=idx_r_red_ori(end);
+idx_p=echo_obj.echo_usrdata.Idx_pings>=idx_ping_red_ori(1)&echo_obj.echo_usrdata.Idx_pings<=idx_ping_red_ori(end);
+idx_r=echo_obj.echo_usrdata.Idx_r>=idx_r_red_ori(1)&echo_obj.echo_usrdata.Idx_r<=idx_r_red_ori(end);
 
 
 if isempty(p.Results.x)||isempty(p.Results.y)
@@ -222,9 +224,9 @@ if length(x)>1
     x=x_data_disp(:,idx_p);
     x_lim=[nanmin(x(:)) nanmax(x(:))];
     if x_lim(2)>x_lim(1)&&~any(isinf(x_lim))&&~any(isnan(x_lim))
-        ax.UserData.xlim=x_lim;
+        echo_obj.echo_usrdata.xlim=x_lim;
     else
-        ax.UserData.xlim=[nan nan];
+        echo_obj.echo_usrdata.xlim=[nan nan];
     end
 end
 
@@ -236,9 +238,9 @@ if length(y_data_disp)>1
     end
     y_lim=[nanmin(y(:)) nanmax(y(:))];
     if y_lim(2)>y_lim(1)&&~any(isinf(y_lim))&&~any(isnan(y_lim))
-        ax.UserData.ylim=y_lim;
+        echo_obj.echo_usrdata.ylim=y_lim;
     else
-        ax.UserData.ylim=[nan nan];
+        echo_obj.echo_usrdata.ylim=[nan nan];
     end
 end
 

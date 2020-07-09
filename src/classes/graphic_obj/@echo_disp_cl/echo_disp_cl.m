@@ -9,9 +9,8 @@ classdef echo_disp_cl < handle
         bottom_line_plot matlab.graphics.chart.primitive.Line
         colorbar_h matlab.graphics.illustration.ColorBar
         regions_h
-        geometry_x = 'samples'
-        geometry_y = 'pings'
         offset = true
+        echo_usrdata=init_echo_usrdata()
         linked_prop = []
     end
     
@@ -41,6 +40,7 @@ classdef echo_disp_cl < handle
             addParameter(p,'ax_tag','main',@ischar);
             addParameter(p,'uiaxes',false,@islogical);
             addParameter(p,'link_ax',false,@islogical);
+            addParameter(p,'echo_usrdata',init_echo_usrdata(),@isstruct);
             parse(p,parent_h,varargin{:});
             
             fields=fieldnames(p.Results);
@@ -58,7 +58,7 @@ classdef echo_disp_cl < handle
             end
             
             [cmap,col_ax,col_lab,col_grid,col_bot,col_txt,col_tracks]=init_cmap(p.Results.cmap);
-
+            
             if p.Results.uiaxes
                 ax_fcn = @uiaxes;
                 tmp = getpixelposition(parent_h);
@@ -72,13 +72,16 @@ classdef echo_disp_cl < handle
             
             user_data=init_echo_usrdata();
             
-            user_data.geometry_x=obj.geometry_x;
-            user_data.geometry_y=obj.geometry_y;
+            
             
             if p.Results.disp_colorbar
                 pos_col = [pos(3)*0.96 pos(2)+pos(4)*0.05 pos(3)*0.02 pos(4)*0.9];
                 pos  = pos.*[1 1 0.95 1];
             end
+            
+            obj.echo_usrdata.ax_tag = p.Results.ax_tag;
+            obj.echo_usrdata.geometry_x=p.Results.geometry_x;
+            obj.echo_usrdata.geometry_y=p.Results.geometry_y;
             
             obj.main_ax=feval(ax_fcn,'Parent',parent_h,...
                 'Color',col_ax,...
@@ -111,9 +114,8 @@ classdef echo_disp_cl < handle
                 'ClippingStyle','rectangle',...
                 'Interactions',[],...
                 'Toolbar',[],...
-                'Tag',p.Results.ax_tag,...
                 'Colormap',cmap,...
-                'UserData',user_data);
+                'Tag',p.Results.ax_tag);
             
             if p.Results.disp_vert_ax
                 switch p.Results.vert_ax_pos
@@ -147,9 +149,9 @@ classdef echo_disp_cl < handle
                     'ClippingStyle','rectangle',...
                     'GridColor',[0 0 0],...
                     'YDir',p.Results.YDir,...
-                    'Tag',p.Results.ax_tag,...
-                    'UserData',user_data);
-                if  strcmpi(user_data.geometry_y,'depth')
+                    'Tag',p.Results.ax_tag);
+                
+                if  strcmpi(obj.echo_usrdata.geometry_y,'depth')
                     obj.vert_ax.YAxis.TickLabelFormat  = '%g m';
                 end
             else
@@ -181,9 +183,8 @@ classdef echo_disp_cl < handle
                     'ClippingStyle','rectangle',...
                     'NextPlot','add',...
                     'GridColor',[0 0 0],...
-                    'SortMethod','childorder',...
                     'Tag',p.Results.ax_tag,...
-                    'UserData',user_data);
+                    'SortMethod','childorder');
             else
                 obj.hori_ax=matlab.graphics.axis.Axes.empty;
             end
@@ -208,14 +209,15 @@ classdef echo_disp_cl < handle
                 'FaceColor',col_lab,...
                 'LineStyle','none',...
                 'AlphaDataMapping',p.Results.AlphaDataMapping,...
-                'tag',p.Results.ax_tag);
+                'Tag',p.Results.ax_tag);
             
             if p.Results.disp_colorbar
                 obj.colorbar_h=colorbar(obj.main_ax,...
                     'PickableParts','none',...
                     'fontsize',p.Results.FontSize-2,...
                     'Color','k','visible','on',...
-                    'Position',pos_col);
+                    'Position',pos_col,...
+                    'Tag',p.Results.ax_tag);
                 if str2double(cur_ver.Version)>=9.8
                     obj.colorbar_h.UIContextMenu=[];
                 end
@@ -223,7 +225,7 @@ classdef echo_disp_cl < handle
                 obj.colorbar_h = matlab.graphics.illustration.ColorBar.empty();
             end
             
-            obj.bottom_line_plot=plot(obj.main_ax,nan,nan,'tag','bottom','Color',col_bot);
+            obj.bottom_line_plot=plot(obj.main_ax,nan,nan,'Tag','bottom','Color',col_bot);
             
             rm_axes_interactions([obj.main_ax obj.vert_ax obj.hori_ax]);
             
@@ -231,7 +233,7 @@ classdef echo_disp_cl < handle
                 obj.link_prop_ax();
             end
         end
-
+        
         function parent_fig = get_parent_figure(obj)
             parent_fig = ancestor(obj.main_ax,'figure');
         end
@@ -253,10 +255,10 @@ classdef echo_disp_cl < handle
         end
         
         function tags = get_tags(obj,varargin)
-            ax_vert = [obj(:).vert_ax] ;
-            tags = cell(1,numel(ax_vert));
-            for ui= 1:numel(ax_vert)
-                tags{ui}=ax_vert(ui).Tag;
+            
+            tags = cell(1,numel(obj));
+            for ui= 1:numel(obj)
+                tags{ui}=obj(ui).echo_usrdata.ax_tag;
             end
             
             if ~isempty(varargin)
@@ -389,7 +391,6 @@ classdef echo_disp_cl < handle
             end
             
             
-            
             idx_xticks=find((diff(rem(xdata_grid,dx))<0))+1;
             idx_minor_xticks=find((diff(rem(xdata_grid+dx/2,dx))<0))+1;
             idx_minor_xticks=setdiff(idx_minor_xticks,idx_xticks);
@@ -397,7 +398,7 @@ classdef echo_disp_cl < handle
             obj.main_ax.XTick=idx_pings(idx_xticks);
             obj.main_ax.XAxis.MinorTickValues=idx_pings(idx_minor_xticks);
             
-            switch obj.main_ax.UserData.geometry_y
+            switch obj.echo_usrdata.geometry_y
                 case {'depth' 'range'}
                     ylim=get(obj.main_ax,'Ylim');
                     ydata_grid = ylim(1):curr_disp.Grid_y:ylim(2);
@@ -473,13 +474,13 @@ classdef echo_disp_cl < handle
             
             xdata_ori=xdata;
             
-            idx_pings=echo_im.UserData.Idx_pings;
+            idx_pings=obj.echo_usrdata.Idx_pings;
             
-            idx_r=echo_im.UserData.Idx_r(:);
+            idx_r=obj.echo_usrdata.Idx_r(:);
             
             prec='uint8';
             
-            switch obj.get_main_ax().UserData.geometry_y
+            switch obj.echo_usrdata.geometry_y
                 case'samples'
                     ydata=idx_r+1/2;
                 case 'depth'
@@ -488,7 +489,7 @@ classdef echo_disp_cl < handle
             
             if p.Results.update_under_bot>0
                 alpha_map=ones(size(data),prec)*6;
-                switch echo_ax.UserData.geometry_y
+                switch obj.echo_usrdata.geometry_y
                     case'samples'
                         bot_vec_red=trans_obj.get_bottom_idx(idx_pings);
                     case 'depth'
@@ -526,9 +527,7 @@ classdef echo_disp_cl < handle
             
             if p.Results.update_cmap>0
                 alpha_map(data<min_axis|isnan(data))=1;
-                if strcmp(echo_ax.Tag,'main')
-                    set(echo_ax,'CLim',curr_disp.Cax);
-                end
+                set(echo_ax,'CLim',curr_disp.Cax);
             end
             
             if p.Results.update_cmap>0||p.Results.update_under_bot>0
@@ -551,8 +550,8 @@ classdef echo_disp_cl < handle
             col_bot  =p.Results.col_bot;
             if isempty(col_bot)
                 
-               [cmap,col_ax,col_lab,col_grid,col_bot,col_txt,col_tracks]=init_cmap(curr_disp.Cmap);
- 
+                [cmap,col_ax,col_lab,col_grid,col_bot,col_txt,col_tracks]=init_cmap(curr_disp.Cmap);
+                
             end
             
             idx_pings_lim=get(obj.echo_surf,'XData');
@@ -572,7 +571,7 @@ classdef echo_disp_cl < handle
                 x=linspace(xdata(1),xdata(end),length(xdata));
                 
                 
-                if ~strcmpi(obj.main_ax.UserData.geometry_y,'depth')
+                if ~strcmpi(obj.echo_usrdata.geometry_y,'depth')
                     di=-1/2;
                     ydata=trans_obj.get_transceiver_samples()+di;
                     y=nan(size(x));

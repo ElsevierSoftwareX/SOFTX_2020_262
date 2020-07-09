@@ -51,7 +51,7 @@ end
 
 [ac_data_col,ac_bad_data_col,in_data_col,in_bad_data_col,txt_col]=set_region_colors(curr_disp.Cmap);
 
-[echo_obj,trans_ax,~,~]=get_axis_from_cids(main_figure,union({'main' 'mini'},layer.ChannelID));
+[echo_obj,trans_obj_tot,~,~]=get_axis_from_cids(main_figure,union({'main' 'mini'},layer.ChannelID));
 reg_uid=layer.get_layer_reg_uid();
 
 for iax=1:length(echo_obj)
@@ -67,10 +67,8 @@ for iax=1:length(echo_obj)
     reg_text(id_rem)=[];
     
     set(reg_text,'color',txt_col,'FontWeight','Normal');
-    trans_obj=trans_ax{iax};
-    if isempty(trans_obj)
-        continue;
-    end
+    trans_obj=trans_obj_tot(iax);
+
     if ~isempty(Unique_ID)
         iit=(ismember({reg_text(:).UserData},Unique_ID));
         

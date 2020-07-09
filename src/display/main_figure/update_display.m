@@ -131,7 +131,7 @@ if new==1
     secondary_freq=getappdata(main_figure,'Secondary_freq');
     if ~isempty(secondary_freq)
         if ~isempty(secondary_freq.echo_obj)
-            if strcmpi(secondary_freq.echo_obj(1).main_ax.UserData.geometry_y,'depth')
+            if strcmpi(secondary_freq.echo_obj(1).echo_usrdata.geometry_y,'depth')
                 ylim=get(secondary_freq.echo_obj(1).main_ax,'Ylim');
                 set(secondary_freq.echo_obj.get_main_ax(),'ytick',floor((ylim(1):curr_disp.Grid_y:ylim(2))/curr_disp.Grid_y)*curr_disp.Grid_y);
                 set(secondary_freq.echo_obj.get_hori_ax(),'ytick',floor((ylim(1):curr_disp.Grid_y:ylim(2))/curr_disp.Grid_y)*curr_disp.Grid_y);

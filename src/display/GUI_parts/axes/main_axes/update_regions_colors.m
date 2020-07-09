@@ -26,7 +26,7 @@ end
 
 [ac_data_col,ac_bad_data_col,in_data_col,in_bad_data_col,txt_col]=set_region_colors(curr_disp.Cmap);
 
-[echo_obj,trans_ax,~,~]=get_axis_from_cids(main_figure,main_or_mini);
+[echo_obj,trans_obj_tot,~,~]=get_axis_from_cids(main_figure,main_or_mini);
 
 reg_uid=layer.get_layer_reg_uid();
 
@@ -44,7 +44,7 @@ for iax=1:length(echo_obj)
     reg_text(id_rem)=[];
     
     set(reg_text,'color',txt_col);
-    trans_obj=trans_ax{iax};
+    trans_obj=trans_obj_tot(iax);
     if isempty(trans_obj)
         continue;
     end

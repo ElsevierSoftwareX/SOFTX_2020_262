@@ -30,8 +30,9 @@ end
 [echo_obj,trans_obj_tot,text_size,~]=get_axis_from_cids(main_figure,main_or_mini);
 
 for iax=1:length(echo_obj)
-    trans_obj=trans_obj_tot{iax};
+    trans_obj=trans_obj_tot(iax);
     main_axes=echo_obj.get_main_ax(iax);
+    
     reg_plot = echo_obj(iax).display_echo_regions(trans_obj,'curr_disp',curr_disp,'text_size',text_size(iax));
     
     if main_axes==axes_panel_comp.echo_obj.main_ax

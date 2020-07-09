@@ -138,7 +138,7 @@ for ifreq=1:numel(layer.ChannelID)
 end
 
 for ui = 1:numel(secondary_freq.echo_obj)
-    context_menu.UserData.ChannelID = secondary_freq.echo_obj(ui).echo_surf.Tag;
+    context_menu.UserData.ChannelID = secondary_freq.echo_obj(ui).echo_usrdata.CID;
     set(secondary_freq.echo_obj(ui).echo_bt_surf,'UIContextMenu',context_menu);
 end
 
