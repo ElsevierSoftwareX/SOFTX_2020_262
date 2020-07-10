@@ -169,23 +169,31 @@ for imap=1:numel(cmap_list)
 end
 uimenu(m_colormap,'Label','Add new Cmap(s) from cpt file','Callback',{@import_new_cmap_callback,main_figure},'separator','on');
 
-main_menu.show_colorbar=uimenu(main_menu.display,'Label','Show Colorbar','checked','on','Callback',{@checkbox_callback,main_figure,@set_axes_position},'Tag','col');
-%main_menu.show_vaxes=uimenu(main_menu.display,'Label','Show Vert Profile','checked','on','Callback',{@checkbox_callback,main_figure,@set_axes_position},'Tag','axv');
-%main_menu.show_haxes=uimenu(main_menu.display,'Label','Show Horz profile','Callback',{@checkbox_callback,main_figure,@set_axes_position},'Tag','axh');
 
-main_menu.disp_bottom=uimenu(main_menu.display,'checked',curr_disp.DispBottom,'Label','Display bottom');
-main_menu.disp_spikes=uimenu(main_menu.display,'checked',curr_disp.DispSpikes,'Label','Display Spikes');
-main_menu.disp_bad_trans=uimenu(main_menu.display,'checked',curr_disp.DispBadTrans,'Label','Display Bad Pings');
-main_menu.disp_reg=uimenu(main_menu.display,'checked',curr_disp.DispReg,'Label','Display Regions');
-main_menu.disp_tracks=uimenu(main_menu.display,'checked',curr_disp.DispTracks,'Label','Display_tracks');
-main_menu.disp_lines=uimenu(main_menu.display,'checked',curr_disp.DispLines,'Label','Display Lines');
-main_menu.disp_survey_lines=uimenu(main_menu.display,'checked',curr_disp.DispSurveyLines,'Label','Display Survey Lines');
-main_menu.disp_under_bot=uimenu(main_menu.display,'checked',curr_disp.DispUnderBottom,'Label','Display Under Bottom data');
+main_menu.disp_colorbar=uimenu(main_menu.display,'Label','Show Colorbar','checked',curr_disp.DispColorbar,'Tag','DispColorbar');
+main_menu.disp_bottom=uimenu(main_menu.display,'checked',curr_disp.DispBottom,'Label','Display bottom','Tag','DispBottom');
+main_menu.disp_spikes=uimenu(main_menu.display,'checked',curr_disp.DispSpikes,'Label','Display Spikes','Tag','DispSpikes');
+main_menu.disp_bad_trans=uimenu(main_menu.display,'checked',curr_disp.DispBadTrans,'Label','Display Bad Pings','Tag','DispBadTrans');
+main_menu.disp_reg=uimenu(main_menu.display,'checked',curr_disp.DispReg,'Label','Display Regions','Tag','DispReg');
+main_menu.disp_tracks=uimenu(main_menu.display,'checked',curr_disp.DispTracks,'Label','Display_tracks','Tag','DispTracks');
+main_menu.disp_lines=uimenu(main_menu.display,'checked',curr_disp.DispLines,'Label','Display Lines','Tag','DispLines');
+main_menu.disp_survey_lines=uimenu(main_menu.display,'checked',curr_disp.DispSurveyLines,'Label','Display Survey Lines','Tag','DispSurveyLines');
+main_menu.disp_under_bot=uimenu(main_menu.display,'checked',curr_disp.DispUnderBottom,'Label','Display Under Bottom data','Tag','DispUnderBottom');
+
 main_menu.display_file_lines=uimenu(main_menu.display,'checked','off','Label','Display File Limits','Callback',{@checkbox_callback,main_figure,@toggle_display_file_lines});
 main_menu.reverse_y_axis=uimenu(main_menu.display,'checked','off','Label','Reverse Y-Axis','Callback',{@checkbox_callback,main_figure,@reverse_y_axis});
 
 
-set([main_menu.disp_tracks main_menu.disp_under_bot main_menu.disp_bottom main_menu.disp_bad_trans main_menu.disp_lines main_menu.disp_reg main_menu.disp_spikes main_menu.disp_survey_lines],'callback',{@set_curr_disp,main_figure});
+set([main_menu.disp_colorbar...
+    main_menu.disp_tracks...
+    main_menu.disp_under_bot...
+    main_menu.disp_bottom....
+    main_menu.disp_bad_trans...
+    main_menu.disp_lines....
+    main_menu.disp_reg....
+    main_menu.disp_spikes....
+    main_menu.disp_survey_lines],....
+    'callback',@set_curr_disp);
 
 
 main_menu.close_all_fig=uimenu(main_menu.display,'Label','Close All External Figures','Callback',{@close_figures_callback,main_figure});
@@ -540,61 +548,17 @@ open_txt_file(main_figure.UserData.logFile);
 end
 
 
-function set_curr_disp(src,~,main_figure)
-main_menu=getappdata(main_figure,'main_menu');
+function set_curr_disp(src,~)
+
 curr_disp=get_esp3_prop('curr_disp');
-
-switch src
-    case main_menu.disp_bad_trans
-        if strcmp(get(src,'checked'),'off')
-            curr_disp.DispBadTrans='on';
-        else
-            curr_disp.DispBadTrans='off';
-        end
-    case main_menu.disp_spikes
-        if strcmp(get(src,'checked'),'off')
-            curr_disp.DispSpikes='on';
-        else
-            curr_disp.DispSpikes='off';
-        end
-    case main_menu.disp_reg
-        if strcmp(get(src,'checked'),'off')
-            curr_disp.DispReg='on';
-        else
-            curr_disp.DispReg='off';
-        end
-    case main_menu.disp_lines
-        if strcmp(get(src,'checked'),'off')
-            curr_disp.DispLines='on';
-        else
-            curr_disp.DispLines='off';
-        end
-    case main_menu.disp_survey_lines
-        if strcmp(get(src,'checked'),'off')
-            curr_disp.DispSurveyLines='on';
-        else
-            curr_disp.DispSurveyLines='off';
-        end
-    case main_menu.disp_bottom
-        if strcmp(get(src,'checked'),'off')
-            curr_disp.DispBottom='on';
-        else
-            curr_disp.DispBottom='off';
-        end
-    case main_menu.disp_under_bot
-        if strcmp(get(src,'checked'),'off')
-            curr_disp.DispUnderBottom='on';
-        else
-            curr_disp.DispUnderBottom='off';
-        end
-    case main_menu.disp_tracks
-        if strcmp(get(src,'checked'),'off')
-            curr_disp.DispTracks='on';
-        else
-            curr_disp.DispTracks='off';
-        end
+switch src.Checked
+    case {'off',0,false}
+    curr_disp.(src.Tag)='on';
+    src.Checked  = 'on';
+case {'on',1,true}
+    curr_disp.(src.Tag)='off';
+    src.Checked  = 'off';
 end
-
 
 end
 

@@ -48,7 +48,10 @@ curr_disp=get_esp3_prop('curr_disp');
 
 axes_panel_comp.axes_panel=axes_panel;
 
-axes_panel_comp.echo_obj = echo_disp_cl(axes_panel_comp.axes_panel,'cmap',curr_disp.Cmap);
+axes_panel_comp.echo_obj = echo_disp_cl(axes_panel_comp.axes_panel,...
+    'cmap',curr_disp.Cmap,...
+    'disp_colorbar',strcmpi(curr_disp.DispColorbar,'on'),...
+    'H_axes_ratio',curr_disp.H_axes_ratio,'V_axes_ratio',curr_disp.V_axes_ratio);
 
 axes_panel_comp.v_axes_plot=plot(axes_panel_comp.echo_obj.vert_ax,nan,nan,'r');
 axes_panel_comp.v_bot_val=yline(axes_panel_comp.echo_obj.vert_ax,0,'-k','Tag','bot_val','Interpreter','none');

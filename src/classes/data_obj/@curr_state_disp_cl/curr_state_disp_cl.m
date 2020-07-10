@@ -25,6 +25,7 @@ classdef curr_state_disp_cl <handle
         DispSpikes='on';
         DispReg='on';
         DispLines='on';
+        DispColorbar = 'on';
         DispSurveyLines='on';
         CursorMode='Normal'
         Grid_x=[100 10 10];
@@ -69,6 +70,7 @@ classdef curr_state_disp_cl <handle
             addParameter(p,'Basemap','landcover',@ischar);
             addParameter(p,'DispBotHighVis','off',@ischar);
             addParameter(p,'DispUnderBottom','on',@ischar);
+            addParameter(p,'DispColorbar','on',@ischar);
             addParameter(p,'DispTracks','on',@ischar);
             addParameter(p,'DispSpikes','on',@ischar);
             addParameter(p,'DispBadTrans','on',@ischar);

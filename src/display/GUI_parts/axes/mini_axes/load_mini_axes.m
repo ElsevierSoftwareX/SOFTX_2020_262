@@ -56,11 +56,21 @@ pointerBehavior.traverseFcn = @(figHandle, currentPoint)...
 
 curr_disp=get_esp3_prop('curr_disp');
 
+switch class(parent)
+    case  'matlab.ui.Figure'
+        d_ax = false;
+        d_grid = 'off';
+    otherwise
+        d_ax = false;
+        d_grid = 'on';
+end
+
 mini_axes_comp.echo_obj=echo_disp_cl(parent,...
     'pos_in_parent',pos_in_parent,...
-    'disp_hori_ax',false,....
-    'disp_vert_ax',false,'disp_colorbar',false,....
-    'disp_grid','off','ax_tag','mini','cmap',curr_disp.Cmap);
+    'disp_hori_ax',d_ax,....
+    'disp_vert_ax',d_ax,...
+    'add_colorbar',false,....
+    'disp_grid',d_grid,'ax_tag','mini','cmap',curr_disp.Cmap);
 
 mini_axes_comp.patch_obj=patch(mini_axes_comp.echo_obj.main_ax,'Faces',[],'Vertices',[],'FaceColor',[0 0 0.6],'FaceAlpha',.2,'EdgeColor',[0 0 0.6],'Tag','zoom_area','LineWidth',1);
 mini_axes_comp.patch_lim_obj=patch(mini_axes_comp.echo_obj.main_ax,'Faces',[],'Vertices',[],'FaceColor','k','FaceAlpha',0,'EdgeColor','k','Tag','disp_area','LineWidth',0.5,'Linestyle','--');
@@ -68,7 +78,6 @@ mini_axes_comp.patch_lim_obj=patch(mini_axes_comp.echo_obj.main_ax,'Faces',[],'V
 iptSetPointerBehavior(mini_axes_comp.patch_obj,pointerBehavior);
 
 set(mini_axes_comp.echo_obj.main_ax,'XTickLabels',[],'YTickLabels',[]);
-
 
 set(mini_axes_comp.echo_obj.echo_surf,'ButtonDownFcn',{@zoom_in_callback_mini_ax,main_figure});
 set(mini_axes_comp.echo_obj.echo_bt_surf,'ButtonDownFcn',{@zoom_in_callback_mini_ax,main_figure});

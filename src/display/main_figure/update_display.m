@@ -41,8 +41,9 @@ if ~isdeployed
     disp_perso(main_figure,'Update Display');
 end
 up_ax_panel = false;
-if ~isappdata(main_figure,'Axes_panel')
-    
+ax_panel_comp = getappdata(main_figure,'Axes_panel');
+if isempty(ax_panel_comp)||~isvalid(ax_panel_comp.axes_panel)
+  
     echo_tab_panel=getappdata(main_figure,'echo_tab_panel');
     axes_panel=uitab(echo_tab_panel,'BackgroundColor',[1 1 1],'tag','axes_panel');
     
@@ -123,7 +124,7 @@ set_alpha_map(main_figure,'main_or_mini',union({'main','mini'},curr_disp.SecChan
 if ~isempty(sel_tab)
     opt_panel.SelectedTab=sel_tab;
 end
-set_axes_position(main_figure);
+
 update_cmap(main_figure);
 init_link_prop(main_figure);
 

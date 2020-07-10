@@ -13,7 +13,7 @@ end
 
 switch dest
     case 'main_figure'
-        pos_out=[0 0 1 0.67];
+        pos_out=[0 0 1 0.77];
         disp_tab_comp=getappdata(main_figure,'Display_tab');
         parent=disp_tab_comp.display_tab;
         mini_axes_comp=getappdata(main_figure,'Mini_axes');
@@ -33,7 +33,7 @@ switch dest
             'CloseRequestFcn',@close_min_axis,...
             'Tag','mini_ax');
         iptPointerManager(parent);
-        delete(mini_axes_comp.echo_obj.main_ax);
+        %delete(mini_axes_comp.echo_obj.main_ax);
         initialize_interactions_mini_ax(parent,main_figure);
 end
 

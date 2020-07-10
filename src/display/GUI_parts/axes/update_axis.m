@@ -130,6 +130,7 @@ for iax=1:length(echo_obj)
             if diff(echo_obj(iax).echo_usrdata.ylim)>0
                 echo_obj.get_main_ax(iax).YLim=echo_obj(iax).echo_usrdata.ylim;
             end
+            
             x_lim=get(axes_panel_comp.echo_obj.main_ax,'xlim');
             y_lim=get(axes_panel_comp.echo_obj.main_ax,'ylim');
             v1 = [x_lim(1) y_lim(1);x_lim(2) y_lim(1);x_lim(2) y_lim(2);x_lim(1) y_lim(2)];

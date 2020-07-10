@@ -4,6 +4,7 @@ classdef echo_disp_cl < handle
         main_ax
         vert_ax
         hori_ax
+        pos_in_parent = [0 0 1 1]
         echo_surf matlab.graphics.primitive.Surface
         echo_bt_surf matlab.graphics.primitive.Surface
         bottom_line_plot matlab.graphics.chart.primitive.Line
@@ -24,10 +25,13 @@ classdef echo_disp_cl < handle
             addParameter(p,'cmap','ek60',@ischar);
             addParameter(p,'disp_vert_ax',true,@islogical);
             addParameter(p,'disp_hori_ax',true,@islogical);
+            addParameter(p,'disp_colorbar',true,@islogical);
+            addParameter(p,'add_colorbar',true,@islogical);
             addParameter(p,'disp_grid','on',@(x) ismember(x,{'off','on'}));
             addParameter(p,'visible_vert','on',@(x) ismember(x,{'off','on'}));
             addParameter(p,'visible_hori','on',@(x) ismember(x,{'off','on'}));
-            addParameter(p,'vert_ax_pos','left',@(x) ismember(x,{'left','right'}));
+            addParameter(p,'y_ax_pos','left',@(x) ismember(x,{'left','right'}));
+            addParameter(p,'x_ax_pos','top',@(x) ismember(x,{'top','bottom'}));
             addParameter(p,'visible_main','on',@(x) ismember(x,{'off','on'}));
             addParameter(p,'pos_in_parent',[0 0 1 1],@isnumeric);
             addParameter(p,'FaceAlpha','flat',@ischar);
@@ -36,10 +40,11 @@ classdef echo_disp_cl < handle
             addParameter(p,'AlphaDataMapping','direct',@ischar);
             addParameter(p,'FontSize',9,@isnumeric);
             addParameter(p,'offset',true,@islogical);
-            addParameter(p,'disp_colorbar',true,@islogical);
             addParameter(p,'ax_tag','main',@ischar);
             addParameter(p,'uiaxes',false,@islogical);
             addParameter(p,'link_ax',false,@islogical);
+            addParameter(p,'V_axes_ratio',0,@isnumeric);
+            addParameter(p,'H_axes_ratio',0,@isnumeric);
             addParameter(p,'echo_usrdata',init_echo_usrdata(),@isstruct);
             parse(p,parent_h,varargin{:});
             
@@ -70,15 +75,9 @@ classdef echo_disp_cl < handle
                 pos = p.Results.pos_in_parent;
             end
             
+            obj.pos_in_parent = pos;
             user_data=init_echo_usrdata();
-            
-            
-            
-            if p.Results.disp_colorbar
-                pos_col = [pos(3)*0.96 pos(2)+pos(4)*0.05 pos(3)*0.02 pos(4)*0.9];
-                pos  = pos.*[1 1 0.95 1];
-            end
-            
+                     
             obj.echo_usrdata.ax_tag = p.Results.ax_tag;
             obj.echo_usrdata.geometry_x=p.Results.geometry_x;
             obj.echo_usrdata.geometry_y=p.Results.geometry_y;
@@ -90,8 +89,8 @@ classdef echo_disp_cl < handle
                 'XColor',col_lab,...
                 'YColor',col_lab,...
                 'FontSize',p.Results.FontSize,...
-                'Position',pos,...
-                'XAxisLocation','bottom',...
+                'XAxisLocation',p.Results.x_ax_pos,...
+                'YAxisLocation',p.Results.y_ax_pos,...
                 'XLimMode','manual',...
                 'YLimMode','manual',...
                 'TickLength',[0 0],...
@@ -101,7 +100,6 @@ classdef echo_disp_cl < handle
                 'YTickMode','manual',...
                 'Box','on',...
                 'SortMethod','childorder',...
-                'XAxisLocation','top',...
                 'XGrid',p.Results.disp_grid,...
                 'YGrid',p.Results.disp_grid,...
                 'XMinorGrid',p.Results.disp_grid,...
@@ -110,22 +108,31 @@ classdef echo_disp_cl < handle
                 'MinorGridLineStyle',':',...
                 'NextPlot','add',...
                 'YDir',p.Results.YDir,...
-                'Visible',p.Results.visible_main,...
+                'visible','off',...
                 'ClippingStyle','rectangle',...
                 'Interactions',[],...
                 'Toolbar',[],...
                 'Colormap',cmap,...
                 'Tag',p.Results.ax_tag);
             
+            
+            
+            switch  p.Results.x_ax_pos
+                case 'bottom'
+                    x_ax_pos = 'top';
+                case'top'
+                    x_ax_pos = 'bottom';
+            end
+
+            switch  p.Results.y_ax_pos
+                case 'right'
+                    y_ax_pos = 'left';
+                case'left'
+                    y_ax_pos = 'right';
+            end
+            
+                           
             if p.Results.disp_vert_ax
-                switch p.Results.vert_ax_pos
-                    case 'right'
-                        pos_vert = [pos(1)+pos(3) pos(2) 0 pos(4)];
-                        vert_ax_pos = 'left';
-                    case 'left'
-                        pos_vert = [pos(1) pos(2) 0 pos(4)];
-                        vert_ax_pos = 'right';
-                end
                 obj.vert_ax=feval(ax_fcn,'Parent',parent_h,...
                     'Color',col_ax,...
                     'GridColor',col_grid,...
@@ -135,19 +142,17 @@ classdef echo_disp_cl < handle
                     'FontSize',p.Results.FontSize,...
                     'Fontweight','Bold',...
                     'Interactions',[],'Toolbar',[],...
-                    'Position',pos_vert,...
-                    'XAxisLocation','Top',...
-                    'YAxisLocation',vert_ax_pos,...
+                    'XAxisLocation',x_ax_pos,...
+                    'YAxisLocation',y_ax_pos,...
                     'YTickMode','manual',...
                     'TickDir','in',...
-                    'visible',p.Results.visible_vert,...
+                    'visible','off',...
                     'box','on',...
                     'XTickLabel',{[]},...
                     'Xgrid',p.Results.disp_grid,...
                     'Ygrid',p.Results.disp_grid,...
                     'NextPlot','add',...
                     'ClippingStyle','rectangle',...
-                    'GridColor',[0 0 0],...
                     'YDir',p.Results.YDir,...
                     'Tag',p.Results.ax_tag);
                 
@@ -169,20 +174,18 @@ classdef echo_disp_cl < handle
                     'Toolbar',[],...
                     'FontSize',p.Results.FontSize,...
                     'Fontweight','Bold',...
-                    'Position',[pos(1) pos(2)+pos(4) pos(3) 0],...
-                    'XAxisLocation','bottom',...
-                    'YAxisLocation','left',...
+                    'XAxisLocation',x_ax_pos,...
+                    'YAxisLocation',y_ax_pos,...
                     'TickDir','in',...
                     'XTickMode','manual',...
-                    'visible',p.Results.visible_hori,...
-                    'box','on',...
+                    'Visible','off',...
+                    'Box','on',...
                     'YTickLabel',{[]},...
                     'XTickLabelRotation',-90,...
                     'Xgrid',p.Results.disp_grid,...
                     'Ygrid',p.Results.disp_grid,...
                     'ClippingStyle','rectangle',...
                     'NextPlot','add',...
-                    'GridColor',[0 0 0],...
                     'Tag',p.Results.ax_tag,...
                     'SortMethod','childorder');
             else
@@ -190,6 +193,43 @@ classdef echo_disp_cl < handle
             end
             
             cur_ver=ver('Matlab');
+           
+            if p.Results.add_colorbar
+                obj.colorbar_h=colorbar(obj.main_ax,...
+                    'PickableParts','none',...
+                    'fontsize',p.Results.FontSize-2,...
+                    'Color','k',...
+                    'Visible','off',...
+                    'Tag',p.Results.ax_tag);
+            else
+                obj.colorbar_h = matlab.graphics.illustration.ColorBar.empty();
+            end
+            
+            if str2double(cur_ver.Version)>=9.8
+                obj.colorbar_h.UIContextMenu=[];
+            end
+             
+
+            obj.bottom_line_plot=plot(obj.main_ax,nan,nan,'Tag','bottom','Color',col_bot);
+            
+            rm_axes_interactions([obj.main_ax obj.vert_ax obj.hori_ax]);
+            
+            
+               
+             if ~isempty(obj.main_ax)&&strcmpi(p.Results.visible_main,'on')
+                obj.main_ax.Visible ='on';
+            end
+            
+            if ~isempty(obj.colorbar_h)&&p.Results.disp_colorbar
+                obj.colorbar_h.Visible ='on';
+            end   
+            if ~isempty(obj.vert_ax)&&strcmpi(p.Results.visible_vert,'on')
+                obj.vert_ax.Visible ='on';
+            end
+            if ~isempty(obj.hori_ax)&&strcmpi(p.Results.visible_hori,'on')
+                obj.hori_ax.Visible ='on';
+            end
+            obj.set_axes_position(p.Results.V_axes_ratio,p.Results.H_axes_ratio);
             
             echo_init=zeros(2,2);
             
@@ -210,24 +250,6 @@ classdef echo_disp_cl < handle
                 'LineStyle','none',...
                 'AlphaDataMapping',p.Results.AlphaDataMapping,...
                 'Tag',p.Results.ax_tag);
-            
-            if p.Results.disp_colorbar
-                obj.colorbar_h=colorbar(obj.main_ax,...
-                    'PickableParts','none',...
-                    'fontsize',p.Results.FontSize-2,...
-                    'Color','k','visible','on',...
-                    'Position',pos_col,...
-                    'Tag',p.Results.ax_tag);
-                if str2double(cur_ver.Version)>=9.8
-                    obj.colorbar_h.UIContextMenu=[];
-                end
-            else
-                obj.colorbar_h = matlab.graphics.illustration.ColorBar.empty();
-            end
-            
-            obj.bottom_line_plot=plot(obj.main_ax,nan,nan,'Tag','bottom','Color',col_bot);
-            
-            rm_axes_interactions([obj.main_ax obj.vert_ax obj.hori_ax]);
             
             if link_ax||p.Results.link_ax
                 obj.link_prop_ax();
@@ -363,8 +385,7 @@ classdef echo_disp_cl < handle
             
             idx_pings=round(obj.echo_surf.XData);
             
-            idx_r=round(obj.echo_surf.YData);
-            
+           
             switch curr_disp.Xaxes_current
                 case 'seconds'
                     xdata_grid=trans_obj.Time(idx_pings);
@@ -400,9 +421,11 @@ classdef echo_disp_cl < handle
             
             switch obj.echo_usrdata.geometry_y
                 case {'depth' 'range'}
-                    ylim=get(obj.main_ax,'Ylim');
-                    ydata_grid = ylim(1):curr_disp.Grid_y:ylim(2);
+                    ylim=obj.echo_usrdata.ylim;
+                    ydata_grid = round(ylim(1):curr_disp.Grid_y/100:ylim(2));
+                    idx_r = ydata_grid;
                 otherwise
+                    idx_r=round(obj.echo_surf.YData);
                     ydata_grid=trans_obj.get_transceiver_range(idx_r);
             end
             
@@ -533,6 +556,7 @@ classdef echo_disp_cl < handle
             if p.Results.update_cmap>0||p.Results.update_under_bot>0
                 set(echo_im,'AlphaData',single(alpha_map));
             end
+            
         end
         
         function display_echo_bottom(obj,trans_obj,varargin)
@@ -593,6 +617,84 @@ classdef echo_disp_cl < handle
             end
             
         end
+        
+        function [pos_m,pos_v,pos_h,pos_cb] = get_axes_position(obj,vpos_r,hpos_r)
+            pos_m=obj.pos_in_parent;
+            
+            if isempty(obj.hori_ax)||strcmpi(obj.hori_ax.Visible,'off')
+                hpos_r = 0;
+            end
+            
+            if isempty(obj.vert_ax)||strcmpi(obj.vert_ax.Visible,'off')
+                vpos_r = 0;
+            end
+            
+            pos_v=[pos_m(1)-vpos_r*pos_m(3) pos_m(2) vpos_r*pos_m(3) pos_m(4)];            
+            pos_h=[pos_m(1) pos_m(2)+pos_m(4) pos_m(3) hpos_r*pos_m(4)];
+            
+            if (isempty(obj.colorbar_h)||strcmpi(obj.colorbar_h.Visible,'off'))
+                pos_cb=[pos_m(1)+pos_m(3) 0 0 pos_m(4)];
+            else
+                pos_cb=[pos_m(1)+pos_m(3)-0.05*pos_m(3) 0 0.05*pos_m(3) pos_m(4)];
+            end
+            
+            pos_h=pos_h+[0 0 -pos_cb(3) 0];
+            pos_m=pos_m+[0 0 -pos_cb(3) 0];
+                        
+            pos_h=pos_h+[0 -pos_h(4) 0 0];
+            pos_v=pos_v+[0 0 0 -pos_h(4)];
+            pos_m=pos_m+[0 0 0 -pos_h(4)];
+            
+            pos_v=pos_v+[pos_v(3) 0 0 0];
+            pos_h=pos_h+[pos_v(3) 0 -pos_v(3) 0];
+            pos_m=pos_m+[pos_v(3) 0 -pos_v(3) 0];
+            
+            width_colorbar=pos_cb(3);
+            pos_cb(3)=width_colorbar*1/3;
+            pos_cb(1)=pos_cb(1)+width_colorbar*1/3;
+            height_col=pos_cb(4);
+            pos_cb(2)=height_col*0.05;
+            pos_cb(4)=height_col*0.9;
+            
+                     
+            if ~isempty(obj.vert_ax)
+                switch obj.vert_ax.YAxisLocation
+                    case 'left'
+                     pos_m = pos_m -[pos_v(3) 0 0 0];
+                     pos_v = pos_v + [pos_m(3) 0 0 0];
+                     pos_h(1) = pos_m(1);
+                end
+            end
+            
+            if ~isempty(obj.hori_ax)
+                switch obj.hori_ax.XAxisLocation
+                    case 'top'
+                        pos_m = pos_m +[0 pos_h(4) 0 0];
+                        pos_h = pos_h - [0 pos_m(4) 0  0];
+                        pos_v(2) = pos_m(2);
+                end
+            end
+            
+        end
+        
+        function  set_axes_position(obj,vpos_r,hpos_r)
+            [pos_m,pos_v,pos_h,pos_cb] = get_axes_position(obj,vpos_r,hpos_r);
+            
+            if ~isempty(obj.main_ax)
+                set(obj.main_ax,'Position',pos_m);
+            end
+            
+            if ~isempty(obj.colorbar_h)
+                set(obj.colorbar_h,'Position',pos_cb);
+            end   
+            if ~isempty(obj.vert_ax)
+                set(obj.vert_ax,'Position',pos_v);
+            end
+            if ~isempty(obj.hori_ax)
+                set(obj.hori_ax,'Position',pos_h);
+            end
+        end
+        
     end
 end
 

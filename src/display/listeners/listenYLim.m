@@ -89,7 +89,6 @@ if ~any(up)
     return;
 end
 
-set_axes_position(main_figure);
 
 display_bottom(main_figure);
 display_tracks(main_figure);
