@@ -91,23 +91,11 @@ catch
     end
 end
 
+
 if up_curr_disp>=1
-    lim_att = get_lim_config_att();
-    [display_config_file,~,~]=get_config_files();
-    [~,fname,fext]=fileparts(display_config_file);
     filepath=fileparts(layer.Filename{1});
-    disp_config_file=fullfile(filepath,[fname fext]);
+    curr_disp.update_curr_disp(filepath);
     
-    if isfile(disp_config_file)
-        curr_disp_new=read_config_display_xml(disp_config_file);
-        props=properties(curr_disp);
-        
-        for i=1:numel(props)
-            if ismember((props{i}),lim_att)
-                curr_disp.(props{i})=curr_disp_new.(props{i});
-            end
-        end
-    end
 end
 
 curr_disp.CurrLayerID = layer.Unique_ID;

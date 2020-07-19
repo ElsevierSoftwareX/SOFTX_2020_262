@@ -43,7 +43,7 @@ switch ver
     case 'v1'
         alg_name='BottomDetection';
 end
-update_algos(main_figure,'algo_name',{alg_name});
+update_algos('algo_name',{alg_name});
 
 layer=get_current_layer();
 curr_disp=get_esp3_prop('curr_disp');

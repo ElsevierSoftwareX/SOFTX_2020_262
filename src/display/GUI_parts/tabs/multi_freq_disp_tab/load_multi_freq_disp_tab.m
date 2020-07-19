@@ -267,7 +267,7 @@ switch evt.Indices(2)
             layer.Curves(idx_c(it)).Tag=data{2};
         end
         update_reglist_tab(main_figure,0);
-        display_regions(main_figure,union({'main' 'mini'},layer.ChannelID(idx_mod)));
+        display_regions(union({'main' 'mini'},layer.ChannelID(idx_mod)));
         
         switch tab_tag
             case 'ts_f'

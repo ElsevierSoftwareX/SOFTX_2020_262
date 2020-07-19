@@ -118,10 +118,10 @@ format_color_gui(dest_fig,curr_disp.Font,curr_disp.Cmap);
 
 end
 
-function close_tab(src,~,main_figure)
+function close_tab(src,evt)
 tag=src.Tag;
 
-
+main_figure = get_esp3_prop('main_figure');
 dest_fig=getappdata(main_figure,'option_tab_panel');
 switch tag
     case 'st_tracks'

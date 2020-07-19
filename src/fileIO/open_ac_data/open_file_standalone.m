@@ -204,8 +204,9 @@ for iftype=1:numel(ftype_cell_unique)
                 
                 new_layers_tmp_tot(uil).get_att_data_from_csv({},0);
                 new_layers_tmp_tot(uil).get_gps_data_from_csv({},0);
-                
-                p.Results.load_bar_comp.progress_bar.set('Minimum',0,'Maximum',numel(new_layers_tmp_tot),'Value',uil);
+                if ~isempty(p.Results.load_bar_comp)
+                    p.Results.load_bar_comp.progress_bar.set('Minimum',0,'Maximum',numel(new_layers_tmp_tot),'Value',uil);
+                end
             end
                 
         end

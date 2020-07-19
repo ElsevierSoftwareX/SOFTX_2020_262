@@ -43,7 +43,7 @@ if~(strcmpi(src.SelectionType,'Normal'))
     return;
 end
 
-update_algos(main_figure,'algo_name',{'BottomDetectionV2'});
+update_algos('algo_name',{'BottomDetectionV2'});
 
 layer=get_current_layer();
 axes_panel_comp=getappdata(main_figure,'Axes_panel');

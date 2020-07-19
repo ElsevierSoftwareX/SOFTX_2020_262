@@ -8,4 +8,5 @@ lim_att=   {'Xaxes_current'
             'DispSecFreqsWithOffset'
             'Caxes'
             'Grid_x'
-            'Grid_y'};
+            'Grid_y'
+            'YDir'};

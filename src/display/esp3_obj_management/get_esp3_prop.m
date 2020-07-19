@@ -1,4 +1,4 @@
-function obj=get_esp3_prop(prop_to_get)
+function [obj,esp3_obj]=get_esp3_prop(prop_to_get)
 
 obj=[];
 esp3_obj=getappdata(groot,'esp3_obj');

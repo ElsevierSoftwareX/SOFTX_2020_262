@@ -2,7 +2,7 @@ function apply_bottomfeatures_cback(~,~,select_plot,main_figure)
 
 alg_name = 'BottomFeatures';
 
-update_algos(main_figure,'algo_name',{alg_name});
+update_algos('algo_name',{alg_name});
 
 layer = get_current_layer();
 curr_disp=get_esp3_prop('curr_disp');

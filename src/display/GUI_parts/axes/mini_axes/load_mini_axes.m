@@ -39,13 +39,10 @@
 function load_mini_axes(main_figure,parent,pos_in_parent)
 
 if isappdata(main_figure,'Mini_axes')
-    mini_axes_comp=getappdata(main_figure,'Mini_axes');
-    
+    mini_axes_comp=getappdata(main_figure,'Mini_axes');   
     delete(mini_axes_comp.echo_obj.main_ax);
-    
     rmappdata(main_figure,'Mini_axes');
 end
-
 
 pointerBehavior.enterFcn =  @(figHandle, currentPoint)...
     set(figHandle, 'Pointer', 'fleur');
@@ -66,11 +63,12 @@ switch class(parent)
 end
 
 mini_axes_comp.echo_obj=echo_disp_cl(parent,...
+    'YDir',curr_disp.YDir,...
     'pos_in_parent',pos_in_parent,...
     'disp_hori_ax',d_ax,....
     'disp_vert_ax',d_ax,...
     'add_colorbar',false,....
-    'disp_grid',d_grid,'ax_tag','mini','cmap',curr_disp.Cmap);
+    'disp_grid',d_grid,'ax_tag','mini','tag','mini','cmap',curr_disp.Cmap);
 
 mini_axes_comp.patch_obj=patch(mini_axes_comp.echo_obj.main_ax,'Faces',[],'Vertices',[],'FaceColor',[0 0 0.6],'FaceAlpha',.2,'EdgeColor',[0 0 0.6],'Tag','zoom_area','LineWidth',1);
 mini_axes_comp.patch_lim_obj=patch(mini_axes_comp.echo_obj.main_ax,'Faces',[],'Vertices',[],'FaceColor','k','FaceAlpha',0,'EdgeColor','k','Tag','disp_area','LineWidth',0.5,'Linestyle','--');

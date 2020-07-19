@@ -38,6 +38,7 @@ function load_display_tab(main_figure,option_tab_panel)
 
 curr_disp=get_esp3_prop('curr_disp');
 display_tab_comp.display_tab=uitab(option_tab_panel,'Title','Display Option','tag','disp');
+
 nb_col=8;
 
 size_bttn_grp=[0 0.77 1 0.23];

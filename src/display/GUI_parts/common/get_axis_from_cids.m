@@ -6,7 +6,7 @@ text_size=[];
 cids={};
 curr_disp=get_esp3_prop('curr_disp');
 layer=get_current_layer();
-if isempty(layer)
+if isempty(layer)||isempty(main_figure)
     return;
 end
 secondary_freq=getappdata(main_figure,'Secondary_freq');

@@ -44,7 +44,6 @@ if ~isempty(layer)
         set(axes_panel_comp.echo_obj.main_ax,'xlim',x);
         set(axes_panel_comp.echo_obj.main_ax,'ylim',y);
     end
-    reverse_y_axis(main_figure);
     initialize_interactions_v2(main_figure);
 end
 

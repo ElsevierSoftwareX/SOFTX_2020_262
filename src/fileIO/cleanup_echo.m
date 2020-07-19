@@ -1,5 +1,8 @@
 function cleanup_echo(main_figure)
-close_figures_callback([],[],main_figure);
+
+if ~isempty(main_figure)
+    close_figures_callback([],[],main_figure);
+end
 
 esp3_obj=getappdata(groot,'esp3_obj');
 delete(esp3_obj);

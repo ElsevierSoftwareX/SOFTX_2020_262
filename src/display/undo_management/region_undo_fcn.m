@@ -40,7 +40,7 @@ end
 trans_obj.rm_all_region();
 IDs=trans_obj.add_region(regs);
 curr_disp=get_esp3_prop('curr_disp');
-display_regions(main_figure,'all');
+display_regions('all');
 curr_disp.Reg_changed_flag=1;
 if ~isempty(IDs)
     curr_disp.setActive_reg_ID({});   

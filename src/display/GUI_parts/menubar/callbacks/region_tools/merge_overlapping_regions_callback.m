@@ -46,11 +46,11 @@ curr_disp=get_esp3_prop('curr_disp');
 [trans_obj,~]=layer.get_trans(curr_disp);
 if ~isempty(trans_obj.Regions)
     old_regs=trans_obj.Regions;
-    new_regions=trans_obj.Regions.merge_regions();
+    new_regions=trans_obj.Regions.merge_regions('overlap_only',2);
     trans_obj.rm_all_region();
     IDs=trans_obj.add_region(new_regions,'IDs',1:length(new_regions));
     
-    display_regions(main_figure,'both');
+    display_regions('both');
     
     add_undo_region_action(main_figure,trans_obj,old_regs,trans_obj.Regions);
     

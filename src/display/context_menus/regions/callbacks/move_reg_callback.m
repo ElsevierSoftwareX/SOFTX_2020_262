@@ -129,7 +129,7 @@ switch main_figure.SelectionType
                      
         curr_disp.Reg_changed_flag=1;
         clear_regions(main_figure,old_ID,{});
-        display_regions(main_figure,'both');
+        display_regions('both');
 
         curr_disp.setActive_reg_ID(reg_curr.Unique_ID);
         update_multi_freq_disp_tab(main_figure,'sv_f',0);

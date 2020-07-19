@@ -44,6 +44,7 @@ if isempty(layer)
 end
 
 axes_panel_comp=getappdata(main_figure,'Axes_panel');
+
 curr_disp=get_esp3_prop('curr_disp');
 if isempty(axes_panel_comp)
     return;

@@ -181,7 +181,7 @@ main_menu.disp_survey_lines=uimenu(main_menu.display,'checked',curr_disp.DispSur
 main_menu.disp_under_bot=uimenu(main_menu.display,'checked',curr_disp.DispUnderBottom,'Label','Display Under Bottom data','Tag','DispUnderBottom');
 
 main_menu.display_file_lines=uimenu(main_menu.display,'checked','off','Label','Display File Limits','Callback',{@checkbox_callback,main_figure,@toggle_display_file_lines});
-main_menu.reverse_y_axis=uimenu(main_menu.display,'checked','off','Label','Reverse Y-Axis','Callback',{@checkbox_callback,main_figure,@reverse_y_axis});
+main_menu.ydir=uimenu(main_menu.display,'checked','off','Label','Reverse Y-Axis','Tag','YDir');
 
 
 set([main_menu.disp_colorbar...
@@ -212,7 +212,7 @@ towbody_tools=uimenu(main_menu.tools,'Label','Towbody tools');
 uimenu(towbody_tools,'Label','Correct position based on cable angle and towbody depth','Callback',{@correct_pos_angle_depth_cback,main_figure});
 
 if ~isdeployed
-    bs_tools=uimenu(main_menu.tools,'Label','Backscatter Analysis');   
+    bs_tools=uimenu(main_menu.tools,'Label','Backscatter Analysis');
     uimenu(bs_tools,'Label','Execute BS analysis','Callback',{@bs_analysis_callback,main_figure});
 end
 
@@ -551,15 +551,27 @@ end
 function set_curr_disp(src,~)
 
 curr_disp=get_esp3_prop('curr_disp');
-switch src.Checked
-    case {'off',0,false}
-    curr_disp.(src.Tag)='on';
-    src.Checked  = 'on';
-case {'on',1,true}
-    curr_disp.(src.Tag)='off';
-    src.Checked  = 'off';
+switch src.Tag
+    case 'YDir'
+        switch  src.Checked
+            case 'off'
+                curr_disp.(src.Tag)='reverse';
+                src.Checked  = 'on';
+            case 'on'
+                curr_disp.(src.Tag)='normal';
+                src.Checked  = 'off';
+        end
+    otherwise
+        
+        switch src.Checked
+            case {'off',0,false}
+                curr_disp.(src.Tag)='on';
+                src.Checked  = 'on';
+            case {'on',1,true}
+                curr_disp.(src.Tag)='off';
+                src.Checked  = 'off';
+        end
 end
-
 end
 
 

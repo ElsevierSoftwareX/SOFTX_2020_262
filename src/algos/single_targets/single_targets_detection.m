@@ -141,7 +141,7 @@ if ~ismember(field,trans_obj.Data.Fieldname)
     field='sp';
 end
 
-[BW_athwart,BW_along]=trans_obj.get_beamwidth_at_f_c();
+[BW_athwart,BW_along]=trans_obj.get_beamwidth_at_f_c([]);
 
 for ui=1:num_ite
     idx_pings=idx_pings_tot((ui-1)*block_size+1:nanmin(ui*block_size,numel(idx_pings_tot)));

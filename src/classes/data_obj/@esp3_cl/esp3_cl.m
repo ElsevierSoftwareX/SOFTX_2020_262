@@ -7,7 +7,49 @@ classdef esp3_cl < handle
         app_path           = app_path_create();
         process            = process_cl.empty();
         curr_disp          = curr_state_disp_cl();
-        
+        echo_disp_obj      = echo_disp_cl.empty();     
+
+%         progress_bar_obj    = progress_bar_panel_cl.empty();
+%         opt_figure         = [];
+%         main_figure        = [];
+%         sec_figure         = [];
+
+%currently in main_figure appdata
+%         iptPointerManager: [1×1 struct]
+%            SelectArea: [1×1 struct]
+%       ExternalFigures: [1×0 Figure]
+%           Loading_bar: [1×1 struct]
+%            Info_panel: [1×1 struct]
+%        echo_tab_panel: [1×1 TabGroup]
+%      option_tab_panel: [1×1 TabGroup]
+%        algo_tab_panel: [1×1 TabGroup]
+%             main_menu: [1×1 struct]
+%              esp3_tab: [1×1 struct]
+%              file_tab: [1×1 struct]
+%           EchoInt_tab: [1×1 struct]
+%        Secondary_freq: [1×1 struct]
+%      Cursor_mode_tool: [1×1 struct]
+%           Display_tab: [1×1 struct]
+%             Lines_tab: [1×1 struct]
+%       Calibration_tab: [1×1 struct]
+%               Env_tab: [1×1 struct]
+%        Processing_tab: [1×1 struct]
+%        Layer_tree_tab: [1×1 struct]
+%           Reglist_tab: [1×1 struct]
+%               Map_tab: [1×1 struct]
+%             ST_Tracks: [1×1 struct]
+%                  sv_f: [1×1 struct]
+%                  ts_f: [1×1 struct]
+%           Algo_panels: [1×11 algo_panel_cl]
+%           Denoise_tab: [1×1 struct]
+%        multi_freq_tab: [1×1 struct]
+%       interactions_id: [1×1 struct]
+%            javaWindow: [1×1 com.mathworks.hg.peer.FigureFrameProxy$FigureFrame]
+%                Dndobj: [1×1 dndcontrol]
+%            ListenersH: [1×25 event.proplistener]
+%            Axes_panel: [1×1 struct]
+%             Mini_axes: [1×1 struct]
+%           LinkedProps: [1×1 struct]
     end
     
     methods
@@ -43,7 +85,9 @@ classdef esp3_cl < handle
                 
                 if ~isdeployed()&&isappdata(groot,'esp3_obj')
                     old_obj = getappdata(groot,'esp3_obj');
-                    delete(old_obj.main_figure); 
+                    if ~isempty(old_obj.main_figure)&&ishandle(old_obj.main_figure)
+                        delete(old_obj.main_figure);
+                    end
                 end
                 
                 setappdata(groot,'esp3_obj',obj);
@@ -52,34 +96,20 @@ classdef esp3_cl < handle
                     %% Get monitor's dimensions
                     [size_fig,units]=get_init_fig_size([]);
                     %% Defining the app's main window
-                    obj.main_figure = figure('Units',units,...
-                        'Position',size_fig,... %Position and size normalized to the screen size ([left, bottom, width, height])
-                        'DockControls','off',...
-                        'Color','White',...
+                    obj.main_figure = new_echo_figure([],...
+                        'Units',units,...
+                        'Position',size_fig,... 
                         'Name','ESP3',...
                         'Tag','ESP3',...
-                        'NumberTitle','off',...
                         'Resize','on',...
                         'MenuBar','none',...
                         'Toolbar','none',...
-                        'visible','off',...
-                        'WindowStyle','normal',...
-                        'ResizeFcn',@resize_echo,...
-                        'BusyAction','cancel',...
-                        'Interruptible','off',...
+                        'Visible','off',...
                         'CloseRequestFcn',@closefcn_clean);
-                    set(obj.main_figure,'BusyAction','cancel');
+                    obj.main_figure.ResizeFcn = @resize_echo;
+                    obj.main_figure.Interruptible = 'off';
+                    obj.main_figure.BusyAction='cancel';
                     
-                    %% Install mouse pointer manager in figure
-                    iptPointerManager(obj.main_figure);
-                    
-                    %% Get Javaframe from Figure to set the Icon
-                    javaFrame = get(obj.main_figure,'JavaFrame');
-                    if ~isempty(javaFrame)
-                        %             javaFrame.fHG2Client.setClientDockable(true);
-                        %             set(javaFrame,'GroupName','ESP3');
-                        javaFrame.setFigureIcon(javax.swing.ImageIcon(fullfile(whereisEcho(),'icons','echoanalysis.png')));
-                    end
                 end
                 
                 %% Software version
@@ -181,23 +211,16 @@ classdef esp3_cl < handle
                 if ~isempty(p.Results.scripts_to_run)
                     obj.run_scripts(p.Results.scripts_to_run,'discard_loaded_layers',p.Results.SaveEcho==0,'update_display_at_loading',0) ;
                 end
-                                
-                if p.Results.SaveEcho>0   
+                
+                if p.Results.SaveEcho>0
                     layers = obj.layers;
-                    for uil = 1:numel(layers)         
+                    for uil = 1:numel(layers)
+                        filepath=fileparts(layers(uil).Filename{1});
+                        obj.curr_disp.update_curr_disp(filepath);
                         obj.set_layer(layers(uil));
-                        loadEcho(obj.main_figure);   
-                        ax_panel=getappdata(obj.main_figure,'Axes_panel');
- 
-                        x_lim=[nanmin(ax_panel.echo_obj.echo_surf.XData(:)) nanmax(ax_panel.echo_obj.echo_surf.XData(:))];
-                        y_lim=[nanmin(ax_panel.echo_obj.echo_surf.YData(:)) nanmax(ax_panel.echo_obj.echo_surf.YData(:))];
-                        ax = ax_panel.echo_obj.get_main_ax();
-                        if diff(x_lim)>0 && diff(y_lim)>0
-                            ax.XLim = x_lim;
-                            ax.YLim = y_lim;
+                        for uic = 1:numel(layers(uil).ChannelID)
+                            save_echo('vis','off','cid',layers(uil).ChannelID{uic});
                         end
-
-                        save_echo('vis','off');
                     end
                     cleanup_echo(obj.main_figure);
                 end
@@ -208,8 +231,7 @@ classdef esp3_cl < handle
                 if ~isdeployed
                     rethrow(err);
                 end
-            end
-            
+            end           
         end
         
         function Alphamap = get_alphamap(obj)
@@ -244,6 +266,25 @@ classdef esp3_cl < handle
             obj.layers(~isvalid(obj.layers))=[];
         end
         
+        function add_echo_disp_obj(obj,echo_disp_obj_vec)
+            for ui = 1:numel(echo_disp_obj_vec)
+                edisp_obj = echo_disp_obj_vec(ui);
+                if ~isempty(obj.echo_disp_obj)
+                    tags = {obj.echo_disp_obj(:).Tag};
+                    idx = strfind(edisp_obj.Tag,tags);
+                    if isempty(idx)
+                        obj.echo_disp_obj = [obj.echo_disp_obj edisp_obj];
+                    else
+                        delete(obj.echo_disp_obj);
+                        obj.echo_disp_obj(idx) = edisp_obj;
+                    end
+                else
+                    obj.echo_disp_obj = edisp_obj;
+                end
+            end
+        end
+        
+        
         function delete(obj)
             
             if ~isdeployed
@@ -262,23 +303,23 @@ classdef esp3_cl < handle
                 end
                 nb_l=nb_l-1;
             end
-            if ishandle(obj.main_figure)
+            if ~isempty(obj.main_figure)&&ishandle(obj.main_figure)
                 dndobj=getappdata(obj.main_figure,'Dndobj');
                 delete(dndobj);
+      
+                appdata = get(obj.main_figure,'ApplicationData');
+                fns = fieldnames(appdata);
+                
+                for ii = 1:numel(fns)
+                    rmappdata(obj.main_figure,fns{ii});
+                end
+                delete(obj.main_figure);
             end
-            appdata = get(obj.main_figure,'ApplicationData');
-            fns = fieldnames(appdata);
-            
-            for ii = 1:numel(fns)
-                rmappdata(obj.main_figure,fns{ii});
-            end
-            delete(obj.main_figure);
             
             if isappdata(groot,'esp3_obj')
                 rmappdata(groot,'esp3_obj');
             end
-            
-            
+               
         end
         
         function [lay,lay_idx]=get_layer(obj)

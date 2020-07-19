@@ -28,5 +28,5 @@ for i=1:length(curr_disp.Active_reg_ID)
     layer.copy_region_across(idx_freq,reg_curr,idx_freq_end);
 end
 
-display_regions(main_figure,'all');
+display_regions('all');
 end

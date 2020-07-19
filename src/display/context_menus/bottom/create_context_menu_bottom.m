@@ -41,16 +41,15 @@ layer=get_current_layer();
 if isempty(layer)
     return;
 end
-[~,idx_freq]=layer.get_trans(curr_disp);
 
 delete(findobj(main_figure,'Type','Uicontextmenu','-and','Tag','botCtxtMenu'));
-
 context_menu=uicontextmenu(ancestor(bottom_line,'figure'),'Tag','botCtxtMenu');
 bottom_line.UIContextMenu=context_menu;
 
-uimenu(context_menu,'Label','Shift Bottom ...','Callback',{@shift_bottom_callback,[],main_figure});
+uimenu(context_menu,'Label','Shift Bottom ...','Callback',{@shift_bottom_callback,[]});
 uimenu(context_menu,'Label','Filter Bottom ...','Callback',@filter_bottom_callback);
 uimenu(context_menu,'Label','Remove Bottom','Callback',{@rm_bottom_callback,main_figure});
+
 switch layer.Filetype
     case 'EK60'
         uimenu(context_menu,'Label','Reload Simrad bottom','Callback',@reload_ek_bot_cback);

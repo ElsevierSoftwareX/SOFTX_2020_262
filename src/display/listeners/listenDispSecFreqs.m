@@ -15,11 +15,12 @@ switch curr_disp.DispSecFreqs
             otherwise
                 load_secondary_freq_win(main_figure,0);
         end
+        
         init_sec_link_props(main_figure);
         update_axis(main_figure,1,'main_or_mini',layer.ChannelID);
         update_cmap(main_figure);
         set_alpha_map(main_figure,'main_or_mini',layer.ChannelID);
-        display_regions(main_figure,union({'main' 'mini'},layer.ChannelID));
+        display_regions(union({'main' 'mini'},layer.ChannelID));
         display_bottom(main_figure);
         
         init_link_prop(main_figure);

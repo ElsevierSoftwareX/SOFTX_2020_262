@@ -1,5 +1,6 @@
 
-function rm_Secondary_freq(src,~,main_figure)
+function rm_Secondary_freq(src,~)
+main_figure = get_esp3_prop('main_figure');
 
 if ishghandle(main_figure)
     if isappdata(main_figure,'Secondary_freq')

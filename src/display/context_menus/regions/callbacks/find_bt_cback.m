@@ -43,7 +43,7 @@ switch version
     case 'dropouts'
          alg_name='DropOuts';
 end
-update_algos(main_figure,'algo_name',{alg_name});
+update_algos('algo_name',{alg_name});
 
 layer=get_current_layer();
 curr_disp=get_esp3_prop('curr_disp');
@@ -63,7 +63,6 @@ end
 show_status_bar(main_figure);
 load_bar_comp=getappdata(main_figure,'Loading_bar');
 old_bot=trans_obj.Bottom;
-
 
 new_region=reg_obj.merge_regions('overlap_only',0);
 trans_obj.apply_algo(alg_name,'load_bar_comp',load_bar_comp,'reg_obj',new_region,'replace_bot',0);

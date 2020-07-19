@@ -42,7 +42,7 @@ update_axis(main_figure,1,'main_or_mini','mini');
 set_alpha_map(main_figure,'main_or_mini','mini');
 update_cmap(main_figure);
 init_link_prop(main_figure);
-display_regions(main_figure,'mini');
+display_regions('mini');
 display_bottom(main_figure);
 
 % profile off;

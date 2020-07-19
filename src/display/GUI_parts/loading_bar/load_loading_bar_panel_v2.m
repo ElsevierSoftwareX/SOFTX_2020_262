@@ -10,7 +10,6 @@ end
 
 pix_pos=getpixelposition(main_figure);
 
-
 load_bar_comp.panel=uipanel(main_figure,'Units','pixels','Position',...
     [0 0 pix_pos(3) inf_h],'BackgroundColor',[1 1 1],'tag','load_panel','visible','on','BorderType','line');
 

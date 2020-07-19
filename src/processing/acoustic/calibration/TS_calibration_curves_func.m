@@ -1,4 +1,4 @@
-referefunction[cal_cw,cal_fm]=TS_calibration_curves_func(main_figure,layer,select)
+function[cal_cw,cal_fm]=TS_calibration_curves_func(main_figure,layer,select)
 
 cal_cw=[];
 cal_fm={};
@@ -8,7 +8,7 @@ int_meth='linear';
 ext_meth=nan;
 
 
-update_algos(main_figure,'algo_name',{'SingleTarget'});
+update_algos('algo_name',{'SingleTarget'});
 
 load_bar_comp=getappdata(main_figure,'Loading_bar');
 
@@ -171,7 +171,7 @@ for uui=select
     update_axis(main_figure,0,'main_or_mini',cids_up,'force_update',1);
     display_bottom(main_figure,cids_up);
     clear_regions(main_figure,{},cids_up);
-    display_regions(main_figure,cids_up);
+    display_regions(cids_up);
     set_alpha_map(main_figure,'main_or_mini',cids_up,'update_bt',0);
     curr_disp.setField('singletarget');
     

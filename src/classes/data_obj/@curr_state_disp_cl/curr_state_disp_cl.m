@@ -16,6 +16,7 @@ classdef curr_state_disp_cl <handle
         Xaxes_current={'meters'};
         Cax     
         Caxes
+        YDir = 'reverse'
         DispBottom='on';
         DispUnderBottom='off';
         UnderBotTransparency=90;
@@ -97,6 +98,7 @@ classdef curr_state_disp_cl <handle
             addParameter(p,'V_axes_ratio',0.05,@isnumeric);
             addParameter(p,'H_axes_ratio',0.15,@isnumeric);
             addParameter(p,'EchoQuality','high',@ischar);
+            addParameter(p,'YDir','reverse',@(x) ismember(x,{'reverse','normal'}));
             parse(p,varargin{:});
             results=p.Results;
             props=fieldnames(results);

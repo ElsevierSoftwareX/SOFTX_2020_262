@@ -136,7 +136,7 @@ classdef env_data_cl < matlab.mixin.Copyable
                     tab=readtable(fname,opts);
                     tabs=table2struct(tab,'ToScalar',true);
                      fprintf('Loaded SVP profile from %s.\n',fname);
-                    if all(isfield(tabs,{'soundspeed','depth'}))
+                    if all(isfield(tabs,{'soundspeed','depth'}))&&~isempty(tabs.depth)
                         env_obj.set_svp(tabs.depth,tabs.soundspeed,'profile');
                     end
                 catch err
@@ -162,7 +162,7 @@ classdef env_data_cl < matlab.mixin.Copyable
                     tab=readtable(fname,opts);
                     tabs=table2struct(tab,'ToScalar',true);
                      fprintf('Loaded CTD file from %s.\n',fname);
-                    if all(isfield(tabs,{'temperature','salinity','depth'}))
+                    if all(isfield(tabs,{'temperature','salinity','depth'}))&&~isempty(tabs.depth)
                         env_obj.set_ctd(tabs.depth,tabs.temperature,tabs.salinity,'profile');
                     end
                 catch err

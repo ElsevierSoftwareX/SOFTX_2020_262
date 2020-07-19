@@ -286,7 +286,7 @@ switch src.Parent.Tag
         display_bottom(main_figure);
     case 'reg'
         layer.load_bot_regs('bot_ver',[],'reg_ver',ver);
-        display_regions(main_figure,'all');
+        display_regions('all');
         curr_disp.setActive_reg_ID({});
 end
 

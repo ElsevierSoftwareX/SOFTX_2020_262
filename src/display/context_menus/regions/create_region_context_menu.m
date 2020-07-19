@@ -123,7 +123,7 @@ uimenu(algo_menu,'Label','School Detection','Callback',{@apply_school_detect_cba
 uimenu(algo_menu,'Label','Single Targets Detection','Callback',{@apply_st_detect_cback,select_plot,main_figure});
 uimenu(algo_menu,'Label','Target Tracking','Callback',{@apply_track_target_cback,select_plot,main_figure});
 
-uimenu(context_menu,'Label','Shift Bottom ...','Callback',{@shift_bottom_callback,select_plot,main_figure});
+uimenu(context_menu,'Label','Shift Bottom ...','Callback',{@shift_bottom_callback,select_plot});
 
 if isreg==0 
     uimenu(context_menu,'Label','Clear Spikes','Callback',{@clear_spikes_cback,select_plot,main_figure});

@@ -36,7 +36,7 @@
 %% Function
 function apply_school_detect_cback(~,~,select_plot,main_figure)
 
-update_algos(main_figure,'algo_name',{'SchoolDetection'});
+update_algos('algo_name',{'SchoolDetection'});
 layer=get_current_layer();
 curr_disp=get_esp3_prop('curr_disp');
 [trans_obj,~]=layer.get_trans(curr_disp);
@@ -65,7 +65,7 @@ add_undo_region_action(main_figure,trans_obj,old_regs,trans_obj.Regions);
 
 hide_status_bar(main_figure);
     
-display_regions(main_figure,'both');
+display_regions('both');
 curr_disp.setActive_reg_ID({});
 
 

@@ -95,7 +95,7 @@ IDs=trans_obj.add_region(reg_temp);
 
 add_undo_region_action(main_figure,trans_obj,old_regs,trans_obj.Regions);
 
-display_regions(main_figure,'both');
+display_regions('both');
 
 if ~isempty(IDs)
     curr_disp.setActive_reg_ID(IDs);   

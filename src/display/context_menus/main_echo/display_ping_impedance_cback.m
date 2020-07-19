@@ -1,12 +1,15 @@
 function display_ping_impedance_cback(src,~,main_figure,idx_ping,new)
 hfigs=getappdata(main_figure,'ExternalFigures');
+
 if ~isempty(hfigs)
     hfigs(~isvalid(hfigs))=[];
 end
 idx_fig=[];
+
 if ~isempty(hfigs)
     idx_fig=find(strcmp({hfigs(:).Tag},'Impedance'));
 end
+
 if isempty(idx_fig)&&new==0
     return;
 end

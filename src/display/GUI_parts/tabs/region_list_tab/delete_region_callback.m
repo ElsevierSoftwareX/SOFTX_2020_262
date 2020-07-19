@@ -59,7 +59,7 @@ layer.delete_regions_from_uid(curr_disp,ID);
 
 add_undo_region_action(main_figure,trans_obj,old_regs,trans_obj.Regions);
 
-display_regions(main_figure,'both');
+display_regions('both');
 
 update_multi_freq_disp_tab(main_figure,'sv_f',0);
 update_multi_freq_disp_tab(main_figure,'ts_f',0);

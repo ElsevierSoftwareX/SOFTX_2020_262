@@ -59,7 +59,7 @@ if ~isempty(regions)
     
     display_bottom(main_figure);
     
-    display_regions(main_figure,'both');
+    display_regions('both');
     curr_disp=get_esp3_prop('curr_disp');
     curr_disp.setActive_reg_ID({});
 

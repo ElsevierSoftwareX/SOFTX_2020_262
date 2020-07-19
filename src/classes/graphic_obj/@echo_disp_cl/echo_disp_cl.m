@@ -1,6 +1,8 @@
 classdef echo_disp_cl < handle
     
     properties
+        tag = '';
+        t_size = 8;
         main_ax
         vert_ax
         hori_ax
@@ -32,6 +34,7 @@ classdef echo_disp_cl < handle
             addParameter(p,'visible_hori','on',@(x) ismember(x,{'off','on'}));
             addParameter(p,'y_ax_pos','left',@(x) ismember(x,{'left','right'}));
             addParameter(p,'x_ax_pos','top',@(x) ismember(x,{'top','bottom'}));
+            addParameter(p,'visible_fig','on',@(x) ismember(x,{'off','on'}));
             addParameter(p,'visible_main','on',@(x) ismember(x,{'off','on'}));
             addParameter(p,'pos_in_parent',[0 0 1 1],@isnumeric);
             addParameter(p,'FaceAlpha','flat',@ischar);
@@ -40,7 +43,8 @@ classdef echo_disp_cl < handle
             addParameter(p,'AlphaDataMapping','direct',@ischar);
             addParameter(p,'FontSize',9,@isnumeric);
             addParameter(p,'offset',true,@islogical);
-            addParameter(p,'ax_tag','main',@ischar);
+            addParameter(p,'tag','',@ischar);
+            addParameter(p,'ax_tag','',@ischar);
             addParameter(p,'uiaxes',false,@islogical);
             addParameter(p,'link_ax',false,@islogical);
             addParameter(p,'V_axes_ratio',0,@isnumeric);
@@ -57,14 +61,14 @@ classdef echo_disp_cl < handle
             
             if isempty(parent_h)||~isvalid(parent_h)
                 link_ax = true;
-                parent_h = new_echo_figure(get_esp3_prop('main_figure'),'UiFigureBool',p.Results.uiaxes,'visible',p.Results.visible_main);
+                parent_h = new_echo_figure(get_esp3_prop('main_figure'),'UiFigureBool',p.Results.uiaxes,'visible',p.Results.visible_fig);
             else
                 link_ax = false;
             end
             
             [cmap,col_ax,col_lab,col_grid,col_bot,col_txt,col_tracks]=init_cmap(p.Results.cmap);
             
-            if p.Results.uiaxes
+            if p.Results.uiaxes&&will_it_work(parent_h,[],true)
                 ax_fcn = @uiaxes;
                 tmp = getpixelposition(parent_h);
                 if ismember('pos_in_parent',p.UsingDefaults)
@@ -141,7 +145,9 @@ classdef echo_disp_cl < handle
                     'YColor',col_lab,...
                     'FontSize',p.Results.FontSize,...
                     'Fontweight','Bold',...
-                    'Interactions',[],'Toolbar',[],...
+                    'Interactions',[],...
+                    'Toolbar',[],...
+                    'Ticklength' ,[0.005 0.0100],...
                     'XAxisLocation',x_ax_pos,...
                     'YAxisLocation',y_ax_pos,...
                     'YTickMode','manual',...
@@ -171,6 +177,7 @@ classdef echo_disp_cl < handle
                     'XColor',col_lab,...
                     'YColor',col_lab,...
                     'Interactions',[],...
+                    'Ticklength' ,[0.005 0.0100],...
                     'Toolbar',[],...
                     'FontSize',p.Results.FontSize,...
                     'Fontweight','Bold',...
@@ -189,10 +196,10 @@ classdef echo_disp_cl < handle
                     'Tag',p.Results.ax_tag,...
                     'SortMethod','childorder');
             else
-                obj.hori_ax=matlab.graphics.axis.Axes.empty;
+                obj.hori_ax=matlab.graphics.axis.Axes.empty();
             end
             
-            cur_ver=ver('Matlab');
+            
            
             if p.Results.add_colorbar
                 obj.colorbar_h=colorbar(obj.main_ax,...
@@ -204,9 +211,9 @@ classdef echo_disp_cl < handle
             else
                 obj.colorbar_h = matlab.graphics.illustration.ColorBar.empty();
             end
-            
-            if str2double(cur_ver.Version)>=9.8
-                obj.colorbar_h.UIContextMenu=[];
+
+             if ~isempty(obj.colorbar_h)&&(will_it_work(parent_h,9.8,true)||will_it_work(parent_h,[],false))
+                 obj.colorbar_h.UIContextMenu=[];
             end
              
 
@@ -214,8 +221,7 @@ classdef echo_disp_cl < handle
             
             rm_axes_interactions([obj.main_ax obj.vert_ax obj.hori_ax]);
             
-            
-               
+                 
              if ~isempty(obj.main_ax)&&strcmpi(p.Results.visible_main,'on')
                 obj.main_ax.Visible ='on';
             end
@@ -359,13 +365,14 @@ classdef echo_disp_cl < handle
                 end
             end
             
-            if p.Results.bt_on_top==0
-                zoom_area=findobj(obj.main_ax,'tag','zoom_area','-or','Tag','disp_area');
-                uistack([zoom_area;text_disp;lines;select_area;regions;bt_im;echo_im],'top');
-            else
-                uistack([bt_im;text_disp;lines;select_area;regions;echo_im],'top');
+            if will_it_work(obj.main_ax,[],false)
+                if p.Results.bt_on_top==0
+                    zoom_area=findobj(obj.main_ax,'tag','zoom_area','-or','Tag','disp_area');
+                    uistack([zoom_area;text_disp;lines;select_area;regions;bt_im;echo_im],'top');
+                else
+                    uistack([bt_im;text_disp;lines;select_area;regions;echo_im],'top');
+                end
             end
-            
             obj.main_ax.Layer='top';
         end
         
@@ -675,6 +682,17 @@ classdef echo_disp_cl < handle
                 end
             end
             
+        end
+        
+        function delete(obj)
+           delete(obj.main_ax);
+           delete(obj.vert_ax);
+           delete(obj.hori_ax);
+           delete(obj.colorbar_h);
+           if ~isdeployed
+               c = class(obj);
+               disp(['ML object destructor called for class ',c]);
+           end
         end
         
         function  set_axes_position(obj,vpos_r,hpos_r)

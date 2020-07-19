@@ -46,10 +46,9 @@ for ireg_1=1:length(regions)
         region_2=regions(ireg_2);
         
         u=intersect(region_2.Poly,region_1.Poly);
-        if overlap_only>0
-            if u.NumRegions==0
-                continue;
-            end
+        
+        if (overlap_only==1 || overlap_only==2) && u.NumRegions==0
+            continue;
         end
         
         reg_comp_mat(ireg_1,ireg_2)=1;
@@ -80,11 +79,13 @@ for ireg=1:length(regions)
             if ~strcmp(regions(i).Name,'')&&i~=ireg
                 region_2=regions(i);
                 
-                if overlap_only ==0
-                    [poly_combined,Type]=region_1.get_combined_poly(region_2,'union');
-                else
-                    [poly_combined,Type]=region_1.get_combined_poly(region_2,'intersect');
+                switch overlap_only 
+                    case 1
+                        [poly_combined,Type]=region_1.get_combined_poly(region_2,'intersect');
+                    case {0,2}
+                        [poly_combined,Type]=region_1.get_combined_poly(region_2,'union'); 
                 end
+                
                 if overlap_only>0
                     if poly_combined.NumRegions==0
                         continue;

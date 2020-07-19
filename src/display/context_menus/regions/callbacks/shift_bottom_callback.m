@@ -35,11 +35,11 @@
 % Yoann Ladroit, NIWA. Type |help EchoAnalysis.m| for copyright information.
 
 %% Function
-function shift_bottom_callback(~,~,select_plot,main_figure)
+function shift_bottom_callback(~,~,select_plot)
 
 layer=get_current_layer();
 curr_disp=get_esp3_prop('curr_disp');
-
+main_figure=get_esp3_prop('main_figure');
 [trans_obj,~]=layer.get_trans(curr_disp);
 
 if ~isempty(select_plot)

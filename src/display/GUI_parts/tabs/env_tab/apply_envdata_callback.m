@@ -38,7 +38,7 @@ if ~isempty(layer)
     update_axis(main_figure,0,'main_or_mini',cids_up,'force_update',1);
     display_bottom(main_figure,cids_up);
     clear_regions(main_figure,{},cids_up);
-    display_regions(main_figure,cids_up);
+    display_regions(cids_up);
     set_alpha_map(main_figure,'main_or_mini',cids_up,'update_bt',0);
         
     

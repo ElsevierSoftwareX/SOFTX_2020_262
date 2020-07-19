@@ -36,7 +36,7 @@
 %% Function
 function apply_track_target_cback(~,~,select_plot,main_figure)
 
-update_algos(main_figure,'algo_name',{'TrackTarget'});
+update_algos('algo_name',{'TrackTarget'});
 
 layer=get_current_layer();
 curr_disp=get_esp3_prop('curr_disp');

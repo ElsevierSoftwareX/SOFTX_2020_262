@@ -49,7 +49,7 @@ layer.CVS_BottomRegions(app_path.cvs_root.Path_to_folder,'BotCVS',0,'RegCVS',1);
 
 
 
-display_regions(main_figure,'all');
+display_regions('all');
 curr_disp=get_esp3_prop('curr_disp');
 
 curr_disp.setActive_reg_ID({});

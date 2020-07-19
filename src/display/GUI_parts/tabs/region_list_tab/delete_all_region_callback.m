@@ -56,7 +56,7 @@ switch choice
             trans_obj.rm_regions();
             curr_disp.Reg_changed_flag=1;
             
-            display_regions(main_figure,'both');            
+            display_regions('both');            
             
             add_undo_region_action(main_figure,trans_obj,old_regs,trans_obj.Regions);
   

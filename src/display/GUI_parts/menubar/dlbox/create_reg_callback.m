@@ -47,7 +47,7 @@ trans_obj.add_region(reg_wc);
 close(reg_fig);
 
 
-display_regions(main_figure,'both');
+display_regions('both');
 
 curr_disp=get_esp3_prop('curr_disp');
 

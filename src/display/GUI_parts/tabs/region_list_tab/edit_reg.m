@@ -70,7 +70,7 @@ for ifi=1:numel(fields)
     layer.set_field_to_region_with_uid(uid,fields{ifi},id);
 end
 
-display_regions(main_figure,'all');
+display_regions('all');
 
 activate_region_callback(uid,main_figure);
 

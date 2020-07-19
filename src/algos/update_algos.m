@@ -34,19 +34,19 @@
 % Yoann Ladroit, NIWA. Type |help EchoAnalysis.m| for copyright information.
 
 %% Function
-function update_algos(main_figure,varargin)
+function update_algos(varargin)
 
 p = inputParser;
-addRequired(p,'main_figure',@(x)isempty(x)||ishandle(x));
 addParameter(p,'algo_name',list_algos,@iscell);
 addParameter(p,'idx_chan',[],@isnumeric);
-parse(p,main_figure,varargin{:});
+parse(p,varargin{:});
 
 layer = get_current_layer();
 if isempty(layer)
     return;
 end
 
+main_figure=get_esp3_prop('main_figure');
 curr_disp=get_esp3_prop('curr_disp');
 
 if isempty(p.Results.idx_chan)

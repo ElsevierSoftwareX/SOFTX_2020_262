@@ -50,7 +50,7 @@ if ~isempty(trans_obj.Regions)
     tag=trans_obj.get_reg_tags();
     for t=1:1:length(tag)
         idx=trans_obj.find_regions_tag(tag{t});
-        regions_tmps=trans_obj.Regions(idx).merge_regions();
+        regions_tmps=trans_obj.Regions(idx).merge_regions('overlap_only',2);
         for i=1:length(regions_tmps)
             regions_tmps(i).Tag=tag{t};
         end
@@ -59,7 +59,7 @@ if ~isempty(trans_obj.Regions)
     trans_obj.rm_all_region();
     IDs=trans_obj.add_region(new_regions,'IDs',1:length(new_regions));
    
-    display_regions(main_figure,'both');
+    display_regions('both');
    
     add_undo_region_action(main_figure,trans_obj,old_regs,trans_obj.Regions);
 

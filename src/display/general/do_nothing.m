@@ -1,2 +1,2 @@
-function do_nothing(~,~,~,~)
+function do_nothing(~,~)
 end

@@ -179,7 +179,7 @@ if ~isdeployed()&&isappdata(groot,'esp3_obj')
     end
 end
 
-if ~isempty(scripts)&&isempty(files_to_load)&&p.Results.SaveEcho==0
+if (~isempty(scripts)||~isempty(files_to_load))&&p.Results.SaveEcho==1
     nodisplay = true;
 else
     nodisplay  =false;

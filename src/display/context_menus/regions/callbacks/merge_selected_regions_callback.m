@@ -56,7 +56,7 @@ if ~isempty(trans_obj.Regions)&&~isempty(selected_regs_ids)
     layer.delete_regions_from_uid(curr_disp,selected_regs_ids);
     IDs=trans_obj.add_region(new_regions);
    
-    display_regions(main_figure,'both');
+    display_regions('both');
    
     add_undo_region_action(main_figure,trans_obj,old_regs,trans_obj.Regions);
 

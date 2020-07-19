@@ -54,7 +54,7 @@ set_esp3_prop('layers',layers);
 
 display_bottom(main_figure);
 
-display_regions(main_figure,'all');
+display_regions('all');
 curr_disp=get_esp3_prop('curr_disp');
 [trans_obj,~]=layer.get_trans(curr_disp);
 curr_disp.setActive_reg_ID(trans_obj.get_reg_first_Unique_ID());

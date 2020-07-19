@@ -116,7 +116,7 @@ reg_temp=region_cl(...
 old_regs=trans_obj.Regions;
 IDs=trans_obj.add_region(reg_temp);
 
-display_regions(main_figure,'both');
+display_regions('both');
 add_undo_region_action(main_figure,trans_obj,old_regs,trans_obj.Regions);
 
 if ~isempty(IDs)

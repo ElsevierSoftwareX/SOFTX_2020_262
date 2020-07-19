@@ -48,7 +48,7 @@ reg_obj=trans_obj.get_region_from_Unique_ID(curr_disp.Active_reg_ID);
 if isempty(reg_obj)
     return;
 end
-update_algos(main_figure,'algo_name',{'Classification'});
+update_algos('algo_name',{'Classification'});
 update_survey_opts(main_figure);
 show_status_bar(main_figure);
 survey_opt_obj=layer.get_survey_options();
@@ -63,6 +63,6 @@ setappdata(main_figure,'ExternalFigures',hfigs);
 
 update_echo_int_tab(main_figure,0);
 update_reglist_tab(main_figure,1);
-display_regions(main_figure,'both');
+display_regions('both');
 hide_status_bar(main_figure);
 end

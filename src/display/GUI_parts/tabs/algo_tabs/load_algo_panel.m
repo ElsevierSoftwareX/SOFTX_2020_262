@@ -67,7 +67,7 @@ setappdata(main_figure,'Algo_panels',algo_panels);
 end
 
 function  validate(~,~,main_figure,algo_name,str)
-update_algos(main_figure,'algo_name',{algo_name});
+update_algos('algo_name',{algo_name});
 
 curr_disp=get_esp3_prop('curr_disp');
 layer=get_current_layer();
@@ -85,7 +85,7 @@ switch str
         [trans_obj,~]=layer.get_trans(curr_disp);
         idx_chan = 1:numel(layer.Frequencies);
 end
-update_algos(main_figure,'algo_name',{algo_name},'idx_chan',idx_chan);
+update_algos('algo_name',{algo_name},'idx_chan',idx_chan);
 
 switch algo_name
     
@@ -103,7 +103,7 @@ switch algo_name
         
         hide_status_bar(main_figure);
         
-        display_regions(main_figure,'both');
+        display_regions('both');
         curr_disp.setActive_reg_ID(trans_obj.get_reg_first_Unique_ID());
 
         update_echo_int_tab(main_figure,0);
@@ -157,7 +157,7 @@ switch algo_name
         
         hide_status_bar(main_figure);
         
-        display_regions(main_figure,'both');
+        display_regions('both');
         curr_disp.setActive_reg_ID(trans_obj.get_reg_first_Unique_ID());
         
         

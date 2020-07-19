@@ -29,18 +29,16 @@ try
     layer=get_current_layer();
     
     echo_tab_panel=getappdata(main_figure,'echo_tab_panel');
-    
+    info_panel_comp=getappdata(main_figure,'Info_panel');
     axes_panel_comp=getappdata(main_figure,'Axes_panel');
+    
     bool =isempty(axes_panel_comp)||(~isa(axes_panel_comp.axes_panel,'matlab.ui.Figure') && ~strcmpi(echo_tab_panel.SelectedTab.Tag,'axes_panel'));
     if  bool ||isempty(layer)||~isvalid(layer)
         %pause(dpause);
         return;
     end
     
-    
-    info_panel_comp=getappdata(main_figure,'Info_panel');
-    curr_disp=get_esp3_prop('curr_disp');
-    
+    curr_disp=get_esp3_prop('curr_disp');    
     cur_str=sprintf('Cursor mode: %s',curr_disp.CursorMode);
     set(info_panel_comp.cursor_mode,'String',cur_str);
     

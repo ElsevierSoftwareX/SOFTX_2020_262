@@ -46,18 +46,14 @@ if isempty(ax_panel_comp)||~isvalid(ax_panel_comp.axes_panel)
   
     echo_tab_panel=getappdata(main_figure,'echo_tab_panel');
     axes_panel=uitab(echo_tab_panel,'BackgroundColor',[1 1 1],'tag','axes_panel');
-    
-%     cur_ver = ver('Matlab');
-%     axes_panel=new_echo_figure(main_figure,'tag','axes_panel','Units','Normalized','Position',[0.1 0.1 0.8 0.8],'UiFigureBool',str2double(cur_ver.Version)>9.7);
-%     axes_panel.Alphamap = main_figure.Alphamap;  
-%     initialize_interactions_v2(axes_panel);
-%     
+
+%      axes_panel=new_echo_figure(main_figure,'tag','axes_panel','Units','Normalized','Position',[0.1 0.1 0.8 0.8],'UiFigureBool',true);
+%      axes_panel.Alphamap = main_figure.Alphamap;  
+%     initialize_interactions_v2(axes_panel);     
 
     load_axis_panel(main_figure,axes_panel);
     
-%     ff = new_echo_figure(gcf,'UiFigureBool',true);
-%     load_axis_panel([],ff);
-    
+ 
     display_tab_comp=getappdata(main_figure,'Display_tab');
     load_mini_axes(main_figure,display_tab_comp.display_tab,[0 0 1 0.77]);
     enabled_obj=findobj(main_figure,'Enable','off');
@@ -145,16 +141,15 @@ display_bottom(main_figure);
 display_tracks(main_figure);
 display_file_lines(main_figure);
 display_lines(main_figure);
-display_regions(main_figure);
+display_regions();
 display_survdata_lines(main_figure);
-
 
 update_info_panel([],[],1);
 
 curr_disp=get_esp3_prop('curr_disp');
 disp_perso(main_figure,'');
 
-if up_ax_panel
+if up_ax_panel&&isa(axes_panel,'matlab.ui.container.Tab')
     set(echo_tab_panel,'SelectedTab',axes_panel);
 end
 

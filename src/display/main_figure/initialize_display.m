@@ -36,13 +36,20 @@
 %% Function
 function initialize_display(esp3_obj)
 
+
+
+
+
 main_figure=esp3_obj.main_figure;
 curr_disp=esp3_obj.curr_disp;
-
 pan_height=get_top_panel_height(8.25);
+
+
+
+
+
 load_loading_bar_panel_v2(main_figure);
 load_info_panel(main_figure);
-
 load_bar_comp=getappdata(main_figure,'Loading_bar');
 inf_h_tmp=load_bar_comp.panel.Position(4);
 info_panel=getappdata(main_figure,'Info_panel');

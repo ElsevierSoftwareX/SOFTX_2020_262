@@ -46,10 +46,6 @@ addParameter(p,'UiFigureBool',false,@islogical);
 
 parse(p,main_figure,varargin{:});
 
-cur_ver=ver('Matlab');
-cur_ver_num = str2double(cur_ver.Version);
-
-
 
 if p.Results.Keep_old==0
     hfigs=clean_echo_figures(main_figure,'Tag',p.Results.Tag);
@@ -94,11 +90,11 @@ if isempty(p.Results.fig_handle)
             'Resize',p.Results.Resize,...
             'MenuBar',mbar,...
             'ToolBar',tbar,...
-            'CloseRequestFcn',{p.Results.CloseRequestFcn,main_figure},...
-            'ButtonDownFcn',{p.Results.ButtonDownFcn,main_figure},...
-            'WindowScrollWheelFcn',{p.Results.WindowScrollWheelFcn,main_figure},...
+            'CloseRequestFcn',p.Results.CloseRequestFcn,...
+            'ButtonDownFcn',p.Results.ButtonDownFcn,...
+            'WindowScrollWheelFcn',p.Results.WindowScrollWheelFcn,...
             'Visible',p.Results.Visible,...
-            'WindowKeyPressFcn',{p.Results.WindowKeyPressFcn,main_figure},...
+            'WindowKeyPressFcn',p.Results.WindowKeyPressFcn,...
             'UserData',p.Results.UserData);
     else
         fig_handle=figure('Units',pos_u,...
@@ -113,11 +109,11 @@ if isempty(p.Results.fig_handle)
             'Resize',p.Results.Resize,...
             'MenuBar',mbar,...
             'ToolBar',tbar,...
-            'CloseRequestFcn',{p.Results.CloseRequestFcn,main_figure},...
-            'ButtonDownFcn',{p.Results.ButtonDownFcn,main_figure},...
-            'WindowScrollWheelFcn',{p.Results.WindowScrollWheelFcn,main_figure},...
+            'CloseRequestFcn',p.Results.CloseRequestFcn,...
+            'ButtonDownFcn',p.Results.ButtonDownFcn,...
+            'WindowScrollWheelFcn',p.Results.WindowScrollWheelFcn,...
             'Visible',p.Results.Visible,...
-            'WindowKeyPressFcn',{p.Results.WindowKeyPressFcn,main_figure},...
+            'WindowKeyPressFcn',p.Results.WindowKeyPressFcn,...
             'UserData',p.Results.UserData);
     end
 else
@@ -140,6 +136,8 @@ if isdeployed()
     fig_handle.DockControls='off';
 end
 
+iptPointerManager(fig_handle);
+
 switch p.Results.Toolbar
     case 'esp3'
         create_default_toolbar(fig_handle);
@@ -147,14 +145,14 @@ end
 
 %% Install mouse pointer manager in figure
 iptPointerManager(fig_handle);
-if ~p.Results.UiFigureBool
+if will_it_work(fig_handle,[],false)
     javaFrame = get(fig_handle,'JavaFrame');
     javaFrame.setFigureIcon(javax.swing.ImageIcon(fullfile(whereisEcho(),'icons','echoanalysis.png')));
     if ~isdeployed()
         javaFrame.fHG2Client.setClientDockable(true);
         set(javaFrame,'GroupName',p.Results.Group);
     end
-elseif cur_ver_num>=9.9
+elseif will_it_work(fig_handle,9.9,true)
     fig_handle.Icon = fullfile(whereisEcho(),'icons','echoanalysis.png');
 end
 
@@ -202,16 +200,8 @@ end
 
 
 
-function close_win_echo(src,~,~,main_figure)
+function close_win_echo(src,~)
 uiresume(src);
-% if ~isempty(main_figure)
-%     ext_fig=getappdata(main_figure,'ExternalFigures');
-%     idx_src=find(src==ext_fig);
-%     if ~isempty(idx_src)
-%         ext_fig(idx_src)=[];
-%         setappdata(main_figure,'ExternalFigures',ext_fig);
-%     end
-% end
 
 delete(src);
 end

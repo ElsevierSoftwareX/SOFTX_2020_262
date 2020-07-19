@@ -7,6 +7,6 @@ set_alpha_map(main_figure,'main_or_mini',layer.ChannelID);
 update_cmap(main_figure);
 update_grid(main_figure);
 display_bottom(main_figure,layer.ChannelID);
-display_regions(main_figure,layer.ChannelID);
+display_regions(layer.ChannelID);
 init_link_prop(main_figure);
 end

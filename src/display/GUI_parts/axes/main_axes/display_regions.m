@@ -1,12 +1,13 @@
-function display_regions(main_figure,varargin)
+function display_regions(varargin)
 
 % profile on;
 
 layer=get_current_layer();
 
-axes_panel_comp=getappdata(main_figure,'Axes_panel');
-
 curr_disp=get_esp3_prop('curr_disp');
+main_figure=get_esp3_prop('main_figure');
+
+axes_panel_comp=getappdata(main_figure,'Axes_panel');
 
 if ~isempty(varargin)
     if ischar(varargin{1})

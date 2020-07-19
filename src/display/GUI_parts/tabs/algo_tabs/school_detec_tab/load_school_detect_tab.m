@@ -94,7 +94,7 @@ if isempty(files_classif)
     files_classif='--';
 end
 set(al_c_panel.classification_file,'string',files_classif,'value',1);
-update_algos(main_figure,'algo_name',{'Classification'});
+update_algos('algo_name',{'Classification'});
 end
 
 
