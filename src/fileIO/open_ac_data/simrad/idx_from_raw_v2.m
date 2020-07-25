@@ -5,7 +5,9 @@ if isfile(filename)
     s=dir(filename);
     filesize=s.bytes;
 end
+
 fid=fopen(filename,'r','n','US-ASCII');
+%fid=fopen(filename,'r');
 
 if fid==-1
     return;

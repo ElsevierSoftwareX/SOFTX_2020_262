@@ -124,7 +124,7 @@ if ~isempty(ax_pdf)&&~isempty(pc_pdf)
     %figure();
     %histogram2(mean_TS_per_track,mean_range_per_track,[numel((xl(1):db_res:xl(2))) numel((0:survey_options_obj.Horizontal_slice_size:nanmax(mean_range_per_track)))],'FaceColor','flat','DisplayStyle','tile');
     [pdf,x_mat,y_mat]=pdf_2d_perso(mean_TS_per_track,mean_range_per_track,(xl(1):db_res:xl(2))',(0:survey_options_obj.Horizontal_slice_size:nanmax(mean_range_per_track)),'gauss');
-    cax=[prctile(pdf(pdf>0),50) prctile(pdf(pdf>0),99)];
+    cax=[prctile(pdf(pdf>0),5) prctile(pdf(pdf>0),95)];
     try
         set(pc_pdf,'XData',x_mat,'YData',y_mat,'CData',pdf,'ZData',zeros(size(pdf)),'AlphaData',pdf>=cax(1),'EdgeColor',col_grid);
     catch err
@@ -144,7 +144,10 @@ if ~isempty(ax_pdf)&&~isempty(pc_pdf)
     if diff(yl)>0
         ax_pdf.YLim=yl;
     end
-    caxis(ax_pdf,cax);
+    if diff(cax)>0
+        caxis(ax_pdf,cax);
+    end
+    
     colormap(ax_pdf,cmap);
     
 end

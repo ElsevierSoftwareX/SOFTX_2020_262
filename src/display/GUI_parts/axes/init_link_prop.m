@@ -41,10 +41,9 @@ linked_prop.xtick=linkprop([axes_panel_comp.echo_obj.main_ax axes_panel_comp.ech
 linked_prop.ytick=linkprop([axes_panel_comp.echo_obj.main_ax axes_panel_comp.echo_obj.vert_ax],{'YTick'});
 
 linked_prop.xticklabel=linkprop([axes_panel_comp.echo_obj.hori_ax secondary_freq.echo_obj.get_hori_ax()],{'XTickLabel'});
-linked_prop.yticklabel=linkprop([axes_panel_comp.echo_obj.vert_ax secondary_freq.echo_obj.get_vert_ax()],{'YTickLabel'});
+%linked_prop.yticklabel=linkprop([axes_panel_comp.echo_obj.vert_ax secondary_freq.echo_obj.get_vert_ax()],{'YTickLabel'});
 
 linked_prop.cmap=linkprop([axes_panel_comp.echo_obj.main_ax echo_int_tab_comp.main_ax mini_axes_comp.echo_obj.main_ax secondary_freq.echo_obj.get_main_ax()],{'Colormap'});
-
 
 
 setappdata(main_figure,'LinkedProps',linked_prop);

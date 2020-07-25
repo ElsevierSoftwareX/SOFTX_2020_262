@@ -507,8 +507,10 @@ if ~isequal(Filename_cell, 0)
                                 end
                             end
                     end
-                catch
-                    warndlg_perso([],'XML',sprintf('Could not read Config for file %s\n',fileN),5)     
+                catch  
+                    if ~isdeployed()
+                        fprintf('Could not read Config for file %s\n Likely a invalid character in the XML\n',fileN);
+                    end
                 end
             else
                 if strcmpi(ftype,'ek80')

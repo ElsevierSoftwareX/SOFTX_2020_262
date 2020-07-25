@@ -109,12 +109,12 @@ catch
     update_axis(main_figure,new,'main_or_mini','mini','force_update',force_update);
 end
 curr_disp=get_esp3_prop('curr_disp');
+
 if new==1
     init_sec_link_props(main_figure);
 end
 
 upped=update_axis(main_figure,new,'main_or_mini',curr_disp.SecChannelIDs,'force_update',force_update);
-
 set_alpha_map(main_figure,'main_or_mini',union({'main','mini'},curr_disp.SecChannelIDs(upped>0),'stable'));
 
 if ~isempty(sel_tab)
@@ -130,8 +130,7 @@ if new==1
         if ~isempty(secondary_freq.echo_obj)
             if strcmpi(secondary_freq.echo_obj(1).echo_usrdata.geometry_y,'depth')
                 ylim=get(secondary_freq.echo_obj(1).main_ax,'Ylim');
-                set(secondary_freq.echo_obj.get_main_ax(),'ytick',floor((ylim(1):curr_disp.Grid_y:ylim(2))/curr_disp.Grid_y)*curr_disp.Grid_y);
-                set(secondary_freq.echo_obj.get_hori_ax(),'ytick',floor((ylim(1):curr_disp.Grid_y:ylim(2))/curr_disp.Grid_y)*curr_disp.Grid_y);
+                set(secondary_freq.echo_obj.get_main_ax(1),'ytick',floor((ylim(1):curr_disp.Grid_y:ylim(2))/curr_disp.Grid_y)*curr_disp.Grid_y);
             end
         end
     end

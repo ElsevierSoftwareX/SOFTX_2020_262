@@ -119,8 +119,10 @@ classdef esp3_cl < handle
                 [gpu_comp,~]=get_gpu_comp_stat();
                 if gpu_comp
                     disp_perso(obj.main_figure,'GPU computation Available');
+                    disp('GPU computation Available');
                 else
                     disp_perso(obj.main_figure,'GPU computation Unavailable');
+                    disp('GPU computation Unavailable');
                 end
                 
                 %% Read ESP3 config file

@@ -165,13 +165,12 @@ if ~isempty(idx_sec)
     end
 end
 
-if any(strcmpi(main_or_mini,'main'))
-    update_grid(main_figure);
-end
-
 if any(strcmpi(main_or_mini,'mini'))
     update_grid_mini_ax(main_figure);
 end
 
+if any(strcmpi(main_or_mini,'main'))
+    update_grid(main_figure);
+end
 update_info_panel([],[],1);
 end
