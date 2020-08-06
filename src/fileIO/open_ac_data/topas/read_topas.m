@@ -155,8 +155,20 @@ for i_cell=1:length(Filename_cell)
     data.nb_channel=unique(data.channel_number);
     
     transceiver(data.nb_channel)=transceiver_cl();
+    
     att=attitude_nav_cl('Heading',zeros(size(data.pingTime)),'Pitch',data.tx_pitch,'Roll',data.tx_roll,'Heave',data.tx_heave,'Time',data.pingTime);
-    gps_obj=gps_data_cl('Lat',data.lat_north,'Long',data.lon_east,'Time',data.pingTime);
+    
+    lat_deg=sign(data.lat_north).*round(abs(data.lat_north));
+    lat_min=sign(data.lat_north).*(abs(data.lat_north)-abs(lat_deg))*100/60;
+    
+    lon_deg=sign(data.lon_east).*round(abs(data.lon_east));
+    lon_min=sign(data.lon_east).*(abs(data.lon_east)-abs(lon_deg))*100/60;
+    
+    lat_tot  = lat_deg+lat_min;
+    lon_tot = lon_deg+lon_min;
+    
+    gps_obj=gps_data_cl('Lat',lat_tot,'Long',lon_tot,'Time',data.pingTime);
+    
     for ic=1:max(data.nb_channel)
         
         
@@ -182,7 +194,7 @@ for i_cell=1:length(Filename_cell)
         
         
         config_obj=config_cl();
-        config_obj.ChannelID=sprintf('TOPAS %.0fkHz',num2str(nanmean(data.CentreFreq(idx_channel))));
+        config_obj.ChannelID=sprintf('TOPAS %.0fkHz',nanmean(data.CentreFreq(idx_channel))/1e3);
         params_obj=params_cl(nb_pings);
         envdata=env_data_cl('SoundSpeed',c);
         config_obj.EthernetAddress='';
@@ -210,7 +222,7 @@ for i_cell=1:length(Filename_cell)
         params_obj.PulseLength(:)=nanmean(data.ChirpLength(idx_channel))/1e3;
         params_obj.SampleInterval(:)=1./data.sampFreq(idx_channel);
         params_obj.TransmitPower(:)=data.sourceLevel(idx_channel);
-        params_obj.Absorption(:)= seawater_absorption((params_obj.FrequencyStart+params_obj.FrequencyEnd(1))/2/1e3, (envdata.Salinity), (envdata.Temperature), (envdata.Depth),'fandg')/1e3;
+        params_obj.Absorption(:)= seawater_absorption((params_obj.FrequencyStart(1)+params_obj.FrequencyEnd(1))/2/1e3, (envdata.Salinity), (envdata.Temperature), (envdata.Depth),'fandg')/1e3;
         
         power_lin=zeros(nb_samples,nb_pings);
         
@@ -232,17 +244,9 @@ for i_cell=1:length(Filename_cell)
         
        
         
-        lat=data.lat_north(idx_channel);
-        lon=data.lon_east(idx_channel);
-        
-        lat_deg=sign(lat).*round(abs(lat));
-        lat_min=sign(lat).*(abs(lat)-abs(lat_deg))*100/60;
-        
-        lon_deg=sign(lon).*round(abs(lon));
-        lon_min=sign(lon).*(abs(lon)-abs(lon_deg))*100/60;
         
         att_chan=attitude_nav_cl('Heading',zeros(size(data.pingTime(idx_channel))),'Pitch',data.tx_pitch(idx_channel),'Roll',data.tx_roll(idx_channel),'Heave',data.tx_heave(idx_channel),'Time',data.pingTime(idx_channel));
-        gps_chan=gps_data_cl('Lat',lat_deg+lat_min,'Long',lon_deg+lon_min,'Time',data.pingTime(idx_channel));
+        gps_chan=gps_data_cl('Lat',lat_tot(idx_channel),'Long',lon_tot(idx_channel),'Time',data.pingTime(idx_channel));
         transceiver(ic)=transceiver_cl('Data',ac_data_temp,...
             'AttitudeNavPing',att_chan,...
             'GPSDataPing',gps_chan,...

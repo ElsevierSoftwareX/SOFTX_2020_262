@@ -69,7 +69,7 @@ try
     map_tab_comp=getappdata(main_figure,'Map_tab');
     
     if ~isvalid(map_tab_comp.curr_track)
-        map_tab_comp.curr_track=matlab.graphics.chart.primitive.Line('Parent',map_tab_comp.ax,'Color','r','linestyle','--','linewidth',1,'tag','curr_track');
+        map_tab_comp.curr_track=matlab.graphics.chart.primitive.Line('Parent',map_tab_comp.ax,'Color','r','linestyle','-','linewidth',1,'tag','curr_track');
         map_tab_comp.curr_track.LatitudeDataMode='manual';
     end
     

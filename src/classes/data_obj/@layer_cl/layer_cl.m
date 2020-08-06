@@ -52,7 +52,7 @@ classdef layer_cl < matlab.mixin.Copyable
             addParameter(p,'EnvData',env_data_cl(),check_env_class);
             addParameter(p,'OriginCrest','');
              addParameter(p,'Algo',algo_cl.empty(),@(x) isa(x,'algo_cl')||isempty(x));
-            addParameter(p,'SurveyData',{survey_data_cl()},@(obj) isa(obj,'survey_data_cl')|iscell(obj)|isempty(obj))
+            addParameter(p,'SurveyData',survey_data_cl.empty(),@(obj) isa(obj,'survey_data_cl')|iscell(obj)|isempty(obj))
             
             parse(p,varargin{:});
             results=p.Results;

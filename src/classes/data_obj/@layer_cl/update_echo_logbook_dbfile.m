@@ -157,6 +157,7 @@ for ilay=1:length(layers_obj)
                         end_time=layers_obj(ilay).Transceivers(1).Time(end);
                         start_time=layers_obj(ilay).Transceivers(1).Time(1);
                         survdata_temp.surv_data_to_logbook_db(dbconn,file_curr_short,'StartTime',start_time,'EndTime',end_time);
+                        layers_obj(ilay).set_survey_data(survdata_temp);
                     end
                 end
                 

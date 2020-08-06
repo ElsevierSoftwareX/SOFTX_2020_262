@@ -51,7 +51,7 @@ uimenu(context_menu,'Label','Filter Bottom ...','Callback',@filter_bottom_callba
 uimenu(context_menu,'Label','Remove Bottom','Callback',{@rm_bottom_callback,main_figure});
 
 switch layer.Filetype
-    case 'EK60'
+    case {'EK60' 'EK80'}
         uimenu(context_menu,'Label','Reload Simrad bottom','Callback',@reload_ek_bot_cback);
 end
 uimenu(context_menu,'Label','Display Bottom Region','Callback',@display_bottom_region_callback);

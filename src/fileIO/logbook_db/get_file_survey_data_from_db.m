@@ -9,7 +9,8 @@ try
         initialize_echo_logbook_dbfile(path_f,[],0)
     end
     dbconn=sqlite(db_file,'connect');
-    survey_data=dbconn.fetch('SELECT SurveyName,Voyage from survey');
+    survey_data=dbconn.fetch('SELECT SurveyName,Voyage FROM survey');
+    
     if isempty(survey_data)
         survey_data={'' ''};
     end
@@ -21,6 +22,7 @@ try
     catch
         data_logbook=dbconn.fetch(sprintf('SELECT Snapshot,Stratum,Transect,StartTime,EndTime,Comment FROM logbook WHERE Filename = "%s%s" ORDER BY StartTime',filename_s,end_file));
     end
+    
     
     nb_surv_data=size(data_logbook,1);
     surv_data=cell(1,nb_surv_data);
@@ -47,20 +49,21 @@ try
     if ~isempty(surv_data)
         st=surv_data{1}.StartTime;
         et=surv_data{end}.EndTime;
+        
+        if abs(fet-et)>1/(24*60*60) && abs(st-fst)>1/(24*60*60)
+            surv_data{1}.StartTime=fst;
+            surv_data{end}.EndTime=fet;
+            dbconn.exec(sprintf('UPDATE logbook SET StartTime = "%s",EndTime = "%s"   WHERE Filename = "%s%s" AND StartTime = "%s"',datestr(fst,'yyyy-mm-dd HH:MM:SS'),datestr(fet,'yyyy-mm-dd HH:MM:SS'),filename_s,end_file,data_logbook{i,4}))
+        elseif abs(st-fst)>1/(24*60*60)
+            surv_data{1}.StartTime=fst;
+            dbconn.exec(sprintf('UPDATE logbook SET StartTime = "%s"   WHERE Filename = "%s%s" AND StartTime = "%s"',datestr(fst,'yyyy-mm-dd HH:MM:SS'),filename_s,end_file,data_logbook{i,4}))
+        elseif abs(fet-et)>1/(24*60*60)
+            surv_data{end}.EndTime=fet;
+            dbconn.exec(sprintf('UPDATE logbook SET EndTime = "%s" WHERE Filename = "%s%s" AND EndTime = "%s"',datestr(fet,'yyyy-mm-dd HH:MM:SS'),filename_s,end_file,data_logbook{i,5}));
+        end
+        
     end
-    
-    if abs(fet-et)>1/(24*60*60) && abs(st-fst)>1/(24*60*60)
-        surv_data{1}.StartTime=fst;
-        surv_data{end}.EndTime=fet;
-        dbconn.exec(sprintf('UPDATE logbook SET StartTime = "%s",EndTime = "%s"   WHERE Filename = "%s%s" AND StartTime = "%s"',datestr(fst,'yyyy-mm-dd HH:MM:SS'),datestr(fet,'yyyy-mm-dd HH:MM:SS'),filename_s,end_file,data_logbook{i,4}))        
-    elseif abs(st-fst)>1/(24*60*60)
-        surv_data{1}.StartTime=fst;
-        dbconn.exec(sprintf('UPDATE logbook SET StartTime = "%s"   WHERE Filename = "%s%s" AND StartTime = "%s"',datestr(fst,'yyyy-mm-dd HH:MM:SS'),filename_s,end_file,data_logbook{i,4}))  
-    elseif abs(fet-et)>1/(24*60*60)
-        surv_data{end}.EndTime=fet;
-        dbconn.exec(sprintf('UPDATE logbook SET EndTime = "%s" WHERE Filename = "%s%s" AND EndTime = "%s"',datestr(fet,'yyyy-mm-dd HH:MM:SS'),filename_s,end_file,data_logbook{i,5}));
-    end
-     dbconn.close();
+    dbconn.close();
     
 catch err
     print_errors_and_warnings([],'error',err);

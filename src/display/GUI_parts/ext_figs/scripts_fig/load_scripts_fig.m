@@ -219,6 +219,9 @@ end
 function run_script_callback_v2(src,~,hObject,main_figure,flag,discard_lay)
 
 selected_scripts=getappdata(hObject,'SelectedScripts');
+app_path=get_esp3_prop('app_path');
+
+selected_scripts=cellfun(@(x) fullfile(app_path.scripts.Path_to_folder,x),selected_scripts,'UniformOutput',0);
 
 if ispc()
     choice=question_dialog_fig(main_figure,'Update display','Do you want show the echograms as you load them (takes more time...)','timeout',5);

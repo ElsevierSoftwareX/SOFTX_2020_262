@@ -1,6 +1,5 @@
 function [basemap_list,url_list,attribution_list,basemap_dispname_list]=list_basemaps(add,online,varargin)
 
-
 app_path_main=whereisEcho();
 config_path=fullfile(app_path_main,'config');
 
@@ -25,7 +24,6 @@ if isempty(basemap_struct)
     return;
 end
 
-
 basemap_list={basemap_struct(:).name};
 url_list={basemap_struct(:).url};
 attribution_list={basemap_struct(:).attribution};
@@ -35,11 +33,7 @@ idx_rem=[];
 
 if add>0
     basenames={'darkwater' 'none'};
-    %[out,msg]=system('ping -w 1 -n 1 https://bitbucket.org/echoanalysis/esp3/src/master/');
     conn=online>0;
-%     if ~(contains(msg,'100% loss')||contains(msg,'could not find host'))
-%         conn=true;       
-%     end
     
     for i=1:numel(basemap_struct)
         try

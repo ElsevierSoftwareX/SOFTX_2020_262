@@ -72,6 +72,8 @@ for uishp=1:numel(geo_data_shp)
             tmp_plot.LatitudeDataMode='manual';
             h_in=[h_in tmp_plot];
             
+            temp_txt=[];
+            
             switch type
                 
                 case 'stratum'
@@ -94,8 +96,7 @@ for uishp=1:numel(geo_data_shp)
                         temp_txt=text(ax,nanmean(bbox(:,2)),nanmean(bbox(:,1)),str,...
                             'Fontsize',6,'Fontweight','normal','Interpreter','None','VerticalAlignment','bottom','Clipping','on','Color',color,'tag',new_shp_f{uishp});
                     end
-                otherwise
-                    temp_txt=[];
+                    
             end
             
             h_in=[h_in temp_txt];

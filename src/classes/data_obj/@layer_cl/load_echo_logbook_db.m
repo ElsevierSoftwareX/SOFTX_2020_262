@@ -69,10 +69,10 @@ for ip=1:length(pathtofile)
 end
 
 try
-    layers_obj.add_survey_data_db(); 
     if incomplete>0
         layers_obj.update_echo_logbook_dbfile();
     end
+    layers_obj.add_survey_data_db(); 
 catch err
     print_errors_and_warnings([],'error',err);
 end

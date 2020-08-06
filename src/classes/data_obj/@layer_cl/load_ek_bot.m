@@ -12,8 +12,8 @@ Bottom_sim.time=[];
 frequencies=[];
 try
     for ui=1:numel(Filenames)
-        Filename=Filenames{ui};
-        Filename_bot=[Filename(1:end-4) '.bot'];
+        [p_tmp,f_tmp,~]=fileparts(Filenames{ui});
+        Filename_bot=fullfile(p_tmp,[f_tmp '.bot']);
         
         if isfile(Filename_bot)
             [Bottom_sim_temp, frequencies_temp] = readEKBotSimple(Filename_bot);

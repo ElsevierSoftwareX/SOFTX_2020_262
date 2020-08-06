@@ -65,9 +65,7 @@ classdef gps_data_cl
                 obj.Time=p.Results.Time;
                 obj.Dist=zeros(1,nb_pings);
                 obj.NMEA='';
-            end
-            
-            
+            end            
         end
         
         
@@ -129,7 +127,7 @@ classdef gps_data_cl
 %             figure();
 %             geoplot(obj.Lat(id_keep),obj.Long(id_keep),'-xr');hold on;
 %             geoplot(obj.Lat,obj.Long,'k');
-
+            id_keep = unique([1 id_keep(:)' numel(obj.Lat)]);
             id_keep = id_nn(id_keep);
             
             obj_out=gps_data_cl('Lat',obj.Lat(id_keep),'Long',obj.Long(id_keep),'Time',obj.Time(id_keep),'NMEA',obj.NMEA);

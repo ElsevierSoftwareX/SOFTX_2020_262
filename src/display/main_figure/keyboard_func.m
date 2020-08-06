@@ -358,7 +358,7 @@ try
                 db_file=fullfile(path_f,'echo_logbook.db');
             end
             disp_perso(main_figure,sprintf('Looking for new files for logbook %s',db_file));
-            [file_added,files_rem]=layer_cl().update_echo_logbook_dbfile('main_figure',main_figure,'DbFile',db_file);
+            [file_added,files_rem]=layer_cl.empty.update_echo_logbook_dbfile('main_figure',main_figure,'DbFile',db_file);
             
             if ~isempty(file_added)||~isempty(files_rem)
                 dest_fig=getappdata(main_figure,'echo_tab_panel');
