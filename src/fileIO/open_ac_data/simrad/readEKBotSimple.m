@@ -10,8 +10,11 @@ if (fid==-1)
     return;
 end
 
+
+
 %  read configuration datagram (file header)
 [~, frequencies,~] = readEKRaw_ReadHeader(fid);
+
 bottom=[];
 
 nPings=1;
@@ -31,25 +34,23 @@ while (true)
         
         case 'BOT0'
             
-            
             %  Read BOT datagram
             transceivercount = fread(fid, 1, 'int32', 'l');
             depth = fread(fid, transceivercount, 'float64', 'l');
-            
             
             %  store data assuming there are transceivercount depths per datagram.
             bottom.number(nPings) = nPings;
             bottom.time(nPings) = datenum(1601, 1, 1, 0, 0, dgTime);
             bottom.depth(:,nPings) = depth;
             nPings = nPings + 1;
-            
-            
-            
+  
         otherwise
             %  Skip unknown datagram - print warning message
-            warning('readEKRaw:IOError', strcat('Unknown datagram ''', ...
-                dgheader.datagramtype,''' in file'));
-            
+            if ~isdeployed
+                warning('readEKRaw:IOError', strcat('Unknown datagram ''', ...
+                    dgType,''' in file'));
+            end
+            break;
     end
     
     %  datagram length is repeated...

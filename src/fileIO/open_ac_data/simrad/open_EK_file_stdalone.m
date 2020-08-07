@@ -455,9 +455,8 @@ if ~isequal(Filename_cell, 0)
                 for itrans=1:length(trans_obj)
                     
                     if~isempty(trans_depth)
-                        [dt,idx]=nanmin(abs(depth_time(:)-trans_obj(itrans).Time(:)'));
-                        idx_rem= dt>nanmax(10*mode(diff(trans_obj(itrans).Time)),5*mode(diff(depth_time)));
-                        trans_depth_resampled=trans_depth(idx);
+                        trans_depth_resampled=resample_data_v2(trans_depth(:)',depth_time(:)',trans_obj(itrans).Time(:)');
+                        idx_rem= isnan(trans_depth_resampled);
                         trans_depth_resampled(idx_rem)=0;
                         trans_obj(itrans).TransducerDepth=trans_depth_resampled;
                     else
@@ -469,8 +468,7 @@ if ~isequal(Filename_cell, 0)
                     id_rem=union(id_rem,uu);
                     continue;
                 end
-                
-
+               
                 
                 for i =1:length(trans_obj)
                     gps_data_ping=gps_data.resample_gps_data(trans_obj(i).Time);

@@ -1,7 +1,7 @@
 function display_lines(main_figure)
 
 layer=get_current_layer();
-lines_tab_comp=getappdata(main_figure,'Lines_tab');
+%lines_tab_comp=getappdata(main_figure,'Lines_tab');
 axes_panel_comp=getappdata(main_figure,'Axes_panel');
 curr_disp=get_esp3_prop('curr_disp');
 [trans_obj,idx_freq]=layer.get_trans(curr_disp);

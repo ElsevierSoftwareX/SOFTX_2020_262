@@ -21,6 +21,10 @@ try
             continue;
         end
         
+        if isempty(frequencies_temp)
+            frequencies_temp = layer_obj.AvailableFrequencies;
+        end
+        
         if isempty(frequencies)
             Bottom_sim.depth=Bottom_sim_temp.depth;
             Bottom_sim.time=Bottom_sim_temp.time;
