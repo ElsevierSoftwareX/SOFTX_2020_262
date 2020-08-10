@@ -171,11 +171,11 @@ for ui=1:num_ite
     end
     
     [nb_samples,nb_pings]=size(TS);
-    [~,N]=trans_obj.get_pulse_length(idx_pings);
-    N=nanmax(N);
+    [T,N]=trans_obj.get_pulse_Teff(idx_pings);
+
     Idx_samples_lin=Idx_samples_lin_tot(idx_r,idx_pings);
     r=trans_obj.get_transceiver_range(idx_r);
-    r_p=trans_obj.get_transceiver_range(N);
+    r_p=trans_obj.get_transceiver_range(nanmax(N));
     Range=repmat(r,1,nb_pings);
     
 
@@ -231,16 +231,13 @@ for ui=1:num_ite
     Samples=repmat(idx_r',1,nb_pings);
     Ping=repmat(trans_obj.get_transceiver_pings(idx_pings),nb_samples,1);
     Time=repmat(trans_obj.get_transceiver_time(idx_pings),nb_samples,1);
-    
-    
-    [T,Pulse_length_sample]=trans_obj.get_pulse_length(idx_pings);
-    Pulse_length_sample=repmat(Pulse_length_sample,nb_samples,1);
-    Np=Pulse_length_sample(1);
+ 
+    N=repmat(N,nb_samples,1);
+    Np=N(1);
     T=T(1);
 
-    
-    Pulse_length_max_sample=ceil(Pulse_length_sample.*p.Results.MaxNormPL);
-    Pulse_length_min_sample=floor(Pulse_length_sample.*p.Results.MinNormPL);
+    Pulse_length_max_sample=ceil(N.*p.Results.MaxNormPL);
+    Pulse_length_min_sample=floor(N.*p.Results.MinNormPL);
     
     c=nanmean(trans_obj.get_soundspeed(idx_r));
 
@@ -293,7 +290,7 @@ for ui=1:num_ite
                 pulse_env_after_lin=pulse_env_after_lin+idx_sup_after;
             end
             
-            temp_pulse_length_sample=Pulse_length_sample(idx_peaks);
+            temp_N=N(idx_peaks);
             pulse_length_lin=pulse_env_before_lin+pulse_env_after_lin+1;
             
             idx_good_pulses=(pulse_length_lin<=Pulse_length_max_sample(idx_peaks))&(pulse_length_lin>=Pulse_length_min_sample(idx_peaks));
@@ -301,7 +298,7 @@ for ui=1:num_ite
             idx_target_lin=idx_peaks_lin(idx_good_pulses);
             idx_samples_lin=idx_samples_lin(idx_good_pulses);
             pulse_length_lin=pulse_length_lin(idx_good_pulses);
-            pulse_length_trans_lin=temp_pulse_length_sample;
+            pulse_length_trans_lin=temp_N;
             pulse_env_before_lin=pulse_env_before_lin(idx_good_pulses);
             pulse_env_after_lin=pulse_env_after_lin(idx_good_pulses);
             

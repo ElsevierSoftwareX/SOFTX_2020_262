@@ -45,7 +45,7 @@ try
             continue;
         end
         idx_bot=find(layer_obj.Frequencies(itrans)==frequencies);
-        if ~isempty(idx_bot)
+        if ~isempty(idx_bot)&&~isempty(Bottom_sim.depth)
             curr_range=layer_obj.Transceivers(itrans).get_transceiver_range();
             depth_resampled=resample_data_v2(Bottom_sim.depth(idx_bot,:),Bottom_sim.time,layer_obj.Transceivers(itrans).Time);
             depth_resampled=depth_resampled-layer_obj.Transceivers(itrans).TransducerDepth;

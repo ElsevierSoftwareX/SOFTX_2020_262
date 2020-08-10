@@ -1,21 +1,19 @@
 function [bottom, frequencies] = readEKBotSimple(filename)
-
+bottom.number = [];
+bottom.time = [];
+bottom.depth = [];
+frequencies = [];
 
 %  open file for reading
 fid = fopen(filename, 'r');
 if (fid==-1)
     [~, name, ext] = fileparts(filename);
-    bottom = -1; frequencies=-1;
     warning('Could not open out file: %s%s',name,ext);
     return;
 end
 
-
-
 %  read configuration datagram (file header)
 [~, frequencies,~] = readEKRaw_ReadHeader(fid);
-
-bottom=[];
 
 nPings=1;
 %  read entire file, processing individual datagrams
