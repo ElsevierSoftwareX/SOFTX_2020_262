@@ -535,7 +535,7 @@ if ~isequal(Filename_cell, 0)
         end
         
         if ~isempty(load_bar_comp)
-            set(load_bar_comp.progress_bar,'Value',uu);
+            set(load_bar_comp.progress_bar, 'Minimum',0, 'Maximum',length(Filename_cell),'Value',uu);
         end
         
     end

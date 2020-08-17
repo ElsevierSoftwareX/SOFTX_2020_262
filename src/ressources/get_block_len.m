@@ -22,4 +22,6 @@ else
     end
 end
 
+block_len_def = nanmax(block_len_def,1e2);
+
 end

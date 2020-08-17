@@ -28,6 +28,7 @@ load_bar_comp.progress_bar.setText('Updating Map...');
 layer=get_current_layer();
 [folders,~]=layers.get_path_files();
 folders=unique(folders);
+
 try
     if ~isempty(src)
         

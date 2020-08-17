@@ -34,9 +34,14 @@ classdef gps_data_cl
                 end
                 obj.NMEA=obj.NMEA(:)';
                 
+                dll = 0.0090;%(so that it is equivalent to 1 km on a longitude change)
+                
                 obj.Long(obj.Long<0)=obj.Long(obj.Long<0)+360;
+                
                 idx_nan=find((isnan(obj.Lat)+isnan(obj.Long))>0|(obj.Lat==0)|...
-                    obj.Lat>90|obj.Lat<-90|obj.Long<0|obj.Long>360);
+                    obj.Lat>90|obj.Lat<-90|obj.Long<0|obj.Long>360|...
+                    filter2(ones(1,2),(abs(diff(obj.Lat)))>dll,'full')>=2|...
+                    filter2(ones(1,2),(abs(diff(obj.Long)))>dll,'full')>=2);
                 
                 obj.Long(idx_nan)=nan;
                 obj.Lat(idx_nan)=nan;
@@ -127,7 +132,7 @@ classdef gps_data_cl
 %             figure();
 %             geoplot(obj.Lat(id_keep),obj.Long(id_keep),'-xr');hold on;
 %             geoplot(obj.Lat,obj.Long,'k');
-            id_keep = unique([1 id_keep(:)' numel(obj.Lat)]);
+            id_keep = unique([1 id_keep(:)' numel(obj.Lat(id_nn))]);
             id_keep = id_nn(id_keep);
             
             obj_out=gps_data_cl('Lat',obj.Lat(id_keep),'Long',obj.Long(id_keep),'Time',obj.Time(id_keep),'NMEA',obj.NMEA);

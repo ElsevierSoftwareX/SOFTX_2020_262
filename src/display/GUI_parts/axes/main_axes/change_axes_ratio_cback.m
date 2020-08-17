@@ -16,6 +16,7 @@ switch curr_fig.SelectionType
         cp = curr_fig.CurrentPoint;
         x1 = cp(1,1)-pos_ax(1);
         y1 = pos_panel(4)-cp(1,2);
+        
         switch(hov)
             case 'h'
                 ptr='top';
@@ -46,7 +47,7 @@ end
         cp = curr_fig.CurrentPoint;
         pos_ax=getpixelposition(src,true);
         x1 = cp(1,1)-pos_ax(1);
-        y1 = pos_panel(4)-cp(1,2);
+        y1 = pos_ax(2)+pos_ax(4)-cp(1,2);
         
         %y1/pos_panel(4);
         switch(hov)

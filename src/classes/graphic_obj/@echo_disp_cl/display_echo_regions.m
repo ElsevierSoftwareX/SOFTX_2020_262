@@ -24,7 +24,20 @@ end
 
 main_axes=echo_obj.main_ax;
 
-di=1/2;
+switch echo_obj.echo_usrdata.geometry_y
+    case'samples'
+        dyi  =1/2;
+    otherwise
+        dyi  =0;
+end
+
+switch echo_obj.echo_usrdata.geometry_y
+    case'pings'
+        dxi  =1/2;
+    otherwise
+        dxi  =0;
+end
+
 
 active_regs=trans_obj.find_regions_Unique_ID(curr_disp.Active_reg_ID);
 
@@ -81,13 +94,13 @@ for i=1:nb_reg
             case'samples'
                 %                     reg_trans_depth=zeros(size(reg_curr.Idx_pings));
                 %                     dr=1;
-                poly.Vertices(:,1)=poly.Vertices(:,1)+1/2;
-                poly.Vertices(:,2)=poly.Vertices(:,2)+di;
+                poly.Vertices(:,1)=poly.Vertices(:,1)+dyi;
+                poly.Vertices(:,2)=poly.Vertices(:,2)+dxi;
                 
                 %r_text=nanmean(reg_curr.Idx_r);
-            case 'depth'
+            case {'depth' 'range'}
                 
-                if curr_disp.DispSecFreqsWithOffset>0
+                if strcmpi(echo_obj.echo_usrdata.geometry_y,'depth')
                     reg_trans_depth=trans_obj.get_transducer_depth(reg_curr.Idx_pings);
                 else
                     reg_trans_depth=zeros(1,numel(reg_curr.Idx_pings));
@@ -98,7 +111,7 @@ for i=1:nb_reg
                 end
                 
                 if any(reg_trans_depth~=0)
-                    if numel(reg_trans_depth)>1&&~strcmp(reg_curr.Shape,'Polygon')
+                    if numel(reg_trans_depth)>1
                         diff_vert=diff(poly.Vertices(:,1));
                         temp_x_vert=arrayfun(@(x,z) x+sign(z)*(0:abs(z))',poly.Vertices(1:end-1,1),diff_vert,'un',0);
                         %id_rem=isnan(diff_vert);
@@ -127,7 +140,7 @@ for i=1:nb_reg
                 new_vert(~isnan(poly.Vertices(:,2)))=r(idx_r)*sin(t_angle);
                 poly.Vertices(:,2)=new_vert;
                 
-                poly.Vertices(:,1)=poly.Vertices(:,1)+1/2;
+                poly.Vertices(:,1)=poly.Vertices(:,1)+dyi;
                 
                 if numel(reg_trans_depth)>1
                     [~,idx]=nanmin(abs(poly.Vertices(:,1)-reg_curr.Idx_pings),[],2);

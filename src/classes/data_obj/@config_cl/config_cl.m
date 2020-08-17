@@ -13,8 +13,8 @@ classdef config_cl
         HWChannelConfiguration=-1;
         MaxTxPowerTransceiver=-1;
         PulseLength=0.001;
-        AngleOffsetAlongship=-1;
-        AngleOffsetAthwartship=-1;
+        AngleOffsetAlongship=0;
+        AngleOffsetAthwartship=0;
         AngleSensitivityAlongship=-1;
         AngleSensitivityAthwartship=-1;
         BeamType=1;

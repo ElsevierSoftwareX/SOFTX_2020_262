@@ -80,13 +80,13 @@ classdef echo_disp_cl < handle
             end
             
             obj.pos_in_parent = pos;
-            user_data=init_echo_usrdata();
                      
             obj.echo_usrdata.ax_tag = p.Results.ax_tag;
             obj.echo_usrdata.geometry_x=p.Results.geometry_x;
             obj.echo_usrdata.geometry_y=p.Results.geometry_y;
             
-            obj.main_ax=feval(ax_fcn,'Parent',parent_h,...
+            obj.main_ax=feval(ax_fcn,...
+                'Parent',parent_h,...
                 'Color',col_ax,...
                 'GridColor',col_grid,...
                 'MinorGridColor',col_grid,...
@@ -247,7 +247,7 @@ classdef echo_disp_cl < handle
                 'FaceColor',p.Results.FaceAlpha,...
                 'LineStyle','none',...
                 'AlphaDataMapping',p.Results.AlphaDataMapping,...
-                'UserData',user_data,...
+                'UserData',obj.echo_usrdata,...
                 'Tag',p.Results.ax_tag);
             
             set(obj.echo_bt_surf,...
@@ -523,11 +523,9 @@ classdef echo_disp_cl < handle
                     case'samples'
                         bot_vec_red=trans_obj.get_bottom_idx(idx_pings);
                     case 'depth'
-                        if curr_disp.DispSecFreqsWithOffset>0
-                            bot_vec_red=trans_obj.get_bottom_depth(idx_pings);
-                        else
-                            bot_vec_red=trans_obj.get_bottom_range(idx_pings);
-                        end
+                        bot_vec_red=trans_obj.get_bottom_depth(idx_pings);
+                    case 'range'
+                        bot_vec_red=trans_obj.get_bottom_range(idx_pings);
                 end
                 
                 idx_bot_red=bsxfun(@le,bot_vec_red,ydata);
@@ -566,6 +564,72 @@ classdef echo_disp_cl < handle
             
         end
         
+        function [ping_range,sample_range] = get_ping_sample_range(echo_obj,trans_obj)
+                
+            switch echo_obj.echo_usrdata.geometry_x
+                case 'pings'
+                    xdata=trans_obj.get_transceiver_pings();
+                case 'seconds'
+                    xdata=trans_obj.get_transceiver_time();
+                case 'meters'
+                    xdata=trans_obj.GPSDataPing.Dist;
+            end
+            
+            [~,p_min] = nanmin(abs(xdata-nanmin(echo_obj.echo_surf.XData(:))));
+            [~,p_max] = nanmin(abs(xdata-nanmax(echo_obj.echo_surf.XData(:))));
+            ping_range = p_min:p_max;
+            switch echo_obj.echo_usrdata.geometry_y
+                case 'samples'
+                    ydata = trans_obj.get_transceiver_samples();
+                case 'depth'
+                    ydata=trans_obj.get_transceiver_depth([],[]);
+                case 'range'
+                    ydata=trans_obj.get_transceiver_range();
+            end
+            
+            [~,s_min] = nanmin(abs(ydata-nanmin(echo_obj.echo_surf.YData(:))));
+            [~,s_max] = nanmin(abs(ydata-nanmax(echo_obj.echo_surf.YData(:))));
+            
+            sample_range = s_min:s_max;
+        end
+        
+        
+        function ping_range = get_ping_range(echo_obj,trans_obj)
+            
+            switch echo_obj.echo_usrdata.geometry_x
+                case 'pings'
+                    xdata=trans_obj.get_transceiver_pings();
+                case 'seconds'
+                    xdata=trans_obj.get_transceiver_time();
+                case 'meters'
+                    xdata=trans_obj.GPSDataPing.Dist;
+            end
+            
+            [~,p_min] = nanmin(abs(xdata-nanmin(echo_obj.echo_surf.XData(:))));
+            [~,p_max] = nanmin(abs(xdata-nanmax(echo_obj.echo_surf.XData(:))));
+            ping_range = p_min:p_max;
+        end
+        
+        
+        function sample_range = get_sample_range(echo_obj,trans_obj)
+                
+
+            switch echo_obj.echo_usrdata.geometry_y
+                case 'samples'
+                    ydata = trans_obj.get_transceiver_samples();
+                case 'depth'
+                    ydata=trans_obj.get_transceiver_depth([],[]);
+                case 'range'
+                    ydata=trans_obj.get_transceiver_range();
+            end
+            
+            [~,s_min] = nanmin(abs(ydata-nanmin(echo_obj.echo_surf.YData(:))));
+            [~,s_max] = nanmin(abs(ydata-nanmax(echo_obj.echo_surf.YData(:))));
+            
+            sample_range = s_min:s_max;
+        end
+        
+        
         function display_echo_bottom(obj,trans_obj,varargin)
             
             p = inputParser;
@@ -579,14 +643,15 @@ classdef echo_disp_cl < handle
             curr_disp = p.Results.curr_disp;
             
             col_bot  =p.Results.col_bot;
+            
             if isempty(col_bot)
                 
                 [cmap,col_ax,col_lab,col_grid,col_bot,col_txt,col_tracks]=init_cmap(curr_disp.Cmap);
                 
             end
             
-            idx_pings_lim=get(obj.echo_surf,'XData');
-            idx_pings=nanmax(floor(idx_pings_lim(1)),1):ceil(idx_pings_lim(end));
+            idx_pings = obj.get_ping_range(trans_obj);
+            
             
             if ~isempty(trans_obj.Bottom.Sample_idx)
                 idx_bottom=trans_obj.Bottom.Sample_idx(idx_pings);
@@ -602,20 +667,20 @@ classdef echo_disp_cl < handle
                 x=linspace(xdata(1),xdata(end),length(xdata));
                 
                 
-                if ~strcmpi(obj.echo_usrdata.geometry_y,'depth')
-                    di=-1/2;
-                    ydata=trans_obj.get_transceiver_samples()+di;
-                    y=nan(size(x));
-                    y(~isnan(idx_bottom))=ydata(idx_bottom(~isnan(idx_bottom)));
-                    y((y-di)==numel(ydata))=nan;
-                else
-                    if curr_disp.DispSecFreqsWithOffset>0
+                switch obj.echo_usrdata.geometry_y
+                    case 'samples'
+                        di=-1/2;
+                        ydata=trans_obj.get_transceiver_samples()+di;
+                        y=nan(size(x));
+                        y(~isnan(idx_bottom))=ydata(idx_bottom(~isnan(idx_bottom)));
+                        y((y-di)==numel(ydata))=nan;
+                    case 'depth'
                         y=trans_obj.get_bottom_depth(idx_pings);
-                    else
+                    case 'range'
                         y=trans_obj.get_bottom_range(idx_pings);
-                    end
-                    
                 end
+                
+                
                 
                 set(bt_h,'XData',x,'YData',y,'visible',curr_disp.DispBottom,'color',col_bot);
                 
@@ -636,6 +701,7 @@ classdef echo_disp_cl < handle
                 vpos_r = 0;
             end
             
+              
             pos_v=[pos_m(1)-vpos_r*pos_m(3) pos_m(2) vpos_r*pos_m(3) pos_m(4)];            
             pos_h=[pos_m(1) pos_m(2)+pos_m(4) pos_m(3) hpos_r*pos_m(4)];
             

@@ -28,21 +28,23 @@ switch units
     case{ 'characters','char'}
         gui_fmt.x_sep=0.5;
         gui_fmt.y_sep=0.25;
-        gui_fmt.txt_w=20;
+        gui_fmt.txt_w=18;
         gui_fmt.txt_h=1.2;
-        gui_fmt.box_w=6.5;
+        gui_fmt.box_w=6;
         gui_fmt.box_h=1.2;
         gui_fmt.button_w=9;
         gui_fmt.button_h=1.2;
+        
     case'pixels'
         gui_fmt.x_sep=4;
         gui_fmt.y_sep=5;
-        gui_fmt.txt_w=95;
+        gui_fmt.txt_w=90;
         gui_fmt.txt_h=20;
-        gui_fmt.box_w=32;
+        gui_fmt.box_w=30;
         gui_fmt.box_h=25;
         gui_fmt.button_w=50;
         gui_fmt.button_h=25;
+        
     case {'normalized','norm'}
         
         if nargin<3

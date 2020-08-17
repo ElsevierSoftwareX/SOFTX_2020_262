@@ -10,9 +10,11 @@ if ~will_it_work(echo_tab_panel,9.8,false)
     esp3_tab_comp.browser.setCurrentLocation(adress);
 elseif will_it_work(echo_tab_panel,9.8,true)
     g = uigridlayout(esp3_tab_comp.esp3_tab);
+    g.RowHeight={'1x'};
+    g.ColumnWidth={'1x'};
     esp3_tab_comp.uihtml_h=uihtml(g);
     esp3_tab_comp.uihtml_h.HTMLSource = adress;
-    esp3_tab_comp.uihtml_h.Layout
+    %esp3_tab_comp.uihtml_h.Layout.
 end
 setappdata(main_figure,'esp3_tab',esp3_tab_comp);
 

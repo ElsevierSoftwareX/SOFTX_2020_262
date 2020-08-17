@@ -102,6 +102,7 @@ gps_exp_menu = uimenu(main_menu.export,'Label','Position (GPS)','Tag','menuexpor
 uimenu(gps_exp_menu,'Label','Export to _gps_data.csv file','Callback',{@export_gps_to_csv_callback,main_figure,[],'_gps_data'});
 uimenu(gps_exp_menu,'Label','Export to shapefile','Callback',{@export_gps_to_shapefile_callback,main_figure,[]});
 uimenu(gps_exp_menu,'Label','Export to .csv or shapefile from raw files','Callback',{@export_nav_to_csv_from_raw_dlbox,main_figure});
+uimenu(gps_exp_menu,'Label','Force update of GPS data in database','Callback',@force_ping_db_update_cback);
 
 NMEA_exp_menu = uimenu(main_menu.export,'Label','NMEA messages','Tag','menuexportnmea');
 uimenu(NMEA_exp_menu,'Label','Export to _NMEA.csv file','Callback',{@export_NMEA_to_csv_callback,main_figure,[],'_NMEA'});
@@ -243,11 +244,11 @@ uimenu(track_tools,'Label','Create Regions from Tracked targets','Callback',{@cr
 survey_results_tools=uimenu(main_menu.tools,'Label','Survey results Tools');
 uimenu(survey_results_tools,'Label','Display survey results','Callback',{@display_survey_results_cback,main_figure});
 
-man_menu.scripts = uimenu(main_figure,'Label','Scripting');
-uimenu(man_menu.scripts ,'Label','Script Manager','Callback',{@load_xml_scripts_callback,main_figure});
-uimenu(man_menu.scripts ,'Label','Script Builder','Callback',{@load_script_builder_callback,main_figure});
+main_menu.scripts = uimenu(main_figure,'Label','Scripting');
+uimenu(main_menu.scripts ,'Label','Script Manager','Callback',{@load_xml_scripts_callback,main_figure});
+uimenu(main_menu.scripts ,'Label','Script Builder','Callback',{@load_script_builder_callback,main_figure});
 if ~isdeployed
-    uimenu(man_menu.scripts ,'Label','MBS Scripts','Callback',{@load_mbs_scripts_callback,main_figure},'separator','on');
+    uimenu(main_menu.scripts ,'Label','MBS Scripts','Callback',{@load_mbs_scripts_callback,main_figure},'separator','on');
 end
 
 main_menu.options = uimenu(main_figure,'Label','Config','Tag','main_menu.options');
@@ -263,6 +264,12 @@ uimenu(main_menu.help_shortcuts,'Label','About','Callback',{@info_menu,main_figu
 
 setappdata(main_figure,'main_menu',main_menu);
 
+end
+
+function force_ping_db_update_cback(~,~)
+layer_obj = get_current_layer();
+layer_obj.add_ping_data_to_db([],1);
+update_map_tab
 end
 
 function open_file_cback(~,~,id)

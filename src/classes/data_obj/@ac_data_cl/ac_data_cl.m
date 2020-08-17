@@ -8,8 +8,9 @@ classdef ac_data_cl < handle
         Type
         FileId uint16
         BlockId uint16
-        Nb_samples
-        Nb_pings
+        Nb_samples = 1
+        Nb_pings = 1
+        Nb_beams = 1
         MemapName
     end
     
@@ -25,6 +26,7 @@ classdef ac_data_cl < handle
             addParameter(p,'SubData',[],check_sub_ac_data_class);
             addParameter(p,'Nb_samples',[],@isnumeric);
             addParameter(p,'Nb_pings',[],@isnumeric);
+            addParameter(p,'Nb_beams',[],@isnumeric);
             addParameter(p,'FileId',[],@isnumeric);
             addParameter(p,'BlockId',[],@isnumeric);
             addParameter(p,'MemapName','',checkname);
@@ -78,7 +80,6 @@ classdef ac_data_cl < handle
             
         end
         
-        %% ?
         function ac_data_file = get_data_idx_file(ac_data_obj,file_id)
             
             ac_data_file = ac_data_cl();
@@ -96,6 +97,7 @@ classdef ac_data_cl < handle
             ac_data_file.FileId     = ones(size(idx));
             ac_data_file.BlockId     = idx_block-nanmin(idx_block)+1;
             ac_data_file.Nb_samples = ac_data_obj.Nb_samples(unique(idx_block));
+            ac_data_file.Nb_beams = ac_data_obj.Nb_beams(unique(idx_block));
             ac_data_file.Nb_pings   = numel(idx);
             ac_data_file.MemapName  = ac_data_obj.MemapName(unique(idx_block));
             

@@ -164,7 +164,7 @@ end
         set(info_panel_comp.percent_BP,'string',trans_obj.bp_percent2str());
 
         set_alpha_map(main_figure,'update_cmap',0,'update_under_bot',0);
-        %update_info_panel([],[],1);
+        update_info_panel([],[],1);
 %         profile off;
 %         profile viewer;
     end

@@ -82,6 +82,15 @@ checked_state=cell(1,nb_chan);
 checked_state(disp_chan)={'on'};
 checked_state(~disp_chan)={'off'};
 
+
+if curr_disp.DispSecFreqsWithOffset
+    c='on';
+    dd = 'depth';
+else
+    c='off';
+    dd = 'range';
+end
+
 for iax=1:nb_chan
     
     switch curr_disp.DispSecFreqsOr
@@ -105,7 +114,7 @@ for iax=1:nb_chan
     
     secondary_freq.echo_obj(iax) = echo_disp_cl(secondary_freq.fig,...
         'YDir',curr_disp.YDir,...
-        'geometry_y','depth',...
+        'geometry_y',dd,...
         'visible_vert',vis_side,...
         'visible_hori',vis_top,...
         'y_ax_pos','right',...
@@ -121,11 +130,7 @@ for iax=1:nb_chan
   
 end
 
-if curr_disp.DispSecFreqsWithOffset
-    c='on';
-else
-    c='off';
-end
+
 
 context_menu=uicontextmenu(secondary_freq.fig,'Tag','MFContextMenu');
 uimenu(context_menu,'Label','Change orientation','Callback',{@change_orientation_callback,main_figure});

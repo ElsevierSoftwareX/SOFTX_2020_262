@@ -47,7 +47,6 @@ for iax=1:length(echo_obj)
     
     switch main_or_mini{iax}
         case 'main'
-            off_disp=0;
             if new==0
                 x=double(get(echo_ax,'xlim'));
                 y=double(get(echo_ax,'ylim'));
@@ -64,14 +63,11 @@ for iax=1:length(echo_obj)
             clear_lines(axes_panel_comp.echo_obj.main_ax);
             
         case 'mini'
-            
-            off_disp=0;
             y=[1 nb_samples];
             x=[1 nb_pings];
         otherwise
-            off_disp=curr_disp.DispSecFreqsWithOffset;
+
             x=double(get(axes_panel_comp.echo_obj.main_ax,'xlim'));
-            
             dr=nanmean(diff(range_t));
             y1=(curr_disp.R_disp(1)-range_t(1))/dr;
             y2=(curr_disp.R_disp(2)-range_t(1))/dr;
@@ -84,8 +80,7 @@ for iax=1:length(echo_obj)
             'Unique_ID',layer_obj.Unique_ID,...
             'curr_disp',curr_disp,...
             'Fieldname',curr_disp.Fieldname,...
-            'x',x,'y',y,...
-            'off_disp',off_disp>0,...
+            'x',x,'y',y,.....
             'force_update',p.Results.force_update>0);  
     end
     

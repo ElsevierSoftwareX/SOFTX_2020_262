@@ -12,7 +12,6 @@ addParameter(p,'fieldname','sv',@ischar);
 addParameter(p,'Unique_ID',generate_Unique_ID([]),@ischar);
 addParameter(p,'x',[],@isnumeric);
 addParameter(p,'y',[],@isnumeric);
-addParameter(p,'off_disp',true,@islogical);
 addParameter(p,'force_update',true,@islogical);
 
 parse(p,echo_obj,trans_obj,varargin{:});
@@ -28,7 +27,6 @@ echo_obj = p.Results.echo_obj;
 
 fieldname = p.Results.fieldname;
 
-off_disp = p.Results.off_disp;
 force_update = p.Results.force_update;
 
 
@@ -136,24 +134,28 @@ if update_echo>0
         fprintf('Pings to load %d to %d\n',idx_ping_red(1),idx_ping_red(end));
         fprintf('Pings to display %d to %d\n',idx_ping_red_ori(1),idx_ping_red_ori(end));
     end
-    if strcmp(echo_obj.echo_usrdata.geometry_y,'depth')
-        if off_disp>0
-            depth_trans=trans_obj.get_transducer_depth(idx_ping_red);
-        else
-            depth_trans=zeros(1,numel(idx_r_red));
-        end
-        if any(depth_trans~=0)||trans_obj.Config.TransducerAlphaX~=0||trans_obj.Config.TransducerAlphaY~=0
-            [x_data_disp,y_data_disp,data,sc]=trans_obj.apply_line_depth(fieldname,idx_r_red,idx_ping_red);
-        else
+    switch echo_obj.echo_usrdata.geometry_y
+        case {'depth' 'range'}
+            
+            if strcmp(echo_obj.echo_usrdata.geometry_y,'depth') 
+                depth_trans=trans_obj.get_transducer_depth(idx_ping_red);
+            else
+                depth_trans=zeros(1,numel(idx_r_red));
+            end
+            
+            if any(depth_trans~=0)||trans_obj.Config.TransducerAlphaX~=0||trans_obj.Config.TransducerAlphaY~=0
+                [x_data_disp,y_data_disp,data,sc]=trans_obj.apply_line_depth(fieldname,idx_r_red,idx_ping_red);
+            else
+                [data,sc]=trans_obj.Data.get_subdatamat(idx_r_red,idx_ping_red,'field',fieldname);
+                x_data_disp=xdata(idx_ping_red);
+                y_data_disp=trans_obj.get_transceiver_range(idx_r_red);
+            end
+            
+        otherwise
             [data,sc]=trans_obj.Data.get_subdatamat(idx_r_red,idx_ping_red,'field',fieldname);
+            
             x_data_disp=xdata(idx_ping_red);
-            y_data_disp=trans_obj.get_transceiver_range(idx_r_red);
-        end
-    else
-        [data,sc]=trans_obj.Data.get_subdatamat(idx_r_red,idx_ping_red,'field',fieldname);
-        
-        x_data_disp=xdata(idx_ping_red);
-        y_data_disp=ydata(idx_r_red);
+            y_data_disp=ydata(idx_r_red);
     end
     
     if isempty(data)

@@ -47,18 +47,13 @@ p_button=pos{5,3}{1};
 p_button(3)=gui_fmt.button_w;
 uicontrol(lines_tab_comp.lines_tab,gui_fmt.pushbtnStyle,'String','Use as Offset','pos',p_button,'callback',{@offset_line_callback,main_figure});
 uicontrol(lines_tab_comp.lines_tab,gui_fmt.pushbtnStyle,'String','Remove Offset','pos',p_button+[p_button(3) 0 0 0],'callback',{@remove_offset_callback,main_figure});
-%uicontrol(lines_tab_comp.lines_tab,gui_fmt.chckboxStyle,'String','Disp. Offset','pos',p_button+[2*p_button(3) 0 0 0],'callback',{@toggle_offset_callback,main_figure},'value',curr_disp.DispSecFreqsWithOffset);
 
 
 %set(findobj(lines_tab_comp.lines_tab, '-property', 'Enable'), 'Enable', 'off');
 setappdata(main_figure,'Lines_tab',lines_tab_comp);
 
 end
-% function toggle_offset_callback(src,~,main_figure)
-% curr_disp=get_esp3_prop('curr_disp');
-% curr_disp.DispSecFreqsWithOffset=src.Value;
-% 
-% end
+
 
 
 function draw_line_callback(~,~,main_figure)

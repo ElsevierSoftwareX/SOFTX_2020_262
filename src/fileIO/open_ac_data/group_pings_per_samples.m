@@ -37,6 +37,7 @@ for ui=1:numel(ping_group_end)
     ping_group_end(ui)=find(pings==ping_group_end(ui),1);
     block_id(ping_group_start(ui):ping_group_end(ui))=ui;
 end
+
 % 
 % figure();
 % plot(pings,ceil(nb_samples/div_factor));hold on;plot(pings,group_by_nb_s);hold on;plot(pings,nb_samples/div_factor);

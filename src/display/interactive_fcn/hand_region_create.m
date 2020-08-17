@@ -37,11 +37,11 @@
 %% Function
 function hand_region_create(main_figure,func)
 %profile on;
-layer=get_current_layer();
-axes_panel_comp=getappdata(main_figure,'Axes_panel');
+
 curr_disp=get_esp3_prop('curr_disp');
 
-ah=axes_panel_comp.echo_obj.main_ax;
+[echo_obj,trans_obj,~,~]=get_axis_from_cids(main_figure,{'main'});
+ah=echo_obj.main_ax;
 
 
 switch main_figure.SelectionType
@@ -51,63 +51,57 @@ switch main_figure.SelectionType
         %         curr_disp.CursorMode='Normal';
         return;
 end
-axes_panel_comp.echo_obj.echo_bt_surf.UIContextMenu=[];
-axes_panel_comp.echo_obj.bottom_line_plot.UIContextMenu=[];
-clear_lines(ah);
- [cmap,col_ax,col_line,col_grid,col_bot,col_txt,~]=init_cmap(curr_disp.Cmap);
+echo_obj.echo_bt_surf.UIContextMenu=[];
+echo_obj.bottom_line_plot.UIContextMenu=[];
 
-[trans_obj,idx_freq]=layer.get_trans(curr_disp);
+clear_lines(ah);
+
+[cmap,col_ax,col_line,col_grid,col_bot,col_txt,~]=init_cmap(curr_disp.Cmap);
 
 rr=trans_obj.get_transceiver_range();
 
-cp = ah.CurrentPoint;
 u=1;
 
-xinit(1) = cp(1,1);
-yinit(1)=cp(1,2);
+[x,y,idx_p,idx_r] = echo_obj.get_main_ax_cp(trans_obj);
 
-xdata=trans_obj.get_transceiver_pings();
-ydata=trans_obj.get_transceiver_samples();
-
-x_lim=get(ah,'xlim');
-y_lim=get(ah,'ylim');
-
-if xinit(1)<x_lim(1)||xinit(1)>xdata(end)||yinit(1)<y_lim(1)||yinit(1)>y_lim(end)
+if isempty(idx_p)||isempty(idx_r)
     return;
 end
+
+xinit(1) = idx_p;
+yinit(1) = idx_r;
 
 %set(main_figure,'KeyPressFcn',{@check_esc});
 
 hp=patch(ah,'XData',xinit,'YData',yinit,'FaceColor',col_line,'FaceAlpha',0.4,'EdgeColor',col_line,'linewidth',0.5,'Tag','reg_temp');
-txt=text(ah,cp(1,1),cp(1,2),sprintf('%.2f m',rr(nanmin(ceil(cp(1,2)),numel(rr)))),'color',col_line,'Tag','reg_temp');
+txt=text(ah,x,y,sprintf('%.2f m',rr(idx_r)),'color',col_line,'Tag','reg_temp');
 
 replace_interaction(main_figure,'interaction','WindowButtonMotionFcn','id',2,'interaction_fcn',@wbmcb);
 replace_interaction(main_figure,'interaction','WindowButtonUpFcn','id',2,'interaction_fcn',@wbucb);
 
     function wbmcb(~,~)
-        cp = ah.CurrentPoint;
-        
-        if cp(1,2)<0
+
+        [x,y,idx_p,idx_r] = echo_obj.get_main_ax_cp(trans_obj);
+
+        if isempty(idx_p)||isempty(idx_r)
             return;
         end
         
         u=u+1;
-        xinit(u) = cp(1,1);
-        yinit(u) = nanmin(nanmax(ceil(cp(1,2)),1),numel(rr));
-        
-        
+        xinit(u) = idx_p;
+        yinit(u) = idx_r;
+             
         if isvalid(hp)
             set(hp,'XData',xinit,'YData',yinit);
         else
            hp=patch(ah,'XData',xinit,'YData',yinit,'FaceColor',col_line,'FaceAlpha',0.4,'EdgeColor',col_line,'linewidth',0.5,'Tag','reg_temp');
         end
         
-        
-        
+           
         if isvalid(txt)
-            set(txt,'position',[cp(1,1) yinit(u) 0],'string',sprintf('%.2f m',rr(yinit(u))));
+            set(txt,'position',[x y 0],'string',sprintf('%.2f m',rr(yinit(u))));
         else
-            txt=text(ah,cp(1,1),yinit(u),sprintf('%.2f m',rr(yinit(u))),'color',col_line,'Tag','reg_temp');
+            txt=text(ah,x,y,sprintf('%.2f m',rr(yinit(u))),'color',col_line,'Tag','reg_temp');
         end
         
     end
@@ -117,34 +111,19 @@ replace_interaction(main_figure,'interaction','WindowButtonUpFcn','id',2,'intera
         replace_interaction(main_figure,'interaction','WindowButtonMotionFcn','id',2);
         replace_interaction(main_figure,'interaction','WindowButtonUpFcn','id',2);
       
-        x_data_disp=linspace(xdata(1),xdata(end),length(xdata));
-        xinit(isnan(xinit))=[];
-        yinit(isnan(yinit))=[];
-        xinit(xinit>xdata(end))=xdata(end);
-        xinit(xinit<xdata(1))=xdata(1);
-        
-        yinit(yinit>ydata(end))=ydata(end);
-        yinit(yinit<ydata(1))=ydata(1);
-        
-        poly_r=nan(size(yinit));
-        poly_pings=nan(size(xinit));
-        
-        for i=1:length(xinit)
-            [~,poly_pings(i)]=nanmin(abs(xinit(i)-double(x_data_disp)));
-            [~,poly_r(i)]=nanmin(abs(yinit(i)-double(ydata)));     
-        end
+       
         clear_lines(ah)
         delete(txt);
         delete(hp);
         
-        if length(poly_pings)<=2
+        if length(xinit)<=2
             return;
         end
         
-        poly_pings=round([poly_pings poly_pings(1)]);
-        poly_r=round([poly_r poly_r(1)]);
+        xinit=round([xinit xinit(1)]);
+        yinit=round([yinit yinit(1)]);
         
-        feval(func,main_figure,poly_r,poly_pings);
+        feval(func,main_figure,yinit,xinit);
         
 % profile off;
 % profile viewer;

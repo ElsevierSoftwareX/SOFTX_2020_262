@@ -117,6 +117,8 @@ nb_samples_cell=nb_samples_cell(idx_freq);
 
 [nb_samples_group,~,~,block_id]=cellfun(@(x) group_pings_per_samples(x,1:numel(x)),nb_samples_cell,'un',0);
 
+%block_len = 20;
+
 nb_samples_per_block=idx_raw_obj.get_nb_samples_per_block_per_channels(block_len);
 nb_samples_per_block=nb_samples_per_block(idx_freq);
 

@@ -1,6 +1,9 @@
 function display_survdata_lines(main_figure)
 
 axes_panel_comp=getappdata(main_figure,'Axes_panel');
+if isempty(axes_panel_comp)
+    return;
+end
 layer=get_current_layer();
 curr_disp=get_esp3_prop('curr_disp');
 
@@ -46,7 +49,7 @@ dt=1;
 for ifile=1:length(idx_start_time)
     surv_temp=layer.get_survey_data('Idx',ifile);
     if ~isempty(idx_start_time(ifile))
-        xline(ax,xdata(idx_start_time(ifile))-dt/4,'color',[0 0.5 0],'tag','surv_id','Visible',vis,'Label',surv_temp.print_survey_data,'Interpreter','none');
+        xline(ax,xdata(idx_start_time(ifile))-dt/4,'color',[0 0.5 0],'tag','surv_id','Visible',vis,'Label',surv_temp.print_survey_data,'Interpreter','none');%,'LabelVerticalAlignment ','Bottom');
         %plot(ax,xdata(idx_start_time(ifile)).*ones(size(ydata))-dt/4,ydata,'color',[0 0.5 0],'tag','surv_id','Visible',vis);
     end
 end
