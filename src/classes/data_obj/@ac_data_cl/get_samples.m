@@ -7,6 +7,6 @@ if nargin>=2
     idx(idx>length(samples))=[];
     samples=samples(idx);
 end
-    
+
 
 end

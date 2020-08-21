@@ -85,14 +85,27 @@ classdef sub_ac_data_cl < handle
                                 continue;
                             end
                             
+
                             if numel(data{icell})==2
                                 nb_samples=data{icell}(1);
                                 nb_pings=data{icell}(2);
-                                
+                                nb_beams = 1;
+                            elseif numel(data{icell})==3
+                                nb_samples=data{icell}(1);
+                                nb_beams=data{icell}(2);
+                                nb_pings=data{icell}(3);
+                            elseif numel(size(data{icell}))==3
+                                [nb_samples,nb_beams,nb_pings]=size(data{icell});
                             else
                                 [nb_samples,nb_pings]=size(data{icell});
+                                nb_beams = 1;
                             end
-                            format={obj.Fmt,[nb_samples,nb_pings],obj.Fieldname};
+                            
+                            if nb_beams ==1
+                                format={obj.Fmt,[nb_samples,nb_pings],obj.Fieldname};
+                            else
+                                format={obj.Fmt,[nb_samples,nb_beams,nb_pings],obj.Fieldname};
+                            end
                             
                             switch obj.Fmt
                                 case {'int8' 'uint8'}
@@ -116,7 +129,7 @@ classdef sub_ac_data_cl < handle
                                 %     fwrite(fileID,p.Results.default_value*ones(1,nanmin(b_size,nb_samples*nb_pings-(b_size*u)))/obj.ConvFactor,obj.Fmt);
                                 %     u=u+1;
                                 % end
-                                fwrite(fileID,p.Results.default_value*ones/obj.ConvFactor,obj.Fmt,nb*(nb_samples*nb_pings-1));
+                                fwrite(fileID,p.Results.default_value*ones/obj.ConvFactor,obj.Fmt,nb*(nb_beams*nb_samples*nb_pings-1));
                             else
                                 fwrite(fileID,double(data{icell})/obj.ConvFactor,obj.Fmt);
                             end

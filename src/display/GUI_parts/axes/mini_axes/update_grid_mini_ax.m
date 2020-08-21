@@ -15,7 +15,7 @@ end
 xdata=get(mini_axes_comp.echo_obj.echo_surf,'XData');
 ydata=get(mini_axes_comp.echo_obj.echo_surf,'YData');
 
-idx_pings=ceil(mini_axes_comp.echo_obj.echo_surf.XData);
+idx_ping=ceil(mini_axes_comp.echo_obj.echo_surf.XData);
 idx_r=ceil(mini_axes_comp.echo_obj.echo_surf.YData);
 
 curr_disp.init_grid_val(trans_obj);
@@ -23,19 +23,19 @@ curr_disp.init_grid_val(trans_obj);
 
 switch curr_disp.Xaxes_current
     case 'seconds'
-            xdata_grid=trans_obj.Time(idx_pings);
+            xdata_grid=trans_obj.Time(idx_ping);
             xdata_grid=xdata_grid*(24*60*60);
     case 'pings'
-        xdata_grid=trans_obj.get_transceiver_pings(idx_pings);
+        xdata_grid=trans_obj.get_transceiver_pings(idx_ping);
     case 'meters'
-        xdata_grid=trans_obj.GPSDataPing.Dist(idx_pings);
+        xdata_grid=trans_obj.GPSDataPing.Dist(idx_ping);
         if isempty(xdata)
             disp_perso(main_figure,'NO GPS Data');
             curr_disp.Xaxes_current='pings';
-            xdata_grid=trans_obj.get_transceiver_pings(idx_pings);
+            xdata_grid=trans_obj.get_transceiver_pings(idx_ping);
         end
     otherwise
-        xdata_grid=trans_obj.get_transceiver_pings(idx_pings);      
+        xdata_grid=trans_obj.get_transceiver_pings(idx_ping);      
 end
 
 ydata_grid=trans_obj.get_transceiver_range(idx_r);

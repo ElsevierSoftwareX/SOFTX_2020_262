@@ -47,17 +47,17 @@ for i=1:length(reg_evr)
     samples=resample_data_v2(1:length(range),range,depth_box,'Opt','Nearest');
 
     
-    Idx_pings=pings(1):pings(2);
+    Idx_ping=pings(1):pings(2);
     Idx_r=samples(1):samples(2);
     
-    if nansum(isnan(Idx_pings))==length(Idx_pings)
+    if nansum(isnan(Idx_ping))==length(Idx_ping)
         continue;
     end
     
     switch reg_evr(i).info.r_type
         case 0 %Horizontal region
             Shape='Rectangular';
-            Idx_pings=1:length(timevec);
+            Idx_ping=1:length(timevec);
             Reference='Surface';
         case {1,2} %Polygonal region
             Shape='Polygon';
@@ -86,7 +86,7 @@ for i=1:length(reg_evr)
         case 'Polygon'
             X_cont=resample_data_v2(1:length(timevec),timevec,reg_evr(i).timestamp,'Opt','Nearest');
             Y_cont=resample_data_v2(1:length(range),range,reg_evr(i).depth,'Opt','Nearest');
-            Idx_pings=nanmin(X_cont):nanmax(X_cont);
+            Idx_ping=nanmin(X_cont):nanmax(X_cont);
             Idx_r=nanmin(Y_cont):nanmax(Y_cont);
 
     end
@@ -95,7 +95,7 @@ for i=1:length(reg_evr)
         'Name',Name,...
         'Tag',Tag,...
         'Type',Type,...
-        'Idx_pings',Idx_pings,...
+        'Idx_ping',Idx_ping,...
         'Idx_r',Idx_r,...
         'Shape',Shape,...
         'X_cont',X_cont,...

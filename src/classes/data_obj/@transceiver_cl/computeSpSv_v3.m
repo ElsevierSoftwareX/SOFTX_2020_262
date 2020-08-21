@@ -81,11 +81,11 @@ if ~isempty(p.Results.load_bar_comp)
 end
 
 while u<ceil(nb_pings/bsize)
-    idx_pings=(u*bsize+1):nanmin(((u+1)*bsize),nb_pings);
+    idx_ping=(u*bsize+1):nanmin(((u+1)*bsize),nb_pings);
     u=u+1;
     
-    pow=trans_obj.Data.get_subdatamat(1:nb_samples,idx_pings,'field','power');
-    powunmatched=trans_obj.Data.get_subdatamat(1:nb_samples,idx_pings,'field','powerunmatched');
+    pow=trans_obj.Data.get_subdatamat('idx_r',1:nb_samples,'idx_ping',idx_ping,'field','power');
+    powunmatched=trans_obj.Data.get_subdatamat('idx_r',1:nb_samples,'idx_ping',idx_ping,'field','powerunmatched');
     
     if gpu_comp%use of gpuArray results in about 20% speed increase here
         if g.AvailableMemory/(8*4*5)<=bsize*nb_samples
@@ -94,9 +94,9 @@ while u<ceil(nb_pings/bsize)
         pow=gpuArray(pow);
         range_t=gpuArray(range_t_ori);
         powunmatched=gpuArray(powunmatched);
-        ptx_idx_pings=gpuArray(ptx(idx_pings));
+        ptx_idx_ping=gpuArray(ptx(idx_ping));
     else
-        ptx_idx_pings=ptx(idx_pings);
+        ptx_idx_ping=ptx(idx_ping);
         range_t=range_t_ori;
     end
     
@@ -106,16 +106,16 @@ while u<ceil(nb_pings/bsize)
                 
         case 'FM'
            
-            [Sp,Sv]=convert_power_v2(pow,range_t,c,alpha,t_eff_comp(idx_pings),t_nom(idx_pings),ptx_idx_pings,c./f_c(idx_pings),G(idx_pings),eq_beam_angle_c(idx_pings),sacorr,trans_obj.Config.TransceiverName);
+            [Sp,Sv]=convert_power_v2(pow,range_t,c,alpha,t_eff_comp(idx_ping),t_nom(idx_ping),ptx_idx_ping,c./f_c(idx_ping),G(idx_ping),eq_beam_angle_c(idx_ping),sacorr,trans_obj.Config.TransceiverName);
             
             if any(strcmpi(p.Results.FieldNames,'sp'))||isempty(p.Results.FieldNames)&&~isempty(powunmatched)
-                [Sp_un,Sv_un]=convert_power_v2(powunmatched,range_t,c,alpha,t_eff(idx_pings),t_nom(idx_pings),ptx_idx_pings,c./f_c(idx_pings),G(idx_pings),eq_beam_angle_c(idx_pings),sacorr,trans_obj.Config.TransceiverName);
+                [Sp_un,Sv_un]=convert_power_v2(powunmatched,range_t,c,alpha,t_eff(idx_ping),t_nom(idx_ping),ptx_idx_ping,c./f_c(idx_ping),G(idx_ping),eq_beam_angle_c(idx_ping),sacorr,trans_obj.Config.TransceiverName);
                 if  isa(Sp_un,'gpuArray')
                     Sp_un=gather(Sp_un);
                     Sv_un=gather(Sv_un);
                 end
-                trans_obj.Data.replace_sub_data_v2('spunmatched',Sp_un,[],idx_pings);
-                trans_obj.Data.replace_sub_data_v2('svunmatched',Sv_un,[],idx_pings);
+                trans_obj.Data.replace_sub_data_v2(Sp_un,'field','spunmatched','idx_ping',idx_ping);
+                trans_obj.Data.replace_sub_data_v2(Sv_un,'field','svunmatched','idx_ping',idx_ping);
             end
             
         case 'CW'
@@ -127,7 +127,7 @@ while u<ceil(nb_pings/bsize)
                     t_eff=t_nom;
             end
             
-            [Sp,Sv]=convert_power_v2(pow,range_t,c,alpha,t_eff(idx_pings),t_nom(idx_pings),ptx_idx_pings,c./f_c(idx_pings),G(idx_pings),eq_beam_angle_c(idx_pings),sacorr,trans_obj.Config.TransceiverName);
+            [Sp,Sv]=convert_power_v2(pow,range_t,c,alpha,t_eff(idx_ping),t_nom(idx_ping),ptx_idx_ping,c./f_c(idx_ping),G(idx_ping),eq_beam_angle_c(idx_ping),sacorr,trans_obj.Config.TransceiverName);
             
     end
     
@@ -135,14 +135,14 @@ while u<ceil(nb_pings/bsize)
         if isa(Sv,'gpuArray')
             Sv=gather(Sv);
         end
-        trans_obj.Data.replace_sub_data_v2('sv',Sv,[],idx_pings);
+        trans_obj.Data.replace_sub_data_v2(Sv,'field','sv','idx_ping',idx_ping);
         clear Sv;
     end
     if any(strcmpi(p.Results.FieldNames,'sp'))||isempty(p.Results.FieldNames)
         if  isa(Sp,'gpuArray')
             Sp=gather(Sp);
         end
-        trans_obj.Data.replace_sub_data_v2('sp',Sp,[],idx_pings);
+        trans_obj.Data.replace_sub_data_v2(Sp,'field','sp','idx_ping',idx_ping);
         clear Sp;
     end
     if ~isempty(p.Results.load_bar_comp)

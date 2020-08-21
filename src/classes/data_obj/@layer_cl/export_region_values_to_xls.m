@@ -49,7 +49,7 @@ regs=regs(is);
 for ir=1:length(idx_freq_sort)
     reg_tmp=regs(ir);
     trans_obj=layer_obj.Transceivers(idx_freq_sort(ir));
-    [data_reg,idx_r,idx_pings,bad_data_mask,bad_trans_vec,intersection_mask,below_bot_mask,mask_from_st]=get_data_from_region(trans_obj,...
+    [data_reg,idx_r,idx_ping,bad_data_mask,bad_trans_vec,intersection_mask,below_bot_mask,mask_from_st]=get_data_from_region(trans_obj,...
         reg_tmp,...
         'field',p.Results.field,...
         'intersect_only',p.Results.intersection_only);
@@ -79,9 +79,9 @@ for ir=1:length(idx_freq_sort)
     
     
     range_t=trans_obj.get_transceiver_range(idx_r);
-    time_t=trans_obj.get_transceiver_time(idx_pings);
+    time_t=trans_obj.get_transceiver_time(idx_ping);
     samples_t=trans_obj.get_transceiver_samples(idx_r);
-    ping_number=trans_obj.get_transceiver_pings(idx_pings);
+    ping_number=trans_obj.get_transceiver_pings(idx_ping);
     
     
     output_f=generate_valid_filename(p.Results.output_f);

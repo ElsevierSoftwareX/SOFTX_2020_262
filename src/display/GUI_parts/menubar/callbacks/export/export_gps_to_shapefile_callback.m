@@ -50,11 +50,11 @@ for ilay = 1:length(layers_to_export)
         [~,file_name,filt_ext] = fileparts(filenames{ifil});
         
         % get index of pings in dataset from this file
-        idx_pings = find(trans_obj.Data.FileId==ifil);
+        idx_ping = find(trans_obj.Data.FileId==ifil);
         
         % create geostructs
         field = genvarname(file_name);
-        Lines.(field) = gps_obj.gps_to_geostruct(idx_pings);
+        Lines.(field) = gps_obj.gps_to_geostruct(idx_ping);
         Lines.(field).Filename = [file_name filt_ext];
         
     end

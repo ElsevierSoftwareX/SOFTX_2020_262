@@ -152,14 +152,14 @@ switch class(select_plot)
     case 'region_cl'
         reg_obj=trans_obj.get_region_from_Unique_ID(curr_disp.Active_reg_ID);
     otherwise
-        idx_pings=round(nanmin(select_plot.XData)):round(nanmax(select_plot.XData));
+        idx_ping=round(nanmin(select_plot.XData)):round(nanmax(select_plot.XData));
         idx_r=round(nanmin(select_plot.YData)):round(nanmax(select_plot.YData));
-        reg_obj=region_cl('Name','Select Area','Idx_r',idx_r,'Idx_pings',idx_pings,'Unique_ID','select_area');
+        reg_obj=region_cl('Name','Select Area','Idx_r',idx_r,'Idx_ping',idx_ping,'Unique_ID','select_area');
 end
 idx_r = reg_obj.Idx_r;
-idx_pings = reg_obj.Idx_pings;
+idx_ping = reg_obj.Idx_ping;
 
-trans_obj.set_spikes(idx_r,idx_pings,0);
+trans_obj.set_spikes(idx_r,idx_ping,0);
 set_alpha_map(main_figure,'update_under_bot',0,'update_cmap',0);
 
 end
@@ -238,9 +238,9 @@ switch class(select_plot)
         [trans_obj,~]=layer.get_trans(curr_disp);
         reg_obj=trans_obj.get_region_from_Unique_ID(curr_disp.Active_reg_ID);
     otherwise
-        idx_pings=round(nanmin(select_plot.XData)):round(nanmax(select_plot.XData));
+        idx_ping=round(nanmin(select_plot.XData)):round(nanmax(select_plot.XData));
         idx_r=round(nanmin(select_plot.YData)):round(nanmax(select_plot.YData));
-        reg_obj=region_cl('Name','Select Area','Idx_r',idx_r,'Idx_pings',idx_pings,'Unique_ID','select_area');
+        reg_obj=region_cl('Name','Select Area','Idx_r',idx_r,'Idx_ping',idx_ping,'Unique_ID','select_area');
 end
 
 
@@ -267,9 +267,9 @@ switch class(select_plot)
         [trans_obj,~]=layer.get_trans(curr_disp);
         reg_obj=trans_obj.get_region_from_Unique_ID(curr_disp.Active_reg_ID);
     otherwise
-        idx_pings=round(nanmin(select_plot.XData)):round(nanmax(select_plot.XData));
+        idx_ping=round(nanmin(select_plot.XData)):round(nanmax(select_plot.XData));
         idx_r=round(nanmin(select_plot.YData)):round(nanmax(select_plot.YData));
-        reg_obj=region_cl('Name','Select Area','Idx_r',idx_r,'Idx_pings',idx_pings,'Unique_ID','select_area');
+        reg_obj=region_cl('Name','Select Area','Idx_r',idx_r,'Idx_ping',idx_ping,'Unique_ID','select_area');
 end
 
 trans=layer.get_trans(curr_disp);

@@ -14,10 +14,10 @@ trans_obj = layer.Transceivers(p.Results.idx_freq);
 
 if isempty(p.Results.reg_obj)
     idx_r=(1:length(trans_obj.get_transceiver_range()))';
-    idx_pings=1:length(trans_obj.get_transceiver_pings());
+    idx_ping=1:length(trans_obj.get_transceiver_pings());
     [~,Np_p]=trans_obj.get_pulse_length();
     idx_r(idx_r<3*nanmax(Np_p))=[];
-    reg_obj=region_cl('Idx_r',idx_r,'Idx_pings',idx_pings);
+    reg_obj=region_cl('Idx_r',idx_r,'Idx_ping',idx_ping);
 else
     reg_obj=p.Results.reg_obj;
 
@@ -67,9 +67,9 @@ for uui=1:length(layer.Frequencies)
         
         idx_slice_r=round((r_f-r_f(1))/cell_h)+1;
         idx_slice=repmat(idx_slice_r',length(pings),1,length(f_vec_temp));
-        idx_pings=repmat((1:length(pings))',1,length(r_f),length(f_vec_temp));
+        idx_ping=repmat((1:length(pings))',1,length(r_f),length(f_vec_temp));
         idx_f=repmat(shiftdim((1:length(f_vec_temp)),-1),size(Sv_f_out,1),length(r_f),1);
-        sv_f_temp=(accumarray([idx_pings(:) idx_slice(:) idx_f(:)],db2pow(Sv_f_out(:)),[],@nanmean));
+        sv_f_temp=(accumarray([idx_ping(:) idx_slice(:) idx_f(:)],db2pow(Sv_f_out(:)),[],@nanmean));
         
         Sv_f_temp=shiftdim(pow2db_perso(nanmean(sv_f_temp,1)),1);
         SD_f_temp=shiftdim(pow2db_perso(nanstd(sv_f_temp,1,1)),1);

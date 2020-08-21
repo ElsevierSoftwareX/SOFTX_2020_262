@@ -10,7 +10,7 @@ classdef region_cl
         Remove_ST
         Line_ID=[]
         Type
-        Idx_pings
+        Idx_ping
         Idx_r
         Shape
         MaskReg
@@ -45,7 +45,7 @@ classdef region_cl
             addParameter(p,'X_cont',[],@(x) isnumeric(x)||iscell(x));
             addParameter(p,'Y_cont',[],@(x) isnumeric(x)||iscell(x));
             addParameter(p,'Idx_r',[],@isnumeric);
-            addParameter(p,'Idx_pings',[],@isnumeric);
+            addParameter(p,'Idx_ping',[],@isnumeric);
             addParameter(p,'Poly',[],@(x) isempty(x)||isa(x,'polyshape'));
             addParameter(p,'MaskReg',[],@(x) isnumeric(x)||islogical(x));
             addParameter(p,'Shape','Rectangular',check_shape);
@@ -69,8 +69,8 @@ classdef region_cl
             
             switch lower(obj.Shape)
                 case 'rectangular'
-                    if ~isempty(obj.Idx_pings)
-                        x_reg_rect=([obj.Idx_pings(1)-1 obj.Idx_pings(end) obj.Idx_pings(end) obj.Idx_pings(1)-1 obj.Idx_pings(1)-1]);
+                    if ~isempty(obj.Idx_ping)
+                        x_reg_rect=([obj.Idx_ping(1)-1 obj.Idx_ping(end) obj.Idx_ping(end) obj.Idx_ping(1)-1 obj.Idx_ping(1)-1]);
                         y_reg_rect=([obj.Idx_r(end) obj.Idx_r(end) obj.Idx_r(1)-1 obj.Idx_r(1)-1 obj.Idx_r(end)]);
                         x_reg_rect(x_reg_rect==0)=1;
                         y_reg_rect(y_reg_rect==0)=1;
@@ -82,7 +82,7 @@ classdef region_cl
                         end
                     elseif ~isempty(results.Poly)
                         [xlim,ylim]=obj.Poly.boundingbox;
-                        obj.Idx_pings=xlim(1):xlim(end);
+                        obj.Idx_ping=xlim(1):xlim(end);
                         obj.Idx_r=ylim(1):ylim(end);
                     end
                 otherwise 
@@ -90,28 +90,28 @@ classdef region_cl
                         obj.Poly=results.Poly;
                         obj.MaskReg=mask_from_poly(obj.Poly);
                         [xlim,ylim]=obj.Poly.boundingbox;
-                        obj.Idx_pings=xlim(1):xlim(end);
+                        obj.Idx_ping=xlim(1):xlim(end);
                         obj.Idx_r=ylim(1):ylim(end);
 %                         [x,y]=cont_from_mask(obj.MaskReg);
 %                         [x,y]=reduce_reg_contour(x,y,10);
-%                         obj.Poly=polyshape(cellfun(@(u) u+results.Idx_pings(1)-1, x,'un',0),cellfun(@(u) u+results.Idx_r(1)-1, y,'un',0),'Simplify',false);
+%                         obj.Poly=polyshape(cellfun(@(u) u+results.Idx_ping(1)-1, x,'un',0),cellfun(@(u) u+results.Idx_r(1)-1, y,'un',0),'Simplify',false);
                         
                     elseif ~isempty(results.X_cont)
                         obj.Poly=polyshape(results.X_cont,results.Y_cont,'Simplify',false);                         
                         obj.MaskReg=mask_from_poly(obj.Poly);
                         
                         [xlim,ylim]=obj.Poly.boundingbox;
-                        obj.Idx_pings=xlim(1):xlim(2);
+                        obj.Idx_ping=xlim(1):xlim(2);
                         obj.Idx_r=ylim(1):ylim(2);  
                         
                     elseif ~isempty(results.MaskReg)
                         [x,y]=cont_from_mask(results.MaskReg);
                         [x,y]=reduce_reg_contour(x,y,10);
-                        obj.Poly=polyshape(cellfun(@(u) u+results.Idx_pings(1)-1, x,'un',0),cellfun(@(u) u+results.Idx_r(1)-1, y,'un',0),'Simplify',true);
-                        obj.Idx_pings=results.Idx_pings;
+                        obj.Poly=polyshape(cellfun(@(u) u+results.Idx_ping(1)-1, x,'un',0),cellfun(@(u) u+results.Idx_r(1)-1, y,'un',0),'Simplify',true);
+                        obj.Idx_ping=results.Idx_ping;
                         obj.Idx_r=results.Idx_r;
-                    elseif ~isempty(results.Idx_pings)
-                         x_reg_rect=([obj.Idx_pings(1)-1 obj.Idx_pings(end) obj.Idx_pings(end) obj.Idx_pings(1)-1 obj.Idx_pings(1)-1]);
+                    elseif ~isempty(results.Idx_ping)
+                         x_reg_rect=([obj.Idx_ping(1)-1 obj.Idx_ping(end) obj.Idx_ping(end) obj.Idx_ping(1)-1 obj.Idx_ping(1)-1]);
                         y_reg_rect=([obj.Idx_r(end) obj.Idx_r(end) obj.Idx_r(1)-1 obj.Idx_r(1)-1 obj.Idx_r(end)]);
                         x_reg_rect(x_reg_rect==0)=1;
                         y_reg_rect(y_reg_rect==0)=1;
@@ -126,8 +126,8 @@ classdef region_cl
                     
             end
             obj.Idx_r(obj.Idx_r==0)=1;
-            obj.Idx_pings(obj.Idx_pings==0)=1;
-            obj.Idx_pings=obj.Idx_pings(:)';
+            obj.Idx_ping(obj.Idx_ping==0)=1;
+            obj.Idx_ping=obj.Idx_ping(:)';
             obj.Idx_r=obj.Idx_r(:);
         end
         
@@ -161,7 +161,7 @@ classdef region_cl
               
         function mask=get_mask(obj)
                
-            nb_pings=length(obj.Idx_pings);
+            nb_pings=length(obj.Idx_ping);
             nb_samples=length(obj.Idx_r);
             mask=ones(nb_samples,nb_pings);
             

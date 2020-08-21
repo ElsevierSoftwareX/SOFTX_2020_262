@@ -1,15 +1,15 @@
-function [mask_common,idx_r,idx_pings,type]=get_combined_mask(region_1,region_2,method)
+function [mask_common,idx_r,idx_ping,type]=get_combined_mask(region_1,region_2,method)
 
 
-idx_pings=nanmin([region_1.Idx_pings(1) region_2.Idx_pings(1)]):nanmax([region_1.Idx_pings(end) region_2.Idx_pings(end)]);
+idx_ping=nanmin([region_1.Idx_ping(1) region_2.Idx_ping(1)]):nanmax([region_1.Idx_ping(end) region_2.Idx_ping(end)]);
 idx_r=(nanmin([region_1.Idx_r(1) region_2.Idx_r(1)]):nanmax([region_1.Idx_r(end) region_2.Idx_r(end)]))';
 
-mask_common_1_tot=zeros(length(idx_r),length(idx_pings));
-mask_common_2_tot=zeros(length(idx_r),length(idx_pings));
+mask_common_1_tot=zeros(length(idx_r),length(idx_ping));
+mask_common_2_tot=zeros(length(idx_r),length(idx_ping));
 
-[~,~,idx_pings_old_1]=intersect(region_1.Idx_pings,idx_pings);
+[~,~,idx_ping_old_1]=intersect(region_1.Idx_ping,idx_ping);
 [~,~,idx_r_old_1]=intersect(region_1.Idx_r,idx_r);
-[~,~,idx_pings_old_2]=intersect(region_2.Idx_pings,idx_pings);
+[~,~,idx_ping_old_2]=intersect(region_2.Idx_ping,idx_ping);
 [~,~,idx_r_old_2]=intersect(region_2.Idx_r,idx_r);
 
 
@@ -18,19 +18,19 @@ switch region_1.Shape
     case 'Polygon'
         mask_common_1=region_1.get_mask();
     otherwise
-        mask_common_1=ones(length(region_1.Idx_r),length(region_1.Idx_pings));
+        mask_common_1=ones(length(region_1.Idx_r),length(region_1.Idx_ping));
 end
 
 switch region_2.Shape
     case 'Polygon'
         mask_common_2=region_2.get_mask;
     otherwise
-        mask_common_2=ones(length(region_2.Idx_r),length(region_2.Idx_pings));
+        mask_common_2=ones(length(region_2.Idx_r),length(region_2.Idx_ping));
 end
 
 
-mask_common_1_tot(idx_r_old_1,idx_pings_old_1)=mask_common_1;
-mask_common_2_tot(idx_r_old_2,idx_pings_old_2)=mask_common_2;
+mask_common_1_tot(idx_r_old_1,idx_ping_old_1)=mask_common_1;
+mask_common_2_tot(idx_r_old_2,idx_ping_old_2)=mask_common_2;
 
 switch region_1.Type
     case 'Data'

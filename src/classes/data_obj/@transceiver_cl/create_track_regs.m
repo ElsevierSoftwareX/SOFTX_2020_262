@@ -23,7 +23,7 @@ nb_samples=length(trans_obj.get_transceiver_range());
 nb_pings=length(trans_obj.Time);
 ST=trans_obj.ST;
 tracks=trans_obj.Tracks;
-idx_pings_st=ST.Ping_number;
+idx_ping_st=ST.Ping_number;
 idx_r_st=ST.idx_r;
 
 uid=p.Results.uid;
@@ -51,17 +51,17 @@ if ~isempty(tracks)
         idx_targets=tracks.target_id{k};
         
         %idx_r=max(1,min(idx_r_st(idx_targets)-Np)):min(max(idx_r_st(idx_targets))+Np,nb_samples);
-        idx_pings=max(1,min(idx_pings_st(idx_targets)-2)):min(max(idx_pings_st(idx_targets))+2,nb_pings);
-        idx_r_tracks=round(interp1(idx_pings_st(idx_targets),idx_r_st(idx_targets),idx_pings,'linear','extrap'));
+        idx_ping=max(1,min(idx_ping_st(idx_targets)-2)):min(max(idx_ping_st(idx_targets))+2,nb_pings);
+        idx_r_tracks=round(interp1(idx_ping_st(idx_targets),idx_r_st(idx_targets),idx_ping,'linear','extrap'));
         
         idx_rem=idx_r_tracks>nb_samples|idx_r_tracks<0;
-        idx_pings(idx_rem)=[];
+        idx_ping(idx_rem)=[];
         idx_r_tracks(idx_rem)=[];
         
         idx_r=max(1,min(idx_r_tracks-ceil(5/2*Np))):min(max(idx_r_tracks)+ceil(3/2*Np),nb_samples);
         
-        MaskReg=zeros(length(idx_r),length(idx_pings));
-        MaskReg((idx_r_tracks-min(idx_r)+1)+(idx_pings-min(idx_pings))*(length(idx_r)))=1;
+        MaskReg=zeros(length(idx_r),length(idx_ping));
+        MaskReg((idx_r_tracks-min(idx_r)+1)+(idx_ping-min(idx_ping))*(length(idx_r)))=1;
         MaskReg=ceil(filter2_perso(ones(2*Np,2),MaskReg));
         
         [full_candidates, num_can] = bwlabeln(MaskReg>0);
@@ -80,7 +80,7 @@ if ~isempty(tracks)
             'ID',tracks.id(k),...
             'Name','Track',...
             'Type',p.Results.Type,...
-            'Idx_pings',idx_pings,...
+            'Idx_ping',idx_ping,...
             'Idx_r',idx_r,...
             'Shape','Polygon',...
             'Reference','Surface',...

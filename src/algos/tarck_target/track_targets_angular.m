@@ -62,9 +62,9 @@ parse(p,trans_obj,varargin{:});
 
 if isempty(p.Results.reg_obj)
     idx_r=1:length(trans_obj.get_transceiver_range());
-    idx_pings=1:length(trans_obj.get_transceiver_pings());
+    idx_ping=1:length(trans_obj.get_transceiver_pings());
 else
-    idx_pings=p.Results.reg_obj.Idx_pings;
+    idx_ping=p.Results.reg_obj.Idx_ping;
     idx_r=p.Results.reg_obj.Idx_r;
 end
 
@@ -73,7 +73,7 @@ trans_obj.ST.Track_ID = nan(size(trans_obj.ST.TS_comp));
 ST=trans_obj.ST;
 
 
-idx_rem=~((ST.idx_r(:)>=idx_r(1)&ST.idx_r(:)<=idx_r(end))&(ST.Ping_number(:)>=idx_pings(1)&ST.Ping_number(:)<=idx_pings(end)));
+idx_rem=~((ST.idx_r(:)>=idx_r(1)&ST.idx_r(:)<=idx_r(end))&(ST.Ping_number(:)>=idx_ping(1)&ST.Ping_number(:)<=idx_ping(end)));
 i0=find(~idx_rem);
 
 ST = structfun(@(x) x(~idx_rem),ST,'un',0);

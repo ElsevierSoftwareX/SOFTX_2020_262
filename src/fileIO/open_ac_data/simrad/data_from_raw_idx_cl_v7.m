@@ -261,8 +261,6 @@ for idg=1:nb_dg
                 if ~isempty(idx)
                     dgTime=idx_raw_obj.time_dg(idg);
                     fread(fid, 1, 'int32', 0, 'l');
-                    params_cl_init(idx).Time=dgTime;
-                    trans_obj(idx).Params.Time(i_ping(idx))=dgTime;
                     
                     continue;
                 elseif ~isempty(idx_over)
@@ -317,7 +315,6 @@ for idg=1:nb_dg
                     if ~isempty(idx)
                         param_str_init{idx}=t_line;
                         
-                        params_cl_init(idx).Time=dgTime;
                         for jj=1:length(fields_params)
                             switch fields_params{jj}
                                 case 'PulseDuration'
@@ -333,7 +330,7 @@ for idg=1:nb_dg
                             end
                         end
                         
-                        trans_obj(idx).Params.Time(i_ping(idx))=dgTime;
+                        
                         
                         if iscell(trans_obj(idx).TransducerImpedance)
                             if i_ping(idx)==1
@@ -568,14 +565,14 @@ for idg=1:nb_dg
                 trans_obj(idx).Data = ac_data_cl('SubData',[],...
                     'Nb_samples', nb_samples_group{idx},...
                     'Nb_pings',   nb_pings(idx),...
+                    'Nb_beams',ones(size(nb_samples_group{idx})),...
                     'BlockId' , block_id{idx},...
-                    'MemapName',  curr_data_name_t{idx});
-                
+                    'MemapName',  curr_data_name_t{idx});    
             end
             
             if block_i(idx)==block_len||i_ping(idx)==nb_pings(idx)
-                idx_pings=(block_len*(block_nb(idx)-1)+1):i_ping(idx);
-                mode{idx}=write_data(data.pings(idx).datatype,trans_obj(idx),data_tmp{idx},gps_only,(1:nb_samples_per_block{idx}(block_nb(idx))),idx_pings);
+                idx_ping=(block_len*(block_nb(idx)-1)+1):i_ping(idx);
+                mode{idx}=write_data(data.pings(idx).datatype,trans_obj(idx),data_tmp{idx},gps_only,(1:nb_samples_per_block{idx}(block_nb(idx))),idx_ping);
                 block_i(idx)=0;
                 block_nb(idx)=block_nb(idx)+1;
             end
@@ -605,7 +602,7 @@ fclose(fid);
 
 for i=1:nb_trans
     if block_i(i)>1
-        trans_obj(i).Mode=write_data(data.pings(idx).datatype,trans_obj(i),data_tmp{idx},gps_only,(1:nb_samples_per_block{i}(block_i(i))),idx_pings);
+        trans_obj(i).Mode=write_data(data.pings(idx).datatype,trans_obj(i),data_tmp{idx},gps_only,(1:nb_samples_per_block{i}(block_i(i))),idx_ping);
     else
         trans_obj(i).Mode=mode{i};
     end
@@ -694,7 +691,7 @@ trans_obj(id_rem)=[];
 end
 
 
-function mode=write_data(datatype,trans_obj,data_tmp,GPSOnly,idx_r,idx_pings)
+function mode=write_data(datatype,trans_obj,data_tmp,GPSOnly,idx_r,idx_ping)
 
 if datatype(1)==dec2bin(1)
     if datatype(2)==dec2bin(1)||datatype(1)==dec2bin(0)&&trans_obj.Config.BeamType>0
@@ -710,10 +707,10 @@ if datatype(1)==dec2bin(1)
     mode='CW';
     
     if GPSOnly==0
-        trans_obj.Data.replace_sub_data_v2('power',db2pow_perso(data_tmp.power),idx_r,idx_pings)
+        trans_obj.Data.replace_sub_data_v2(db2pow_perso(data_tmp.power),'field','power','idx_r',idx_r,'idx_ping',idx_ping)
         if  datatype(2)==dec2bin(1)&&trans_obj.Config.BeamType>0
-            trans_obj.Data.replace_sub_data_v2('alongangle',AlongAngle,idx_r,idx_pings)
-            trans_obj.Data.replace_sub_data_v2('acrossangle',AcrossAngle,idx_r,idx_pings)
+            trans_obj.Data.replace_sub_data_v2(AlongAngle,'field','alongangle','idx_r',idx_r,'idx_ping',idx_ping)
+            trans_obj.Data.replace_sub_data_v2(AcrossAngle,'field','acrossangle','idx_r',idx_r,'idx_ping',idx_ping)
         end
     end
     
@@ -756,14 +753,14 @@ else
     
     if GPSOnly==0
         if strcmp(mode,'FM')
-            trans_obj.Data.replace_sub_data_v2('powerunmatched',powerunmatched,idx_r,idx_pings)
-            trans_obj.Data.replace_sub_data_v2('y_real',real(y),idx_r,idx_pings)
-            trans_obj.Data.replace_sub_data_v2('y_imag',imag(y),idx_r,idx_pings)
+            trans_obj.Data.replace_sub_data_v2(powerunmatched,'field','powerunmatched','idx_r',idx_r,'idx_ping',idx_ping)
+            trans_obj.Data.replace_sub_data_v2(real(y),'field','y_real','idx_r',idx_r,'idx_ping',idx_ping)
+            trans_obj.Data.replace_sub_data_v2(imag(y),'field','y_imag','idx_r',idx_r,'idx_ping',idx_ping)
         end
-        trans_obj.Data.replace_sub_data_v2('power',pow,idx_r,idx_pings)
+        trans_obj.Data.replace_sub_data_v2(pow,'field','power','idx_r',idx_r,'idx_ping',idx_ping)
         if trans_obj.Config.BeamType>0
-            trans_obj.Data.replace_sub_data_v2('alongangle',AlongAngle,idx_r,idx_pings)
-            trans_obj.Data.replace_sub_data_v2('acrossangle',AcrossAngle,idx_r,idx_pings)
+            trans_obj.Data.replace_sub_data_v2(AlongAngle,'field','alongangle','idx_r',idx_r,'idx_ping',idx_ping)
+            trans_obj.Data.replace_sub_data_v2(AcrossAngle,'field','acrossangle','idx_r',idx_r,'idx_ping',idx_ping)
         end
     end
 end

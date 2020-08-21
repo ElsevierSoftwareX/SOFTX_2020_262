@@ -9,26 +9,26 @@ r_tot=trans_obj.get_transceiver_range();
 switch class(select_plot)
     case 'region_cl'
         idx_r=select_plot.Idx_r;
-        idx_pings=select_plot.Idx_pings;
+        idx_ping=select_plot.Idx_ping;
     otherwise
-        idx_pings=round(nanmin(select_plot.XData)):round(nanmax(select_plot.XData));
+        idx_ping=round(nanmin(select_plot.XData)):round(nanmax(select_plot.XData));
         idx_r=round(nanmin(select_plot.YData)):round(nanmax(select_plot.YData));
 end
 
 n=2;
 if ~rem_soundings
     ping_tot=trans_obj.get_transceiver_pings();
-    idx_pings_inter=intersect(ping_tot,idx_pings(1)-n:idx_pings(end)+n); 
-    [~,idx_com]=intersect(idx_pings_inter,idx_pings);
+    idx_ping_inter=intersect(ping_tot,idx_ping(1)-n:idx_ping(end)+n); 
+    [~,idx_com]=intersect(idx_ping_inter,idx_ping);
 else
-   idx_pings_inter=idx_pings; 
-   idx_com=1:numel(idx_pings);
+   idx_ping_inter=idx_ping; 
+   idx_com=1:numel(idx_ping);
 end
 
-bottom_idx=trans_obj.get_bottom_idx(idx_pings_inter);
+bottom_idx=trans_obj.get_bottom_idx(idx_ping_inter);
 
 idx_val=find((bottom_idx>=idx_r(1))&bottom_idx<=idx_r(end));
-idx_brush=intersect(idx_pings_inter-idx_pings_inter(1)+1,idx_val);
+idx_brush=intersect(idx_ping_inter-idx_ping_inter(1)+1,idx_val);
 
 bottom_idx(intersect(idx_brush,idx_com))=nan;
 
@@ -52,11 +52,11 @@ bottom_idx(intersect(idx_brush,idx_com))=nan;
 old_bot=trans_obj.Bottom;
 bot=old_bot;
 
-bot.Sample_idx(idx_pings_inter)=bottom_idx;
+bot.Sample_idx(idx_ping_inter)=bottom_idx;
 bot.Sample_idx(bot.Sample_idx<=1|bot.Sample_idx>numel(r_tot))=nan;
 
 if set_bad>0
-    bot.Tag(idx_brush+idx_pings_inter(1)-1)=0;
+    bot.Tag(idx_brush+idx_ping_inter(1)-1)=0;
 end
 
 trans_obj.Bottom=bot;

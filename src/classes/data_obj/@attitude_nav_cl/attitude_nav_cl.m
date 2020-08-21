@@ -85,18 +85,18 @@ classdef attitude_nav_cl
         end
         
         %% export attitude data to .csv file
-        function save_attitude_to_file(obj,fileN,idx_pings)
+        function save_attitude_to_file(obj,fileN,idx_ping)
             
-            if isempty(idx_pings)
-                idx_pings = 1:length(obj.Time);
+            if isempty(idx_ping)
+                idx_ping = 1:length(obj.Time);
             end
             
-            struct_obj.Heading = obj.Heading(idx_pings);
-            struct_obj.Roll    = obj.Roll(idx_pings);
-            struct_obj.Pitch   = obj.Pitch(idx_pings);
-            struct_obj.Heave   = obj.Heave(idx_pings);
-            struct_obj.Yaw     = obj.Yaw(idx_pings);
-            struct_obj.Time    = cellfun(@(x) datestr(x,'dd/mm/yyyy HH:MM:SS'),(num2cell(obj.Time(idx_pings))),'UniformOutput',0);
+            struct_obj.Heading = obj.Heading(idx_ping);
+            struct_obj.Roll    = obj.Roll(idx_ping);
+            struct_obj.Pitch   = obj.Pitch(idx_ping);
+            struct_obj.Heave   = obj.Heave(idx_ping);
+            struct_obj.Yaw     = obj.Yaw(idx_ping);
+            struct_obj.Time    = cellfun(@(x) datestr(x,'dd/mm/yyyy HH:MM:SS'),(num2cell(obj.Time(idx_ping))),'UniformOutput',0);
             
             
             ff=fieldnames(struct_obj);

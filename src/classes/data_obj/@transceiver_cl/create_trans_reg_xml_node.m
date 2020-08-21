@@ -21,7 +21,7 @@ region_file.appendChild(regions_node);
 
 for ir=1:length(trans_obj.Regions)
     try
-        if isempty(intersect(idx_ping,trans_obj.Regions(ir).Idx_pings))
+        if isempty(intersect(idx_ping,trans_obj.Regions(ir).Idx_ping))
             continue;
         end
         if numel(unique(trans_obj.Data.FileId))>1
@@ -31,7 +31,7 @@ for ir=1:length(trans_obj.Regions)
         end
         for irs=1:length(splitted_reg)
             
-            if isempty(intersect(idx_ping,splitted_reg(irs).Idx_pings))
+            if isempty(intersect(idx_ping,splitted_reg(irs).Idx_ping))
                 continue;
             end
             
@@ -57,8 +57,8 @@ for ir=1:length(trans_obj.Regions)
             switch ver
                 case '0.1'
                     
-                    bbox_t_s=datestr(time(splitted_reg(irs).Idx_pings(1)),'yyyymmddHHMMSSFFF');
-                    bbox_t_e=datestr(time(splitted_reg(irs).Idx_pings(end)),'yyyymmddHHMMSSFFF');
+                    bbox_t_s=datestr(time(splitted_reg(irs).Idx_ping(1)),'yyyymmddHHMMSSFFF');
+                    bbox_t_e=datestr(time(splitted_reg(irs).Idx_ping(end)),'yyyymmddHHMMSSFFF');
                     bbox_str=sprintf('%s %.3f ',bbox_t_s,range(splitted_reg(irs).Idx_r(1)),bbox_t_e,range(splitted_reg(irs).Idx_r(end)));
                     
                     bbox_node = docNode.createElement('bbox');
@@ -93,8 +93,8 @@ for ir=1:length(trans_obj.Regions)
                     
                 case '0.2'
                     
-                    bbox_p_s=splitted_reg(irs).Idx_pings(1)-idx_ping(1)+1;
-                    bbox_p_e=splitted_reg(irs).Idx_pings(end)-idx_ping(1)+1;
+                    bbox_p_s=splitted_reg(irs).Idx_ping(1)-idx_ping(1)+1;
+                    bbox_p_e=splitted_reg(irs).Idx_ping(end)-idx_ping(1)+1;
                     bbox_str=sprintf('%d %d ',bbox_p_s,splitted_reg(irs).Idx_r(1),bbox_p_e,splitted_reg(irs).Idx_r(end));
                     
                     bbox_node = docNode.createElement('bbox');
@@ -106,7 +106,7 @@ for ir=1:length(trans_obj.Regions)
                             contours_node = docNode.createElement('contours');
                             for icont=1:length(X_cont)
                                 contour_node = docNode.createElement('contour');
-                                ping_cont=X_cont{icont}-splitted_reg(irs).Idx_pings(1)+1;
+                                ping_cont=X_cont{icont}-splitted_reg(irs).Idx_ping(1)+1;
 
                                 sample_cont=Y_cont{icont}-splitted_reg(irs).Idx_r(1)+1;
                                 cont_str=[];

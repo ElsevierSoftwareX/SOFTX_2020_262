@@ -54,15 +54,15 @@ for ilay = 1:length(layers_to_export)
         [~,file_name,filt_ext] = fileparts(filenames{ifil});
         
         % get index of pings in dataset from this file
-        idx_pings = find(trans_obj.Data.FileId==ifil);
+        idx_ping = find(trans_obj.Data.FileId==ifil);
         
         % get data
-        Time       = gps_obj.Time(idx_pings);
-        Lat        = gps_obj.Lat(idx_pings);
-        Lon        = gps_obj.Long(idx_pings);
-        Depth      = get_bottom_depth(trans_obj,idx_pings);
-        BadPingTag = get_badtrans_tag(trans_obj,idx_pings);
-        [E1,E2]    = get_bottom_features(trans_obj,idx_pings);
+        Time       = gps_obj.Time(idx_ping);
+        Lat        = gps_obj.Lat(idx_ping);
+        Lon        = gps_obj.Long(idx_ping);
+        Depth      = get_bottom_depth(trans_obj,idx_ping);
+        BadPingTag = get_badtrans_tag(trans_obj,idx_ping);
+        [E1,E2]    = get_bottom_features(trans_obj,idx_ping);
         
         % some processing
         Depth(BadPingTag==0) = NaN;
@@ -71,7 +71,7 @@ for ilay = 1:length(layers_to_export)
         
         % figure; plot(E1); title(file_name);
         
-        window_size = nanmin(numel(idx_pings)/2,500); % in pings
+        window_size = nanmin(numel(idx_ping)/2,500); % in pings
         
         Time = movmedian(Time,window_size,'omitnan');
         Time = Time(ceil(window_size./2):window_size:end);

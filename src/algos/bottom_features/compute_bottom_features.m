@@ -31,28 +31,28 @@ end
 
 % pings indices
 if isempty(p.Results.reg_obj)
-    idx_pings = 1:length(trans_obj.get_transceiver_pings());
-    reg_obj = region_cl('Name','Temp','Idx_r',[1 10],'Idx_pings',idx_pings);
+    idx_ping = 1:length(trans_obj.get_transceiver_pings());
+    reg_obj = region_cl('Name','Temp','Idx_r',[1 10],'Idx_ping',idx_ping);
 else
     reg_obj = p.Results.reg_obj;
 end
-idx_pings = reg_obj.Idx_pings;
+idx_ping = reg_obj.Idx_ping;
 
 % initialize results
 output_struct.done = false;
-output_struct.E1 = -999.*ones(size(idx_pings));
-output_struct.E2 = -999.*ones(size(idx_pings));
+output_struct.E1 = -999.*ones(size(idx_ping));
+output_struct.E2 = -999.*ones(size(idx_ping));
 
-if isempty(idx_pings)
+if isempty(idx_ping)
     output_struct.done = true;
     return;
 end
-idx_pings = trans_obj.get_transceiver_pings(idx_pings);
+idx_ping = trans_obj.get_transceiver_pings(idx_ping);
 
 % get bottom range, and pings with valid bottom (and not a badping)
-bot_idx = trans_obj.get_bottom_idx(idx_pings);
-bot_r   = trans_obj.get_bottom_range(idx_pings);
-idx_bad = trans_obj.get_badtrans_idx(idx_pings);
+bot_idx = trans_obj.get_bottom_idx(idx_ping);
+bot_r   = trans_obj.get_bottom_range(idx_ping);
+idx_bad = trans_obj.get_badtrans_idx(idx_ping);
 bot_r(idx_bad) = NaN;
 idx_val = find(~isnan(bot_r));
 
@@ -65,7 +65,7 @@ end
 range_tot = trans_obj.get_transceiver_range();
 
 % calculate pulse range
-[p_sec, p_nsamp] = trans_obj.get_pulse_length(idx_pings);
+[p_sec, p_nsamp] = trans_obj.get_pulse_length(idx_ping);
 p_r = range_tot(p_nsamp)';
 
 p_r(p_r==0) = range_tot(p_nsamp(p_r==0)+1)';
@@ -74,12 +74,12 @@ p_r(p_r==0) = range_tot(p_nsamp(p_r==0)+1)';
 % some initialization required in one method
 switch p.Results.bot_feat_comp_method
     case 'Yoann'
-        bottom_slope_across = nan(size(idx_pings));
-        bottom_slope_along = nan(size(idx_pings));
-        delta_along = nan(size(idx_pings));
-        delta_across = nan(size(idx_pings));
-        phi_slope_along = nan(size(idx_pings));
-        phi_slope_across = nan(size(idx_pings));
+        bottom_slope_across = nan(size(idx_ping));
+        bottom_slope_along = nan(size(idx_ping));
+        delta_along = nan(size(idx_ping));
+        delta_across = nan(size(idx_ping));
+        phi_slope_along = nan(size(idx_ping));
+        phi_slope_across = nan(size(idx_ping));
 end
 
 
@@ -137,8 +137,8 @@ for ii = idx_val
             idx_echo = (idx_echo_start:idx_echo_end)';
             
             % get the echo signal and phase
-            sv_first_echo = (trans_obj.Data.get_subdatamat(idx_echo,idx_pings(ii),'field',field));
-            [al_phi,ac_phi] = trans_obj.get_phase('idx_ping',idx_pings(ii),'idx_r',idx_echo);
+            sv_first_echo = (trans_obj.Data.get_subdatamat('idx_r',idx_echo,'idx_ping',idx_ping(ii),'field',field));
+            [al_phi,ac_phi] = trans_obj.get_phase('idx_ping',idx_ping(ii),'idx_r',idx_echo);
 
             % calculate phase angles 
             idx_tmp = find(sv_first_echo > nanmax(sv_first_echo)-20);
@@ -227,7 +227,7 @@ for ii = idx_val
             
             if idx_echo_end > idx_echo_end_ori
                 % echo is longer than previous estimate, get data again
-                sv_first_echo = (trans_obj.Data.get_subdatamat(idx_echo,idx_pings(ii),'field',field));
+                sv_first_echo = (trans_obj.Data.get_subdatamat('idx_r',idx_echo,'idx_ping',idx_ping(ii),'field',field));
             else
                 % echo is shorter, just sample the first data
                 sv_first_echo = sv_first_echo(1:idx_echo_end-idx_echo_start+1);
@@ -318,7 +318,7 @@ for ii = idx_val
             % find that index after the bottom line.
             
             % first, get ping data from the bottom line onwards
-            sv_ping_after_bot = (trans_obj.Data.get_subdatamat(bot_idx(ii):numel(range_tot),idx_pings(ii),'field',field));
+            sv_ping_after_bot = (trans_obj.Data.get_subdatamat('idx_r',bot_idx(ii):numel(range_tot),'idx_ping',idx_ping(ii),'field',field));
             if isempty(sv_ping_after_bot)
                 continue;
             end
@@ -384,12 +384,12 @@ for ii = idx_val
     end
     
     % E1 integration
-    sv_E1 = (trans_obj.Data.get_subdatamat(E1_start_idx:E1_end_idx,idx_pings(ii),'field',field));
+    sv_E1 = (trans_obj.Data.get_subdatamat('idx_r',E1_start_idx:E1_end_idx,'idx_ping',idx_ping(ii),'field',field));
     sv_E1(sv_E1==-999) = NaN;
     E1 = depth_normalizing_factor.*log10(4*pi*(1852^2)*sum(db2pow_perso(sv_E1)));
     
     % E2 integration
-    sv_E2 = (trans_obj.Data.get_subdatamat(E2_start_idx:E2_end_idx,idx_pings(ii),'field',field));
+    sv_E2 = (trans_obj.Data.get_subdatamat('idx_r',E2_start_idx:E2_end_idx,'idx_ping',idx_ping(ii),'field',field));
     sv_E2(sv_E2==-999) = NaN;
     E2 = depth_normalizing_factor.*log10(4*pi*(1852^2)*sum(db2pow_perso(sv_E2)));
     
@@ -404,7 +404,7 @@ for ii = idx_val
     
     if DEBUG
         % ping data
-        sv_entire_ping = (trans_obj.Data.get_subdatamat([],idx_pings(ii),'field',field));
+        sv_entire_ping = trans_obj.Data.get_subdatamat('idx_ping',idx_ping(ii),'field',field);
         num_samples = length(sv_entire_ping);
         
         % plot entire ping
@@ -430,7 +430,7 @@ for ii = idx_val
         
         % finalize
         xlim(ax,[max([1 idx_echo_start-100]) min([E2_end_idx+100 num_samples])])
-        ax.Title.String = sprintf('Ping number %d/%d. E1=%.4f. E2=%.4f',idx_pings(ii),idx_pings(idx_val(end)),E1,E2);
+        ax.Title.String = sprintf('Ping number %d/%d. E1=%.4f. E2=%.4f',idx_ping(ii),idx_ping(idx_val(end)),E1,E2);
         drawnow
         
     end
@@ -438,15 +438,15 @@ for ii = idx_val
 end
 
 output_struct.done =  true;
-trans_obj.Bottom.E1(idx_pings)=output_struct.E1;
-trans_obj.Bottom.E2(idx_pings)=output_struct.E2;
+trans_obj.Bottom.E1(idx_ping)=output_struct.E1;
+trans_obj.Bottom.E2(idx_ping)=output_struct.E2;
 
 
 % %
 % figure()
-% plot(idx_pings,bottom_slope_across)
+% plot(idx_ping,bottom_slope_across)
 % hold on;
-% plot(idx_pings,bottom_slope_along)
+% plot(idx_ping,bottom_slope_along)
 % legend({'Across' 'Along'})
 
 

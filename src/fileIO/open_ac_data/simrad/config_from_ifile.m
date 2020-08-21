@@ -5,6 +5,12 @@ params_obj=params_cl(nb_pings);
 
 ifileInfo=parse_ifile(ifile);
 
+if isnan(ifileInfo.sound_speed)
+    soundspeed=1500;
+else
+    soundspeed=ifileInfo.sound_speed;
+end
+
 config_obj.TransceiverName='CREST';
 config_obj.AngleSensitivityAlongship=ifileInfo.angle_factor_alongship;
 config_obj.AngleSensitivityAthwartship=ifileInfo.angle_factor_alongship;
@@ -20,21 +26,25 @@ config_obj.Gain=ifileInfo.G0;
 config_obj.SaCorrection=ifileInfo.SACORRECT;
 config_obj.EquivalentBeamAngle=-20.60;
 
+if isnan(ifileInfo.transmit_pulse_length)
+    config_obj.PulseLength=4/ifileInfo.depth_factor/soundspeed*2;
+else
+    config_obj.PulseLength=ifileInfo.transmit_pulse_length; 
+end
+
 params_obj.FrequencyEnd(:)=38000;
 params_obj.FrequencyStart(:)=38000;
 params_obj.Frequency(:)=38000;
 params_obj.TransmitPower(:)=2000;
+params_obj.PulseLength(:)=config_obj.PulseLength;
 
-if isnan(ifileInfo.sound_speed)
-    soundspeed=1500;
-else
-    soundspeed=ifileInfo.sound_speed;
-end
 
 if isnan(ifileInfo.transmit_pulse_length)
     params_obj.PulseLength(:)=4/ifileInfo.depth_factor/soundspeed*2;
+    config_obj.PulseLength
 else
     params_obj.PulseLength(:)=ifileInfo.transmit_pulse_length; 
+    config_obj.PulseLength
 end
 params_obj.TeffPulseLength=params_obj.PulseLength;
 params_obj.TeffCompPulseLength=params_obj.PulseLength;

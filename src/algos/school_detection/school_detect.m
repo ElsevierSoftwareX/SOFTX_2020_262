@@ -94,9 +94,9 @@ output_struct.done =  false;
 
 if isempty(p.Results.reg_obj)
     idx_r=(1:length(trans_obj.get_transceiver_range()))';
-    idx_pings=1:length(trans_obj.get_transceiver_pings());
+    idx_ping=1:length(trans_obj.get_transceiver_pings());
     idx_r(idx_r<3*nanmax(Np_p))=[];
-    reg_obj=region_cl('Idx_r',idx_r,'Idx_pings',idx_pings);
+    reg_obj=region_cl('Idx_r',idx_r,'Idx_ping',idx_ping);
 else
     reg_obj=p.Results.reg_obj;
     idx_r=reg_obj.Idx_r;
@@ -134,7 +134,7 @@ for i=1:length(reg_schools)
     end
 end
 
-[Sv_mat,idx_r,idx_pings,bad_data_mask,bad_trans_vec,~,below_bot_mask,~]=get_data_from_region(trans_obj,reg_obj,'field',field);
+[Sv_mat,idx_r,idx_ping,bad_data_mask,bad_trans_vec,~,below_bot_mask,~]=get_data_from_region(trans_obj,reg_obj,'field',field);
 
 Sv_mat(:,bad_trans_vec)=nan;
 Sv_mat(bad_data_mask|below_bot_mask)=nan;
@@ -144,13 +144,13 @@ range=trans_obj.get_transceiver_range(idx_r);
 dist=trans_obj.GPSDataPing.Dist;
 
 if nanmean(diff(dist))>0
-    dist_pings=dist(idx_pings);
+    dist_pings=dist(idx_ping);
 else
     warning('No Distance was computed, using ping instead of distance for school detection');
-    dist_pings=trans_obj.get_transceiver_pings(idx_pings)';
+    dist_pings=trans_obj.get_transceiver_pings(idx_ping)';
 end
 
-[~,Np]=trans_obj.get_pulse_Teff(idx_pings);
+[~,Np]=trans_obj.get_pulse_Teff(idx_ping);
 thr_sv=p.Results.thr_sv;
 thr_sv_max=p.Results.thr_sv_max;
 l_min_can=p.Results.l_min_can;
@@ -177,7 +177,7 @@ linked_candidates_mini=link_candidates_v2(candidates,dist_pings,range,horz_link_
 
 output_struct.linked_candidates=sparse(linked_candidates_mini);
 
-dd=nanmax(diff(trans_obj.GPSDataPing.Dist(idx_pings)));
+dd=nanmax(diff(trans_obj.GPSDataPing.Dist(idx_ping)));
 
 dr=nanmax(diff(trans_obj.get_transceiver_range(idx_r)));
 
@@ -193,7 +193,7 @@ if ~isempty(p.Results.load_bar_comp)
     p.Results.load_bar_comp.progress_bar.setText('Creating regions');
 end
 
-trans_obj.create_regions_from_linked_candidates(output_struct.linked_candidates,'w_unit',w_unit,'h_unit','meters','idx_r',idx_r,'idx_pings',idx_pings,...
+trans_obj.create_regions_from_linked_candidates(output_struct.linked_candidates,'w_unit',w_unit,'h_unit','meters','idx_r',idx_r,'idx_ping',idx_ping,...
     'cell_w',cell_w,'cell_h',nanmax(dr*2,h_min_can/10),'reg_names','School');
 
 output_struct.done =  true;

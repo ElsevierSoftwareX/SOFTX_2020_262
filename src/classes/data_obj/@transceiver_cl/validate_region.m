@@ -93,13 +93,13 @@ Idx_r=trans_obj.get_transceiver_samples();
 
 switch region.Shape
     case 'Rectangular'
-        region.Idx_pings=intersect((1:length(pings_t)),region.Idx_pings);
+        region.Idx_ping=intersect((1:length(pings_t)),region.Idx_ping);
         region.Idx_r=intersect(Idx_r,region.Idx_r);
     case 'Polygon'
-        region.Idx_pings=intersect((1:length(pings_t)),region.Idx_pings);
+        region.Idx_ping=intersect((1:length(pings_t)),region.Idx_ping);
         region.Idx_r=intersect(Idx_r,region.Idx_r);    
         region.Idx_r=intersect(Idx_r,region.Idx_r);
-        region.MaskReg=region.get_sub_mask(1:length(region.Idx_r),1:length(region.Idx_pings));
+        region.MaskReg=region.get_sub_mask(1:length(region.Idx_r),1:length(region.Idx_ping));
         if ~any(region.MaskReg)
             region.Shape='Rectangular';
             region.MaskReg=[];

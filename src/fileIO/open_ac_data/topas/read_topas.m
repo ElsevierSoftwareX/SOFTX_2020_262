@@ -215,7 +215,6 @@ for i_cell=1:length(Filename_cell)
         config_obj.TransducerName='TOPAS';
         config_obj.TransceiverName='TOPAS';
         
-        params_obj.Time=data.pingTime(idx_channel);
         params_obj.Frequency(:)=data.CentreFreq(idx_channel);
         params_obj.FrequencyEnd(:)=data.ChirpStop(idx_channel);
         params_obj.FrequencyStart(:)=data.ChirpStart(idx_channel);
@@ -239,12 +238,11 @@ for i_cell=1:length(Filename_cell)
         
         ac_data_temp=ac_data_cl('SubData',sub_ac_data_temp,...
             'Nb_samples',length(range),...
+            'Nb_beams',1,...
             'Nb_pings',nb_pings,...
             'MemapName',curr_name);
         
        
-        
-        
         att_chan=attitude_nav_cl('Heading',zeros(size(data.pingTime(idx_channel))),'Pitch',data.tx_pitch(idx_channel),'Roll',data.tx_roll(idx_channel),'Heave',data.tx_heave(idx_channel),'Time',data.pingTime(idx_channel));
         gps_chan=gps_data_cl('Lat',lat_tot(idx_channel),'Long',lon_tot(idx_channel),'Time',data.pingTime(idx_channel));
         transceiver(ic)=transceiver_cl('Data',ac_data_temp,...

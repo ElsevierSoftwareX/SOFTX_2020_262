@@ -8,7 +8,7 @@ addParameter(p,'survey_data',survey_data_cl(),@(x) isa(x,'survey_data_cl'));
 parse(p,trans_obj,region,varargin{:});
 
 % pre-processing
-ipings = region.Idx_pings(1):region.Idx_pings(end);
+ipings = region.Idx_ping(1):region.Idx_ping(end);
 irange = region.Idx_r(1):region.Idx_r(end);
 range_reg = trans_obj.get_transceiver_range(irange);
 dist_reg  = trans_obj.get_dist(ipings);

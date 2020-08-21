@@ -45,12 +45,12 @@ output_struct.done =  false;
 
 if isempty(p.Results.reg_obj)
     idx_r_tot=1:length(trans_obj.get_transceiver_range());
-    idx_pings_tot=1:length(trans_obj.get_transceiver_pings());
-    reg_obj=region_cl('Name','Temp','Idx_r',idx_r_tot,'Idx_pings',idx_pings_tot);
+    idx_ping_tot=1:length(trans_obj.get_transceiver_pings());
+    reg_obj=region_cl('Name','Temp','Idx_r',idx_r_tot,'Idx_ping',idx_ping_tot);
 else
     reg_obj=p.Results.reg_obj;
 end
-idx_pings_tot=reg_obj.Idx_pings;
+idx_ping_tot=reg_obj.Idx_ping;
 idx_r_tot=reg_obj.Idx_r;
 
 range_tot = trans_obj.get_transceiver_range(idx_r_tot);
@@ -68,7 +68,7 @@ end
 
 
 if isempty(p.Results.reg_obj)
-    reg_obj=region_cl('Idx_r',idx_r_tot,'Idx_pings',idx_pings_tot);
+    reg_obj=region_cl('Idx_r',idx_r_tot,'Idx_ping',idx_ping_tot);
 else
     reg_obj=p.Results.reg_obj;
 end
@@ -90,9 +90,9 @@ end
 
 trans_obj.rm_tracks();
 
-block_size=nanmin(ceil(p.Results.block_len/numel(idx_r_tot)),numel(idx_pings_tot));
+block_size=nanmin(ceil(p.Results.block_len/numel(idx_r_tot)),numel(idx_ping_tot));
 
-num_ite=ceil(numel(idx_pings_tot)/block_size);
+num_ite=ceil(numel(idx_ping_tot)/block_size);
 
 if up_bar
     p.Results.load_bar_comp.progress_bar.setText('Single Target detection');
@@ -144,17 +144,17 @@ end
 [BW_athwart,BW_along]=trans_obj.get_beamwidth_at_f_c([]);
 
 for ui=1:num_ite
-    idx_pings=idx_pings_tot((ui-1)*block_size+1:nanmin(ui*block_size,numel(idx_pings_tot)));
+    idx_ping=idx_ping_tot((ui-1)*block_size+1:nanmin(ui*block_size,numel(idx_ping_tot)));
     
     idx_r=idx_r_tot;
     
-    reg_temp=region_cl('Name','Temp','Idx_r',idx_r,'Idx_pings',idx_pings);
+    reg_temp=region_cl('Name','Temp','Idx_r',idx_r,'Idx_ping',idx_ping);
     
-    [TS,idx_r,idx_pings,bad_data_mask,bad_trans_vec,inter_mask,below_bot_mask,~]=get_data_from_region(trans_obj,reg_temp,'field',field,...
+    [TS,idx_r,idx_ping,bad_data_mask,bad_trans_vec,inter_mask,below_bot_mask,~]=get_data_from_region(trans_obj,reg_temp,'field',field,...
         'intersect_only',1,...
         'regs',reg_obj);
     
-    Power= trans_obj.Data.get_subdatamat(idx_r,idx_pings,'field','power');
+    Power= trans_obj.Data.get_subdatamat('idx_r',idx_r,'idx_ping',idx_ping,'field','power');
     
     mask=bad_data_mask|below_bot_mask|~inter_mask;
     
@@ -162,7 +162,7 @@ for ui=1:num_ite
     
    
     idx_r=idx_r(:);
-    idx_pings=idx_pings(:)';
+    idx_ping=idx_ping(:)';
 
     if isempty(TS)
         warndlg_perso([],'No TS','Cannot find single targets with no TS datagram...');
@@ -171,9 +171,9 @@ for ui=1:num_ite
     end
     
     [nb_samples,nb_pings]=size(TS);
-    [T,N]=trans_obj.get_pulse_Teff(idx_pings);
+    [T,N]=trans_obj.get_pulse_Teff(idx_ping);
 
-    Idx_samples_lin=Idx_samples_lin_tot(idx_r,idx_pings);
+    Idx_samples_lin=Idx_samples_lin_tot(idx_r,idx_ping);
     r=trans_obj.get_transceiver_range(idx_r);
     r_p=trans_obj.get_transceiver_range(nanmax(N));
     Range=repmat(r,1,nb_pings);
@@ -217,8 +217,8 @@ for ui=1:num_ite
     Power(idx_rem,:)=[];
     Idx_samples_lin(idx_rem,:)=[];
     [nb_samples,nb_pings]=size(TS);
-    along=trans_obj.Data.get_subdatamat(idx_r,idx_pings,'field','AlongAngle');
-    athwart=trans_obj.Data.get_subdatamat(idx_r,idx_pings,'field','AcrossAngle');
+    along=trans_obj.Data.get_subdatamat('idx_r',idx_r,'idx_ping',idx_ping,'field','AlongAngle');
+    athwart=trans_obj.Data.get_subdatamat('idx_r',idx_r,'idx_ping',idx_ping,'field','AcrossAngle');
     
     if isempty(along)||isempty(along)
         disp('Computing using single beam data');
@@ -229,8 +229,8 @@ for ui=1:num_ite
     Range=repmat(trans_obj.get_transceiver_range(idx_r),1,nb_pings);
     
     Samples=repmat(idx_r',1,nb_pings);
-    Ping=repmat(trans_obj.get_transceiver_pings(idx_pings),nb_samples,1);
-    Time=repmat(trans_obj.get_transceiver_time(idx_pings),nb_samples,1);
+    Ping=repmat(trans_obj.get_transceiver_pings(idx_ping),nb_samples,1);
+    Time=repmat(trans_obj.get_transceiver_time(idx_ping),nb_samples,1);
  
     N=repmat(N,nb_samples,1);
     Np=N(1);
@@ -459,12 +459,12 @@ for ui=1:num_ite
             single_targets.Transmitted_pulse_length=T*ones(size(single_targets.PulseLength_Normalized_PLDL));
             
             
-            heading_mat=repmat(heading(idx_pings),nb_samples,1);
-            roll_mat=repmat(roll(idx_pings),nb_samples,1);
-            pitch_mat=repmat(pitch(idx_pings),nb_samples,1);
-            heave_mat=repmat(heave(idx_pings),nb_samples,1);
-            dist_mat=repmat(dist(idx_pings),nb_samples,1);
-            yaw_mat=repmat(yaw(idx_pings),nb_samples,1);
+            heading_mat=repmat(heading(idx_ping),nb_samples,1);
+            roll_mat=repmat(roll(idx_ping),nb_samples,1);
+            pitch_mat=repmat(pitch(idx_ping),nb_samples,1);
+            heave_mat=repmat(heave(idx_ping),nb_samples,1);
+            dist_mat=repmat(dist(idx_ping),nb_samples,1);
+            yaw_mat=repmat(yaw(idx_ping),nb_samples,1);
             
             single_targets.Dist=dist_mat(idx_target_lin);
             single_targets.Roll=roll_mat(idx_target_lin);
@@ -478,11 +478,11 @@ for ui=1:num_ite
                  
             
         case 'FM'
-            dt=trans_obj.get_params_value('SampleInterval',idx_pings(1));
+            dt=trans_obj.get_params_value('SampleInterval',idx_ping(1));
             dr=dt*nanmean(trans_obj.get_soundspeed(idx_r))/2;
             
   
-            [T,Np_t]=trans_obj.get_pulse_length(idx_pings(1));      
+            [T,Np_t]=trans_obj.get_pulse_length(idx_ping(1));      
             %peak_mat(peak_mat==-999)=nan;
             
 %             tic;
@@ -502,7 +502,7 @@ for ui=1:num_ite
                 'MinPeakHeight',min_TS-p.Results.MaxBeamComp,...
                 'WidthReference','halfprom',...
                 'MinPeakDistance',(p.Results.MaxNormPL*Np_t/2),...
-                'MinPeakWidth',2,...
+                'MinPeakWidth',p.Results.MinNormPL*Np_t,...
                 'MaxPeakWidth',p.Results.MaxNormPL*Np_t);
             %toc
             %figure();plot(peak_mat(:));hold on;plot(idx_peaks_lin,peak_vals,'+');xlim([1 1e4])
@@ -521,7 +521,7 @@ for ui=1:num_ite
             idx_samples=rem(idx_peaks_lin,size(peak_mat,1));
             idx_samples(idx_samples==0)=nb_samples;
 
-            idx_pings=Ping(idx_peaks_lin);
+            idx_ping=Ping(idx_peaks_lin);
 
             single_targets.TS_comp=TS(idx_peaks_lin)'+simradBeamComp(idx_peaks_lin)';
             single_targets.TS_uncomp=TS(idx_peaks_lin)';
@@ -533,8 +533,8 @@ for ui=1:num_ite
             single_targets.StandDev_Angles_Major_Axis=zeros(size(idx_peaks_lin))';
             single_targets.Angle_minor_axis=along(idx_peaks_lin)';
             single_targets.Angle_major_axis=athwart(idx_peaks_lin)';
-            single_targets.Ping_number=idx_pings';
-            single_targets.Time=Time(idx_pings)';
+            single_targets.Ping_number=idx_ping';
+            single_targets.Time=Time(idx_ping)';
             
             single_targets.idx_target_lin=idx_samples_lin;
             single_targets.pulse_env_before_lin=width_peaks'/2*dt;
@@ -592,7 +592,7 @@ output_struct.done =  true;
 % if~isempty(old_single_targets)
 %     if ~isempty(old_single_targets.TS_comp)
 %
-%         idx_rem=(old_single_targets.idx_r>=idx_r(1)&old_single_targets.idx_r<=idx_r(end))&(old_single_targets.Ping_number>=idx_pings(1)&old_single_targets.Ping_number<=idx_pings(end));
+%         idx_rem=(old_single_targets.idx_r>=idx_r(1)&old_single_targets.idx_r<=idx_r(end))&(old_single_targets.Ping_number>=idx_ping(1)&old_single_targets.Ping_number<=idx_ping(end));
 %
 %         props=fields(old_single_targets);
 %

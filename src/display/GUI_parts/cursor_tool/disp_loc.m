@@ -62,9 +62,9 @@ end
         
         curr_gps=trans_obj.GPSDataPing;
         
-        [~,idx_pings]=nanmin(abs(double(xdata)-xinit));
+        [~,idx_ping]=nanmin(abs(double(xdata)-xinit));
         
-        (fprintf('%.6f \n%.6f\n',curr_gps.Lat(idx_pings),curr_gps.Long(idx_pings)));
+        (fprintf('%.6f \n%.6f\n',curr_gps.Lat(idx_ping),curr_gps.Long(idx_ping)));
         
     end
 

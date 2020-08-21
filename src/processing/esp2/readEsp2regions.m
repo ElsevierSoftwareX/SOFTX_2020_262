@@ -37,8 +37,8 @@ while 1
         %Ping_ori=nanmin(x1,x2)+pingOffset;
         %Sample_ori=nanmin(y1,y2);
         
-        idx_pings=(nanmin(x1,x2):nanmax(x1,x2))+1;
-        idx_pings(idx_pings>PingCount)=[];
+        idx_ping=(nanmin(x1,x2):nanmax(x1,x2))+1;
+        idx_ping(idx_ping>PingCount)=[];
         idx_r=(nanmin(y1,y2):nanmax(y1,y2))+1;
         
         
@@ -65,7 +65,7 @@ while 1
                 MaskReg=[];
             case 'Polygon'
                 Shape='Polygon';
-                [X,Y] = meshgrid(idx_pings,idx_r);
+                [X,Y] = meshgrid(idx_ping,idx_r);
                 MaskReg = double(inpolygon(X,Y,X_cont,Y_cont));       
         end
                
@@ -99,8 +99,8 @@ while 1
         tline = fgetl(fid);
         Cell_w = str2double(tline(16:end));
         Cell_w_unit='pings';
-        if numel(idx_pings)==1
-            idx_pings=[idx_pings-1 idx_pings idx_pings+1];
+        if numel(idx_ping)==1
+            idx_ping=[idx_ping-1 idx_ping idx_ping+1];
         end
         
          Regions(i)=region_cl(...
@@ -108,7 +108,7 @@ while 1
             'Name',Class,...
             'Tag',Class,...
             'Type',Type,...
-            'Idx_pings',idx_pings,...
+            'Idx_ping',idx_ping,...
             'Idx_r',idx_r,...
             'Shape',Shape,...
             'MaskReg',MaskReg,...

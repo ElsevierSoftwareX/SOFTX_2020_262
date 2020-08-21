@@ -20,8 +20,8 @@ acrossangle_ori=trans_obj.Data.get_datamat('acrossangle');
 acrossangle_new=layer.Transceivers(select).Data.get_datamat('acrossangle');
 alongangle_new=layer.Transceivers(select).Data.get_datamat('alongangle');
 
-trans_obj.Data.replace_sub_data_v2('acrossangle',imresize(acrossangle_new,size(acrossangle_ori),'nearest'),[],[]);
-trans_obj.Data.replace_sub_data_v2('alongangle',imresize(alongangle_new,size(acrossangle_ori),'nearest'),[],[]);
+trans_obj.Data.replace_sub_data_v2(imresize(acrossangle_new,size(acrossangle_ori),'nearest'),'field','acrossangle');
+trans_obj.Data.replace_sub_data_v2(imresize(alongangle_new,size(acrossangle_ori),'nearest'),'field','alongangle');
 update_display(main_figure,0,1);
 
 end

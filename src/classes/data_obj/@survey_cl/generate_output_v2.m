@@ -212,9 +212,9 @@ for isn = 1:length(snaps)
             end
             
 
-            idx_pings = 1:length(gps_add.Time);
+            idx_ping = 1:length(gps_add.Time);
             idx_in_transect = find(gps_add.Time(:)>= nanmin(output.StartTime(idx_lay(i)))&gps_add.Time(:)<= nanmax(output.EndTime(idx_lay(i))));
-            idx_good_pings_add = intersect(idx_pings,idx_in_transect);
+            idx_good_pings_add = intersect(idx_ping,idx_in_transect);
             idx_good_pings_add = intersect(idx_good_pings_add,find(tag_add>0));
             idx_good_pings_dist = intersect(idx_good_pings_add,find(~isnan(gps_add.Lat)));
             
@@ -235,7 +235,7 @@ for isn = 1:length(snaps)
             mean_bot_w = mean_bot_w+mean_bot(i)*length(idx_good_pings_add);
             av_speed(i) = dist_add/timediff;
             idx_good_pings = union(idx_good_pings,idx_good_pings_add+iping0);
-            iping0 = iping0+length(idx_pings);
+            iping0 = iping0+length(idx_ping);
         end
         
         if isempty(idx_good_pings)

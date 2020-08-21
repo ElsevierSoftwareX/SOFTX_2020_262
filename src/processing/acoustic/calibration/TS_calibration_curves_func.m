@@ -78,7 +78,7 @@ for uui=select
         continue;
     end
     new_region=trans_obj.Regions.merge_regions('overlap_only',0);
-    t_mode_d=nanmean(trans_depth(new_region.Idx_pings));
+    t_mode_d=nanmean(trans_depth(new_region.Idx_ping));
     
     Freq=trans_obj.Config.Frequency;
     Freq_c=(trans_obj.get_params_value('FrequencyStart',1)+trans_obj.get_params_value('FrequencyEnd',1))/2;
@@ -406,27 +406,27 @@ for uui=select
         case 'FM'
             
             idx_peak_tot = trans_obj.ST.idx_r(idx_keep_sec);
-            idx_pings = trans_obj.ST.Ping_number(idx_keep_sec);
+            idx_ping = trans_obj.ST.Ping_number(idx_keep_sec);
             
             if isempty(idx_peak_tot)
                 warndlg_perso(main_figure,'','Not enough central echoes');
                 continue;
             end
             
-            set(load_bar_comp.progress_bar, 'Minimum',0, 'Maximum',length(idx_pings), 'Value',0);
+            set(load_bar_comp.progress_bar, 'Minimum',0, 'Maximum',length(idx_ping), 'Value',0);
             load_bar_comp.progress_bar.setText(sprintf('Processing TS estimation Frequency %.0fkHz',trans_obj.Config.Frequency/1e3));
             
             idx_rem=[];
-            f_corr=nan(1,numel(idx_pings));
+            f_corr=nan(1,numel(idx_ping));
                        
             cal_struct=trans_obj.get_fm_cal();
             
-            for kk=1:length(idx_pings)
-                [sp,cp,f,~,f_corr(kk)]=processTS_f_v2(trans_obj,layer.EnvData,idx_pings(kk),range_tot(idx_peak_tot(kk)),cal_struct,att_m);
+            for kk=1:length(idx_ping)
+                [sp,cp,f,~,f_corr(kk)]=processTS_f_v2(trans_obj,layer.EnvData,idx_ping(kk),range_tot(idx_peak_tot(kk)),cal_struct,att_m);
                 if kk==1
-                    Sp_f=nan(numel(sp),numel(idx_pings));
-                    Compensation_f=nan(numel(sp),numel(idx_pings));
-                    f_vec=nan(numel(sp),numel(idx_pings));
+                    Sp_f=nan(numel(sp),numel(idx_ping));
+                    Compensation_f=nan(numel(sp),numel(idx_ping));
+                    f_vec=nan(numel(sp),numel(idx_ping));
                 end
                 if numel(sp)==size(Sp_f,1)
                     Sp_f(:,kk)=sp;
@@ -524,20 +524,20 @@ for uui=select
             end
             
             idx_peak_tot = trans_obj.ST.idx_r(idx_keep);
-            idx_pings = trans_obj.ST.Ping_number(idx_keep);
+            idx_ping = trans_obj.ST.Ping_number(idx_keep);
     
-            set(load_bar_comp.progress_bar, 'Minimum',0, 'Maximum',length(idx_pings), 'Value',0);
+            set(load_bar_comp.progress_bar, 'Minimum',0, 'Maximum',length(idx_ping), 'Value',0);
             load_bar_comp.progress_bar.setText(sprintf('Processing EQA estimation Frequency %.0fkHz',trans_obj.Config.Frequency/1e3));
             
             idx_rem=[];
-            f_corr=nan(1,numel(idx_pings));
+            f_corr=nan(1,numel(idx_ping));
             
-            for kk=1:length(idx_pings)
-                [sp,cp,f,~,f_corr(kk)]=trans_obj.processTS_f_v2(layer.EnvData,idx_pings(kk),range_tot(idx_peak_tot(kk)),cal_fm,att_m);
+            for kk=1:length(idx_ping)
+                [sp,cp,f,~,f_corr(kk)]=trans_obj.processTS_f_v2(layer.EnvData,idx_ping(kk),range_tot(idx_peak_tot(kk)),cal_fm,att_m);
                 if kk==1
-                    Sp_f=nan(numel(sp),numel(idx_pings));
-                    Compensation_f=nan(numel(sp),numel(idx_pings));
-                    f_vec=nan(numel(sp),numel(idx_pings));
+                    Sp_f=nan(numel(sp),numel(idx_ping));
+                    Compensation_f=nan(numel(sp),numel(idx_ping));
+                    f_vec=nan(numel(sp),numel(idx_ping));
                 end
                 if numel(sp)==size(Sp_f,1)
                     Sp_f(:,kk)=sp;
@@ -756,7 +756,7 @@ for uui=select
             cal_cw.AngleOffsetAthwartship(uui)=offset_ps-trans_obj.Config.AngleOffsetAthwartship;
             cal_cw.BeamWidthAlongship(uui)=faBW;
             cal_cw.BeamWidthAthwartship(uui)=psBW;
-            cal_cw.EQA(uui)=10*log10(2.2578*sind(cal_cw.BeamWidthAlongship(uui)/4+cal_cw.BeamWidthAthwartship(uui)/4).^2);
+            cal_cw.EQA(uui)=10*log10(2.578*sind(cal_cw.BeamWidthAlongship(uui)/4+cal_cw.BeamWidthAthwartship(uui)/4).^2);
             cal_cw.RMS(uui)=rms_fit;
             
             for ifi=1:length(fid)
@@ -768,6 +768,7 @@ for uui=select
                 fprintf(fid(ifi),['Fore/aft offset = ' num2str(offset_fa-trans_obj.Config.AngleOffsetAlongship) ' degrees (to be subtracted from angles)\n']);
                 fprintf(fid(ifi),['Port/stbd beamwidth = ' num2str(psBW) ' degrees\n']);
                 fprintf(fid(ifi),['Port/stbd offset = ' num2str(offset_ps-trans_obj.Config.AngleOffsetAthwartship) ' degrees (to be subtracted from angles)\n']);
+                fprintf(fid(ifi),['New EBA estimated at = ' num2str(cal_cw.EQA(uui)) ' dB\n']);
                 fprintf(fid(ifi),['Results obtained from ' num2str(numel(Sp_sph(id))) ' sphere echoes\n']);
                 fprintf(fid(ifi),['Using c = ' num2str(layer.EnvData.SoundSpeed) ' m/s\n']);
                 fprintf(fid(ifi),['Using alpha = ' num2str(trans_obj.Alpha(1)*1e3) ' dB/km\n']);

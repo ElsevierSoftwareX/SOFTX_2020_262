@@ -81,7 +81,7 @@ bot=old_bot;
 
 xinit=nan(1,nb_pings);
 yinit=nan(1,nb_pings);
-idx_pings=[];
+idx_ping=[];
 cp = ah.CurrentPoint;
 xinit(1) =cp(1,1);
 yinit(1)=cp(1,2);
@@ -188,13 +188,13 @@ end
                 idx_bot=(idx_bot:idx_bot_1);
                 
                 bot.Sample_idx(idx_bot)=round(linspace(idx_r,idx_r1,length(idx_bot)));
-                idx_pings=union(idx_pings,idx_bot);
+                idx_ping=union(idx_ping,idx_bot);
             end
         elseif length(x_f)==1
             [~, idx_bot]=nanmin(abs(x_f-xdata));
             [~,idx_r]=nanmin(abs(y_f-ydata));
             bot.Sample_idx(idx_bot)=idx_r;
-            idx_pings=union(idx_pings,idx_bot);
+            idx_ping=union(idx_ping,idx_bot);
         end
         
     end
@@ -210,7 +210,7 @@ end
         
         if val>0 
             add_undo_bottom_action(main_figure,trans_obj,old_bot,bot)
-            %trans_obj.apply_algo('BottomFeatures','reg_obj',region_cl('Idx_pings',idx_pings,'Idx_r',[1 10]));
+            %trans_obj.apply_algo('BottomFeatures','reg_obj',region_cl('Idx_ping',idx_ping,'Idx_r',[1 10]));
         end
         
         display_bottom(main_figure,{'main' 'mini' curr_disp.ChannelID});

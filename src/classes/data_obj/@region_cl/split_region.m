@@ -13,19 +13,19 @@ unique_id=reg_obj.Unique_ID;
 for ifile=file_ids
     
     idx_ping_files=find(idx_files==ifile);
-    idx_reg_inter=intersect(idx_ping_files,reg_obj.Idx_pings);
+    idx_reg_inter=intersect(idx_ping_files,reg_obj.Idx_ping);
     
     if ~isempty(idx_reg_inter)
-        Idx_pings=idx_reg_inter;
-%         Idx_pings(1) 
-%         Idx_pings(end)
-%         x_reg_rect=([Idx_pings(1) Idx_pings(end) Idx_pings(end) Idx_pings(1) Idx_pings(1)]);
+        Idx_ping=idx_reg_inter;
+%         Idx_ping(1) 
+%         Idx_ping(end)
+%         x_reg_rect=([Idx_ping(1) Idx_ping(end) Idx_ping(end) Idx_ping(1) Idx_ping(1)]);
 %         y_reg_rect=([reg_obj.Idx_r(end) reg_obj.Idx_r(end) reg_obj.Idx_r(1) reg_obj.Idx_r(1) reg_obj.Idx_r(end)]);
 %         poly_file=polyshape(x_reg_rect,y_reg_rect,'Simplify',false);
-        if length(idx_reg_inter)<length(reg_obj.Idx_pings)
+        if length(idx_reg_inter)<length(reg_obj.Idx_ping)
             switch reg_obj.Shape
                 case 'Polygon'            
-                    mask=reg_obj.get_sub_mask(1:numel(reg_obj.Idx_r),Idx_pings-reg_obj.Idx_pings(1)+1);
+                    mask=reg_obj.get_sub_mask(1:numel(reg_obj.Idx_r),Idx_ping-reg_obj.Idx_ping(1)+1);
 
                     %poly=intersect(poly_file,reg_obj.Poly);
                 case 'Rectangular'
@@ -40,7 +40,7 @@ for ifile=file_ids
                 'Name',reg_obj.Name,...
                 'Tag',reg_obj.Tag,...
                 'Type',reg_obj.Type,...
-                'Idx_pings',Idx_pings,...
+                'Idx_ping',Idx_ping,...
                 'Idx_r',reg_obj.Idx_r,...
                 'Shape',reg_obj.Shape,...
                 'MaskReg',mask,...
@@ -69,7 +69,7 @@ end
 
 idx_rem=zeros(1,numel(regions));
 for i=1:numel(regions)
-    idx_rem(i)=isempty(regions(i).Idx_r)|isempty(regions(i).Idx_pings);
+    idx_rem(i)=isempty(regions(i).Idx_r)|isempty(regions(i).Idx_ping);
 end
 
 regions(find(idx_rem))=[];

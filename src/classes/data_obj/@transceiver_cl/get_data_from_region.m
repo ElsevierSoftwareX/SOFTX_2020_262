@@ -1,4 +1,4 @@
-function [data,idx_r,idx_pings,bad_data_mask,bad_trans_vec,intersection_mask,below_bot_mask,mask_from_st] = get_data_from_region(trans_obj,region,varargin)
+function [data,idx_r,idx_ping,bad_data_mask,bad_trans_vec,intersection_mask,below_bot_mask,mask_from_st] = get_data_from_region(trans_obj,region,varargin)
 
 %% input parser
 p = inputParser;
@@ -20,27 +20,27 @@ parse(p,trans_obj,region,varargin{:});
 %% init
 data = [];
 idx_r = [];
-idx_pings = [];
+idx_ping = [];
 bad_data_mask = [];
 intersection_mask = [];
 bad_trans_vec = [];
 below_bot_mask = [];
 mask_from_st = [];
 
-idx_pings_tot = region.Idx_pings;
+idx_ping_tot = region.Idx_ping;
 
-time_tot = trans_obj.get_transceiver_time(idx_pings_tot);
+time_tot = trans_obj.get_transceiver_time(idx_ping_tot);
 
 idx_keep_x = ( time_tot<=p.Results.timeBounds(2) & time_tot>=p.Results.timeBounds(1) );
 
 if ~any(idx_keep_x)
     return;
 end
-idx_pings = idx_pings_tot(idx_keep_x);
+idx_ping = idx_ping_tot(idx_keep_x);
 idx_r = region.Idx_r;
 
 % tic
-% [ping_mat,r_mat]=meshgrid(idx_pings,idx_r);
+% [ping_mat,r_mat]=meshgrid(idx_ping,idx_r);
 % isin=arrayfun(@(x,y) isinterior(region.Poly,x,y),ping_mat,r_mat);
 % toc
 % figure();imagesc(isin)
@@ -52,10 +52,10 @@ idx_r = region.Idx_r;
 range_trans = trans_obj.get_transceiver_range(idx_r);
 idx_r = idx_r(range_trans>nanmin(p.Results.rangeBounds)&range_trans<nanmax(p.Results.rangeBounds));
 
-data = trans_obj.Data.get_subdatamat(idx_r,idx_pings,'field',p.Results.field);
-depth_trans = trans_obj.get_transceiver_depth(idx_r,idx_pings);
+data = trans_obj.Data.get_subdatamat('idx_r',idx_r,'idx_ping',idx_ping,'field',p.Results.field);
+depth_trans = trans_obj.get_transceiver_depth(idx_r,idx_ping);
 range_trans = trans_obj.get_transceiver_range(idx_r);
-bot_sple = trans_obj.get_bottom_idx(idx_pings);
+bot_sple = trans_obj.get_bottom_idx(idx_ping);
 bot_sple(isnan(bot_sple)) = inf;
 [~,idx_keep_r] = intersect(idx_r,region.Idx_r);
 
@@ -64,7 +64,7 @@ if isempty(data)
     return;
 end
 
-region.Idx_pings = idx_pings;
+region.Idx_ping = idx_ping;
 region.Idx_r = idx_r;
 
 switch region.Shape
@@ -73,7 +73,7 @@ switch region.Shape
         data(region.get_mask==0) = NaN;
 end
 
-if isempty(idx_r)||isempty(idx_pings)
+if isempty(idx_r)||isempty(idx_ping)
     warning('Cannot integrate this region, no data...');
     trans_obj.rm_region_id(region.Unique_ID);
     return;
@@ -102,7 +102,7 @@ end
 idx = trans_obj.find_regions_type('Bad Data');
 bad_data_mask = region.get_mask_from_intersection(trans_obj.Regions(idx));
 
-mask_spikes = trans_obj.get_spikes(idx_r,idx_pings);
+mask_spikes = trans_obj.get_spikes(idx_r,idx_ping);
 
 if ~isempty(mask_spikes)
     bad_data_mask = bad_data_mask|mask_spikes;
@@ -110,12 +110,12 @@ end
 
 if region.Remove_ST
     mask_from_st = trans_obj.mask_from_st();
-    mask_from_st = mask_from_st(idx_r,idx_pings);
+    mask_from_st = mask_from_st(idx_r,idx_ping);
 else
     mask_from_st = false(size(data));
 end
 
-bad_trans_vec = (trans_obj.Bottom.Tag(idx_pings)==0);
+bad_trans_vec = (trans_obj.Bottom.Tag(idx_ping)==0);
 
 if p.Results.keep_bottom==0
     below_bot_mask = bsxfun(@ge,idx_r(:),bot_sple(:)');
@@ -131,7 +131,7 @@ switch region.Reference
     case 'Transducer'
         line_ref = zeros(1,size(data,2));
     case 'Bottom'
-        line_ref = trans_obj.get_bottom_range(idx_pings);
+        line_ref = trans_obj.get_bottom_range(idx_ping);
     case 'Line'
         if isempty(p.Results.line_obj)
             line_obj=line_cl('Depth',zeros(size(time_tot(idx_keep_x))),'Range',-depth_trans,'Time',time_tot(idx_keep_x));

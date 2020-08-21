@@ -139,29 +139,29 @@ classdef gps_data_cl
         end
         
         %% export GPS data to geostruct format
-        function geostruct = gps_to_geostruct(obj,idx_pings)
+        function geostruct = gps_to_geostruct(obj,idx_ping)
             
-            if isempty(idx_pings)
-                idx_pings = 1:length(obj.Lat);
+            if isempty(idx_ping)
+                idx_ping = 1:length(obj.Lat);
             end
             geostruct.Geometry    = 'Line';
-            geostruct.BoundingBox = [[min(obj.Long(idx_pings)) min(obj.Lat(idx_pings))];[max(obj.Long(idx_pings)) max(obj.Lat(idx_pings))]];
-            geostruct.Lat         = obj.Lat(idx_pings);
-            geostruct.Lon         = obj.Long(idx_pings);
-            geostruct.Date        = datestr(nanmean(obj.Time(idx_pings))); 
+            geostruct.BoundingBox = [[min(obj.Long(idx_ping)) min(obj.Lat(idx_ping))];[max(obj.Long(idx_ping)) max(obj.Lat(idx_ping))]];
+            geostruct.Lat         = obj.Lat(idx_ping);
+            geostruct.Lon         = obj.Long(idx_ping);
+            geostruct.Date        = datestr(nanmean(obj.Time(idx_ping))); 
         end
         
         %% export GPS data to a .csv file
-        function save_gps_to_file(obj,output_file,idx_pings)
+        function save_gps_to_file(obj,output_file,idx_ping)
             
-            if isempty(idx_pings)
-                idx_pings = 1:length(obj.Lat);
+            if isempty(idx_ping)
+                idx_ping = 1:length(obj.Lat);
             end
-            idx_pings = intersect(idx_pings,find(~isnan(obj.Time)&~isnan(obj.Lat)&~isnan(obj.Long)));
+            idx_ping = intersect(idx_ping,find(~isnan(obj.Time)&~isnan(obj.Lat)&~isnan(obj.Long)));
             
-            struct_obj.Lat  = obj.Lat(idx_pings)';
-            struct_obj.Long = obj.Long(idx_pings)';
-            struct_obj.Time = cellfun(@(x) datestr(x,'dd/mm/yyyy HH:MM:SS'),(num2cell(obj.Time(idx_pings))'),'UniformOutput',0);
+            struct_obj.Lat  = obj.Lat(idx_ping)';
+            struct_obj.Long = obj.Long(idx_ping)';
+            struct_obj.Time = cellfun(@(x) datestr(x,'dd/mm/yyyy HH:MM:SS'),(num2cell(obj.Time(idx_ping))'),'UniformOutput',0);
             
             struct2csv(struct_obj,output_file);
             

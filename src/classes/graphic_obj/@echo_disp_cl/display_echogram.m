@@ -146,13 +146,13 @@ if update_echo>0
             if any(depth_trans~=0)||trans_obj.Config.TransducerAlphaX~=0||trans_obj.Config.TransducerAlphaY~=0
                 [x_data_disp,y_data_disp,data,sc]=trans_obj.apply_line_depth(fieldname,idx_r_red,idx_ping_red);
             else
-                [data,sc]=trans_obj.Data.get_subdatamat(idx_r_red,idx_ping_red,'field',fieldname);
+                [data,sc]=trans_obj.Data.get_subdatamat('idx_r',idx_r_red,'idx_ping',idx_ping_red,'field',fieldname);
                 x_data_disp=xdata(idx_ping_red);
                 y_data_disp=trans_obj.get_transceiver_range(idx_r_red);
             end
             
         otherwise
-            [data,sc]=trans_obj.Data.get_subdatamat(idx_r_red,idx_ping_red,'field',fieldname);
+            [data,sc]=trans_obj.Data.get_subdatamat('idx_r',idx_r_red,'idx_ping',idx_ping_red,'field',fieldname);
             
             x_data_disp=xdata(idx_ping_red);
             y_data_disp=ydata(idx_r_red);
@@ -190,7 +190,7 @@ if update_echo>0
     
 
     echo_obj.echo_usrdata.Idx_r=idx_r_red;
-    echo_obj.echo_usrdata.Idx_pings=idx_ping_red;
+    echo_obj.echo_usrdata.Idx_ping=idx_ping_red;
     echo_obj.echo_usrdata.CID=trans_obj.Config.ChannelID;
     echo_obj.echo_usrdata.Fieldname=fieldname;
     echo_obj.echo_usrdata.Layer_ID=p.Results.Unique_ID;
@@ -213,7 +213,7 @@ else
     
 end
 
-idx_p=echo_obj.echo_usrdata.Idx_pings>=idx_ping_red_ori(1)&echo_obj.echo_usrdata.Idx_pings<=idx_ping_red_ori(end);
+idx_p=echo_obj.echo_usrdata.Idx_ping>=idx_ping_red_ori(1)&echo_obj.echo_usrdata.Idx_ping<=idx_ping_red_ori(end);
 idx_r=echo_obj.echo_usrdata.Idx_r>=idx_r_red_ori(1)&echo_obj.echo_usrdata.Idx_r<=idx_r_red_ori(end);
 
 

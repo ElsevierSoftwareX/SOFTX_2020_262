@@ -10,14 +10,14 @@ switch class(select_plot)
     case 'region_cl'
         reg_curr=select_plot;
     otherwise
-        idx_pings=round(nanmin(select_plot.XData)):round(nanmax(select_plot.XData));
+        idx_ping=round(nanmin(select_plot.XData)):round(nanmax(select_plot.XData));
         idx_r=round(nanmin(select_plot.YData)):round(nanmax(select_plot.YData));
-        reg_curr=region_cl('Idx_pings',idx_pings,'Idx_r',idx_r);
+        reg_curr=region_cl('Idx_ping',idx_ping,'Idx_r',idx_r);
 end
 
-data=trans_obj.Data.get_subdatamat(reg_curr.Idx_r,reg_curr.Idx_pings,'field','power');
+data=trans_obj.Data.get_subdatamat(reg_curr.Idx_r,reg_curr.Idx_ping,'field','power');
 
-fs=1./trans_obj.get_params_value('SampleInterval',reg_curr.Idx_pings)/2;
+fs=1./trans_obj.get_params_value('SampleInterval',reg_curr.Idx_ping)/2;
 
 
 [nb_samples,nb_pings]=size(data);

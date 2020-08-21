@@ -56,7 +56,7 @@ if ~isempty(PathToFile)&&~isempty(FileName)
 
             if ~strcmpi(layer.Filetype,'CREST')
                 for ii=1:length(regions)
-                    regions(ii).Idx_pings=regions(ii).Idx_pings+1;
+                    regions(ii).Idx_ping=regions(ii).Idx_ping+1;
                     regions(ii).Idx_r=regions(ii).Idx_r+1;
                 end
             end

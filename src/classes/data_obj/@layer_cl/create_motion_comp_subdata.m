@@ -17,7 +17,7 @@ time_ping_vec=(trans_obj.Data.get_samples()-1)*trans_obj.get_params_value('Sampl
 compensation=create_motion_comp(pitch,roll,time_att,time_pings_start,time_ping_vec,faBW,psBW);
 compensation(abs(compensation)>12)=0;
 
-trans_obj.Data.replace_sub_data_v2('motioncompensation',compensation,[],[])
+trans_obj.Data.replace_sub_data_v2(compensation,'field','motioncompensation')
 
 
 end

@@ -29,16 +29,16 @@ for ireg=1:numel(active_reg)
     [mean_depth,Sa] = trans_obj.get_mean_depth_from_region(active_reg(ireg).Unique_ID);
     
     % get Sv, bottom, time and range within region
-    idx_pings = active_reg(ireg).Idx_pings;
+    idx_ping = active_reg(ireg).Idx_ping;
     idx_r     = active_reg(ireg).Idx_r;
-    Sv    = trans_obj.Data.get_subdatamat(idx_r,idx_pings,'field','sv');
+    Sv    = trans_obj.Data.get_subdatamat('idx_r',idx_r,'idx_ping',idx_ping,'field','sv');
     range_all = trans_obj.get_transceiver_range();
     range_end = range_all(end);
     bot_r = trans_obj.get_bottom_range;
     bot_r(bot_r==0)     = range_end;
     bot_r(isnan(bot_r)) = range_end;
-    bot_r = bot_r(idx_pings);
-    time = trans_obj.Time(idx_pings);
+    bot_r = bot_r(idx_ping);
+    time = trans_obj.Time(idx_ping);
     range = trans_obj.get_transceiver_range(idx_r);
     
     % get colormap
@@ -49,7 +49,7 @@ for ireg=1:numel(active_reg)
     
     % top axis
     ax1 = axes(fig,'units','normalized','outerposition',[0 0.5 1 0.5]);
-    u = image(trans_obj.Time(idx_pings),range,Sv,'CDataMapping','scaled');
+    u = image(trans_obj.Time(idx_ping),range,Sv,'CDataMapping','scaled');
     hold(ax1,'on');
     grid(ax1,'on')
     plot(ax1,time,mean_depth,'r','linewidth',2);

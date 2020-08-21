@@ -28,7 +28,6 @@ addParameter(p,'EsOffset',[]);
 addParameter(p,'GPSOnly',0);
 addParameter(p,'LoadEKbot',0);
 addParameter(p,'force_open',0);
-addParameter(p,'sub_sample',1);
 addParameter(p,'bot_ver',-1);
 addParameter(p,'reg_ver',-1);
 
@@ -54,6 +53,15 @@ for iftype=1:numel(ftype_cell_unique)
         
         
         switch ftype
+
+            case 'DIDSON'
+                 new_layers_tmp=open_DDF_file_stdalone(Filename_tmp,...
+                    'PathToMemmap',p.Results.PathToMemmap,...
+                    'load_bar_comp',p.Results.load_bar_comp,...
+                    'PathToMemmap',p.Results.PathToMemmap,...
+                    'load_bar_comp',p.Results.load_bar_comp);
+                multi_lay_mode=0;
+
             case 'FCV30'
                 for ifi = 1:length(Filename_tmp)
                     if ~isempty(p.Results.load_bar_comp)
@@ -85,8 +93,7 @@ for iftype=1:numel(ftype_cell_unique)
                     'FieldNames',p.Results.FieldNames,...
                     'PathToMemmap',p.Results.PathToMemmap,...
                     'load_bar_comp',p.Results.load_bar_comp,...
-                    'force_open',p.Results.force_open,...
-                    'sub_sample',p.Results.sub_sample);
+                    'force_open',p.Results.force_open);
                 multi_lay_mode=0;
             case 'ASL'
                 

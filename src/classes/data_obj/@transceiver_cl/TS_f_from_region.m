@@ -15,7 +15,7 @@ parse(p,trans_obj,reg_obj,varargin{:});
 switch class(reg_obj)
     case 'region_cl'
         
-        pings=trans_obj.get_transceiver_pings(reg_obj.Idx_pings);
+        pings=trans_obj.get_transceiver_pings(reg_obj.Idx_ping);
         
         switch p.Results.mode
             case 'max_reg'

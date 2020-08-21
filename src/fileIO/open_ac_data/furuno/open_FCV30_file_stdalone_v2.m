@@ -132,12 +132,12 @@ for iconfig=id_config
     if ~isempty(load_bar_comp)
         set(load_bar_comp.progress_bar, 'Minimum',0, 'Maximum',nb_pings_tot, 'Value',0);
     end
-    idx_pings_tot=1:nb_pings_tot;
+    idx_ping_tot=1:nb_pings_tot;
     nb_samples_max=5*1e4;
     
-    block_size=nanmin(ceil(p.Results.block_len/nb_samples_max),numel(idx_pings_tot));
+    block_size=nanmin(ceil(p.Results.block_len/nb_samples_max),numel(idx_ping_tot));
     
-    num_ite=ceil(numel(idx_pings_tot)/block_size);
+    num_ite=ceil(numel(idx_ping_tot)/block_size);
     
     
     
@@ -160,13 +160,13 @@ for iconfig=id_config
     
     
     for ui=1:num_ite
-        idx_pings=idx_pings_tot((ui-1)*block_size+1:nanmin(ui*block_size,numel(idx_pings_tot)));
+        idx_ping=idx_ping_tot((ui-1)*block_size+1:nanmin(ui*block_size,numel(idx_ping_tot)));
         
-        nb_pings=numel(idx_pings);
+        nb_pings=numel(idx_ping);
         
         
         for u=1:nb_pings
-            ip=idx_pings(u);
+            ip=idx_ping(u);
             if ~isempty(load_bar_comp)
                 str_disp=sprintf('Getting infos for file %s',filename_dat{ip});
                 set(load_bar_comp.progress_bar, 'Value',ip);
@@ -186,7 +186,6 @@ for iconfig=id_config
             header.Date(6)=fread(fid,1,'short')';
             header.Remarks=char(fread(fid,287,'short')');
             
-            params.Time(ip)=datenum(header.Date);
             params.Mode(ip)=fread(fid,1,'short');
             params.TotalBeamNumber(ip)=fread(fid,1,'short');
             params.Beam_Id(ip,:)=fread(fid,5,'short');
@@ -240,7 +239,7 @@ for iconfig=id_config
         echo.Data=nan(nanmax(echo.DataSize),nb_pings);
         
         for u=1:nb_pings
-            ip=idx_pings(u);
+            ip=idx_ping(u);
             if ~isempty(load_bar_comp)
                 str_disp=sprintf('Getting Ping Data for %s',filename_dat{ip});
                 set(load_bar_comp.progress_bar, 'Value',ip);
@@ -282,8 +281,8 @@ for iconfig=id_config
         acrossphi=angle(echo.comp_sig_4(idx_s,:).*conj(echo.comp_sig_3(idx_s,:)));
         
         
-        AlongAngle=180/pi*asin(bsxfun(@rdivide,c*alongphi,(2*pi*params.Frequency(idx_pings)).*(L0*cosd(att.Pitch(idx_pings)))));
-        AcrossAngle=-180/pi*asin(bsxfun(@rdivide,c*acrossphi,(2*pi*params.Frequency(idx_pings)).*(L0*cosd(att.Roll(idx_pings)))));
+        AlongAngle=180/pi*asin(bsxfun(@rdivide,c*alongphi,(2*pi*params.Frequency(idx_ping)).*(L0*cosd(att.Pitch(idx_ping)))));
+        AcrossAngle=-180/pi*asin(bsxfun(@rdivide,c*acrossphi,(2*pi*params.Frequency(idx_ping)).*(L0*cosd(att.Roll(idx_ping)))));
         
         fwrite(fileID(strcmp(fields,'alongangle')),double(AlongAngle)/factor_fields(strcmpi(fields,'alongangle')),fmt_fields{strcmpi(fields,'alongangle')});
         fwrite(fileID(strcmp(fields,'acrossangle')),double(AcrossAngle)/factor_fields(strcmpi(fields,'acrossangle')),fmt_fields{strcmpi(fields,'acrossangle')});
@@ -316,7 +315,6 @@ for iconfig=id_config
     
     sub_ac_data_temp=sub_ac_data_cl.sub_ac_data_from_files(curr_data_name,[nb_samples nb_pings_tot],fields);
     
-    params_current.Time=NMEA.UTC;
     params_current.BandWidth(:)=params.ChirpWidth(1);
     params_current.ChannelMode=params.Mode;
     params_current.Frequency(:)=params.Frequency;
@@ -334,14 +332,15 @@ for iconfig=id_config
     
     ac_data_temp=ac_data_cl('SubData',sub_ac_data_temp,...
         'Nb_samples',length(R),...
-        'Nb_pings',length(params_current.Time),...
+        'Nb_beams',1,...
+        'Nb_pings',numel(params_current.PingNumber),...
         'MemapName',curr_data_name_t);
     
     trans_obj=transceiver_cl('Data',ac_data_temp,...
         'AttitudeNavPing',att_data,...
         'GPSDataPing',gps_data,...
         'Range',R(:,1),...
-        'Time',params_current.Time,...
+        'Time',NMEA.UTC,...
         'Config',config_current,...
         'Params',params_current);
     

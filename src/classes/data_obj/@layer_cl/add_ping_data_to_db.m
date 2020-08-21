@@ -46,14 +46,14 @@ for ilay=1:length(layers_obj)
             
             
             for ip=1:length(layers_obj(ilay).Filename)
-                idx_pings=find(fileID_vec==ip);
+                idx_ping=find(fileID_vec==ip);
                 if ~(isempty(gps_data{ip})||clear_existing_data>0)
                     if gps_data_obj.Time(end)<=gps_data{ip}.Time(end)
                         continue;
                     end
                 end
                
-                id_keep_f=intersect(id_keep,idx_pings);
+                id_keep_f=intersect(id_keep,idx_ping);
                 if isempty(id_keep_f)        
                    continue;
                 end
@@ -81,7 +81,7 @@ for ilay=1:length(layers_obj)
                 try
                     t=table(...
                         repmat({[fileOri extN]},numel(id_keep_f),1),...
-                        id_keep_f'-idx_pings(1)+1,...
+                        id_keep_f'-idx_ping(1)+1,...
                         repmat(freq,numel(id_keep_f),1),...
                         gps_data_obj.Lat(id_keep_f)',...
                         gps_data_obj.Long(id_keep_f)',...

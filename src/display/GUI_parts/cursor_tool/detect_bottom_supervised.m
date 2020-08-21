@@ -126,24 +126,24 @@ wbmcb([],[])
 %         rect.Position=[ping_new-dr sample_new-ratio*dr 2*dr dr*2*ratio];
         set(rect,'XData',x_box,'YData',y_box);
         
-        [idx_pings,idx_r]=get_pr(ping_new,sample_new);
+        [idx_ping,idx_r]=get_pr(ping_new,sample_new);
 
         if ping_new<xdata(1)||ping_new>xdata(end)||sample_new<ydata(1)||sample_new>ydata(end)
             return;
         end
         
-        output_struct= trans_obj.apply_algo('BottomDetectionV2','reg_obj',region_cl('Idx_r',idx_r,'Idx_pings',idx_pings),'force_ignore_status_bar',1);
+        output_struct= trans_obj.apply_algo('BottomDetectionV2','reg_obj',region_cl('Idx_r',idx_r,'Idx_ping',idx_ping),'force_ignore_status_bar',1);
        
-        yinit(idx_pings)=output_struct.bottom;
+        yinit(idx_ping)=output_struct.bottom;
         
         if isvalid(hp)
-            set(hp,'XData',xdata(idx_pings),'YData',yinit(idx_pings)+di);
+            set(hp,'XData',xdata(idx_ping),'YData',yinit(idx_ping)+di);
         else
-            hp=plot(ah,xdata(idx_pings),yinit(idx_pings)+di,'color',line_col,'linewidth',1,'Tag','bottom_temp','linewidth',2);
+            hp=plot(ah,xdata(idx_ping),yinit(idx_ping)+di,'color',line_col,'linewidth',1,'Tag','bottom_temp','linewidth',2);
         end
         
         
-        bot.Sample_idx(idx_pings)=yinit(idx_pings);
+        bot.Sample_idx(idx_ping)=yinit(idx_ping);
         end_bottom_edit(0)
     end
 
@@ -155,12 +155,12 @@ wbmcb([],[])
     end
 
 
-    function [idx_pings,idx_r]=get_pr(ping1,sample1)
+    function [idx_ping,idx_r]=get_pr(ping1,sample1)
         
-        idx_pings=round((ping1-dr):(ping1+dr));
+        idx_ping=round((ping1-dr):(ping1+dr));
         idx_r=round((sample1-dr*ratio):(sample1+dr*ratio));
         
-        idx_pings(idx_pings>nb_pings|idx_pings<1)=[];
+        idx_ping(idx_ping>nb_pings|idx_ping<1)=[];
         idx_r(idx_r>nb_samples|idx_r<1)=[];
         
     end

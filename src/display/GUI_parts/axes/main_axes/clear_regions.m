@@ -53,6 +53,10 @@ else
     [echo_obj,~,~,~]=get_axis_from_cids(main_figure,channelIDS);
 end
 
+if isempty(echo_obj)
+    return;
+end
+
 echo_obj.clear_echo_regions([]);
 
 if ~isdeployed

@@ -37,13 +37,13 @@ if isempty(echo_obj_existing)
    ydir = curr_disp.YDir;
    gx = 'pings';
    gy = 'depth';
-   idx_pings = 1:numel(trans_obj.Time);
+   idx_ping = 1:numel(trans_obj.Time);
    idx_r = (1:numel(trans_obj.Range));
 else
    ydir = echo_obj_existing.main_ax.YDir;
    gx = echo_obj_existing.echo_usrdata.geometry_x;
    gy = echo_obj_existing.echo_usrdata.geometry_y;
-   idx_pings = echo_obj_existing.echo_usrdata.Idx_pings;
+   idx_ping = echo_obj_existing.echo_usrdata.Idx_ping;
    idx_r = echo_obj_existing.echo_usrdata.Idx_r;
 end
 
@@ -61,7 +61,7 @@ echo_obj = echo_disp_cl([],...
 [dr,dp,up] =echo_obj.display_echogram(trans_obj,...
             'curr_disp',curr_disp,...
             'Fieldname',curr_disp.Fieldname,...
-            'x',idx_pings,...
+            'x',idx_ping,...
             'y',idx_r,...
             'force_update',true);
         

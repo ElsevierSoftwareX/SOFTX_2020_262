@@ -84,8 +84,8 @@ end
 if PROF
     profile on;
 end
-time_tot=trans_obj.get_transceiver_time(region.Idx_pings);
-pings_tot=trans_obj.get_transceiver_pings(region.Idx_pings);
+time_tot=trans_obj.get_transceiver_time(region.Idx_ping);
+pings_tot=trans_obj.get_transceiver_pings(region.Idx_ping);
 output=[];
 
 
@@ -103,7 +103,7 @@ idx_in=find(time_tot>=p.Results.timeBounds(1)&time_tot<=p.Results.timeBounds(2))
 if isempty(idx_in)
     return;
 end
-idx_pings_tot=region.Idx_pings(idx_in);
+idx_ping_tot=region.Idx_ping(idx_in);
 pings_tot=pings_tot(idx_in);
 time_tot=time_tot(idx_in);
 
@@ -137,7 +137,7 @@ nb_pings_per_slices=idx_end-idx_start+1;
 idx_r_tot=region.Idx_r;
 
 if ~p.Results.keep_bottom
-    idx_bot=trans_obj.get_bottom_idx(idx_pings_tot);
+    idx_bot=trans_obj.get_bottom_idx(idx_ping_tot);
     if ~any(isnan(idx_bot))
         idx_r_tmp=nanmax(idx_bot);
         if ~isnan(idx_r_tmp)
@@ -150,20 +150,20 @@ idx_r_max=idx_r_tot(end);
 
 range_trans=trans_obj.get_transceiver_range(idx_r_tot);
 sample_trans=trans_obj.Data.get_samples(idx_r_tot);
-depth_trans=trans_obj.get_transducer_depth(idx_pings_tot);
+depth_trans=trans_obj.get_transducer_depth(idx_ping_tot);
 
 % taking the average of distance between two samples
 dr = mean(diff(range_trans));
 
-bot_range=trans_obj.get_bottom_range(idx_pings_tot);
+bot_range=trans_obj.get_bottom_range(idx_ping_tot);
 
-bot_depth=trans_obj.get_bottom_depth(idx_pings_tot);
+bot_depth=trans_obj.get_bottom_depth(idx_ping_tot);
 
 switch region.Reference
     case 'Surface'
         line_ref_tot = -depth_trans;
     case 'Transducer'
-        line_ref_tot = zeros(1,numel(idx_pings_tot));
+        line_ref_tot = zeros(1,numel(idx_ping_tot));
     case 'Bottom'
         line_ref_tot = bot_range;
     case 'Line'
@@ -209,7 +209,7 @@ for ui=idx_ite_x
     ie=idx_end(ui);
     
     %% getting Sv
-    [Sv_reg,idx_r,idx_pings,bad_data_mask,bad_trans_vec,intersection_mask,below_bot_mask,mask_from_st]=	get_data_from_region(trans_obj,region,...
+    [Sv_reg,idx_r,idx_ping,bad_data_mask,bad_trans_vec,intersection_mask,below_bot_mask,mask_from_st]=	get_data_from_region(trans_obj,region,...
         'field',field,...
         'timeBounds',[time_tot(is) time_tot(ie)],...
         'depthBounds',p.Results.depthBounds,...
@@ -227,7 +227,7 @@ for ui=idx_ite_x
     
     %% motion correction
     if p.Results.motion_correction>0
-        motion_corr=trans_obj.Data.get_subdatamat(idx_r,idx_pings,'field','motioncompensation');
+        motion_corr=trans_obj.Data.get_subdatamat('idx_r',idx_r,'idx_ping',idx_ping,'field','motioncompensation');
         if ~isempty(motion_corr)
             motion_corr(motion_corr==-999)=0;
             Sv_reg=Sv_reg+motion_corr;
@@ -246,18 +246,18 @@ for ui=idx_ite_x
     
     Sv_reg(~Mask_reg) = nan;
     
-    [~,sub_idx_pings]=intersect(idx_pings_tot,idx_pings);
+    [~,sub_idx_ping]=intersect(idx_ping_tot,idx_ping);
     [~,sub_idx_r]=intersect(idx_r_tot,idx_r);
     
     %% vectors in pings and samples
     
     % time, range, ping counter, and sample counter vectors
-    sub_time = time_tot(sub_idx_pings);
-    sub_pings = pings_tot(sub_idx_pings);
+    sub_time = time_tot(sub_idx_ping);
+    sub_pings = pings_tot(sub_idx_ping);
     sub_samples = sample_trans(sub_idx_r);
-    sub_y=y(sub_idx_r)*ones(1,numel(sub_idx_pings));
-    sub_line_ref=line_ref_tot(sub_idx_pings);
-    sub_bot_depth=bot_depth(sub_idx_pings);
+    sub_y=y(sub_idx_r)*ones(1,numel(sub_idx_ping));
+    sub_line_ref=line_ref_tot(sub_idx_ping);
+    sub_bot_depth=bot_depth(sub_idx_ping);
     
     sub_depth=trans_obj.get_transceiver_depth(sub_samples,sub_pings);
     
@@ -272,15 +272,15 @@ for ui=idx_ite_x
         sub_lat  = nan(size(sub_time));
         sub_lon  = nan(size(sub_time));
     else
-        sub_dist = trans_obj.GPSDataPing.Dist(idx_pings);
-        sub_lat  = trans_obj.GPSDataPing.Lat(idx_pings);
-        sub_lon  = trans_obj.GPSDataPing.Long(idx_pings);
+        sub_dist = trans_obj.GPSDataPing.Dist(idx_ping);
+        sub_lat  = trans_obj.GPSDataPing.Lat(idx_ping);
+        sub_lon  = trans_obj.GPSDataPing.Long(idx_ping);
     end
     
     y_mat = sub_range_from_line_ref;
     
     
-    sub_x = x(sub_idx_pings);
+    sub_x = x(sub_idx_ping);
     
     % meshgrid the vectors in X and Y
     [x_mat,~] = meshgrid(sub_x,sub_idx_r);

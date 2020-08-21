@@ -12,7 +12,7 @@
 %
 % * |main_figure|: TODO: write description and info on variable
 % * |idx_r|: TODO: write description and info on variable
-% * |idx_pings|: TODO: write description and info on variable
+% * |idx_ping|: TODO: write description and info on variable
 %
 % *OUTPUT VARIABLES*
 %
@@ -36,9 +36,9 @@
 % Yoann Ladroit, NIWA. Type |help EchoAnalysis.m| for copyright information.
 
 %% Function
-function create_region_func(main_figure,idx_r,idx_pings)
+function create_region_func(main_figure,idx_r,idx_ping)
 
-if isempty(idx_r)||isempty(idx_pings)
+if isempty(idx_r)||isempty(idx_ping)
     return;
 end
 
@@ -71,7 +71,7 @@ cell_h=str2double(get(reglist_tab_comp.cell_h,'string'));
 cell_w=str2double(get(reglist_tab_comp.cell_w,'string'));
 
 
-if numel(idx_pings)==1||numel(idx_r)==1
+if numel(idx_ping)==1||numel(idx_r)==1
     disp('Region too small. a region needs to contain more than one ping...');
     return;
 end
@@ -81,7 +81,7 @@ reg_temp=region_cl(...
     'Tag',tag,...
     'Name','User defined',...
     'Type',data_type,...
-    'Idx_pings',idx_pings,...
+    'Idx_ping',idx_ping,...
     'Idx_r',idx_r,...
     'Shape','Rectangular',...
     'Reference',ref,...

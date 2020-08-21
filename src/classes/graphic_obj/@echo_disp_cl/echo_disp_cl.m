@@ -390,15 +390,15 @@ classdef echo_disp_cl < handle
             
             [dx,dy]=curr_disp.get_dx_dy();
             
-            idx_pings=round(obj.echo_surf.XData);
+            idx_ping=round(obj.echo_surf.XData);
             
            
             switch curr_disp.Xaxes_current
                 case 'seconds'
-                    xdata_grid=trans_obj.Time(idx_pings);
+                    xdata_grid=trans_obj.Time(idx_ping);
                     xdata_grid=xdata_grid*(24*60*60);
                 case 'pings'
-                    xdata_grid=trans_obj.get_transceiver_pings(idx_pings);
+                    xdata_grid=trans_obj.get_transceiver_pings(idx_ping);
                 case 'meters'
                     xdata_grid=trans_obj.GPSDataPing.Dist;
                     if  ~any(~isnan(trans_obj.GPSDataPing.Lat))
@@ -406,12 +406,12 @@ classdef echo_disp_cl < handle
                         curr_disp.Xaxes_current='pings';
                         curr_disp.init_grid_val(trans_obj);
                         [dx,dy]=curr_disp.get_dx_dy();
-                        xdata_grid=trans_obj.get_transceiver_pings(idx_pings);
+                        xdata_grid=trans_obj.get_transceiver_pings(idx_ping);
                     else
-                        xdata_grid=xdata_grid(idx_pings);
+                        xdata_grid=xdata_grid(idx_ping);
                     end
                 otherwise
-                    xdata_grid=trans_obj.get_transceiver_pings(idx_pings);
+                    xdata_grid=trans_obj.get_transceiver_pings(idx_ping);
             end
             
             if dx == 0
@@ -423,8 +423,8 @@ classdef echo_disp_cl < handle
             idx_minor_xticks=find((diff(rem(xdata_grid+dx/2,dx))<0))+1;
             idx_minor_xticks=setdiff(idx_minor_xticks,idx_xticks);
             
-            obj.main_ax.XTick=idx_pings(idx_xticks);
-            obj.main_ax.XAxis.MinorTickValues=idx_pings(idx_minor_xticks);
+            obj.main_ax.XTick=idx_ping(idx_xticks);
+            obj.main_ax.XAxis.MinorTickValues=idx_ping(idx_minor_xticks);
             
             switch obj.echo_usrdata.geometry_y
                 case {'depth' 'range'}
@@ -504,7 +504,7 @@ classdef echo_disp_cl < handle
             
             xdata_ori=xdata;
             
-            idx_pings=obj.echo_usrdata.Idx_pings;
+            idx_ping=obj.echo_usrdata.Idx_ping;
             
             idx_r=obj.echo_usrdata.Idx_r(:);
             
@@ -521,11 +521,11 @@ classdef echo_disp_cl < handle
                 alpha_map=ones(size(data),prec)*6;
                 switch obj.echo_usrdata.geometry_y
                     case'samples'
-                        bot_vec_red=trans_obj.get_bottom_idx(idx_pings);
+                        bot_vec_red=trans_obj.get_bottom_idx(idx_ping);
                     case 'depth'
-                        bot_vec_red=trans_obj.get_bottom_depth(idx_pings);
+                        bot_vec_red=trans_obj.get_bottom_depth(idx_ping);
                     case 'range'
-                        bot_vec_red=trans_obj.get_bottom_range(idx_pings);
+                        bot_vec_red=trans_obj.get_bottom_range(idx_ping);
                 end
                 
                 idx_bot_red=bsxfun(@le,bot_vec_red,ydata);
@@ -539,12 +539,12 @@ classdef echo_disp_cl < handle
             if p.Results.update_bt>0
                 
                 idxBad=find(trans_obj.Bottom.Tag==0);
-                idx_bad_red=(ismember(idx_pings,idxBad));
+                idx_bad_red=(ismember(idx_ping,idxBad));
                 
                 alpha_map_bt=zeros(size(data),prec);
                 alpha_map_bt(:,idx_bad_red)=3;
                 
-                mask_sp=trans_obj.get_spikes(idx_r,idx_pings);
+                mask_sp=trans_obj.get_spikes(idx_r,idx_ping);
                 
                 if~isempty(mask_sp)&&all(size(mask_sp)==size(data))
                     alpha_map_bt(mask_sp>0)=5;
@@ -650,12 +650,12 @@ classdef echo_disp_cl < handle
                 
             end
             
-            idx_pings = obj.get_ping_range(trans_obj);
+            idx_ping = obj.get_ping_range(trans_obj);
             
             
             if ~isempty(trans_obj.Bottom.Sample_idx)
-                idx_bottom=trans_obj.Bottom.Sample_idx(idx_pings);
-                xdata=trans_obj.get_transceiver_pings(idx_pings);
+                idx_bottom=trans_obj.Bottom.Sample_idx(idx_ping);
+                xdata=trans_obj.get_transceiver_pings(idx_ping);
                 ydata=trans_obj.get_transceiver_samples();
             else
                 idx_bottom=[];
@@ -675,9 +675,9 @@ classdef echo_disp_cl < handle
                         y(~isnan(idx_bottom))=ydata(idx_bottom(~isnan(idx_bottom)));
                         y((y-di)==numel(ydata))=nan;
                     case 'depth'
-                        y=trans_obj.get_bottom_depth(idx_pings);
+                        y=trans_obj.get_bottom_depth(idx_ping);
                     case 'range'
-                        y=trans_obj.get_bottom_range(idx_pings);
+                        y=trans_obj.get_bottom_range(idx_ping);
                 end
                 
                 

@@ -5,6 +5,7 @@ classdef params_cl
         PingNumber uint32
         BandWidth double
         ChannelMode int8
+        BeamAngle double
         Frequency double
         FrequencyEnd double
         FrequencyStart double
@@ -17,22 +18,31 @@ classdef params_cl
         TransmitPower double
         Absorption double
     end
+    
     methods
         function obj=params_cl(varargin)
-            if isempty(varargin)
-                return;
-            else
-                props=properties(obj);
-                for jj=1:length(props)
-                    if iscell(obj.(props{jj}))
-                        obj.(props{jj})=cell(1,varargin{1});
-                        obj.(props{jj})(:)={''};
-                    else
-                        obj.(props{jj})=zeros(1,varargin{1});
+            p = inputParser;
+            
+            addOptional(p,'nb_pings',1,@(x) x>0);
+            addOptional(p,'nb_beams',1,@(x) x>0);
+            parse(p,varargin{:});
+            
+            props=properties(obj);
+            for jj=1:length(props)
+                if iscell(obj.(props{jj}))
+                    obj.(props{jj})=cell(1,p.Results.nb_pings);
+                    obj.(props{jj})(:)={''};
+                else
+                    switch props{jj}
+                        case {'Frequency' 'FrequencyStart' 'FrequencyEnd' 'PulseLength' 'PulseForm' 'Absorption' 'BeamAngle'}
+                            obj.(props{jj})=zeros(p.Results.nb_beams,p.Results.nb_pings);
+                        otherwise
+                            obj.(props{jj})=zeros(1,p.Results.nb_pings);
                     end
                 end
-                obj.PingNumber=1:varargin{1};
             end
+            
+            obj.PingNumber=1:p.Results.nb_pings;
             
         end
         
@@ -78,20 +88,11 @@ classdef params_cl
         
         
         
-        function params_out=concatenate_Params(param_1,param_2,nb_p1,nb_p2)
-            
-            if param_1.Time(1)>param_2.Time(end)
-                param_start=param_2;
-                param_end=param_1;
-                nb_p=nb_p2;
-            else
-                param_start=param_1;
-                param_end=param_2;
-                nb_p=nb_p1;
-            end
-            
-            props=properties(param_1);
-            params_out=params_cl(length(param_1.Time)+length(param_2.Time));
+        function params_out=concatenate_Params(param_start,param_end,nb_p)
+                    
+            props=properties(param_start);
+
+            params_out=params_cl(length(param_start.PingNumber)+length(param_end.PingNumber));
             
             for jj=1:length(props)
                 params_out.(props{jj})=[param_start.(props{jj})(:)' param_end.(props{jj})(:)'];

@@ -31,9 +31,9 @@ switch echo_obj.echo_usrdata.geometry_y
         dyi  =0;
 end
 
-switch echo_obj.echo_usrdata.geometry_y
+switch echo_obj.echo_usrdata.geometry_x
     case'pings'
-        dxi  =1/2;
+        dxi  =-1/2;
     otherwise
         dxi  =0;
 end
@@ -90,20 +90,22 @@ for i=1:nb_reg
         
         poly=reg_curr.Poly;
         
+        poly.Vertices(:,1)=poly.Vertices(:,1)+dxi;
+
         switch echo_obj.echo_usrdata.geometry_y
             case'samples'
-                %                     reg_trans_depth=zeros(size(reg_curr.Idx_pings));
+                %                     reg_trans_depth=zeros(size(reg_curr.Idx_ping));
                 %                     dr=1;
-                poly.Vertices(:,1)=poly.Vertices(:,1)+dyi;
-                poly.Vertices(:,2)=poly.Vertices(:,2)+dxi;
+                poly.Vertices(:,1)=poly.Vertices(:,1)+dxi;
+                poly.Vertices(:,2)=poly.Vertices(:,2)+dyi;
                 
                 %r_text=nanmean(reg_curr.Idx_r);
             case {'depth' 'range'}
                 
                 if strcmpi(echo_obj.echo_usrdata.geometry_y,'depth')
-                    reg_trans_depth=trans_obj.get_transducer_depth(reg_curr.Idx_pings);
+                    reg_trans_depth=trans_obj.get_transducer_depth(reg_curr.Idx_ping);
                 else
-                    reg_trans_depth=zeros(1,numel(reg_curr.Idx_pings));
+                    reg_trans_depth=zeros(1,numel(reg_curr.Idx_ping));
                 end
                 
                 if numel(unique(reg_trans_depth))==1
@@ -140,10 +142,9 @@ for i=1:nb_reg
                 new_vert(~isnan(poly.Vertices(:,2)))=r(idx_r)*sin(t_angle);
                 poly.Vertices(:,2)=new_vert;
                 
-                poly.Vertices(:,1)=poly.Vertices(:,1)+dyi;
                 
                 if numel(reg_trans_depth)>1
-                    [~,idx]=nanmin(abs(poly.Vertices(:,1)-reg_curr.Idx_pings),[],2);
+                    [~,idx]=nanmin(abs(poly.Vertices(:,1)-reg_curr.Idx_ping),[],2);
                     poly.Vertices(:,2)=poly.Vertices(:,2)+reg_trans_depth(idx)';
                 else
                     poly.Vertices(:,2)=poly.Vertices(:,2)+reg_trans_depth;

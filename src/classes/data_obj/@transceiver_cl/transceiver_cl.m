@@ -116,7 +116,7 @@ classdef transceiver_cl < handle
             end
         end
         
-        function mask_spikes = get_spikes(trans_obj,idx_r,idx_pings)
+        function mask_spikes = get_spikes(trans_obj,idx_r,idx_ping)
             if isempty(trans_obj.Spikes)
                 trans_obj.Spikes=sparse(numel(trans_obj.Range),numel(trans_obj.Time));
             end
@@ -125,14 +125,14 @@ classdef transceiver_cl < handle
                 idx_r=1:numel(trans_obj.Range);
             end
             
-            if isempty(idx_pings)
-                idx_pings=1:numel(trans_obj.Time);
+            if isempty(idx_ping)
+                idx_ping=1:numel(trans_obj.Time);
             end
-            mask_spikes=trans_obj.Spikes(idx_r,idx_pings);
+            mask_spikes=trans_obj.Spikes(idx_r,idx_ping);
             
         end
         
-        function set_spikes(trans_obj,idx_r,idx_pings,mask)
+        function set_spikes(trans_obj,idx_r,idx_ping,mask)
             
             if ~issparse(trans_obj.Spikes)
                 trans_obj.Spikes=sparse(trans_obj.Spikes);
@@ -148,13 +148,13 @@ classdef transceiver_cl < handle
                 idx_r=1:size(mask,1);
             end
             
-            if isscalar(mask)&&isempty(idx_pings)
-                idx_pings=1:numel(trans_obj.Time);
-            elseif ~isscalar(mask)&&isempty(idx_pings)
-                idx_pings=1:size(mask,1);
+            if isscalar(mask)&&isempty(idx_ping)
+                idx_ping=1:numel(trans_obj.Time);
+            elseif ~isscalar(mask)&&isempty(idx_ping)
+                idx_ping=1:size(mask,1);
             end
             
-            trans_obj.Spikes(idx_r,idx_pings) = sparse(mask);
+            trans_obj.Spikes(idx_r,idx_ping) = sparse(mask);
             
         end
         
@@ -222,9 +222,9 @@ classdef transceiver_cl < handle
             %             end
             
             %             if all(size(new_bot_sple)==size(old_bot_sple))
-            %                 idx_pings_mod=find((new_bot_sple~=old_bot_sple)&~(isnan(new_bot_sple)&isnan(old_bot_sple)));
+            %                 idx_ping_mod=find((new_bot_sple~=old_bot_sple)&~(isnan(new_bot_sple)&isnan(old_bot_sple)));
             %             else
-            %                 idx_pings_mod=pings;
+            %                 idx_ping_mod=pings;
             %             end
             
             % setting E1
@@ -245,7 +245,7 @@ classdef transceiver_cl < handle
                 if isempty(E1) || ~all(size(E1)==size(new_bot_sple))
                     % no data either old or new, initialize E1
                     E1 = -999.*ones(size(new_bot_sple));
-                    %idx_pings_mod = pings;
+                    %idx_ping_mod = pings;
                 end
                 
                 if ~isempty(new_E1) && all(size(new_E1)==size(new_bot_sple))
@@ -274,7 +274,7 @@ classdef transceiver_cl < handle
                 if isempty(E2) || ~all(size(E2)==size(new_bot_sple))
                     % no data either old or new, initialize E2
                     E2 = -999.*ones(size(new_bot_sple));
-                    %idx_pings_mod = pings;
+                    %idx_ping_mod = pings;
                 end
                 
                 if ~isempty(new_E2) && all(size(new_E2)==size(new_bot_sple))
@@ -293,9 +293,9 @@ classdef transceiver_cl < handle
                 'Version',bottom_obj.Version);
             
             
-            %             if ~isempty(idx_pings_mod)
+            %             if ~isempty(idx_ping_mod)
             % %                 profile on;
-            %                 obj.apply_algo('BottomFeatures','reg_obj',region_cl('Idx_pings',idx_pings_mod,'Idx_r',[1 10]));
+            %                 obj.apply_algo('BottomFeatures','reg_obj',region_cl('Idx_ping',idx_ping_mod,'Idx_r',[1 10]));
             % %                 profile off;
             % %                 profile viewer;
             %             end
@@ -342,9 +342,9 @@ classdef transceiver_cl < handle
         end
         
         
-        function depth=get_transceiver_depth(trans_obj,idx_r,idx_pings)
+        function depth=get_transceiver_depth(trans_obj,idx_r,idx_ping)
             t_angle=trans_obj.get_transducer_pointing_angle();
-            depth=bsxfun(@plus,trans_obj.get_transceiver_range(idx_r)*sin(t_angle),trans_obj.get_transducer_depth(idx_pings));
+            depth=bsxfun(@plus,trans_obj.get_transceiver_range(idx_r)*sin(t_angle),trans_obj.get_transducer_depth(idx_ping));
         end
         
         function t_angle=get_transducer_pointing_angle(trans_obj)
@@ -612,7 +612,7 @@ classdef transceiver_cl < handle
             reg_curr=trans_obj.Regions;
             reg_new=[];
             for i=1:length(reg_curr)
-                if ~strcmpi(reg_curr(i).Name,name)||(isempty(intersect(idx_r,reg_curr(i).Idx_r))&&~isempty(idx_r))||(isempty(intersect(idx_p,reg_curr(i).Idx_pings))&&~isempty(idx_p))%TODO
+                if ~strcmpi(reg_curr(i).Name,name)||(isempty(intersect(idx_r,reg_curr(i).Idx_r))&&~isempty(idx_r))||(isempty(intersect(idx_p,reg_curr(i).Idx_ping))&&~isempty(idx_p))%TODO
                     reg_new=[reg_new reg_curr(i)];
                 end
             end

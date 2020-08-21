@@ -181,19 +181,19 @@ replace_interaction(main_figure,'interaction','WindowButtonUpFcn','id',2,'intera
         x_max=nanmax(x_box);
         x_max=round(nanmin(xdata(end),x_max));
            
-        idx_pings=find(xdata<=x_max&xdata>=x_min);
+        idx_ping=find(xdata<=x_max&xdata>=x_min);
         idx_r=find(ydata<=y_max&ydata>=y_min);
         
         switch mode
             case 'horizontal'
-                idx_pings=1:length(trans_obj.get_transceiver_pings());
+                idx_ping=1:length(trans_obj.get_transceiver_pings());
             case 'vertical'
                 idx_r=1:length(trans_obj.get_transceiver_samples());   
         end
         delete(txt);
         delete(hp);
         
-        feval(func,main_figure,idx_r,idx_pings);
+        feval(func,main_figure,idx_r,idx_ping);
         
         
     end

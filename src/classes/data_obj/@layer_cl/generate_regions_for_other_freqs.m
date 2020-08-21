@@ -34,12 +34,12 @@ for i=1:length(layer.Transceivers)
     r_factor(u)=dr_ori/nanmean(diff(new_range));
     t_factor(u)=dt_ori/nanmean(diff(new_time));
     
-    [~,idx_ping_start]=nanmin(abs(new_time-time_ori(active_reg.Idx_pings(1))));
+    [~,idx_ping_start]=nanmin(abs(new_time-time_ori(active_reg.Idx_ping(1))));
     [~,sample_start]=nanmin(abs(new_range-range_ori(active_reg.Idx_r(1))));
-    [~,idx_ping_end]=nanmin(abs(new_time-time_ori(active_reg.Idx_pings(end))));
+    [~,idx_ping_end]=nanmin(abs(new_time-time_ori(active_reg.Idx_ping(end))));
     [~,sample_end]=nanmin(abs(new_range-range_ori(active_reg.Idx_r(end))));
     
-    idx_pings=idx_ping_start:idx_ping_end;
+    idx_ping=idx_ping_start:idx_ping_end;
     idx_r=(sample_start:sample_end)';
     
     switch active_reg.Cell_w_unit
@@ -54,14 +54,14 @@ for i=1:length(layer.Transceivers)
     switch lower(active_reg.Shape)
         case 'polygon'
             nb_samples=length(idx_r);
-            nb_pings=length(idx_pings);
+            nb_pings=length(idx_ping);
             if nb_samples~=nb_samples_ori||nb_pings~=nb_pings_ori
                 MaskReg=imresize(mask_reg_ori,[nb_samples nb_pings],'nearest');
             else
                 MaskReg=mask_reg_ori;
             end
         otherwise
-            MaskReg=ones(length(idx_r),length(idx_pings));
+            MaskReg=ones(length(idx_r),length(idx_ping));
     end
 
     
@@ -75,7 +75,7 @@ try
         'Name',active_reg.Name,...
         'Type',active_reg.Type,...
         'Tag',active_reg.Tag,...
-        'Idx_pings',idx_pings,...
+        'Idx_ping',idx_ping,...
         'Idx_r',idx_r,...
         'Shape',active_reg.Shape,...
         'MaskReg',MaskReg,...

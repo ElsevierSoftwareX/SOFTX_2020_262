@@ -11,7 +11,7 @@ idx_targets_lin=idx_r+(idx_p-1)*numel(range_t);
 
 [T,Np_t]=trans_obj.get_pulse_Teff(idx_p);
 
-dt=trans_obj.get_params_value('SampleInterval',idx_pings(1));
+dt=trans_obj.get_params_value('SampleInterval',idx_ping(1));
 dr=dt*nanmean(trans_obj.get_soundspeed(idx_r))/2;
 
 single_targets.Target_range=range_t(idx_r);
@@ -25,12 +25,12 @@ single_targets.Angle_major_axis=zeros(size(idx_p));
 single_targets.TS_uncomp=zeros(size(idx_p));
 single_targets.TS_comp=zeros(size(idx_p));
 
-for i=1:numel(idx_p)
-    single_targets.Angle_minor_axis(i)=trans_obj.Data.get_subdatamat(idx_r(i),idx_p(i),'field','AlongAngle');
-    single_targets.Angle_major_axis(i)=trans_obj.Data.get_subdatamat(idx_r(i),idx_p(i),'field','AcrossAngle');
-    single_targets.TS_uncomp(i)=trans_obj.Data.get_subdatamat(idx_r(i),idx_p(i),'field','sp');
-    simradBeamComp = simradBeamCompensation(BW_along, BW_athwart, single_targets.Angle_minor_axis(i), single_targets.Angle_major_axis(i));
-    single_targets.TS_comp(i)=single_targets.TS_uncomp(i)+simradBeamComp;
+for ip=1:numel(idx_p)
+    single_targets.Angle_minor_axis(ip)=trans_obj.Data.get_subdatamat('idx_r',idx_r(ip),'idx_ping',idx_p(ip),'field','AlongAngle');
+    single_targets.Angle_major_axis(ip)=trans_obj.Data.get_subdatamat('idx_r',idx_r(ip),'idx_ping',idx_p(ip),'field','AcrossAngle');
+    single_targets.TS_uncomp(ip)=trans_obj.Data.get_subdatamat('idx_r',idx_r(ip),'idx_ping',idx_p(ip),'field','sp');
+    simradBeamComp = simradBeamCompensation(BW_along, BW_athwart, single_targets.Angle_minor_axis(ip), single_targets.Angle_major_axis(ip));
+    single_targets.TS_comp(ip)=single_targets.TS_uncomp(ip)+simradBeamComp;
 end
 
 single_targets.Ping_number=idx_p;

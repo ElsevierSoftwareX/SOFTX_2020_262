@@ -55,7 +55,7 @@ trans_obj.rm_region_origin('Esp2');
     regions = readEsp2regions(fullfile(folder,rFileName));
     if ~strcmpi(layer.Filetype,'CREST')
         for ii=1:length(regions)
-            regions(ii).Idx_pings=regions(ii).Idx_pings+1;
+            regions(ii).Idx_ping=regions(ii).Idx_ping+1;
             regions(ii).Idx_r=regions(ii).Idx_r+1;
         end
     end

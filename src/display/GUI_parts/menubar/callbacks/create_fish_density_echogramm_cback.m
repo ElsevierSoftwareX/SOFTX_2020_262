@@ -15,7 +15,7 @@ TS=str2double(get(display_tab_comp.TS,'string'));
 
 data_mat=sv_to_density(sv,TS);
 
-trans_obj.Data.replace_sub_data_v2('fishdensity',data_mat,[],[]);
+trans_obj.Data.replace_sub_data_v2(data_mat,'field','fishdensity');
 
 curr_disp.setField('fishdensity');
 

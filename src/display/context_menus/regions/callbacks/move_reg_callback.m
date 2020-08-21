@@ -107,11 +107,11 @@ switch main_figure.SelectionType
         
         [~,idx_r_min]=nanmin(abs(r_min-samples)); 
         
-        if reg_curr.Idx_pings(1)==idx_p_min&&reg_curr.Idx_r(1)==idx_r_min
+        if reg_curr.Idx_ping(1)==idx_p_min&&reg_curr.Idx_r(1)==idx_r_min
            return; 
         end
         
-        reg_curr.Idx_pings=reg_curr.Idx_pings-reg_curr.Idx_pings(1)+idx_p_min;
+        reg_curr.Idx_ping=reg_curr.Idx_ping-reg_curr.Idx_ping(1)+idx_p_min;
         reg_curr.Idx_r=reg_curr.Idx_r-reg_curr.Idx_r(1)+idx_r_min;
         
        

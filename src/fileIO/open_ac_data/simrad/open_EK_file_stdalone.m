@@ -79,7 +79,6 @@ addParameter(p,'EsOffset',[]);
 addParameter(p,'GPSOnly',def_gps_only_val);
 addParameter(p,'LoadEKbot',0);
 addParameter(p,'force_open',0);
-addParameter(p,'sub_sample',1);
 addParameter(p,'load_bar_comp',[]);
 
 parse(p,Filename_cell,varargin{:});
@@ -250,8 +249,13 @@ if ~isequal(Filename_cell, 0)
                         channels_sub = channels_temp;
                     end
                 else
-                    vec_freq = vec_freq_temp(idx_common_freqs);
-                    channels_sub = channels_temp(idx_common_freqs);
+                    if any(idx_common_channels)
+                        vec_freq = vec_freq_temp(idx_common_channels);
+                        channels_sub = channels_temp(idx_common_channels);
+                    else
+                        vec_freq = vec_freq_temp(idx_common_freqs);
+                        channels_sub = channels_temp(idx_common_freqs);
+                    end
                 end
             end
             
@@ -262,10 +266,8 @@ if ~isequal(Filename_cell, 0)
             end
             
             vec_freq_init = vec_freq;
+            channels_init = channels_sub;
 
-
-            
-           
             
             if any(nb_pings<=1)
                 id_rem=union(id_rem,uu);

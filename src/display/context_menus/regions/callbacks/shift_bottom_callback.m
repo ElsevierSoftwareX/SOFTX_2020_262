@@ -47,14 +47,14 @@ if ~isempty(select_plot)
         case 'region_cl'
             reg_obj=trans_obj.get_region_from_Unique_ID(curr_disp.Active_reg_ID);
         otherwise
-            idx_pings=round(nanmin(select_plot.XData)):round(nanmax(select_plot.XData));
+            idx_ping=round(nanmin(select_plot.XData)):round(nanmax(select_plot.XData));
             idx_r=round(nanmin(select_plot.YData)):round(nanmax(select_plot.YData));
-            reg_obj=region_cl('Name','Select Area','Idx_r',idx_r,'Idx_pings',idx_pings,'Unique_ID','select_area');
+            reg_obj=region_cl('Name','Select Area','Idx_r',idx_r,'Idx_ping',idx_ping,'Unique_ID','select_area');
     end
 else
     idx_r = 1:length(trans_obj.get_transceiver_range());
-    idx_pings = 1:length(trans_obj.get_transceiver_pings());
-    reg_obj=region_cl('Name','Select Area','Idx_r',idx_r,'Idx_pings',idx_pings,'Unique_ID','select_area');
+    idx_ping = 1:length(trans_obj.get_transceiver_pings());
+    reg_obj=region_cl('Name','Select Area','Idx_r',idx_r,'Idx_ping',idx_ping,'Unique_ID','select_area');
 end
 
 [answer,cancel]=input_dlg_perso(main_figure,'Enter value',{'Shift Bottom (+ up / - down)'},...
@@ -65,9 +65,9 @@ end
 
 old_bot=trans_obj.Bottom;
 for i=1:numel(reg_obj)
-    idx_pings=reg_obj(i).Idx_pings;
+    idx_ping=reg_obj(i).Idx_ping;
     
-    trans_obj.shift_bottom(answer{1},idx_pings);
+    trans_obj.shift_bottom(answer{1},idx_ping);
 end
 
 curr_disp.Bot_changed_flag=1;

@@ -24,7 +24,7 @@ switch trans_obj.Mode
     
     case 'FM'
         range_tr=trans_obj.get_transceiver_range(reg_obj.Idx_r);
-        pings=trans_obj.get_transceiver_pings(reg_obj.Idx_pings);
+        pings=trans_obj.get_transceiver_pings(reg_obj.Idx_ping);
         
         [~,~,~,~,bad_trans_vec,~,below_bot_mask,~]=trans_obj.get_data_from_region(reg_obj,...
             'field',field);

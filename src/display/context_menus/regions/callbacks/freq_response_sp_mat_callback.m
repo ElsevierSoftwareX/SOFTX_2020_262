@@ -14,9 +14,9 @@ switch class(select_plot)
     case 'region_cl'
         active_reg=select_plot;
     otherwise
-        idx_pings=round(nanmin(select_plot.XData)):round(nanmax(select_plot.XData));
+        idx_ping=round(nanmin(select_plot.XData)):round(nanmax(select_plot.XData));
         idx_r=round(nanmin(select_plot.YData)):round(nanmax(select_plot.YData));
-        active_reg=region_cl('Idx_pings',idx_pings,'Idx_r',idx_r);
+        active_reg=region_cl('Idx_ping',idx_ping,'Idx_r',idx_r);
 end
 
 if strcmp(trans_obj.Mode,'FM')

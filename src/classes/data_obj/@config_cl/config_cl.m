@@ -40,12 +40,11 @@ classdef config_cl
         TransducerMounting='';
         TransducerOffsetX=0;%along
         TransducerOffsetY=0;%across
-        TransducerOffsetZ=0;%depth(positive
+        TransducerOffsetZ=0;%depth
         TransducerOrientation='';
         TransducerSerialNumber='';
         MarketSegment='';
         Version='';
-        PulseDurationFM=[];
         ArticleNumber=0;
         EsOffset=0;
         RxSampleFrequency=nan;

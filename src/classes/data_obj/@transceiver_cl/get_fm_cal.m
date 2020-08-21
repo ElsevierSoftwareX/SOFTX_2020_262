@@ -31,8 +31,8 @@ cal_struct.Frequency=nanmin(FrequencyMinimum,FrequencyMaximum):p.Results.f_res:n
 cal_struct.Gain_th=gain+20*log10(cal_struct.Frequency./f_nom);
 %cal_struct.Gain_th=gain+10*log10(cal_struct.Frequency./f_nom);
 cal_struct.eq_beam_angle_th=eq_beam_angle+20*log10(f_nom./cal_struct.Frequency);
-cal_struct.BeamWidthAlongship_th=trans_obj.Config.BeamWidthAlongship*10.^((f_nom-cal_struct.Frequency)/f_nom/2.2578);
-cal_struct.BeamWidthAthwartship_th=trans_obj.Config.BeamWidthAthwartship*10.^((f_nom-cal_struct.Frequency)/f_nom/2.2578);
+cal_struct.BeamWidthAlongship_th=trans_obj.Config.BeamWidthAlongship*10.^((f_nom-cal_struct.Frequency)/f_nom/2.578);
+cal_struct.BeamWidthAthwartship_th=trans_obj.Config.BeamWidthAthwartship*10.^((f_nom-cal_struct.Frequency)/f_nom/2.578);
 ori_bool(strcmpi(ori,'th')) = true;
 
 %%%%%%%%%%%%%%%%Raw File values%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -112,7 +112,7 @@ end
 end
 
 function eba = estimate_eba(bw_at,bw_al)
-eba = 10*log10(2.2578*sind(bw_at/4+bw_al/4).^2);
+eba = 10*log10(2.578*sind(bw_at/4+bw_al/4).^2);
 
 end
 

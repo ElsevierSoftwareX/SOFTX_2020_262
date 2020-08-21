@@ -13,10 +13,10 @@ trans_obj = layer.Transceivers(p.Results.idx_freq);
 
 if isempty(p.Results.reg_obj)
     idx_r=(1:length(trans_obj.get_transceiver_range()))';
-    idx_pings=1:length(trans_obj.get_transceiver_pings());
+    idx_ping=1:length(trans_obj.get_transceiver_pings());
     [~,Np_p]=trans_obj.get_pulse_length();
     idx_r(idx_r<3*nanmax(Np_p))=[];
-    reg_obj=region_cl('Idx_r',idx_r,'Idx_pings',idx_pings);
+    reg_obj=region_cl('Idx_r',idx_r,'Idx_ping',idx_ping);
 else
     reg_obj=p.Results.reg_obj;
 end

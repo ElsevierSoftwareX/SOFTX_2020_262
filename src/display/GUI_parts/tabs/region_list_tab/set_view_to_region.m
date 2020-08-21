@@ -19,7 +19,7 @@ axes_panel_comp=getappdata(main_figure,'Axes_panel');
 xdata=trans_obj.get_transceiver_pings();
 ydata=trans_obj.get_transceiver_samples();
 
-x_reg_lim=xdata(reg_curr.Idx_pings);
+x_reg_lim=xdata(reg_curr.Idx_ping);
 y_reg_lim=ydata(reg_curr.Idx_r);
 
 

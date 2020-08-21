@@ -38,15 +38,15 @@ if strcmp(trans_obj.Mode,'FM')
     idx_ts=idx_ts+nansum(idx_ts<=0);
     idx_ts=idx_ts-nansum(idx_ts>numel(range_tr));
     
-    y_c_ts=trans_obj.Data.get_subdatamat(idx_ts,iPing,'field','y_real_filtered')+1i*trans_obj.Data.get_subdatamat(idx_ts,iPing,'field','y_imag_filtered');
+    y_c_ts=trans_obj.Data.get_subdatamat('idx_r',idx_ts,'idx_ping',iPing,'field','y_real_filtered')+1i*trans_obj.Data.get_subdatamat('idx_r',idx_ts,'idx_ping',iPing,'field','y_imag_filtered');
     if isempty(y_c_ts)
-        y_c_ts=trans_obj.Data.get_subdatamat(idx_ts,iPing,'field','y_real')+1i*trans_obj.Data.get_subdatamat(idx_ts,iPing,'field','y_imag');
+        y_c_ts=trans_obj.Data.get_subdatamat('idx_r',idx_ts,'idx_ping',iPing,'field','y_real')+1i*trans_obj.Data.get_subdatamat('idx_r',idx_ts,'idx_ping',iPing,'field','y_imag');
     end
     
     nfft=min(nfft,numel(y_c_ts));
     
-    AlongAngle_val=trans_obj.Data.get_subdatamat(idx_ts,iPing,'field','AlongAngle');
-    AcrossAngle_val=trans_obj.Data.get_subdatamat(idx_ts,iPing,'field','AcrossAngle');
+    AlongAngle_val=trans_obj.Data.get_subdatamat('idx_r',idx_ts,'idx_ping',iPing,'field','AlongAngle');
+    AcrossAngle_val=trans_obj.Data.get_subdatamat('idx_r',idx_ts,'idx_ping',iPing,'field','AcrossAngle');
     
     r_ts=range_tr(idx_ts);
     
@@ -164,12 +164,12 @@ else
     [faBW,psBW] = trans_obj.get_beamwidth_at_f_c([]);
 
     f_vec=trans_obj.get_params_value('Frequency',iPing);
-    Sp_f=trans_obj.Data.get_subdatamat(idx_r,iPing,'field','spdenoised');
+    Sp_f=trans_obj.Data.get_subdatamat('idx_r',idx_r,'idx_ping',iPing,'field','spdenoised');
     if isempty(Sp_f)
-        Sp_f=trans_obj.Data.get_subdatamat(idx_r,iPing,'field','sp');
+        Sp_f=trans_obj.Data.get_subdatamat('idx_r',idx_r,iPing,'field','sp');
     end
-    ac_angle=trans_obj.Data.get_subdatamat(idx_r,iPing,'field','AcrossAngle');
-    al_angle=trans_obj.Data.get_subdatamat(idx_r,iPing,'field','AlongAngle');
+    ac_angle=trans_obj.Data.get_subdatamat('idx_r',idx_r,'idx_ping',iPing,'field','AcrossAngle');
+    al_angle=trans_obj.Data.get_subdatamat('idx_r',idx_r,'idx_ping',iPing,'field','AlongAngle');
     
     if ~isempty(ac_angle)
         compensation_f=simradBeamCompensation(faBW,psBW , ac_angle, al_angle);

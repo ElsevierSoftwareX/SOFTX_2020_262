@@ -35,10 +35,10 @@ no_nav=0;
 zone='';
 
 if isempty(reg_obj)
-    idx_pings=trans_obj.get_transceiver_pings();
+    idx_ping=trans_obj.get_transceiver_pings();
     idx_r=trans_obj.get_transceiver_samples();
 else
-    idx_pings=reg_obj.Idx_pings;
+    idx_ping=reg_obj.Idx_ping;
     idx_r=reg_obj.Idx_r;
 end
 
@@ -49,7 +49,7 @@ switch field
         if isempty(trans_obj.ST)
             return;
         end
-        idx_keep_p=find(ismember(trans_obj.ST.Ping_number,idx_pings));
+        idx_keep_p=find(ismember(trans_obj.ST.Ping_number,idx_ping));
         idx_keep_r=find(ismember(trans_obj.ST.idx_r,idx_r));
         idx_keep=intersect(idx_keep_r,idx_keep_p);
         
@@ -74,7 +74,7 @@ switch field
         Range=trans_obj.ST.Target_range(idx_keep);
         AlongAngle=trans_obj.ST.Angle_minor_axis(idx_keep);
         AcrossAngle=trans_obj.ST.Angle_major_axis(idx_keep);
-        idx_pings=trans_obj.ST.Ping_number(idx_keep);
+        idx_ping=trans_obj.ST.Ping_number(idx_keep);
         %idx_r=trans_obj.ST.idx_r(idx_keep);
         nb_samples=1;
     otherwise
@@ -86,16 +86,16 @@ switch field
                 field_load=field;
         end
         nb_samples=length(idx_r);
-        nb_pings=length(idx_pings);
+        nb_pings=length(idx_ping);
         
         Range=repmat(trans_obj.get_transceiver_range(idx_r),1,nb_pings);
-        [data_disp,idx_r,idx_pings,bad_data_mask,bad_trans_vec,~,below_bot_mask,~]=get_data_from_region(trans_obj,reg_obj,...
+        [data_disp,idx_r,idx_ping,bad_data_mask,bad_trans_vec,~,below_bot_mask,~]=get_data_from_region(trans_obj,reg_obj,...
             'field',field_load);
         Mask=(~bad_data_mask)&(~below_bot_mask);
         Mask(:,bad_trans_vec)=0;
         
-        AlongAngle=trans_obj.Data.get_subdatamat(idx_r,idx_pings,'field','AlongAngle');
-        AcrossAngle=trans_obj.Data.get_subdatamat(idx_r,idx_pings,'field','AcrossAngle');
+        AlongAngle=trans_obj.Data.get_subdatamat('idx_r',idx_r,'idx_ping',idx_ping,'field','AlongAngle');
+        AcrossAngle=trans_obj.Data.get_subdatamat('idx_r',idx_r,'idx_ping',idx_ping,'field','AcrossAngle');
         [faBW,psBW] = trans_obj.get_beamwidth_at_f_c([]);
         compensation = simradBeamCompensation(faBW,...
             psBW, AlongAngle, AcrossAngle);
@@ -104,13 +104,13 @@ switch field
 end
 
 if ~isempty(trans_obj.GPSDataPing.Lat)
-    lat=trans_obj.GPSDataPing.Lat(idx_pings);
-    long=trans_obj.GPSDataPing.Long(idx_pings);
-    dist=trans_obj.GPSDataPing.Dist(idx_pings);
+    lat=trans_obj.GPSDataPing.Lat(idx_ping);
+    long=trans_obj.GPSDataPing.Long(idx_ping);
+    dist=trans_obj.GPSDataPing.Dist(idx_ping);
 else
-    lat=zeros(size(idx_pings));
-    long=zeros(size(idx_pings));
-    dist=zeros(size(idx_pings));
+    lat=zeros(size(idx_ping));
+    long=zeros(size(idx_ping));
+    dist=zeros(size(idx_ping));
 end
 
 
@@ -124,15 +124,15 @@ else
     [x_geo,y_geo,zone]=deg2utm(lat,long);
 end
 
-heading_geo=trans_obj.AttitudeNavPing.Heading(idx_pings);%TOFIX when there is no attitude data...
-pitch_geo=trans_obj.AttitudeNavPing.Pitch(idx_pings);
-roll_geo=trans_obj.AttitudeNavPing.Roll(idx_pings);
-heave_geo=trans_obj.AttitudeNavPing.Heave(idx_pings);
-yaw_geo=trans_obj.AttitudeNavPing.Yaw(idx_pings);
+heading_geo=trans_obj.AttitudeNavPing.Heading(idx_ping);%TOFIX when there is no attitude data...
+pitch_geo=trans_obj.AttitudeNavPing.Pitch(idx_ping);
+roll_geo=trans_obj.AttitudeNavPing.Roll(idx_ping);
+heave_geo=trans_obj.AttitudeNavPing.Heave(idx_ping);
+yaw_geo=trans_obj.AttitudeNavPing.Yaw(idx_ping);
 
 if isempty(heading_geo)||all(isnan(heading_geo))||all(heading_geo==-999)
     disp('No Heading Data, we''ll pretend to go north');
-    heading_geo=zeros(size(idx_pings));
+    heading_geo=zeros(size(idx_ping));
     x_geo=dist;
     y_geo=zeros(size(dist));
 end
@@ -170,7 +170,7 @@ pitch=repmat(pitch_geo,nb_samples,1);
 roll=repmat(roll_geo,nb_samples,1);
 heave=repmat(heave_geo,nb_samples,1);
 yaw=repmat(yaw_geo,nb_samples,1);
-idx_pings_mat=repmat(idx_pings,nb_samples,1);
+idx_ping_mat=repmat(idx_ping,nb_samples,1);
 
 X_mat=repmat(x_geo,nb_samples,1);
 Y_mat=repmat(y_geo,nb_samples,1);
@@ -205,7 +205,7 @@ end
    trans_obj.Config.TransducerOffsetY*ones(size(Range)),....
    trans_obj.Config.TransducerOffsetZ*ones(size(Range)));
 
-trans_depth=trans_obj.get_transducer_depth(idx_pings);
+trans_depth=trans_obj.get_transducer_depth(idx_ping);
 
 Z_t=Z_t-trans_depth;
 
@@ -218,7 +218,7 @@ Y_t=Y_mat+Along_dist.*cosd(heading_geo)-Across_dist.*sind(heading_geo);%N/S
 
 
 
-Bottom_r=trans_obj.get_bottom_depth(idx_pings)-heave_geo;
+Bottom_r=trans_obj.get_bottom_depth(idx_ping)-heave_geo;
 
 [Along_dist_bot,Across_dist_bot,Z_bot]=arrayfun(@angles_to_pos_single,...
     -Bottom_r,...
@@ -249,7 +249,7 @@ else
     Lon_t=Y_t;
 end
 
-t=trans_obj.get_transceiver_time(idx_pings);
+t=trans_obj.get_transceiver_time(idx_ping);
 
 data_struct.data_disp=data_disp(:);
 data_struct.mask=Mask(:);
@@ -262,8 +262,8 @@ data_struct.y_vessel=y_geo(:);
 data_struct.bottom_x=X_bot(:);
 data_struct.bottom_y=Y_bot(:);
 data_struct.bottom_z=Z_bot(:);
-data_struct.ping_num=idx_pings_mat(:);
-data_struct.ping_num_vessel=idx_pings(:);
+data_struct.ping_num=idx_ping_mat(:);
+data_struct.ping_num_vessel=idx_ping(:);
 data_struct.time=t(:);
 data_struct.surf=Surf(:);
 data_struct.lat=Lat_t(:);

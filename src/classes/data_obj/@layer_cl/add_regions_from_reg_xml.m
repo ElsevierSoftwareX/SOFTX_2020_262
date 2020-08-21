@@ -127,10 +127,10 @@ for ix=1:length(reg_file_str)
                     depth_box=reg_xml{i}.bbox_r;
                     samples=resample_data_v2(1:length(trans_obj.get_transceiver_range()),trans_obj.get_transceiver_range(),depth_box,'Opt','Nearest');
                     
-                    Idx_pings=pings(1):pings(2);
+                    Idx_ping=pings(1):pings(2);
                     Idx_r=samples(1):samples(2);
                     
-                    if nansum(isnan(Idx_pings))==length(Idx_pings)
+                    if nansum(isnan(Idx_ping))==length(Idx_ping)
                         continue;
                     end
                     
@@ -162,10 +162,10 @@ for ix=1:length(reg_file_str)
                     ping_box=reg_xml{i}.bbox_p+iping_file(1)-1;
                     sample_box=reg_xml{i}.bbox_s;
                     
-                    Idx_pings=ping_box(1):ping_box(2);
+                    Idx_ping=ping_box(1):ping_box(2);
                     Idx_r=sample_box(1):sample_box(2);
                     
-                    if nansum(isnan(Idx_pings))==length(Idx_pings)
+                    if nansum(isnan(Idx_ping))==length(Idx_ping)
                         continue;
                     end
                     
@@ -182,7 +182,7 @@ for ix=1:length(reg_file_str)
                                     continue;
                                 end
                                 i_cont=i_cont+1;
-                                X_cont{i_cont}=reg_xml{i}.Contours{ic}.Ping+Idx_pings(1)-1;
+                                X_cont{i_cont}=reg_xml{i}.Contours{ic}.Ping+Idx_ping(1)-1;
                                 Y_cont{i_cont}=reg_xml{i}.Contours{ic}.Sample+Idx_r(1)-1;
                             end
                     end
@@ -199,7 +199,7 @@ for ix=1:length(reg_file_str)
                 'Tag',Tag,...
                 'Type',Type,...
                 'Origin',Origin,...
-                'Idx_pings',Idx_pings,...
+                'Idx_ping',Idx_ping,...
                 'Idx_r',Idx_r,...
                 'Shape',Shape,...
                 'X_cont',X_cont,...

@@ -64,17 +64,17 @@ if ~isempty(p.Results.load_bar_comp)
     set(p.Results.load_bar_comp.progress_bar, 'Minimum',0, 'Maximum',num_ite, 'Value',0);
 end
 output_struct.done=false;
-idx_pings_tot=1:nb_pings_tot;
+idx_ping_tot=1:nb_pings_tot;
 idx_r=1:numel(range_t);
 
 for ui=1:num_ite
-    idx_pings=idx_pings_tot((ui-1)*block_size+1:nanmin(ui*block_size,numel(idx_pings_tot)));
-    %sub_bot=trans_obj.get_bottom_range(idx_pings);
+    idx_ping=idx_ping_tot((ui-1)*block_size+1:nanmin(ui*block_size,numel(idx_ping_tot)));
+    %sub_bot=trans_obj.get_bottom_range(idx_ping);
     
     lambda=c./FreqCenter;
     
-    reg_temp=region_cl('Name','Temp','Idx_r',idx_r,'Idx_pings',idx_pings);
-    [pow,idx_r,idx_pings,bad_data_mask,bad_trans_vec,~,below_bot_mask,~]=get_data_from_region(trans_obj,reg_temp,'field','power');
+    reg_temp=region_cl('Name','Temp','Idx_r',idx_r,'Idx_ping',idx_ping);
+    [pow,idx_r,idx_ping,bad_data_mask,bad_trans_vec,~,below_bot_mask,~]=get_data_from_region(trans_obj,reg_temp,'field','power');
     
     if isempty(pow)
         return;
@@ -123,7 +123,7 @@ for ui=1:num_ite
     sp=db2pow_perso(sp);
     sv=db2pow_perso(sv);
     
-    [sp_noise,sv_noise]=convert_power_v2(pow_noise,range_t,c,alpha,t_eff(idx_pings),t_nom(idx_pings),double(ptx(idx_pings)),lambda,gain,eq_beam_angle,sacorr,trans_obj.Config.TransceiverName);
+    [sp_noise,sv_noise]=convert_power_v2(pow_noise,range_t,c,alpha,t_eff(idx_ping),t_nom(idx_ping),double(ptx(idx_ping)),lambda,gain,eq_beam_angle,sacorr,trans_obj.Config.TransceiverName);
     
     sp_noise=db2pow_perso(sp_noise);
     sv_noise=db2pow_perso(sv_noise);
@@ -155,10 +155,9 @@ for ui=1:num_ite
     SNR(isnan(SNR))=-999;
     
     
-    %trans_obj.Data.replace_sub_data_v2('powerdenoised',pow_unoised,[],idx_pings,);
-    trans_obj.Data.replace_sub_data_v2('spdenoised',Sp_unoised,[],idx_pings);
-    trans_obj.Data.replace_sub_data_v2('svdenoised',Sv_unoised,[],idx_pings);
-    trans_obj.Data.replace_sub_data_v2('snr',SNR,[],idx_pings);
+    trans_obj.Data.replace_sub_data_v2(Sp_unoised,'field','spdenoised','idx_ping',idx_ping);
+    trans_obj.Data.replace_sub_data_v2(Sv_unoised,'field','svdenoised','idx_ping',idx_ping);
+    trans_obj.Data.replace_sub_data_v2(SNR,'field','snr','idx_ping',idx_ping);
     clear Sp_unoised Sv_unoised snr pow
     if ~isempty(p.Results.load_bar_comp)
         set(p.Results.load_bar_comp.progress_bar, 'Value',ui);

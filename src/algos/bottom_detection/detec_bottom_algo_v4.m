@@ -82,10 +82,10 @@ end
 % Set range and pings to entire file or region extent
 if isempty(p.Results.reg_obj)
     idx_r = 1:length(trans_obj.get_transceiver_range());
-    idx_pings_tot = 1:length(trans_obj.get_transceiver_pings());
+    idx_ping_tot = 1:length(trans_obj.get_transceiver_pings());
 else
     idx_r = p.Results.reg_obj.Idx_r;
-    idx_pings_tot = p.Results.reg_obj.Idx_pings;
+    idx_ping_tot = p.Results.reg_obj.Idx_ping;
 end
 
 % pulse length
@@ -110,21 +110,21 @@ if isempty(idx_r)
     output_struct.bs_bottom=[];
     output_struct.idx_bottom=[];
     output_struct.idx_ringdown=[];
-    output_struct.idx_pings=[];
+    output_struct.idx_ping=[];
     return;
 end
 
 range_tot = trans_obj.get_transceiver_range(idx_r);
 
 % inititialize results
-bot_idx_tot = nan(1,numel(idx_pings_tot));
-BS_bottom_tot = nan(1,numel(idx_pings_tot));
-idx_ringdown_tot = nan(1,numel(idx_pings_tot));
+bot_idx_tot = nan(1,numel(idx_ping_tot));
+BS_bottom_tot = nan(1,numel(idx_ping_tot));
+idx_ringdown_tot = nan(1,numel(idx_ping_tot));
 
 % processing is done in block. Calculate block size and number of
 % iterations
-block_size = nanmin(ceil(block_len/numel(idx_r)),numel(idx_pings_tot));
-num_ite = ceil(numel(idx_pings_tot)/block_size);
+block_size = nanmin(ceil(block_len/numel(idx_r)),numel(idx_ping_tot));
+num_ite = ceil(numel(idx_ping_tot)/block_size);
 
 % udpate prgoress bar
 if ~isempty(p.Results.load_bar_comp)
@@ -146,35 +146,35 @@ win_size=nanmax(win_size,5);
 for ui = 1:num_ite
     
     % pings for this block
-    idx_pings = idx_pings_tot((ui-1)*block_size+1:nanmin(ui*block_size,numel(idx_pings_tot)));
+    idx_ping = idx_ping_tot((ui-1)*block_size+1:nanmin(ui*block_size,numel(idx_ping_tot)));
     
     % mask data outside of region if processing for region/selection
     if isempty(p.Results.reg_obj)
-        mask = ones(numel(idx_r),numel(idx_pings));
+        mask = ones(numel(idx_r),numel(idx_ping));
     else
-        mask = p.Results.reg_obj.get_sub_mask(idx_r-p.Results.reg_obj.Idx_r(1)+1,idx_pings-p.Results.reg_obj.Idx_pings(1)+1);
+        mask = p.Results.reg_obj.get_sub_mask(idx_r-p.Results.reg_obj.Idx_r(1)+1,idx_ping-p.Results.reg_obj.Idx_ping(1)+1);
     end
     
     % get data to be used for this block (normal or denoised TS uncompensated)
     if p.Results.denoised > 0
-        Sp = trans_obj.Data.get_subdatamat(idx_r,idx_pings,'field','spdenoised');
+        Sp = trans_obj.Data.get_subdatamat('idx_r',idx_r,'idx_ping',idx_ping,'field','spdenoised');
         if isempty(Sp)
-            Sp = trans_obj.Data.get_subdatamat(idx_r,idx_pings,'field','sp');
+            Sp = trans_obj.Data.get_subdatamat('idx_r',idx_r,'idx_ping',idx_ping,'field','sp');
         end
     else
-        Sp = trans_obj.Data.get_subdatamat(idx_r,idx_pings,'field','sp');
+        Sp = trans_obj.Data.get_subdatamat('idx_r',idx_r,'idx_ping',idx_ping,'field','sp');
     end
     
     % If no TS unc, take Sv
     if isempty(Sp)
-        Sp = trans_obj.Data.get_subdatamat(idx_r,idx_pings,'field','sv');
+        Sp = trans_obj.Data.get_subdatamat('idx_r',idx_r,'idx_ping',idx_ping,'field','sv');
     end
     
     % mask outside of region
     Sp(mask==0) = -999;
     
     % mask the spikes too
-    spikes =trans_obj.get_spikes(idx_r,idx_pings);
+    spikes =trans_obj.get_spikes(idx_r,idx_ping);
     
     if ~isempty(spikes)
         Sp(spikes>0) = -999;
@@ -219,18 +219,18 @@ for ui = 1:num_ite
     
     % ringdown analysis
     if strcmpi(trans_obj.Mode,'FM')
-        idx_ringdown = ones(1,numel(idx_pings));
+        idx_ringdown = ones(1,numel(idx_ping));
     else
         if p.Results.rm_rd
             % define ringdown
-            ringdown = trans_obj.Data.get_subdatamat(ceil(Np/3),idx_pings,'field','power');
+            ringdown = trans_obj.Data.get_subdatamat('idx_r',ceil(Np/3),'idx_ping',idx_ping,'field','power');
             if isempty(ringdown)
-                ringdown = trans_obj.Data.get_subdatamat(ceil(Np/3),idx_pings,'field','sv');
+                ringdown = trans_obj.Data.get_subdatamat('idx_r',ceil(Np/3),'idx_ping',idx_ping,'field','sv');
             end
             RingDown = pow2db_perso(ringdown);
             idx_ringdown = analyse_ringdown(RingDown,0.1);
         else
-            idx_ringdown = ones(1,numel(idx_pings));
+            idx_ringdown = ones(1,numel(idx_ping));
         end
     end
     
@@ -394,10 +394,10 @@ for ui = 1:num_ite
     bot_idx(bot_idx<=0) = 1;
     
     % save those results for this iteration
-    idx_pings = idx_pings-idx_pings_tot(1)+1;
-    bot_idx_tot(idx_pings)                 = bot_idx;
-    BS_bottom_tot(idx_pings)              = BS_bottom;
-    idx_ringdown_tot(idx_pings)           = idx_ringdown;
+    idx_ping = idx_ping-idx_ping_tot(1)+1;
+    bot_idx_tot(idx_ping)                 = bot_idx;
+    BS_bottom_tot(idx_ping)              = BS_bottom;
+    idx_ringdown_tot(idx_ping)           = idx_ringdown;
     
     % update progress bar
     if ~isempty(p.Results.load_bar_comp)
@@ -414,8 +414,8 @@ switch lower(p.Results.interp_method)
         
     otherwise
         if nansum(~isnan(bot_idx_tot))>=2
-            F=griddedInterpolant(idx_pings_tot(~isnan(bot_idx_tot)),bot_idx_tot(~isnan(bot_idx_tot)),lower(p.Results.interp_method),'none');
-            bot_idx_tot=F(idx_pings_tot);
+            F=griddedInterpolant(idx_ping_tot(~isnan(bot_idx_tot)),bot_idx_tot(~isnan(bot_idx_tot)),lower(p.Results.interp_method),'none');
+            bot_idx_tot=F(idx_ping_tot);
             bot_idx_tot=ceil(bot_idx_tot);
         end
 end
@@ -423,12 +423,12 @@ end
 output_struct.bottom = bot_idx_tot;
 output_struct.bs_bottom    = BS_bottom_tot;
 output_struct.idx_ringdown = idx_ringdown_tot;
-output_struct.idx_pings    = idx_pings_tot;
+output_struct.idx_ping    = idx_ping_tot;
 
 old_tag = trans_obj.Bottom.Tag;
 old_bot = trans_obj.Bottom.Sample_idx;
 
-old_bot(output_struct.idx_pings) = output_struct.bottom;
+old_bot(output_struct.idx_ping) = output_struct.bottom;
 
 new_bot = bottom_cl('Origin','Algo_v3',...
     'Sample_idx',old_bot,...

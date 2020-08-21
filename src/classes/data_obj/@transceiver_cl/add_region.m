@@ -24,7 +24,7 @@ IDs_out={};
 
 for i=1:length(regions)
     
-    regions(i).Idx_pings=regions(i).Idx_pings-Ping_offset;
+    regions(i).Idx_ping=regions(i).Idx_ping-Ping_offset;
     
     switch (regions(i).Cell_w_unit)
         case {'meters' 'seconds'}
@@ -52,7 +52,7 @@ for i=1:length(regions)
             continue;
        end   
     
-    if numel(regions(i).Idx_pings)<2||numel(regions(i).Idx_r)<2
+    if numel(regions(i).Idx_ping)<2||numel(regions(i).Idx_r)<2
         continue;
     end
 

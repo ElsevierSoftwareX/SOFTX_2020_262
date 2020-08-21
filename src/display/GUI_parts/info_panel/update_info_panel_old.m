@@ -105,10 +105,10 @@ try
     
     xdata_red=xdata_red+dxi;
     ydata_red=linspace(y_lim(1),y_lim(2),nb_samples_red);
-    idx_pings=ceil(xdata(idx_x_keep));
+    idx_ping=ceil(xdata(idx_x_keep));
     idx_rs=ceil(ydata(idx_y_keep));
     
-    %idx_pings=ceil(xdata);
+    %idx_ping=ceil(xdata);
     %idx_rs=ceil(ydata);
     
     
@@ -172,11 +172,11 @@ try
             case {'Edit Bottom' 'Bad Pings'}
                 switch curr_disp.Fieldname
                     case {'sv','sp','sp_comp','spdenoised','svdenoised','spunmatched','svunmatched','powerunmatched','powerdenoised','power'}
-                        sub_bot=Bottom.Sample_idx(idx_pings);
-                        sub_tag=Bottom.Tag(idx_pings);
+                        sub_bot=Bottom.Sample_idx(idx_ping);
+                        sub_tag=Bottom.Tag(idx_ping);
                         sub_bot(sub_tag==0)=inf;
                         sub_bot=sub_bot-idx_rs(1)+1;
-                        bot_sample_red=downsample(round(sub_bot*nb_samples_red/(idx_rs(end)-idx_rs(1)+1)),round(length(idx_pings)/nb_pings_red));
+                        bot_sample_red=downsample(round(sub_bot*nb_samples_red/(idx_rs(end)-idx_rs(1)+1)),round(length(idx_ping)/nb_pings_red));
                         
                         idx_r_tot=(1:nb_samples_red)';
                         idx_r_bot=idx_r_tot(idx_r_tot>=nanmin(bot_sample_red-3)&idx_r_tot<=nanmax(bot_sample_red));

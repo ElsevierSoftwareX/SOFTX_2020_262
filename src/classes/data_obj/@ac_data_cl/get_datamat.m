@@ -1,7 +1,7 @@
-function [datamat,idx]=get_datamat(data,field)
+function [datamat,idx]=get_datamat(data_obj,field)
 
-[idx,~]=find_field_idx(data,(deblank(field)));
+[idx,~]=data_obj.find_field_idx((deblank(field)));
 
-datamat=get_subdatamat(data,[],[],'field',field);
+datamat=data_obj.get_subdatamat('field',field);
 
 end

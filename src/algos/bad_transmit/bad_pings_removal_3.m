@@ -104,21 +104,21 @@ output_struct.done =  false;
 % indices of all samples and pings
 if isempty(p.Results.reg_obj)
     idx_r = 1:length(trans_obj.get_transceiver_range());
-    idx_pings_tot = 1:length(trans_obj.get_transceiver_pings());
+    idx_ping_tot = 1:length(trans_obj.get_transceiver_pings());
 else
-    idx_pings_tot = p.Results.reg_obj.Idx_pings;
+    idx_ping_tot = p.Results.reg_obj.Idx_ping;
     idx_r = p.Results.reg_obj.Idx_r;
 end
 
 % total number of pings
-nb_pings_tot = numel(idx_pings_tot);
+nb_pings_tot = numel(idx_ping_tot);
 
 % initialize output (index of bad pings)
 idx_noise_sector_tot = [];
 
 % If doing block processing, calculate number of iterations needed
-block_size = nanmin(ceil(p.Results.block_len/numel(idx_r)),numel(idx_pings_tot));
-num_ite = ceil(numel(idx_pings_tot)/block_size);
+block_size = nanmin(ceil(p.Results.block_len/numel(idx_r)),numel(idx_ping_tot));
+num_ite = ceil(numel(idx_ping_tot)/block_size);
 
 % initialize progress bar
 if ~isempty(p.Results.load_bar_comp)
@@ -137,7 +137,7 @@ G=cal.G0+10*log10(f_nom./f_c);
 for ui = 1:num_ite
     
     % ping indices for this block
-    idx_pings = idx_pings_tot((ui-1)*block_size+1:nanmin(ui*block_size,numel(idx_pings_tot)));
+    idx_ping = idx_ping_tot((ui-1)*block_size+1:nanmin(ui*block_size,numel(idx_ping_tot)));
     
     
     %% GRABBING AND PREPARING DATA
@@ -145,14 +145,14 @@ for ui = 1:num_ite
     % grab data to work on: normal or denoised
     if p.Results.denoised > 0
         % get denoised Sv
-        Sv = trans_obj.Data.get_subdatamat(idx_r,idx_pings,'field','svdenoised');
+        Sv = trans_obj.Data.get_subdatamat('idx_r',idx_r,'idx_ping',idx_ping,'field','svdenoised');
         % failsafe: if no denoised data, grab normal Sv
         if isempty(Sv)
-            Sv = trans_obj.Data.get_subdatamat(idx_r,idx_pings,'field','sv');
+            Sv = trans_obj.Data.get_subdatamat('idx_r',idx_r,'idx_ping',idx_ping,'field','sv');
             warning('denoised Sv not available for bad pings detection. Using normal Sv instead.');
         end
     else
-        Sv = trans_obj.Data.get_subdatamat(idx_r,idx_pings,'field','sv');
+        Sv = trans_obj.Data.get_subdatamat('idx_r',idx_r,'idx_ping',idx_ping,'field','sv');
     end
      
     % get data size
@@ -160,9 +160,9 @@ for ui = 1:num_ite
     
     % if applying the algo on a region, define the region mask...
     if isempty(p.Results.reg_obj)
-        mask = zeros(numel(idx_r),numel(idx_pings));
+        mask = zeros(numel(idx_r),numel(idx_ping));
     else
-        mask = ~p.Results.reg_obj.get_sub_mask(idx_r-p.Results.reg_obj.Idx_r(1)+1,idx_pings-p.Results.reg_obj.Idx_pings(1)+1);
+        mask = ~p.Results.reg_obj.get_sub_mask(idx_r-p.Results.reg_obj.Idx_r(1)+1,idx_ping-p.Results.reg_obj.Idx_ping(1)+1);
     end
     
     % ... and apply mask to the data
@@ -185,7 +185,7 @@ for ui = 1:num_ite
     %% PROCESSING #1: RINGDOWN ANALYSIS
     
     % grab inside the ringdown (original data "power") the ONE characteristic sample
-    ringdown = trans_obj.Data.get_subdatamat(ceil(Np/3),idx_pings,'field','power');
+    ringdown = trans_obj.Data.get_subdatamat('idx_r',ceil(Np/3),'idx_ping',idx_ping,'field','power');
     RingDown = pow2db_perso(ringdown);
     
     % and analyze it if it this was asked in input, using the parameter provided
@@ -202,7 +202,7 @@ for ui = 1:num_ite
     %% PROCESSING #2: UNDEFINED BOTTOM LINE
     
     % get the bottom line sample in each ping
-    idx_bottom = trans_obj.get_bottom_idx(idx_pings);
+    idx_bottom = trans_obj.get_bottom_idx(idx_ping);
     
     % maximum size for a block of pings with undefined bottom to be flagged
     maxBlockSize = 5;
@@ -496,11 +496,11 @@ for ui = 1:num_ite
   
 %% Basic filter for additive noise
 if p.Results.Additive
-       power = trans_obj.Data.get_subdatamat(idx_r,idx_pings,'field','power');
+       power = trans_obj.Data.get_subdatamat('idx_r',idx_r,'idx_ping',idx_ping,'field','power');
 
-    ptx = trans_obj.get_params_value('TransmitPower',idx_pings);
-    gain = G(idx_pings);
-    lambda = c./f_c(idx_pings);
+    ptx = trans_obj.get_params_value('TransmitPower',idx_ping);
+    gain = G(idx_ping);
+    lambda = c./f_c(idx_ping);
     switch trans_obj.Config.TransceiverName
         case {'FCV30'}
             tmp=10*log10(single(power))-2*gain;
@@ -524,9 +524,9 @@ if p.Results.Additive
         power_mode=mode(ceil(tmp/prec)*prec);
         
         power_mean=pow2db(nanmean(db2pow(tmp)));
-        new_echo_figure();plot(idx_pings,power_mode,'r');hold on;
-        plot(idx_pings,power_mean,'k')
-        plot(idx_pings,power_prc_25,'b');
+        new_echo_figure();plot(idx_ping,power_mode,'r');hold on;
+        plot(idx_ping,power_mean,'k')
+        plot(idx_ping,power_prc_25,'b');
         yline(p.Results.thr_add_noise,'b','Noise thr.');
         legend({'Mode','Mean','25-percentile'});
         %     figure();histogram(tmp(:,2),100);hold on;histogram(tmp(:,6),100)
@@ -569,7 +569,7 @@ end
     
     % combining all flagged pings across all algos
     idx_noise_sector = unique([idx_bad_below(:)' idx_bad_above(:)' idx_bad_bs(:)' idx_rd(:)' idx_bottom_nan(:)' idx_fft(:)' idx_add(:)']);
-    idx_noise_sector = idx_noise_sector + idx_pings(1) - 1;
+    idx_noise_sector = idx_noise_sector + idx_ping(1) - 1;
     
     
     

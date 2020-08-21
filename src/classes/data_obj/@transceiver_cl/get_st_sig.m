@@ -18,5 +18,5 @@ for ii=1:numel(st.Ping_number)
     idx_r=idx_r_st(ii):idx_r_et(ii);
     idx_r=idx_r+nansum(idx_r<1);
     idx_r=idx_r-nansum(idx_r>nb_samples);
-    st_sig{ii}=trans_obj.Data.get_subdatamat(idx_r,st.Ping_number(ii),'field',field);
+    st_sig{ii}=trans_obj.Data.get_subdatamat('idx_r',idx_r,'idx_ping',st.Ping_number(ii),'field',field);
 end

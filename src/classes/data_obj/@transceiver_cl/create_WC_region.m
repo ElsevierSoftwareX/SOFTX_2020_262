@@ -56,10 +56,10 @@ trans_depth=trans_obj.get_transducer_depth();
 
 %% ?
 time_t = trans_obj.get_transceiver_time();
-idx_pings = find( time_t >= p.Results.t_min & time_t <= p.Results.t_max );
+idx_ping = find( time_t >= p.Results.t_min & time_t <= p.Results.t_max );
 bot_data(trans_obj.get_bottom_idx() == numel(ydata)) = nan;
-bot_data = bot_data(idx_pings);
-trans_depth=trans_depth(idx_pings);
+bot_data = bot_data(idx_ping);
+trans_depth=trans_depth(idx_ping);
 nb_pings = length(bot_data);
 name = 'WC';
 %% region reference
@@ -114,9 +114,9 @@ switch shape
         num_ite = ceil(nb_pings/block_size);
         
         for ui = 1:num_ite
-            idx_pings_red = idx_pings((ui-1)*block_size+1:nanmin(ui*block_size,nb_pings));
-            mask(:,idx_pings_red) = bsxfun( @ge, ydata, line_ref(idx_pings_red)-r_max ) & ...
-                bsxfun( @le, ydata, line_ref(idx_pings_red)-r_min );
+            idx_ping_red = idx_ping((ui-1)*block_size+1:nanmin(ui*block_size,nb_pings));
+            mask(:,idx_ping_red) = bsxfun( @ge, ydata, line_ref(idx_ping_red)-r_max ) & ...
+                bsxfun( @le, ydata, line_ref(idx_ping_red)-r_min );
         end
         
         idx_r = find(nansum(mask,2)>0,1,'first'):find(nansum(mask,2)>0,1,'last');
@@ -124,7 +124,7 @@ switch shape
         
 end
 
-if isempty(idx_r)||isempty(idx_pings)
+if isempty(idx_r)||isempty(idx_ping)
     reg_wc = [];
 else
     reg_wc = region_cl(...
@@ -133,7 +133,7 @@ else
         'MaskReg',mask,...
         'Name',name,...
         'Type',p.Results.Type,...
-        'Idx_pings',idx_pings,...
+        'Idx_ping',idx_ping,...
         'Idx_r',idx_r,...
         'Reference',p.Results.Ref,...
         'Cell_w',cell_w,...

@@ -42,14 +42,14 @@ for ilay = 1:length(layers_to_export)
         [path_f,fileN,~] = fileparts(input_fullfile);
         
         % get index of pings in dataset from this file
-        idx_pings = find(trans_obj.Data.FileId==ifil);
+        idx_ping = find(trans_obj.Data.FileId==ifil);
         
         % output file name
         output_fullfile = fullfile(path_f,[fileN,filename_append,'.csv']);
         
         try
             % export
-            gps_obj.save_gps_to_file(output_fullfile,idx_pings);
+            gps_obj.save_gps_to_file(output_fullfile,idx_ping);
             
             % display
             disp_perso(main_figure,sprintf('Position for file %s exported as %s',input_fullfile,output_fullfile));

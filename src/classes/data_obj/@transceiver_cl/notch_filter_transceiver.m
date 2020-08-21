@@ -59,20 +59,20 @@ if ~strcmpi(trans_obj.Mode,'CW')
             idx_sub_sub_pings = idx_sub_pings((ui-1)*block_size+1:nanmin(ui*block_size,numel(idx_sub_pings)));
             if ~all(amp_filt>0)
                 for iping=idx_sub_sub_pings
-                    y_c=trans_obj.Data.get_subdatamat([],iping,'field','y_real')+1i*trans_obj.Data.get_subdatamat([],iping,'field','y_imag');
+                    y_c=trans_obj.Data.get_subdatamat('idx_ping',iping,'field','y_real')+1i*trans_obj.Data.get_subdatamat([],iping,'field','y_imag');
                     y_c_filtered = filter(mbFilt,y_c);
-                    trans_obj.Data.replace_sub_data_v2('y_real_filtered',real(y_c_filtered),[],iping);
-                    trans_obj.Data.replace_sub_data_v2('y_imag_filtered',imag(y_c_filtered),[],iping);
+                    trans_obj.Data.replace_sub_data_v2(real(y_c_filtered),'field','y_real_filtered','idx_ping',iping);
+                    trans_obj.Data.replace_sub_data_v2(imag(y_c_filtered),'field','y_imag_filtered','idx_ping',iping);
                     power=(trans_obj.Config.NbQuadrants*(abs(y_c_filtered)/(2*sqrt(2))).^2*((Rwt_rx+Ztrd)/Rwt_rx)^2/Ztrd);
-                    trans_obj.Data.replace_sub_data_v2('power',power,[],iping);
+                    trans_obj.Data.replace_sub_data_v2(power,'field','power','idx_ping',iping);
                 end
             else
                 for iping=idx_sub_sub_pings
-                    y_c=trans_obj.Data.get_subdatamat([],iping,'field','y_real')+1i*trans_obj.Data.get_subdatamat([],iping,'field','y_imag');
-                    trans_obj.Data.replace_sub_data_v2('y_real_filtered',real(y_c),[],iping);
-                    trans_obj.Data.replace_sub_data_v2('y_imag_filtered',imag(y_c),[],iping);
+                    y_c=trans_obj.Data.get_subdatamat('idx_ping',iping,'field','y_real')+1i*trans_obj.Data.get_subdatamat('idx_ping',iping,'field','y_imag');
+                    trans_obj.Data.replace_sub_data_v2(real(y_c),'field','y_real_filtered','idx_ping',iping);
+                    trans_obj.Data.replace_sub_data_v2(imag(y_c),'field','y_imag_filtered','idx_ping',iping);
                     power=(trans_obj.Config.NbQuadrants*(abs(y_c)/(2*sqrt(2))).^2*((Rwt_rx+Ztrd)/Rwt_rx)^2/Ztrd);
-                    trans_obj.Data.replace_sub_data_v2('power',power,[],iping);
+                    trans_obj.Data.replace_sub_data_v2(power,'field','power','idx_ping',iping);
                     
                 end
             end

@@ -2,7 +2,7 @@ function init_varargout(obj)
 
 switch obj.Name
     case {'BottomDetectionV2','BottomDetection'}
-        obj.Varargout={'bottom','bs_bottom','idx_ringdown','idx_pings','done'};
+        obj.Varargout={'bottom','bs_bottom','idx_ringdown','idx_ping','done'};
     case 'DropOuts'
         obj.Varargout={'idx_noise_sector','done'};
     case 'BadPingsV2'

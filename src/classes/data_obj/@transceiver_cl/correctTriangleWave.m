@@ -37,23 +37,23 @@ end
 
 while u<ceil(nb_pings/bsize)
     
-    idx_pings=(u*bsize+1):nanmin(((u+1)*bsize),nb_pings);
+    idx_ping=(u*bsize+1):nanmin(((u+1)*bsize),nb_pings);
     
     u=u+1;
     
-    idx_pings_next=(u*bsize+1):nanmin(((u+1)*bsize),nb_pings);
-    if ~isempty(idx_pings_next)
-        if idx_pings_next(end)==nb_pings
-            idx_pings=union(idx_pings,idx_pings_next);
+    idx_ping_next=(u*bsize+1):nanmin(((u+1)*bsize),nb_pings);
+    if ~isempty(idx_ping_next)
+        if idx_ping_next(end)==nb_pings
+            idx_ping=union(idx_ping,idx_ping_next);
             u=u+1;
         end
     end
-    power=get_subdatamat(trans_obj.Data,1:nb_samples,idx_pings,'field','power');
+    power=trans_obj.Data.get_subdatamat('idx_r',1:nb_samples,'idx_ping',idx_ping,'field','power');
     
     [power_corr_db,mean_err]=correctES60(10*log10(power),mean_err,u-1);
     
     if mean_err~=0
-        trans_obj.Data.replace_sub_data_v2('power',10.^(power_corr_db/10),[],idx_pings);
+        trans_obj.Data.replace_sub_data_v2(10.^(power_corr_db/10),'field','power','idx_ping',idx_ping);
     end
     trans_obj.Config.EsOffset=mean_err;
     if ~isempty(p.Results.load_bar_comp)

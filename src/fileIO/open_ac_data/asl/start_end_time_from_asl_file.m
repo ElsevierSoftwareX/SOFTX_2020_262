@@ -19,7 +19,9 @@ while found_start==0&&~feof(fid)
     pos = ftell(fid);
     
     int_read=fread(fid,BLCK_SIZE,'uint16');
+
     idx_dg=find(int_read==hex2dec('FD02'));
+
     if ~isempty(idx_dg)
         found_start=1;
         
@@ -28,7 +30,6 @@ while found_start==0&&~feof(fid)
             fseek(fid,idx_start,'bof');
             fread(fid,6,'uint16');
             time=fread(fid,7,'uint16');
-            
             
             tmp=datenum(time(1:6)')+time(end)/100/60/60/24;
             if numel(tmp)==1&&tmp<=now

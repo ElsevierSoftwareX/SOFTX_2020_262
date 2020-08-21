@@ -13,6 +13,11 @@ if isfile(filename)>0
         ftype='FCV30';
        return; 
     end
+
+    if strcmp(end_file,'.ddf')
+        ftype='DIDSON';
+        return;
+    end
     
     fid = fopen(filename, 'r');
     if fid==-1

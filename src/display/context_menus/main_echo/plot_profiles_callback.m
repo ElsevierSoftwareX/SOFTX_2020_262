@@ -32,8 +32,8 @@ ydata=trans.get_transceiver_range();
 [~,idx_ping]=nanmin(abs(xdata-x));
 idx_r=ceil(y);
 
-vert_val=trans.Data.get_subdatamat(1:length(ydata),idx_ping,'field',curr_disp.Fieldname);
-horz_val=trans.Data.get_subdatamat(idx_r,1:length(xdata),'field',curr_disp.Fieldname);
+vert_val=trans.Data.get_subdatamat('idx_r',1:length(ydata),'idx_ping',idx_ping,'field',curr_disp.Fieldname);
+horz_val=trans.Data.get_subdatamat('idx_r',idx_r,'idx_ping',1:length(xdata),'field',curr_disp.Fieldname);
 
 switch lower(deblank(curr_disp.Fieldname))
     case{'alongangle','acrossangle'}

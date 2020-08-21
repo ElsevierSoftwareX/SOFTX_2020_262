@@ -69,9 +69,9 @@ if strcmp(trans_obj.Mode,'FM')
             end
     end
     
-    y_c=trans_obj.Data.get_subdatamat(idx_r1:idx_r2,iPing,'field','y_real_filtered')+1i*trans_obj.Data.get_subdatamat(idx_r1:idx_r2,iPing,'field','y_imag_filtered');
+    y_c=trans_obj.Data.get_subdatamat('idx_r',idx_r1:idx_r2,'idx_ping',iPing,'field','y_real_filtered')+1i*trans_obj.Data.get_subdatamat('idx_r',idx_r1:idx_r2,'idx_ping',iPing,'field','y_imag_filtered');
     if isempty(y_c)
-        y_c=trans_obj.Data.get_subdatamat(idx_r1:idx_r2,iPing,'field','y_real')+1i*trans_obj.Data.get_subdatamat(idx_r1:idx_r2,iPing,'field','y_imag');
+        y_c=trans_obj.Data.get_subdatamat('idx_r',idx_r1:idx_r2,'idx_ping',iPing,'field','y_real')+1i*trans_obj.Data.get_subdatamat('idx_r',idx_r1:idx_r2,'idx_ping',iPing,'field','y_imag');
     end
     
     nfft=min(nfft,numel(y_c));

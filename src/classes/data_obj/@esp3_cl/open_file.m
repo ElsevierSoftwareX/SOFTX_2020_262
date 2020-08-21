@@ -191,6 +191,7 @@ try
         % include other files not requested to be opened. This functionality is
         % not available for all types of files
         switch ftype
+
             case {'EK60','EK80','FCV30'}
                 missing_files = find_survey_data_db(Filename);
                 idx_miss=cellfun(@(x)~any(strcmpi(x,old_files)),missing_files);
@@ -210,8 +211,7 @@ try
                             
                     end
                 end
-            case 'ASL'
-                
+            case 'ASL'  
                 [path_asl_tmp,file_asl_tmp,ext_asl_tmp]=cellfun(@fileparts,Filename,'un',0);
                 [path_asl,idx_unique]=unique(path_asl_tmp);
                 Filename=cellfun(@(x,y,z) fullfile(x,[y z]),path_asl,file_asl_tmp(idx_unique),ext_asl_tmp(idx_unique),'un',0);
