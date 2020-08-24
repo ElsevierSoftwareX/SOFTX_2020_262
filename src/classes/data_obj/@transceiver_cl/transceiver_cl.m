@@ -54,8 +54,6 @@ classdef transceiver_cl < handle
             results = p.Results;
             props = fieldnames(results);
             
-            
-            
             for i = 1:length(props)
                 if isprop(trans_obj,props{i})
                     trans_obj.(props{i}) = results.(props{i});
@@ -70,6 +68,7 @@ classdef transceiver_cl < handle
                     trans_obj.AttitudeNavPing = attitude_nav_cl('Time',p.Results.Time);
                 end
             end
+
             
             if isempty(trans_obj.TransducerDepth)
                 trans_obj.TransducerDepth=zeros(size(trans_obj.Time));
@@ -88,7 +87,7 @@ classdef transceiver_cl < handle
                 trans_obj.set_pulse_comp_Teff();
             end
             trans_obj.Spikes=sparse(numel(trans_obj.Range),numel(trans_obj.Time));
-            
+              
         end
         
         function p_out = get_params_value(trans_obj,param_name,idx)
@@ -103,8 +102,8 @@ classdef transceiver_cl < handle
                 idx=1:nb_pings;
             end
             
-            if numel(trans_obj.Params.(param_name))==nb_pings
-                p_out = trans_obj.Params.(param_name)(idx);
+            if size(trans_obj.Params.(param_name),1)==nb_pings
+                p_out = trans_obj.Params.(param_name)(:,idx);
             else
                 idx(idx<1|idx>nb_pings) = [];
                 
@@ -112,7 +111,7 @@ classdef transceiver_cl < handle
                 mat_diff(mat_diff<0)=inf;
                 
                 [~,id]=nanmin(mat_diff,[],1);
-                p_out = trans_obj.Params.(param_name)(id);
+                p_out = trans_obj.Params.(param_name)(:,id);
             end
         end
         
@@ -328,6 +327,7 @@ classdef transceiver_cl < handle
         end
         
         function range = get_transceiver_range(trans_obj,varargin)
+            
             if nargin>=2
                 idx = varargin{1};
                 if ~isempty(idx)

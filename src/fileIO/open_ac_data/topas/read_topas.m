@@ -221,8 +221,7 @@ for i_cell=1:length(Filename_cell)
         params_obj.PulseLength(:)=nanmean(data.ChirpLength(idx_channel))/1e3;
         params_obj.SampleInterval(:)=1./data.sampFreq(idx_channel);
         params_obj.TransmitPower(:)=data.sourceLevel(idx_channel);
-        params_obj.Absorption(:)= seawater_absorption((params_obj.FrequencyStart(1)+params_obj.FrequencyEnd(1))/2/1e3, (envdata.Salinity), (envdata.Temperature), (envdata.Depth),'fandg')/1e3;
-        
+
         power_lin=zeros(nb_samples,nb_pings);
         
         for ip=1:nb_pings
@@ -241,8 +240,7 @@ for i_cell=1:length(Filename_cell)
             'Nb_beams',1,...
             'Nb_pings',nb_pings,...
             'MemapName',curr_name);
-        
-       
+              
         att_chan=attitude_nav_cl('Heading',zeros(size(data.pingTime(idx_channel))),'Pitch',data.tx_pitch(idx_channel),'Roll',data.tx_roll(idx_channel),'Heave',data.tx_heave(idx_channel),'Time',data.pingTime(idx_channel));
         gps_chan=gps_data_cl('Lat',lat_tot(idx_channel),'Long',lon_tot(idx_channel),'Time',data.pingTime(idx_channel));
         transceiver(ic)=transceiver_cl('Data',ac_data_temp,...
@@ -254,6 +252,7 @@ for i_cell=1:length(Filename_cell)
             'Mode','FM',...
             'Config',config_obj,...
             'Params',params_obj);
+
         transceiver(ic).set_absorption(envdata);
     end
     layers(i_cell)=layer_cl('Filename',{Filename},'Filetype','TOPAS','Transceivers',transceiver,'EnvData',envdata,'AttitudeNav',att,'GPSData',gps_obj);

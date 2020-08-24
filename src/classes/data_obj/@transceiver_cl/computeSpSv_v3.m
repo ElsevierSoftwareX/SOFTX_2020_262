@@ -17,6 +17,10 @@ end
 
 parse(p,trans_obj,env_data_obj,varargin{:});
 
+[~,found_pow]=trans_obj.Data.find_field_idx('power');
+if ~found_pow
+    return;
+end
 
 [c,range_t_ori]=trans_obj.compute_soundspeed_and_range(env_data_obj);
 trans_obj.set_transceiver_range(range_t_ori);
@@ -46,7 +50,7 @@ f_c=trans_obj.get_center_frequency();
 if ~isempty(cal_fm)
     [~,idx_f] = nanmin(abs(f_c-cal_fm.Frequency'),[],1);
     eq_beam_angle_c=cal_fm.eq_beam_angle(idx_f);
-    G=cal_fm.Gain(idx_f);
+    G=cal_fm.Gain(idx_f);eid
 else
     eq_beam_angle = trans_obj.Config.EquivalentBeamAngle;
     f_nom = trans_obj.Config.Frequency;
@@ -79,6 +83,8 @@ u=0;
 if ~isempty(p.Results.load_bar_comp)
     p.Results.load_bar_comp.progress_bar.set('Minimum',0,'Maximum',ceil(nb_pings/bsize),'Value',0);
 end
+
+
 
 while u<ceil(nb_pings/bsize)
     idx_ping=(u*bsize+1):nanmin(((u+1)*bsize),nb_pings);

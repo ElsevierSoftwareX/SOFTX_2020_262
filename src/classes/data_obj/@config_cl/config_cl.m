@@ -13,18 +13,28 @@ classdef config_cl
         HWChannelConfiguration=-1;
         MaxTxPowerTransceiver=-1;
         PulseLength=0.001;
+        
         AngleOffsetAlongship=0;
         AngleOffsetAthwartship=0;
+        
         AngleSensitivityAlongship=-1;
         AngleSensitivityAthwartship=-1;
+        
         BeamType=1;
+        
         BeamWidthAlongship=7;
         BeamWidthAthwartship=7;
+        
+        BeamAngleAlongship=0;
+        BeamAngleAthwartship=0;
+        
         DirectivityDropAt2XBeamWidth=-1;
         EquivalentBeamAngle=-1;
+        
         Frequency=0;
         FrequencyMaximum=0;
         FrequencyMinimum=0;
+        
         Gain=1;
         Impedance=1e3;%ohms
         Ztrd=75;%ohms
@@ -50,7 +60,8 @@ classdef config_cl
         RxSampleFrequency=nan;
         Multiplexing=0;
         NbQuadrants=4;
-        
+        RXArrayShape = 'flat';
+        TXArrayShape = 'flat';
     end
     
     methods

@@ -60,7 +60,7 @@ if found
                     else
                         idx_nan=data_tmp==intmin(data_obj.SubData(idx).Fmt);
                     end
-                              
+                    
                 case {'single' 'double'}
                     idx_nan=(data_tmp==realmin(data_obj.SubData(idx).Fmt));
             end
@@ -69,13 +69,15 @@ if found
             data_tmp=double(data_obj.SubData(idx).ConvFactor)*double(data_tmp);
             data_tmp(idx_nan)=val;
             
-            datamat(1:size(data_tmp,1),idx_ping_temp)=data_tmp;
             
-            if numel(size(datamat))==3
+            if nanmax(data_obj.Nb_beams)>1
+                datamat(1:size(data_tmp,1),idx_beam_tmp,idx_ping_temp)=data_tmp;
                 if size(data_tmp,1)<size(datamat,1)
                     datamat(size(data_tmp,1)+1:end,:,idx_ping_temp)=val;
                 end
+                
             else
+                datamat(1:size(data_tmp,1),idx_ping_temp)=data_tmp;
                 if size(data_tmp,1)<size(datamat,1)
                     datamat(size(data_tmp,1)+1:end,idx_ping_temp)=val;
                 end
@@ -85,6 +87,5 @@ if found
 else
     datamat=[];
 end
-
 
 end

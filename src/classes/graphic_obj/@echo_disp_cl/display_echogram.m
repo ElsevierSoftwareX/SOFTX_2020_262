@@ -157,6 +157,10 @@ if update_echo>0
             x_data_disp=xdata(idx_ping_red);
             y_data_disp=ydata(idx_r_red);
     end
+
+    if numel(size(data))==3
+        data = squeeze(nanmax(data,[],2));
+    end
     
     if isempty(data)
         switch  fieldname

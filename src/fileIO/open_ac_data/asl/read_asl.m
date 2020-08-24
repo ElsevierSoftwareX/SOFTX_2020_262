@@ -260,15 +260,9 @@ for i_cell=1:length(Filename_cell)
         params_obj.PulseLength(:)=nanmean(data.pulse_length(ic,:));
         params_obj.SampleInterval(:)=1./nanmean(data.f_s(ic,:)./data.range_sple_bin(ic,:));
         params_obj.TransmitPower(:)=45;
-        params_obj.Absorption(:)= seawater_absorption(params_obj.Frequency(1)/1e3, (envdata.Salinity), (envdata.Temperature), (envdata.Depth),'fandg')/1e3;
-        
         
         power_db=pow2db_perso(data.(sprintf('chan_%.0f',ic)))-calParms.TVR(ic)-20*log10(calParms.VTX(ic));
         data_struct.power=db2pow_perso(power_db);
-        
-%         data_struct.sv = power_db + repmat(20*log10(range)+2*params_obj.Absorption(1)*range,1,nb_pings) - 10*log10(c*params_obj.PulseLength(1)/2)-config_obj.EquivalentBeamAngle+SvOffset;
-%         data_struct.sp = power_db + repmat(40*log10(range)+2*params_obj.Absorption(1)*range,1,nb_pings);
-%         
         
         [sub_ac_data_temp,curr_name]=sub_ac_data_cl.sub_ac_data_from_struct(data_struct,dir_data,{});
         

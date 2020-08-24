@@ -142,18 +142,18 @@ params_cl_init(nb_trans)=params_cl();
 curr_data_name=cell(nb_trans,numel(fields));
 curr_data_name_t=cell(nb_trans,1);
 
-for i=1:nb_trans
-    data.pings(i).number=nan(1,nb_pings(i),array_type);
-    data.pings(i).time=nan(1,nb_pings(i),array_type);
+for itr=1:nb_trans
+    data.pings(itr).number=nan(1,nb_pings(itr),array_type);
+    data.pings(itr).time=nan(1,nb_pings(itr),array_type);
     %data.pings(i).samples=(1:nb_samples(i))';
-    trans_obj(i).Params=params_cl(nb_pings(i));
+    trans_obj(itr).Params=params_cl(nb_pings(itr));
     
     if gps_only==0
         [~,curr_filename,~]=fileparts(tempname);
-        curr_data_name_t{i}=fullfile(p.Results.PathToMemmap,curr_filename);
+        curr_data_name_t{itr}=fullfile(p.Results.PathToMemmap,curr_filename);
         
         for ifif=1:numel(fields)
-            curr_data_name{i,ifif}=[curr_data_name_t{i} fields{ifif} '.bin'];
+            curr_data_name{itr,ifif}=[curr_data_name_t{itr} fields{ifif} '.bin'];
         end
     end
 end
@@ -537,7 +537,8 @@ for idg=1:nb_dg
                         if i_ping(idx)==1
                             mode{idx}='CW';
                             [trans_obj(idx).Config,trans_obj(idx).Params]=config_from_ek60(data.pings(idx),config_EK60(idx_freq(idx)));
-                            
+                            alpha_file = double(data.pings(idx).absorptioncoefficient);
+                            trans_obj(idx).set_absorption(alpha_file);
                         end
                         
                         data_tmp{idx}.power(1:numel(power_tmp),block_i(idx))=power_tmp;
@@ -600,11 +601,11 @@ fclose(fid);
 
 
 
-for i=1:nb_trans
-    if block_i(i)>1
-        trans_obj(i).Mode=write_data(data.pings(idx).datatype,trans_obj(i),data_tmp{idx},gps_only,(1:nb_samples_per_block{i}(block_i(i))),idx_ping);
+for itr=1:nb_trans
+    if block_i(itr)>1
+        trans_obj(itr).Mode=write_data(data.pings(idx).datatype,trans_obj(itr),data_tmp{idx},gps_only,(1:nb_samples_per_block{itr}(block_i(itr))),idx_ping);
     else
-        trans_obj(i).Mode=mode{i};
+        trans_obj(itr).Mode=mode{itr};
     end
     
 end
@@ -629,8 +630,8 @@ switch ftype
     case 'EK80'
         
     case 'EK60'
-        for i=1:length(idx_freq)
-            [trans_obj(i).Config,trans_obj(i).Params]=config_from_ek60(data.pings(i),config_EK60(idx_freq(i)));
+        for itr=1:length(idx_freq)
+            [trans_obj(itr).Config,trans_obj(itr).Params]=config_from_ek60(data.pings(itr),config_EK60(idx_freq(itr)));
         end
         
         envdata.SoundSpeed=data.pings(1).soundvelocity(1);
@@ -652,39 +653,38 @@ end
 id_rem=[];
 
 
-for i =1:nb_trans
+for itr =1:nb_trans
     
-    trans_obj(i).Params=trans_obj(i).Params.reduce_params();
-    f_c = trans_obj(i).get_center_frequency();
-    if ~any(trans_obj(i).Params.Frequency~=0)
-        trans_obj(i).Params.Frequency = (trans_obj(i).Params.FrequencyStart+trans_obj(i).Params.FrequencyEnd)/2;
+    trans_obj(itr).Params=trans_obj(itr).Params.reduce_params();
+    f_c = trans_obj(itr).get_center_frequency();
+    if ~any(trans_obj(itr).Params.Frequency~=0)
+        trans_obj(itr).Params.Frequency = (trans_obj(itr).Params.FrequencyStart+trans_obj(itr).Params.FrequencyEnd)/2;
     end
     
-    if ~any(trans_obj(i).Params.FrequencyStart~=0)
-        trans_obj(i).Params.FrequencyStart = trans_obj(i).Params.Frequency;
+    if ~any(trans_obj(itr).Params.FrequencyStart~=0)
+        trans_obj(itr).Params.FrequencyStart = trans_obj(itr).Params.Frequency;
     end
     
-    if ~any(trans_obj(i).Params.FrequencyEnd~=0)
-        trans_obj(i).Params.FrequencyEnd = trans_obj(i).Params.Frequency;
+    if ~any(trans_obj(itr).Params.FrequencyEnd~=0)
+        trans_obj(itr).Params.FrequencyEnd = trans_obj(itr).Params.Frequency;
     end
     
-    if ~any(trans_obj(i).Params.Absorption~=0)
-        alpha= seawater_absorption(f_c(1)/1e3, (envdata.Salinity), (envdata.Temperature), (envdata.Depth),'fandg')/1e3;
-        trans_obj(i).Params.Absorption(:)=alpha;
+    if isempty(trans_obj(itr).Alpha)
+        trans_obj(itr).set_absorption(envdata);
     end
     
-    trans_obj(i).set_transceiver_time(data.pings(i).time);
+    trans_obj(itr).set_transceiver_time(data.pings(itr).time);
     if gps_only==0
-        trans_obj(i).set_transceiver_time(data.pings(i).time);
+        trans_obj(itr).set_transceiver_time(data.pings(itr).time);
     else
-        trans_obj(i).set_transceiver_time([data.pings(i).time dgTime]);
+        trans_obj(itr).set_transceiver_time([data.pings(itr).time dgTime]);
     end
     
-    [~,range_t]=trans_obj(i).compute_soundspeed_and_range(envdata);
-    trans_obj(i).set_transceiver_range(range_t);
-    trans_obj(i).set_absorption(envdata);
+    [~,range_t]=trans_obj(itr).compute_soundspeed_and_range(envdata);
+    trans_obj(itr).set_transceiver_range(range_t);
+    trans_obj(itr).set_absorption(envdata);
     % initialize bottom object, with right dimensions but no information
-    trans_obj(i).Bottom = [];
+    trans_obj(itr).Bottom = [];
 end
 trans_obj(id_rem)=[];
 

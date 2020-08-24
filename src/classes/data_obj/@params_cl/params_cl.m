@@ -5,7 +5,6 @@ classdef params_cl
         PingNumber uint32
         BandWidth double
         ChannelMode int8
-        BeamAngle double
         Frequency double
         FrequencyEnd double
         FrequencyStart double
@@ -16,7 +15,6 @@ classdef params_cl
         SampleInterval double
         Slope double        
         TransmitPower double
-        Absorption double
     end
     
     methods
@@ -24,22 +22,12 @@ classdef params_cl
             p = inputParser;
             
             addOptional(p,'nb_pings',1,@(x) x>0);
-            addOptional(p,'nb_beams',1,@(x) x>0);
+
             parse(p,varargin{:});
             
             props=properties(obj);
-            for jj=1:length(props)
-                if iscell(obj.(props{jj}))
-                    obj.(props{jj})=cell(1,p.Results.nb_pings);
-                    obj.(props{jj})(:)={''};
-                else
-                    switch props{jj}
-                        case {'Frequency' 'FrequencyStart' 'FrequencyEnd' 'PulseLength' 'PulseForm' 'Absorption' 'BeamAngle'}
-                            obj.(props{jj})=zeros(p.Results.nb_beams,p.Results.nb_pings);
-                        otherwise
-                            obj.(props{jj})=zeros(1,p.Results.nb_pings);
-                    end
-                end
+            for jj=1:length(props) 
+                obj.(props{jj})=zeros(1,p.Results.nb_pings);
             end
             
             obj.PingNumber=1:p.Results.nb_pings;
@@ -53,6 +41,7 @@ classdef params_cl
             end
             
             obj_red=params_cl();
+            
             [params_groups,...
                 obj_red.BandWidth,...
                 obj_red.ChannelMode,...
@@ -65,8 +54,7 @@ classdef params_cl
                 obj_red.TeffCompPulseLength,...
                 obj_red.SampleInterval,...
                 obj_red.Slope,...
-                obj_red.TransmitPower,...
-                obj_red.Absorption...
+                obj_red.TransmitPower...
                 ]=findgroups(...
                 obj.BandWidth,...
                 obj.ChannelMode,...
@@ -79,8 +67,7 @@ classdef params_cl
                 obj.TeffCompPulseLength,...
                 obj.SampleInterval,...
                 obj.Slope,...
-                obj.TransmitPower,...
-                obj.Absorption);
+                obj.TransmitPower);
             
             obj_red.PingNumber = splitapply(@nanmin,obj.PingNumber,params_groups);
             obj_red.Time = splitapply(@nanmin,obj.Time,params_groups);
@@ -92,10 +79,10 @@ classdef params_cl
                     
             props=properties(param_start);
 
-            params_out=params_cl(length(param_start.PingNumber)+length(param_end.PingNumber));
+            params_out=params_cl(numel(param_start.PingNumber)+numel(param_end.PingNumber));
             
             for jj=1:length(props)
-                params_out.(props{jj})=[param_start.(props{jj})(:)' param_end.(props{jj})(:)'];
+                params_out.(props{jj})=[param_start.(props{jj}) param_end.(props{jj})];
             end
             
             params_out.PingNumber = [param_start.PingNumber param_end.PingNumber+nb_p];
@@ -114,8 +101,7 @@ classdef params_cl
                 'TeffCompPulseLength',...
                 'SampleInterval',...
                 'Slope',...
-                'TransmitPower',...
-                'Absorption'};
+                'TransmitPower'};
             
                fact=[1/1e3; ...%'BandWidth',...
                 0; ...%'ChannelMode',...
@@ -128,8 +114,7 @@ classdef params_cl
                   1e3; ... %'TeffCompPulseLength',...
                 1e3; ... %'SampleInterval',...
                 1; %'Slope',...
-                1/1e3; ...%'TransmitPower',...
-                1e3 ...%'Absorption'
+                1/1e3; ...%'TransmitPower'
                 ];
             
             
@@ -144,8 +129,7 @@ classdef params_cl
                 'PulseLength Comp Eff',...
                 'SampleInterval',...
                 'Slope',...
-                'TransmitPower',...
-                'Absorption'};
+                'TransmitPower'};
             
             fields_fmt={'%.2f kHz',...
                 '%d',...
@@ -158,29 +142,24 @@ classdef params_cl
                  '%.3f ms',...
                 '%.3f ms',...
                 '%.6f',....
-                '%.2f kW',...
-                '%.2f dB/km'};
-            
-            
+                '%.2f kW'};
+                        
             param_str =sprintf('<html><ul>Parameters for ping %d:',idx_ping);
             
             id=find(idx_ping-param_obj.PingNumber>0,1,'last');
             
             for ifi=1:length(fields)
                 
-                if length(param_obj.(fields{ifi}))<=id
+                if size(param_obj.(fields{ifi}),2)<=id
                     id=1;
                 end
-
-                if iscell(param_obj.(fields{ifi}))
-                    str_temp=sprintf(fields_fmt{ifi},param_obj.(fields{ifi}){id});
-                else
-                    if isnan(param_obj.(fields{ifi})(id))
-                        continue;
-                    end
-                    str_temp=sprintf(fields_fmt{ifi},fact(ifi)*param_obj.(fields{ifi})(id));
+  
+                if isnan(param_obj.(fields{ifi})(id))
+                    continue;
                 end
                 
+                str_temp=sprintf(fields_fmt{ifi},fact(ifi)*param_obj.(fields{ifi})(id));
+                                
                 param_str = [param_str '<li><i>' fields_name{ifi} ': </i>' str_temp '</li>'];
             end
             param_str = [param_str '</ul></html>'];
@@ -193,6 +172,7 @@ classdef params_cl
             
             props=properties(params_obj);
             id_sec=ismember(idx,params_obj.PingNumber);
+            
             if any(id_sec)
                 id_num=find(id_sec);
             else
@@ -202,8 +182,7 @@ classdef params_cl
              
             for iprop=1:length(props)
                 if ~strcmpi(props{iprop},'PingNumber')
-                        params_section.(props{iprop})= params_obj.(props{iprop})(id_sec);
-
+                        params_section.(props{iprop})= params_obj.(props{iprop})(:,id_sec);
                 end   
             end
             params_section.PingNumber=find(id_num);

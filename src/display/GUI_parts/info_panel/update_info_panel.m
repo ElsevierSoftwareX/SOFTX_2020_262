@@ -38,7 +38,9 @@ try
         return;
     end
     
-    curr_disp=get_esp3_prop('curr_disp');    
+    curr_disp=get_esp3_prop('curr_disp'); 
+   [~,Type,Units]=init_cax(curr_disp.Fieldname);
+
     cur_str=sprintf('Cursor mode: %s',curr_disp.CursorMode);
     set(info_panel_comp.cursor_mode,'String',cur_str);
     
@@ -238,17 +240,9 @@ try
             
         end
         time_str=datestr(Time_trans(idx_ping),'yyyy-mm-dd HH:MM:SS');
+
+        val_str=sprintf('%s: %.2f%s',Type,cdata(idx_r_red,idx_ping_red),Units);
         
-        switch lower(deblank(curr_disp.Fieldname))
-            case{'alongangle','acrossangle'}
-                val_str=sprintf('Angle: %.2f%c',cdata(idx_r_red,idx_ping_red),char(hex2dec('00BA')));
-            case{'alongphi','acrossphi'}
-                val_str=sprintf('Phase: %.2f%c',cdata(idx_r_red,idx_ping_red),char(hex2dec('00BA')));
-            case {'fishdensity'}
-                val_str=sprintf('%s: %.2g fish/m^3',curr_disp.Type,cdata(idx_r_red,idx_ping_red));
-            otherwise
-                val_str=sprintf('%s: %.2f dB',curr_disp.Type,cdata(idx_r_red,idx_ping_red));
-        end
         
         iFile=trans_obj.Data.FileId(idx_ping);
         [~,file_curr,~]=fileparts(layer.Filename{iFile});
@@ -309,6 +303,7 @@ try
         display_ping_impedance_cback([],[],main_figure,idx_ping,0);
         
         update_boat_position(main_figure,idx_ping,0);
+        update_wc_fig(idx_ping);
         
     end
     

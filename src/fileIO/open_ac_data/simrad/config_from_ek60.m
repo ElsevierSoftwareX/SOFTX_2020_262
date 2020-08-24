@@ -27,11 +27,9 @@ else
     end
 end
 
-
 config_obj.TransceiverName=config.soundername;
 % config_obj.TransceiverNumber=[];
 config_obj.TransceiverSoftwareVersion=-1;
-
 
 % config_obj.ChannelNumber=[];
 % config_obj.HWChannelConfiguration=[];
@@ -53,7 +51,6 @@ config_obj.Gain=config.gaintable;
 config_obj.MaxTxPowerTransducer=0;
 config_obj.SaCorrection=config.sacorrectiontable;
 
-
 if ~isempty(pings)
     params_obj=params_cl(length(pings.time));
     params_obj.Time=pings.time;    
@@ -67,7 +64,6 @@ if ~isempty(pings)
     params_obj.SampleInterval=pings.sampleinterval;
     params_obj.Slope=zeros(1,length(pings.time));
     params_obj.TransmitPower=pings.transmitpower;
-    params_obj.Absorption=double(pings.absorptioncoefficient);
 end
 
 

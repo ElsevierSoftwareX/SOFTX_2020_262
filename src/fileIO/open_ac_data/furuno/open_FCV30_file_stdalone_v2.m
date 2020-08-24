@@ -322,8 +322,9 @@ for iconfig=id_config
     params_current.FrequencyStart(:)=params.Frequency-params.ChirpWidth(1)/2;
     params_current.PulseLength(:)=params.TXPulseWidth(1);
     params_current.SampleInterval(:)=nanmean(diff(T,1,1),1);
-    params_current.Absorption(:)=alpha;
+    
     params_current.TransmitPower(:)=2000;
+    
     env_data=env_data_cl();
     env_data.SoundSpeed=c;
     
@@ -343,9 +344,7 @@ for iconfig=id_config
         'Time',NMEA.UTC,...
         'Config',config_current,...
         'Params',params_current);
-    
-
-    
+   trans_obj.set_absorption(envdata);
     layers(ilay)=layer_cl('ChannelID',{'FCV30'},...
         'Filename',{ini_config_files{iconfig}},...
         'Filetype','FCV30','Transceivers'...

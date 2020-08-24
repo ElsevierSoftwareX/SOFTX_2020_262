@@ -14,6 +14,11 @@ parse(p,layer_obj,varargin{:});
 up_ss=false;
 up_abs=false(1,numel(layer_obj.Frequencies));
 
+% switch layer_obj.Filetype
+%     case {'TOPAS' 'DIDSON'}
+%         return;
+% end
+
 if ~isnan(p.Results.new_soundspeed)
     up_ss=abs(p.Results.new_soundspeed-layer_obj.EnvData.SoundSpeed)>1e-2;
     if up_ss
@@ -45,7 +50,7 @@ end
 
 if ~isempty(abs_to_apply)
     for ichan=1:numel(layer_obj.Frequencies)
-         
+        
         idx_abs=find(layer_obj.Frequencies(ichan)==abs_to_apply_f,1);
         [alpha_curr,ori]=layer_obj.Transceivers(ichan).get_absorption();
         [alpha_comp,ori_comp]=layer_obj.Transceivers(ichan).compute_absorption(layer_obj.EnvData);

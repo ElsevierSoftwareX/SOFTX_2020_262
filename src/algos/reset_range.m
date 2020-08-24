@@ -33,7 +33,7 @@
 % *AUTHOR, AFFILIATION & COPYRIGHT*
 %
 % Yoann Ladroit, NIWA. Type |help EchoAnalysis.m| for copyright information.
-
+    
 %% Function
 function algo_vec=reset_range(algo_vec,range)
 if ~isempty(range)

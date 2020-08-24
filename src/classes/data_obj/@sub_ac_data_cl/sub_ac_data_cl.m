@@ -122,7 +122,7 @@ classdef sub_ac_data_cl < handle
                                     nb=8;
                             end
                             
-                            if numel(data{icell})==2
+                            if numel(data{icell})>=2
                                 % b_size=ceil(1e7/nb_samples);
                                 % u=0;
                                 % while u<ceil(nb_pings*nb_samples/b_size)

@@ -43,6 +43,8 @@
 
 %% Function
 function [layers,id_rem] = open_EK_file_stdalone(Filename_cell,varargin)
+id_rem = [];
+layers = layer_cl.empty();
 
 p = inputParser;
 
@@ -55,8 +57,6 @@ if ~iscell(Filename_cell)
 end
 
 if isempty(Filename_cell)
-    id_rem = [];
-    layers = [];
     return;
 end
 

@@ -43,6 +43,7 @@ end
 field={'temperature','salinity','soundspeed','absorption'};
 
 d_trans=trans_obj.get_transceiver_depth([],1);
+
 for iax=1:numel(field)
     %delete(findobj(env_tab_comp.(['ax_' field{iax}]),'Type','line'));
     cla(env_tab_comp.(['ax_' field{iax}]));

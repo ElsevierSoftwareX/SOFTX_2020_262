@@ -125,9 +125,6 @@ if ~isequal(Filename_cell, 0)
          params.Time=Time;
         [config,params]=config_from_ifile(FileName,nb_pings);
         
-        power=convert_sv_or_sp_to_power(sv,trans_range,ifileInfo.sound_speed,params.Absorption,params.TeffPulseLength,params.PulseLength,params.TransmitPower,ifileInfo.sound_speed./params.Frequency,config.Gain,config.EquivalentBeamAngle,config.SaCorrection,'CREST','sv');
-        %[Sp,sv]=convert_power_v2(power,trans_range,ifileInfo.sound_speed,params.Absorption,params.TeffPulseLength,params.TeffPulseLength,params.TransmitPower,ifileInfo.sound_speed./params.Frequency,config.Gain,config.EquivalentBeamAngle,config.SaCorrection,config.TransceiverName);
-
         [~,curr_filename,~]=fileparts(tempname);
         curr_name=fullfile(dir_data,curr_filename);
         
@@ -140,7 +137,6 @@ if ~isequal(Filename_cell, 0)
             'MemapName',curr_name);
         
 
-        
         transceiver=transceiver_cl('Data',ac_data_temp,...
             'Config',config,...
             'Params',params,...
@@ -149,6 +145,8 @@ if ~isequal(Filename_cell, 0)
             'GPSDataPing',gps_data_ping,...
             'Mode','CW',...
             'AttitudeNavPing',attitude_data_pings);
+        trans_obj(idx).set_absorption(ifileInfo.absorption_coefficient/1000);
+        
         envdata=env_data_cl('SoundSpeed',ifileInfo.sound_speed);
         
         layers(uu)=layer_cl('Filename',{FileName},'Filetype','CREST',...

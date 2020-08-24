@@ -284,6 +284,8 @@ for ilay = 1:length(new_layers)
             end
             
             switch config.BeamType
+                case 0
+                    'Single-beam';
                 case {1,65}
                     bt = 'Single-beam, split-aperture';
                 otherwise

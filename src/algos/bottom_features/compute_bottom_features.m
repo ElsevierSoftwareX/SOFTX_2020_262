@@ -198,6 +198,7 @@ for ii = idx_val
                 angle_slope_along  = (phi_slope_along(ii)./trans_obj.Config.AngleSensitivityAthwartship-trans_obj.Config.AngleOffsetAlongship);
                 angle_slope_across = (phi_slope_across(ii)./trans_obj.Config.AngleSensitivityAthwartship-trans_obj.Config.AngleOffsetAthwartship);
             end
+            
             dr = nanmean(diff(range_tot(idx_echo))); % inter-sample range in m
             r  = nanmean(range_tot(idx_tmp));
             if numel(idx_tmp) > 4*p_nsamp(ii)

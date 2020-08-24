@@ -212,7 +212,7 @@ classdef curr_state_disp_cl <handle
             else
                 obj.Caxes=[obj.Caxes cax];
                 obj.Fieldnames=[obj.Fieldnames obj.Fieldname];
-                obj.Cax=cax;
+                obj.Cax=cax;    
             end
             
         end

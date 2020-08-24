@@ -21,6 +21,10 @@ try
     if isempty(ori)||strcmp(ori,'')
         ori=env_data_obj.CTD.ori;
     end
+    d_trans=trans_obj.get_transceiver_depth([],1);
+    default_alpha=seawater_absorption(f_c/1e3, env_data_obj.Salinity, env_data_obj.Temperature, d_trans,att_model)/1e3;
+    
+    trans_obj.Alpha(isnan(trans_obj.Alpha))=default_alpha(isnan(trans_obj.Alpha));
     
     if isempty(env_data_obj.CTD.depth)&&strcmpi(ori,'profile')
         ori='constant';
@@ -28,21 +32,21 @@ try
     
     switch ori
         case 'constant'
-            alpha = mode(trans_obj.get_params_value('Absorption',[]));
+            alpha = nanmean(trans_obj.Alpha);
             alpha =alpha*ones(size(trans_obj.Range));
         case 'theoritical'
-            d_trans=trans_obj.get_transceiver_depth([],1);
+            
             alpha=seawater_absorption(f_c/1e3, env_data_obj.Salinity, env_data_obj.Temperature, d_trans,att_model)/1e3;
             alpha=alpha(:);
             
         case 'profile'
-            alpha_ori = seawater_absorption(f_c/1e3, env_data_obj.CTD.salinity, env_data_obj.CTD.temperature, env_data_obj.CTD.depth,att_model)/1e3;
+            alpha_ori = trans_obj.Alpha;
+            
             d_trans=trans_obj.get_transceiver_depth([],1);
             alpha=resample_data_v2(alpha_ori,env_data_obj.CTD.depth,d_trans);
             
             if any(isnan(alpha))
                 print_errors_and_warnings([],'warning',sprintf('CTD profile provided does not cover the full depth range of the data here...\nCompleting with standard profile based on provided average temperature and Salinity.'))
-                default_alpha=seawater_absorption(f_c/1e3, env_data_obj.Salinity, env_data_obj.Temperature, d_trans,att_model)/1e3;
                 alpha(isnan(alpha))=default_alpha(isnan(alpha));
             end
             alpha=alpha(:);
@@ -59,15 +63,17 @@ try
             end
             ori='profile';
         otherwise
-            alpha = mode(trans_obj.get_params_value('Absorption',[]));
+            alpha = nanmean(trans_obj.Alpha);
             alpha =alpha*ones(size(trans_obj.Range));
             ori='constant';
     end
     
+    
+    
 catch err
     print_errors_and_warnings([],'warning',err);
-    alpha = mode(trans_obj.get_params_value('Absorption',[]));
-    alpha =alpha*ones(size(trans_obj.Range));
+    alpha = nanmean(trans_obj.Alpha);
+    alpha = alpha*ones(size(trans_obj.Range));
     ori='constant';
 end
 

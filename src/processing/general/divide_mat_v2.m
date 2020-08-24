@@ -1,4 +1,4 @@
-function [data_cell,idx_r_cell,idx_beam_cell,idx_ping_cell]=divide_mat_v2(data,nb_samples,nb_beams,nb_pings,idx_r,idx_beam,idx_ping)
+function [data_cell,idx_r_cell,idx_beam_cell,idx_ping_cell]=divide_mat_v2(data,nb_samples,nb_beams,nb_pings,idx_r,idx_beam,idx_ping,ismb)
 
 data_cell=cell(1,length(nb_samples));
 idx_ping_cell=cell(1,length(nb_samples));
@@ -34,7 +34,7 @@ for ip=1:length(nb_pings)
     [~,idx_r_cell{ip},idx_r_tmp]=intersect((1:nb_samples(ip))',idx_r_c);
     [~,idx_beam_cell{ip},idx_beam_tmp]=intersect((1:nb_beams(ip))',idx_beam_c);
     
-    if numel(size(data))==3
+    if ismb
         data_cell{ip}=data(idx_r_tmp,idx_beam_tmp,idx_ping_tmp);
     else
         data_cell{ip}=data(idx_r_tmp,idx_ping_tmp);

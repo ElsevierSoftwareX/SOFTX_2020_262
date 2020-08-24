@@ -256,15 +256,16 @@ for uui=select
     cax=[sphere_ts-12 sphere_ts+3];
     switch trans_obj.Mode
         case 'FM'
-            if trans_obj.Config.BeamType>0
-                fig_bp=plot_bp(AcrossAngle_sph,AlongAngle_sph,Sp_sph,idx_keep);
-                
-                if~isempty(path_out)&&~isempty(fig_bp)
-                    print(fig_bp,fullfile(path_out,generate_valid_filename(['bp_contour_plot' freq_str '.png'])),'-dpng','-r300');
-                end
-            else
-                peak_ts = prctile(Sp_sph(idx_keep),95);
-                idx_keep = idx_keep&abs(Sp_sph-peak_ts)<=maxdBDiff2/2;
+            switch trans_obj.Config.BeamType
+                case 0
+                    fig_bp=plot_bp(AcrossAngle_sph,AlongAngle_sph,Sp_sph,idx_keep);
+                    
+                    if~isempty(path_out)&&~isempty(fig_bp)
+                        print(fig_bp,fullfile(path_out,generate_valid_filename(['bp_contour_plot' freq_str '.png'])),'-dpng','-r300');
+                    end
+                otherwise
+                    peak_ts = prctile(Sp_sph(idx_keep),95);
+                    idx_keep = idx_keep&abs(Sp_sph-peak_ts)<=maxdBDiff2/2;
             end
             
             
@@ -330,36 +331,37 @@ for uui=select
     
     
     idx_keep_sec=idx_keep&abs(phi)<=on_axis;
-    if trans_obj.Config.BeamType >0
-        if nansum(idx_keep_sec)<minOnAxisEchoes
-            warndlg_perso(main_figure,'',sprintf('Less than %d echoes closer than %.1f degrees to the center. Looking out to %.1f degree.',minOnAxisEchoes,on_axis, onAxisFactorExpension*on_axis),5);
-            on_axis = onAxisFactorExpension*on_axis;
-            idx_keep_sec=idx_keep&abs(phi)<=on_axis;
-        end
-        
-        if nansum(idx_keep_sec)<minOnAxisEchoes
-            warndlg_perso(main_figure,'POOR CALIBRATION DATA',sprintf(['Less than %d echoes closer than %.1f degrees to the center. Looking out to %.1f degree.\n'...
-                'PRETTY POOR CALIBRATION DATA, I WOULD NOT TRUST IT!!!!'],minOnAxisEchoes,on_axis, onAxisFactorExpension*on_axis),5);
-            on_axis = onAxisFactorExpension*on_axis;
-            idx_keep_sec=idx_keep&abs(phi)<=on_axis;
-        end
-        
-        if nansum(idx_keep_sec)<minOnAxisEchoes
-            warndlg_perso(main_figure,'POOR CALIBRATION DATA',sprintf(['Less than %d echoes closer than %.1f degrees to the center. Looking out to %.1f degree.\n'...
-                'You are about to try to obtain a calibration from very poor quality data, with very low number of central echoes...'],minOnAxisEchoes,on_axis, onAxisFactorExpension*on_axis/2),5);
-            on_axis = onAxisFactorExpension*on_axis/2;
-            idx_keep_sec=idx_keep&abs(phi)<=on_axis;
-        end
-        
-        if nansum(idx_keep_sec)<minOnAxisEchoes
-            warndlg_perso(main_figure,'','I have tried very hard and cannot find any usable spere echoes in there... Try changing your single target detection parameter for this frequency');
-            if~isempty(path_out)
-                fclose(fid(2));
+    switch trans_obj.Config.BeamType
+        case 0
+            if nansum(idx_keep_sec)<minOnAxisEchoes
+                warndlg_perso(main_figure,'',sprintf('Less than %d echoes closer than %.1f degrees to the center. Looking out to %.1f degree.',minOnAxisEchoes,on_axis, onAxisFactorExpension*on_axis),5);
+                on_axis = onAxisFactorExpension*on_axis;
+                idx_keep_sec=idx_keep&abs(phi)<=on_axis;
             end
-            continue
-        end
-    else
-        if nansum(idx_keep_sec)<minOnAxisEchoes
+            
+            if nansum(idx_keep_sec)<minOnAxisEchoes
+                warndlg_perso(main_figure,'POOR CALIBRATION DATA',sprintf(['Less than %d echoes closer than %.1f degrees to the center. Looking out to %.1f degree.\n'...
+                    'PRETTY POOR CALIBRATION DATA, I WOULD NOT TRUST IT!!!!'],minOnAxisEchoes,on_axis, onAxisFactorExpension*on_axis),5);
+                on_axis = onAxisFactorExpension*on_axis;
+                idx_keep_sec=idx_keep&abs(phi)<=on_axis;
+            end
+            
+            if nansum(idx_keep_sec)<minOnAxisEchoes
+                warndlg_perso(main_figure,'POOR CALIBRATION DATA',sprintf(['Less than %d echoes closer than %.1f degrees to the center. Looking out to %.1f degree.\n'...
+                    'You are about to try to obtain a calibration from very poor quality data, with very low number of central echoes...'],minOnAxisEchoes,on_axis, onAxisFactorExpension*on_axis/2),5);
+                on_axis = onAxisFactorExpension*on_axis/2;
+                idx_keep_sec=idx_keep&abs(phi)<=on_axis;
+            end
+            
+            if nansum(idx_keep_sec)<minOnAxisEchoes
+                warndlg_perso(main_figure,'','I have tried very hard and cannot find any usable spere echoes in there... Try changing your single target detection parameter for this frequency');
+                if~isempty(path_out)
+                    fclose(fid(2));
+                end
+                continue
+            end
+        otherwise
+            if nansum(idx_keep_sec)<minOnAxisEchoes
             warndlg_perso(main_figure,'','Cannot find any usable spere echoes in there for this single-beam calibration... Try changing your single target detection parameter for this frequency');
             if~isempty(path_out)
                 fclose(fid(2));
@@ -503,9 +505,10 @@ for uui=select
             end
            
             
-            if trans_obj.Config.BeamType == 0
-                cal_fm_tot{uui} = cal_fm;
-                continue;
+            switch trans_obj.Config.BeamType
+                case 0
+                    cal_fm_tot{uui} = cal_fm;
+                    continue;
             end
             
             qstring=sprintf('Do also want to try and calibrate the Angles for frequency %.0f kHz',Freq/1e3);
@@ -676,20 +679,23 @@ for uui=select
                     ' m, std = ' num2str(std(trans_obj.ST.Target_range(idx_keep_sec))) ' m\n']);
             end
             
-            if trans_obj.Config.BeamType>0
-                fig_bp=plot_bp(AcrossAngle_sph,AlongAngle_sph,Sp_sph+outby(1),idx_keep);
-                if~isempty(path_out)&&~isempty(fig_bp)
-                    print(fig_bp,fullfile(path_out,generate_valid_filename(['bp_contour_plot' freq_str '.png'])),'-dpng','-r300');
-                end
-                
-                % Do a plot of the compensated and uncompensated echoes at a selection of
-                % angles, similar to what one can get from the Simrad calibration program
-                
-                fig=plotBeamSlices(AcrossAngle_sph(idx_keep),AlongAngle_sph(idx_keep),Sp_sph(idx_keep),outby(1),(faBW + psBW)/2, faBW, psBW, peak_ts, 1/2);
-                
-                if~isempty(path_out)&&~isempty(fig)
-                    print(fig,fullfile(path_out,generate_valid_filename(['slices' freq_str '.png'])),'-dpng','-r300');
-                end
+            switch trans_obj.Config.BeamType
+                case 0
+                    
+                otherwise
+                    fig_bp=plot_bp(AcrossAngle_sph,AlongAngle_sph,Sp_sph+outby(1),idx_keep);
+                    if~isempty(path_out)&&~isempty(fig_bp)
+                        print(fig_bp,fullfile(path_out,generate_valid_filename(['bp_contour_plot' freq_str '.png'])),'-dpng','-r300');
+                    end
+                    
+                    % Do a plot of the compensated and uncompensated echoes at a selection of
+                    % angles, similar to what one can get from the Simrad calibration program
+                    
+                    fig=plotBeamSlices(AcrossAngle_sph(idx_keep),AlongAngle_sph(idx_keep),Sp_sph(idx_keep),outby(1),(faBW + psBW)/2, faBW, psBW, peak_ts, 1/2);
+                    
+                    if~isempty(path_out)&&~isempty(fig)
+                        print(fig,fullfile(path_out,generate_valid_filename(['slices' freq_str '.png'])),'-dpng','-r300');
+                    end
             end
             % The Sa correction is a value that corrects for the received pulse having
             % less energy in it than that nominal, transmitted pulse. The formula for

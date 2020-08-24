@@ -5,6 +5,12 @@ arguments
     ori string=''
 end
 
+r0 = trans_obj.get_transceiver_range(1);
+
+if isempty(r0)
+    r0 = 0;
+end
+
 try   
     if isempty(ori)||strcmp(ori,'')
         ori=env_data_obj.SVP.ori;
@@ -76,6 +82,8 @@ catch err
     c = env_data_obj.SoundSpeed;
     range_t= get_linear_range(trans_obj,c);
 end
+
+range_t = range_t+r0;
 end
 
 

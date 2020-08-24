@@ -2,7 +2,11 @@ function set_absorption(trans_obj,envdata)
 
 if isnumeric(envdata)    
     if all(isnan(envdata))
-       envdata= trans_obj.get_params_value('Absorption',[]);
+        FreqStart=(trans_obj.get_params_value('FrequencyStart',1));
+        FreqEnd=(trans_obj.get_params_value('FrequencyEnd',1));
+        f_c=(FreqStart+FreqEnd)/2;
+        d_trans=trans_obj.get_transceiver_depth([],1);
+        envdata=seawater_absorption(f_c/1e3, 35, 10, d_trans,'fandg')/1e3;
     end
     
     if numel(envdata)==numel(trans_obj.Range)
@@ -26,9 +30,5 @@ else
     trans_obj.Alpha_ori=ori;
 end
 
-switch trans_obj.Alpha_ori
-    case 'constant'
-       trans_obj.Params.Absorption=nanmean(trans_obj.Alpha)*ones(size(trans_obj.Params.Absorption)); 
-end
 
 end

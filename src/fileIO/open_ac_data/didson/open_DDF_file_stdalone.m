@@ -25,8 +25,10 @@ addParameter(p,'load_bar_comp',[]);
 
 parse(p,Filename_cell,varargin{:});
 
-
 load_bar_comp = p.Results.load_bar_comp;
+
+c=1500;
+envdata=env_data_cl('SoundSpeed',c);
 
 if ~isequal(Filename_cell, 0)
     
@@ -37,9 +39,9 @@ if ~isequal(Filename_cell, 0)
     layers(length(Filename_cell)) = layer_cl();
     id_rem = [];
     
-    f=figure();
-    ax = axes(f);
-    imh = imagesc(ax,0);
+    %     f=figure();
+    %     ax = axes(f);
+    %     imh = imagesc(ax,0);
     for uu = 1:nb_files
         
         if ~isempty(load_bar_comp)
@@ -49,7 +51,7 @@ if ~isequal(Filename_cell, 0)
         
         Filename = Filename_cell{uu};
         if ~isfile(Filename)
-            idx_rem = union(idx_rem,uu);
+            id_rem = union(id_rem,uu);
             continue;
         end
         
@@ -59,64 +61,124 @@ if ~isequal(Filename_cell, 0)
         
         
         if fid==-1
-            idx_rem = union(idx_rem,uu);
+            id_rem = union(id_rem,uu);
             continue;
         end
         ddf_str = fread(fid,3,'*char')';
         
         if ~strcmpi(ddf_str,'ddf')
             fclose(fid);
-            idx_rem = union(idx_rem,uu);
+            id_rem = union(id_rem,uu);
             continue;
         end
         
         ddf_ver = fread(fid,1,'int8');
         fileheader=get_file_header(fid,ddf_ver);
-
-        data.version=ddf_ver;
-        data.serialnumber=fileheader.serialnumber;
-
-        while ~feof(fid)
-            frameheader=get_frame_header(fid,ddf_ver,fileheader.serialnumber,fileheader.resolution);
-            switch frameheader.configflags
-                case 0
-                    data.configuration ='DIDSON-S Extended Windows';
-                case 1
-                    data.configuration ='DIDSON-S Classic Windows';
-                case 2
-                    data.configuration ='DIDSON-LR Extended Windows';
-                case 3
-                    data.configuration ='DIDSON-LR Classic Windows';
+        
+        [~,curr_filename,~]=fileparts(tempname);
+        curr_data_name_t=fullfile(p.Results.PathToMemmap,curr_filename);
+        params_obj = params_cl(fileheader.numframes);
+        config_obj = config_cl();
+        config_obj.SerialNumber = num2str(fileheader.serialnumber);
+        config_obj.ChannelID = sprintf('DIDSON_%d',fileheader.serialnumber);
+        config_obj.ChannelIdShort = sprintf('DIDSON_%d',fileheader.serialnumber);
+        config_obj.TransceiverName= sprintf('DIDSON_%d',fileheader.serialnumber);
+        config_obj.TransducerName= sprintf('DIDSON_%d',fileheader.serialnumber);
+        config_obj.ChannelNumber = 1;
+  
+        if fileheader.resolution == 0
+            config_obj.Frequency = 1.1*1e6;
+            config_obj.BeamWidthAlongship = 14;
+            config_obj.BeamWidthAthwartship = 0.4;
+            beamspacing = 0.6;
+        else
+            config_obj.Frequency = 1.8*1e6;
+            config_obj.BeamWidthAlongship = 14;
+            config_obj.BeamWidthAthwartship = 0.3;
+            beamspacing = 0.3;
+        end
+        
+        config_obj.FrequencyMaximum = 2.2*1e6;
+        config_obj.FrequencyMinimum = 1.1*1e6;
+        config_obj.Gain = fileheader.receivergain/2;
+        
+        config_obj.BeamAngleAlongship=zeros(1,fileheader.numbeams);
+        config_obj.BeamAngleAthwartship=((fileheader.numbeams-1)*beamspacing)*linspace(-1/2,1/2,fileheader.numbeams);
+        
+        ac_data_temp = ac_data_cl('SubData',[],...
+            'Nb_samples', fileheader.samplesperchannel,...
+            'Nb_pings',   fileheader.numframes,...
+            'Nb_beams',   fileheader.numbeams,...
+            'MemapName',  curr_data_name_t);
+        
+        ac_data_temp.init_sub_data('img_intensity',0);
+        iframe = 0;
+        
+        
+        
+        while ~feof(fid) && iframe < fileheader.numframes
+            
+            if ~isempty(load_bar_comp)
+                set(load_bar_comp.progress_bar, 'Minimum',0, 'Maximum',fileheader.numframes,'Value',iframe);
+            end
+            try
+                frameheader=get_frame_header(fid,ddf_ver,fileheader.serialnumber,fileheader.resolution);
+            catch err
+                fprintf('Could not read frame %d\n',iframe+1);
             end
             
-            data.minrange=frameheader.windowstart;
-            data.maxrange=data.minrange + frameheader.windowlength;
-            data.numbeams = fileheader.numbeams;
-            data.reverse=fileheader.reverse;
-            data.fid=fid;
-            data.numframes=fileheader.numframes; %number of frames in the file
+            iframe = frameheader.framenumber+1;
+            params_obj.PulseLength(:,iframe)=double(frameheader.pulselength);
+            params_obj.SampleInterval(:,iframe)=1/double(fileheader.samplerate);
+            params_obj.TransmitPower(:,iframe)=1e3;
+            params_obj.Frequency(:,iframe) = config_obj.Frequency;
+            params_obj.FrequencyStart(:,iframe) = config_obj.Frequency;
+            params_obj.FrequencyEnd(:,iframe) = config_obj.Frequency;
+            %params_obj.BeamAngle(:,iframe) = ((fileheader.numbeams-1)*beamspacing/2)*linspace(-1/2,1/2,fileheader.numbeams);
+
+            t=frameheader.ymdHMSF(1:6)';
+            t(6)=t(6)+frameheader.ymdHMSF(7)/1e3;
+            params_obj.Time(iframe) = datenum(t);
             
-            frame=uint8(fread(fid,[data.numbeams,512],'uint8'));
+%             switch frameheader.configflags
+%                 case 0
+%                     data.configuration ='DIDSON-S Extended Windows';
+%                 case 1
+%                     data.configuration ='DIDSON-S Classic Windows';
+%                 case 2
+%                     data.configuration ='DIDSON-LR Extended Windows';
+%                 case 3
+%                     data.configuration ='DIDSON-LR Classic Windows';
+%             end
             
-            if data.reverse == 0
+            frame=fread(fid,[fileheader.numbeams,fileheader.samplesperchannel],'uint8');
+            
+            if fileheader.reverse == 0
                 frame=fliplr(frame'); %Transposed and flipped data frame assumes uninverted sonar
             else
                 frame=frame'; % Assume inverted sonar
             end
-            
-            data.frame=frame;
-            data.receivergain=fileheader.receivergain;
-            
-            imh.XData = 1:size(frame,2);
-            imh.YData = 1:size(frame,1);
-            imh.CData = frame;
-            ax.XLim = [imh.XData(1) imh.XData(end)];
-            ax.YLim = [imh.YData(1) imh.YData(end)];
+            %frame_lin = double(frame)/double(intmax('uint8'));
 
-            pause(0.1);
+            ac_data_temp.replace_sub_data_v2(frame,'idx_ping',iframe,'field','img_intensity')
+            
         end
         
         fclose(fid);
+
+        trans_obj=transceiver_cl('Data',ac_data_temp,...
+            'Range',frameheader.windowstart+c*(0:fileheader.samplesperchannel-1)'/fileheader.samplerate/2,...
+            'Time',params_obj.Time,...
+            'Config',config_obj,...
+            'Mode','CW',...
+            'Params',params_obj);
+        
+        trans_obj.set_absorption(envdata);
+
+        layers(uu)=layer_cl('Filename',{Filename},'Filetype','DIDSON','Transceivers',trans_obj,'EnvData',envdata);
+        if ~isempty(load_bar_comp) 
+            set(load_bar_comp.progress_bar, 'Minimum',0, 'Maximum',length(Filename_cell),'Value',uu);
+        end
     end
     
     
@@ -308,13 +370,17 @@ end
 
 switch header.configflags %
     case 0
-        winlengths=[1.25 2.5 5 10 20 40];      % DIDSON-S, Extended Windows
+        winlengths   = [1.25 2.5 5 10 20 40];      % DIDSON-S, Extended Windows
+        pulselengths = [4.5 9 18 36 72 144]*1e-6;   %not sure
     case 1
-        winlengths=[1.125 2.25 4.5 9 18 36];   % DIDSON-S, Classic Windows
+        winlengths    = [1.125 2.25 4.5 9 18 36];   % DIDSON-S, Classic Windows
+        pulselengths = [4.5 9 18 36 72 144]*1e-6;   %not sure
     case 2
-        winlengths=[2.5 5 10 20 40 70];        % DIDSON-LR, Extended Windows
+        winlengths   = [2.5 5 10 20 40 70];        % DIDSON-LR, Extended Windows
+        pulselengths = [9 18 36 72 144 288]*1e-6;   %not sure
     case 3
-        winlengths=[2.25 4.5 9 18 36 72];      % DIDSON-LR, Classic Windows
+        winlengths   = [2.25 4.5 9 18 36 72];      % DIDSON-LR, Classic Windows
+        pulselengths = [9 18 36 72 144 288]*1e-6; %not sure
 end
 
 
@@ -327,6 +393,7 @@ switch header.configflags
 end
 
 header.windowlength = winlengths(index);   % Convert windowlength code to meters
+header.pulselength = pulselengths(index);   
 
 end
 

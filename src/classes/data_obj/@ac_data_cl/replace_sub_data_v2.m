@@ -41,7 +41,7 @@ nb_beams=data_obj.Nb_beams;
 nb_samples=data_obj.Nb_samples;
 
 if numel(data_mat)>1
-    [data_mat_cell,idx_r_cell,idx_beam_cell,idx_ping_cell]=divide_mat_v2(data_mat,nb_samples,nb_beams,nb_pings,idx_r,idx_beam,idx_ping);
+    [data_mat_cell,idx_r_cell,idx_beam_cell,idx_ping_cell]=divide_mat_v2(data_mat,nb_samples,nb_beams,nb_pings,idx_r,idx_beam,idx_ping,nanmax(data_obj.Nb_beams)>1);
     
     for ii=1:length(data_mat_cell)
         if ~isempty(idx_ping_cell{ii})&&~isempty(idx_r_cell{ii})&&~isempty(idx_beam_cell{ii})
@@ -53,14 +53,14 @@ if numel(data_mat)>1
             idx_r((idx_r-idx_r(1)+1)>nb_samples_data_cell)=[];
             idx_r_data=idx_r-idx_r(1)+1;
             
-            if numel(size(data_obj.SubData(idx).Memap{ii}.Data.(lower(deblank(field)))))==2
+            if ~nanmax(data_obj.Nb_beams)>1
                 data_obj.SubData(idx).Memap{ii}.Data.(lower(deblank(field)))(idx_r,idx_ping_cell{ii})=data_mat_cell{ii}(idx_r_data,:)/data_obj.SubData(idx).ConvFactor;
             else
                 nb_beams_data=size(data_obj.SubData(idx).Memap{ii}.Data.(lower(deblank(field))),2);
                 nb_beams_data_cell=size(data_mat_cell{ii},2);
                 
                 idx_beam=idx_beam_cell{ii};
-                idx_beam(idx_beam{ii}>nb_beams_data)=[];
+                idx_beam(idx_beam_cell{ii}>nb_beams_data)=[];
                 idx_beam((idx_beam-idx_beam(1)+1)>nb_beams_data_cell)=[];
                 idx_beam_data=idx_beam-idx_beam(1)+1;
                 

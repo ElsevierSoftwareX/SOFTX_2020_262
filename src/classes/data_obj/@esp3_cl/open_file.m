@@ -215,7 +215,7 @@ try
                 [path_asl_tmp,file_asl_tmp,ext_asl_tmp]=cellfun(@fileparts,Filename,'un',0);
                 [path_asl,idx_unique]=unique(path_asl_tmp);
                 Filename=cellfun(@(x,y,z) fullfile(x,[y z]),path_asl,file_asl_tmp(idx_unique),ext_asl_tmp(idx_unique),'un',0);
-            case {'TOPAS'}
+            case {'TOPAS' 'DIDSON'}
                 
             case 'CREST'
                 % Prompt user on opening raw or original and handle the answer
@@ -290,7 +290,7 @@ try
             case {'CREST'}
                 
                 
-            case {'EK60','EK80','ASL','TOPAS','FCV30'}
+            case {'EK60','EK80','ASL','TOPAS','FCV30' 'DIDSON'}
                 
                 disp_perso(main_figure,'Loading Bottom and regions');
                 

@@ -83,11 +83,11 @@ switch lower(deblank(Fieldname))
     case 'alongangle'
         Cax=[-10 10];
         Type='Angle Along';
-        Units='deg';
+        Units=char(hex2dec('00BA'));
     case 'acrossangle'
         Cax=[-10 10];
         Type='Angle Across';
-        Units='deg';
+        Units=char(hex2dec('00BA'));
     case 'fishdensity'
         Cax=[0 10];
         Type='Fish Density';
@@ -104,6 +104,10 @@ switch lower(deblank(Fieldname))
         Cax=[0 50];
         Type='PRC';
         Units='%';
+    case 'img_intensity'
+        Cax=[0 2^8];
+        Type='Image Intensity';
+        Units ='';
     otherwise
         if contains(lower(Fieldname),'khz')
             Type=['Sv-' Fieldname];
