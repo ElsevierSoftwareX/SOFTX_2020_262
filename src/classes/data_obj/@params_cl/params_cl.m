@@ -1,8 +1,11 @@
 
 classdef params_cl
     properties
-        Time double
         PingNumber uint32
+        BeamNumber uint16
+        BeamAngleAlongship single
+        BeamAngleAthwartship single
+        SectorNumber uint8
         BandWidth double
         ChannelMode int8
         Frequency double
@@ -22,20 +25,21 @@ classdef params_cl
             p = inputParser;
             
             addOptional(p,'nb_pings',1,@(x) x>0);
-
+            addOptional(p,'nb_beams',1,@(x) x>0);
             parse(p,varargin{:});
             
             props=properties(obj);
-            for jj=1:length(props) 
-                obj.(props{jj})=zeros(1,p.Results.nb_pings);
+            
+            for jj=1:length(props)         
+                obj.(props{jj})=zeros(p.Results.nb_beams,p.Results.nb_pings);
             end
             
             obj.PingNumber=1:p.Results.nb_pings;
-            
+            obj.BeamNumber=1:p.Results.nb_beams;
         end
         
         function obj_red=reduce_params(obj)
-            if isempty(obj.PingNumber)
+            if isempty(obj.PingNumber)||numel(obj.BeamNumber)>1
                 obj_red=obj;
                 return;
             end
@@ -45,6 +49,8 @@ classdef params_cl
             [params_groups,...
                 obj_red.BandWidth,...
                 obj_red.ChannelMode,...
+                obj_red.BeamAngleAlongship,...
+                obj_red.BeamAngleAthwartship,...
                 obj_red.Frequency,...
                 obj_red.FrequencyEnd,...
                 obj_red.FrequencyStart,...
@@ -58,6 +64,8 @@ classdef params_cl
                 ]=findgroups(...
                 obj.BandWidth,...
                 obj.ChannelMode,...
+                obj.BeamAngleAlongship,...
+                obj.BeamAngleAthwartship,...
                 obj.Frequency,...
                 obj.FrequencyEnd,...
                 obj.FrequencyStart,...
@@ -68,9 +76,9 @@ classdef params_cl
                 obj.SampleInterval,...
                 obj.Slope,...
                 obj.TransmitPower);
-            
+
             obj_red.PingNumber = splitapply(@nanmin,obj.PingNumber,params_groups);
-            obj_red.Time = splitapply(@nanmin,obj.Time,params_groups);
+            obj_red.BeamNumber = 1;
         end
         
         
@@ -79,16 +87,19 @@ classdef params_cl
                     
             props=properties(param_start);
 
-            params_out=params_cl(numel(param_start.PingNumber)+numel(param_end.PingNumber));
+            params_out=params_cl(numel(param_start.PingNumber)+numel(param_end.PingNumber),numel(param_start.BeamNumber));
+                        
             
             for jj=1:length(props)
-                params_out.(props{jj})=[param_start.(props{jj}) param_end.(props{jj})];
+                if ~strcmp(props{jj},'BeamNumber')
+                    params_out.(props{jj})=[param_start.(props{jj}) param_end.(props{jj})];
+                end
             end
             
             params_out.PingNumber = [param_start.PingNumber param_end.PingNumber+nb_p];
             
         end
-        function param_str=param2str(param_obj,idx_ping)
+        function param_str=param2str(param_obj,ib,idx_ping)
             
             fields={'BandWidth',...
                 'ChannelMode',...
@@ -153,12 +164,16 @@ classdef params_cl
                 if size(param_obj.(fields{ifi}),2)<=id
                     id=1;
                 end
+                
+                if size(param_obj.(fields{ifi}),1)<=ib
+                    ib=1;
+                end
   
-                if isnan(param_obj.(fields{ifi})(id))
+                if isnan(param_obj.(fields{ifi})(ib,id))
                     continue;
                 end
                 
-                str_temp=sprintf(fields_fmt{ifi},fact(ifi)*param_obj.(fields{ifi})(id));
+                str_temp=sprintf(fields_fmt{ifi},fact(ifi)*param_obj.(fields{ifi})(ib,id));
                                 
                 param_str = [param_str '<li><i>' fields_name{ifi} ': </i>' str_temp '</li>'];
             end
@@ -189,9 +204,7 @@ classdef params_cl
    
         end
         
-        
-        
-        
+          
         function delete(obj)
             if ~isdeployed
                 c = class(obj);

@@ -24,7 +24,7 @@ end
 if p.Results.st
     delete(st_tracks_tab_comp.ax_pos.Children);
     init_st_ax(main_figure,st_tracks_tab_comp.ax_pos);
-    display_st_or_track_pos(main_figure,st_tracks_tab_comp.ax_pos,'st');
+    display_st_or_track_pos(main_figure,st_tracks_tab_comp.ax_pos);
 end
 
 setappdata(main_figure,'ST_Tracks',st_tracks_tab_comp);

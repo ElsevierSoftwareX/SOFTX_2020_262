@@ -11,9 +11,9 @@ addParameter(p,'block_len',get_block_len(10,'cpu'),@(x) x>0);
 parse(p,trans_obj,env_data_obj,varargin{:});
 band_f=p.Results.bands_to_notch;
 
-FreqStart_tot=(trans_obj.get_params_value('FrequencyStart',[]));
-FreqEnd_tot=(trans_obj.get_params_value('FrequencyEnd',[]));
-f_s_sig_tot=round((1./(trans_obj.get_params_value('SampleInterval',[]))));
+FreqStart_tot=(trans_obj.get_params_value('FrequencyStart'));
+FreqEnd_tot=(trans_obj.get_params_value('FrequencyEnd'));
+f_s_sig_tot=round((1./(trans_obj.get_params_value('SampleInterval'))));
 
 [Vals,unique_freqs,triple_ID]=unique([FreqStart_tot(:) FreqEnd_tot(:) f_s_sig_tot(:)],'rows');
 Rwt_rx=trans_obj.Config.Impedance;

@@ -253,7 +253,6 @@ for i_cell=1:length(Filename_cell)
         config_obj.TransducerName='ASL';
         config_obj.TransceiverName='ASL';
         
-        params_obj.Time=data.time;
         params_obj.Frequency(:)=data.freq(ic,:);
         params_obj.FrequencyEnd(:)=data.freq(ic,:);
         params_obj.FrequencyStart(:)=data.freq(ic,:);
@@ -274,7 +273,6 @@ for i_cell=1:length(Filename_cell)
         
         clear curr_data;
 
-        
         transceiver(ic)=transceiver_cl('Data',ac_data_temp,...
             'AttitudeNavPing',att,...
             'Range',range,...

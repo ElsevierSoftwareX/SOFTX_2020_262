@@ -53,7 +53,7 @@ if numel(data_mat)>1
             idx_r((idx_r-idx_r(1)+1)>nb_samples_data_cell)=[];
             idx_r_data=idx_r-idx_r(1)+1;
             
-            if ~nanmax(data_obj.Nb_beams)>1
+            if ~(nanmax(data_obj.Nb_beams)>1)
                 data_obj.SubData(idx).Memap{ii}.Data.(lower(deblank(field)))(idx_r,idx_ping_cell{ii})=data_mat_cell{ii}(idx_r_data,:)/data_obj.SubData(idx).ConvFactor;
             else
                 nb_beams_data=size(data_obj.SubData(idx).Memap{ii}.Data.(lower(deblank(field))),2);

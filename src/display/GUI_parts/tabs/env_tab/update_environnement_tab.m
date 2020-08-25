@@ -7,8 +7,6 @@ if ~isempty(layer)
     [trans_obj,~]=layer.get_trans(curr_disp);
     envdata=layer.EnvData;
 else
-    envdata=env_data_cl();
-    trans_obj=[];
     return;
 end
 
@@ -16,7 +14,8 @@ env_tab_comp=getappdata(main_figure,'Env_tab');
 att_list=get(env_tab_comp.att_model,'String');
 att_model=att_list{get(env_tab_comp.att_model,'value')};
 
-f_c=nanmean(trans_obj.get_center_frequency());
+f_c = trans_obj.get_center_frequency([]);
+f_c = nanmean(f_c,'all');
 
 if new>0
     set(env_tab_comp.sal,'string',num2str(envdata.Salinity,'%.2f'));
@@ -64,22 +63,23 @@ plot(env_tab_comp.ax_absorption,def_alpha*1e3,d_trans,'-','color',[0 0 0.6]);
 plot(env_tab_comp.ax_soundspeed,def_ss,d_trans,'-','color',[0 0 0.6]);
 
 if ~isempty(envdata.CTD.depth)
-     alpha_pro=trans_obj.compute_absorption(envdata,'profile');
-     plot(env_tab_comp.ax_absorption,alpha_pro*1e3,d_trans,'Color',[0.6 0 0]);
+    alpha_pro=trans_obj.compute_absorption(envdata,'profile');
+    plot(env_tab_comp.ax_absorption,alpha_pro*1e3,d_trans,'Color',[0.6 0 0]);
     plot(env_tab_comp.ax_salinity,envdata.CTD.salinity,envdata.CTD.depth,'Color',[0.6 0 0]);
     plot(env_tab_comp.ax_temperature,envdata.CTD.temperature,envdata.CTD.depth,'Color',[0.6 0 0]);
 end
+
 xline(env_tab_comp.ax_temperature,envdata.Temperature,'--','Color',[0 0.6 0]);
 xline(env_tab_comp.ax_salinity,envdata.Salinity,'--','Color',[0 0.6 0]);
-xline(env_tab_comp.ax_absorption,nanmean(trans_obj.get_absorption())*1e3,'--','Color',[0 0.6 0]);
-
+xline(env_tab_comp.ax_absorption,nanmean(trans_obj.get_absorption(),'all')*1e3,'--','Color',[0 0.6 0]);
+xline(env_tab_comp.ax_soundspeed,nanmean(trans_obj.get_soundspeed(),'all'),'--','Color',[0 0.6 0]);
 
 if ~isempty(envdata.SVP.depth)
      [c_pro,~]=trans_obj.compute_soundspeed_and_range(envdata,'profile');
      plot(env_tab_comp.ax_soundspeed,c_pro,d_trans,'--','Color',[0.6 0 0]);
     plot(env_tab_comp.ax_soundspeed,envdata.SVP.soundspeed,envdata.SVP.depth,'Color',[0.6 0 0]);
 end
-xline(env_tab_comp.ax_soundspeed,envdata.SoundSpeed,'--','Color',[0 0.6 0]);
+
 
 
 str_disp=layer.get_env_str(curr_disp);

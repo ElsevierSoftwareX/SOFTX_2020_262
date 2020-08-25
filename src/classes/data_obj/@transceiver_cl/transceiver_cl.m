@@ -68,8 +68,7 @@ classdef transceiver_cl < handle
                     trans_obj.AttitudeNavPing = attitude_nav_cl('Time',p.Results.Time);
                 end
             end
-
-            
+   
             if isempty(trans_obj.TransducerDepth)
                 trans_obj.TransducerDepth=zeros(size(trans_obj.Time));
             end
@@ -90,28 +89,43 @@ classdef transceiver_cl < handle
               
         end
         
-        function p_out = get_params_value(trans_obj,param_name,idx)
+        function p_out = get_params_value(trans_obj,param_name,varargin)
+            
+            p = inputParser;
+            addRequired(p,'trans_obj');
+            addRequired(p,'param_name');
+            addOptional(p,'idx_ping',[]);
+            addOptional(p,'idx_beam',[]);
+            parse(p,trans_obj,param_name,varargin{:});
+            
+            
+            idx_ping = p.Results.idx_ping;
+            idx_beam = p.Results.idx_beam;
             
             nb_pings = numel(trans_obj.Time);
+            nb_beam = numel(trans_obj.Params.BeamNumber);
             
             if nb_pings == 0
                 nb_pings = 1;
             end
             
-            if isempty(idx)
-                idx=1:nb_pings;
+            if isempty(idx_ping)
+                idx_ping=1:nb_pings;
             end
             
-            if size(trans_obj.Params.(param_name),1)==nb_pings
-                p_out = trans_obj.Params.(param_name)(:,idx);
-            else
-                idx(idx<1|idx>nb_pings) = [];
-                
-                mat_diff=idx-double(trans_obj.Params.PingNumber');
+            if isempty(idx_beam)
+                idx_beam=1:nb_beam;
+            end
+
+            
+            if size(trans_obj.Params.(param_name),2)==nb_pings
+                p_out = trans_obj.Params.(param_name)(idx_beam,idx_ping);
+            else           
+                mat_diff=idx_ping-double(trans_obj.Params.PingNumber');
                 mat_diff(mat_diff<0)=inf;
                 
                 [~,id]=nanmin(mat_diff,[],1);
-                p_out = trans_obj.Params.(param_name)(:,id);
+                p_out = trans_obj.Params.(param_name)(idx_beam,id);
             end
         end
         
@@ -301,15 +315,15 @@ classdef transceiver_cl < handle
             
         end
         
-        function f_c=get_center_frequency(trans_obj)
+        function f_c=get_center_frequency(trans_obj,ip)
             
             switch trans_obj.Mode
                 case 'FM'
-                    f_c=(trans_obj.get_params_value('FrequencyStart',[])+trans_obj.get_params_value('FrequencyEnd',[]))/2;
+                    f_c=(trans_obj.get_params_value('FrequencyStart',ip)+trans_obj.get_params_value('FrequencyEnd',ip))/2;
                 case 'CW'
-                    f_c=trans_obj.get_params_value('Frequency',[]);
+                    f_c=trans_obj.get_params_value('Frequency',ip);
                 otherwise
-                    f_c=trans_obj.get_params_value('Frequency',[]);
+                    f_c=trans_obj.get_params_value('Frequency',ip);
             end
             
         end
@@ -327,7 +341,10 @@ classdef transceiver_cl < handle
         end
         
         function range = get_transceiver_range(trans_obj,varargin)
-            
+            range =[];
+            if isempty(trans_obj.Range)
+                return;
+            end
             if nargin>=2
                 idx = varargin{1};
                 if ~isempty(idx)
@@ -352,12 +369,19 @@ classdef transceiver_cl < handle
         end
         
         function depth=get_transducer_depth(trans_obj,varargin)
+            
+            depth =[];
+            if isempty(trans_obj.TransducerDepth)
+                return;
+            end
+            
             depth=trans_obj.TransducerDepth(:)';
             
             if nargin>=2
                 idx=varargin{1};
                 idx(idx<1)=1;
                 idx(idx>=numel(depth))=numel(depth);
+                
                 if ~isempty(idx)
                     depth=depth(idx);
                 end
@@ -388,6 +412,9 @@ classdef transceiver_cl < handle
         
         function set_transceiver_range(trans_obj,range)
             trans_obj.Range=range(:);
+            if isempty(trans_obj.Alpha)
+                trans_obj.Alpha = nan(size(trans_obj.Range));
+            end
         end
         
         function set_transceiver_time(trans_obj,time)
@@ -771,7 +798,9 @@ classdef transceiver_cl < handle
         end
         
         function [BW_al,BW_at] = get_beamwidth_at_f_c(trans_obj,cal_struct)
-            f_c = nanmean(trans_obj.get_center_frequency());
+            f_c = trans_obj.get_center_frequency([]);
+            f_c = nanmean(f_c,'all');
+            
             if isempty(cal_struct)
                 [cal_struct,~]=trans_obj.get_fm_cal('verbose',false);
             end

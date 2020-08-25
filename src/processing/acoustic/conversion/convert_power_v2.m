@@ -23,11 +23,11 @@ switch type
         tmp=10*log10(single(power))-2*gain-10*log10(ptx.*lambda.^2/(16*pi^2));   
 end
 
-if numel(unique(alpha))>1
-    Sp=tmp+TVG_Sp+2*cumsum(alpha.*[zeros(1,size(range_sp,2));diff(range_sp,1)],1);
-    Sv=tmp-10*log10(c.*t_eff/2)-eq_beam_angle-2*sacorr+TVG_Sv+2*cumsum(alpha.*[zeros(1,size(range_sv,2)); diff(range_sv,1)],1);
+if numel(unique(alpha(:)))>1
+    Sp=tmp+TVG_Sp+2*cumsum(alpha.*[zeros(1,size(range_sp,2),size(range_sv,3));diff(range_sp,1)],1);
+    Sv=tmp-10*log10(c.*t_eff/2)-eq_beam_angle-2*sacorr+TVG_Sv+2*cumsum(alpha.*[zeros(1,size(range_sv,2),size(range_sv,3)); diff(range_sv,1)],1);
 else
-    alpha=(unique(alpha));
+    alpha=(unique(alpha(:)));
     Sp=tmp+TVG_Sp+2*alpha.*range_sp;
     Sv=tmp-10*log10(c.*t_eff/2)-eq_beam_angle-2*sacorr+TVG_Sv+2*alpha.*range_sv;
 end

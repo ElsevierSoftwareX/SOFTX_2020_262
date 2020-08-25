@@ -10,13 +10,13 @@ cal_struct.BeamWidthAthwartship=nan(1,numel(freqs));
 
 for i=1:numel(freqs)  
     cal_t=layer_obj.Transceivers(i).get_cal();
-    cal_struct.alpha(i)=nanmean(layer_obj.Transceivers(i).get_absorption())*1e3;
+    cal_struct.alpha(i)=nanmean(layer_obj.Transceivers(i).get_absorption(),'all')*1e3;
     cal_struct.G0(i)=cal_t.G0;
     cal_struct.EQA(i)=cal_t.EQA;
     cal_struct.SACORRECT(i)=cal_t.SACORRECT;
     [faBW,psBW] = layer_obj.Transceivers(i).get_beamwidth_at_f_c([]);
-    cal_struct.BeamWidthAthwartship(i)=psBW;
-    cal_struct.BeamWidthAlongship(i)=faBW;
+    cal_struct.BeamWidthAthwartship(i)=nanmean(psBW,'all');
+    cal_struct.BeamWidthAlongship(i)=nanmean(faBW,'all');
 end
 
 end

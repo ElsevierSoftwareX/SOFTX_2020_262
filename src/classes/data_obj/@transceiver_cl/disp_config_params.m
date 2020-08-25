@@ -19,7 +19,7 @@ jLabel.setBackground(java.awt.Color(1,1,1));
 jLabel.setFont(java.awt.Font(p.Results.font,java.awt.Font.PLAIN,12));
 [~,~] = javacomponent(jLabel,[0,0,900,400],fig);
 
-param_str=trans_obj.Params.param2str(p.Results.idx_ping);
+param_str=trans_obj.Params.param2str(1,p.Results.idx_ping);
 
 jLabel = javaObjectEDT('javax.swing.JLabel',param_str);
 jLabel.setBackground(java.awt.Color(1,1,1));

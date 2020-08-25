@@ -12,6 +12,7 @@ addParameter(p,'fieldname','sv',@ischar);
 addParameter(p,'Unique_ID',generate_Unique_ID([]),@ischar);
 addParameter(p,'x',[],@isnumeric);
 addParameter(p,'y',[],@isnumeric);
+addParameter(p,'beam_angular_limit',[],@isnumeric);
 addParameter(p,'force_update',true,@islogical);
 
 parse(p,echo_obj,trans_obj,varargin{:});
@@ -23,6 +24,10 @@ curr_disp = p.Results.curr_disp;
 
 x = p.Results.x;
 y = p.Results.y;
+beam_angular_limit = p.Results.beam_angular_limit;
+if isempty(beam_angular_limit)
+    beam_angular_limit  = curr_disp.BeamAngularLimit;
+end
 echo_obj = p.Results.echo_obj;
 
 fieldname = p.Results.fieldname;
@@ -55,6 +60,15 @@ end
 if isempty(y)
     y = ydata;
 end
+
+
+BWA=trans_obj.get_params_value('BeamAngleAthwartship',1);
+
+if isempty(beam_angular_limit)
+    beam_angular_limit = [nanmin(BWA) nanmax(BWA)];
+end
+
+idx_beam = find(BWA>=beam_angular_limit(1) & BWA<=beam_angular_limit(2));
 
 idx_ping_min=find((xdata-x(1)>=0),1);
 idx_r_min=find((ydata-y(1)>=0),1);
@@ -144,22 +158,28 @@ if update_echo>0
             end
             
             if any(depth_trans~=0)||trans_obj.Config.TransducerAlphaX~=0||trans_obj.Config.TransducerAlphaY~=0
-                [x_data_disp,y_data_disp,data,sc]=trans_obj.apply_line_depth(fieldname,idx_r_red,idx_ping_red);
+                [x_data_disp,y_data_disp,data,sc]=trans_obj.apply_line_depth(fieldname,idx_r_red,idx_beam,idx_ping_red);
             else
-                [data,sc]=trans_obj.Data.get_subdatamat('idx_r',idx_r_red,'idx_ping',idx_ping_red,'field',fieldname);
+                [data,sc]=trans_obj.Data.get_subdatamat('idx_beam',idx_beam,'idx_r',idx_r_red,'idx_ping',idx_ping_red,'field',fieldname);
                 x_data_disp=xdata(idx_ping_red);
                 y_data_disp=trans_obj.get_transceiver_range(idx_r_red);
             end
             
         otherwise
-            [data,sc]=trans_obj.Data.get_subdatamat('idx_r',idx_r_red,'idx_ping',idx_ping_red,'field',fieldname);
+            [data,sc]=trans_obj.Data.get_subdatamat('idx_beam',idx_beam,'idx_r',idx_r_red,'idx_ping',idx_ping_red,'field',fieldname);
             
             x_data_disp=xdata(idx_ping_red);
             y_data_disp=ydata(idx_r_red);
     end
 
     if numel(size(data))==3
-        data = squeeze(nanmax(data,[],2));
+        switch  fieldname
+            case 'img_intensity'
+                 data = squeeze(nanmax(data,[],2));
+            otherwise
+                data = squeeze(nanmean(data,2));
+        end
+       
     end
     
     if isempty(data)
@@ -170,7 +190,7 @@ if update_echo>0
                 fieldname='sv';
         end
         if strcmp(echo_obj.echo_usrdata.geometry_y,'depth')
-            [x_data_disp,y_data_disp,data,sc]=trans_obj.apply_line_depth(fieldname,idx_r_red,idx_ping_red);
+            [x_data_disp,y_data_disp,data,sc]=trans_obj.apply_line_depth(fieldname,idx_r_red,idx_beam,idx_ping_red);
         end
     end
     %y_data_disp=logspace(log10(ydata(idx_r_red(1))),log10(ydata(idx_r_red(end))),numel(idx_r_red));

@@ -418,14 +418,14 @@ if ~isequal(Filename_cell, 0)
             end
             
             if GPSOnly(uu)==0
-                for i =1:length(trans_obj)
-                    if trans_obj(i).need_escorr()
+                for itr =1:length(trans_obj)
+                    if trans_obj(itr).need_escorr()
                         es_offset=p.Results.EsOffset;
                         if (isempty(es_offset)||isnan(es_offset)||~isnumeric(es_offset))&&isfile(fullfile(path_f,'survey_options.xml'))
                             survey_options_obj=parse_survey_options_xml(fullfile(path_f,'survey_options.xml'));
                             es_offset = survey_options_obj.Es60_correction;
                         end
-                        trans_obj(i).correctTriangleWave('EsOffset',es_offset,...
+                        trans_obj(itr).correctTriangleWave('EsOffset',es_offset,...
                             'load_bar_comp',p.Results.load_bar_comp);
                     end
                 end
@@ -472,14 +472,14 @@ if ~isequal(Filename_cell, 0)
                 end
                
                 
-                for i =1:length(trans_obj)
-                    gps_data_ping=gps_data.resample_gps_data(trans_obj(i).Time);
-                    attitude=attitude_full.resample_attitude_nav_data(trans_obj(i).Time);   
-                    trans_obj(i).Params=trans_obj(i).Params.reduce_params();
-                    trans_obj(i).GPSDataPing=gps_data_ping;
-                    trans_obj(i).AttitudeNavPing=attitude;
-                    trans_obj(i).set_pulse_Teff();
-                    trans_obj(i).set_pulse_comp_Teff();
+                for itr =1:length(trans_obj)
+                    gps_data_ping=gps_data.resample_gps_data(trans_obj(itr).Time);
+                    attitude=attitude_full.resample_attitude_nav_data(trans_obj(itr).Time);   
+                    trans_obj(itr).Params=trans_obj(itr).Params.reduce_params();
+                    trans_obj(itr).GPSDataPing=gps_data_ping;
+                    trans_obj(itr).AttitudeNavPing=attitude;
+                    trans_obj(itr).set_pulse_Teff();
+                    trans_obj(itr).set_pulse_comp_Teff();
                 end
             end
             
@@ -497,12 +497,12 @@ if ~isequal(Filename_cell, 0)
                     [~,output,type]=read_xml0(t_line);
                     switch type
                         case 'Configuration'
-                            for i=1:length(trans_obj)
-                                idx = find(strcmp(deblank( trans_obj(i).Config.ChannelID),deblank(cellfun(@(x) x.ChannelIdShort,output,'un',0))));
+                            for itr=1:length(trans_obj)
+                                idx = find(strcmpi(deblank(trans_obj(itr).Config.ChannelID),deblank(cellfun(@(x) x.ChannelID,output,'un',0))));
                                 if ~isempty(idx)
                                     config_obj=config_obj_from_xml_struct(output(idx),t_line);
                                     if~isempty(config_obj)
-                                        trans_obj(i).Config=config_obj;
+                                        trans_obj(itr).Config=config_obj;
                                     end
                                 end
                             end

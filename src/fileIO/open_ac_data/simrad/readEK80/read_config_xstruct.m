@@ -78,7 +78,7 @@ if isfield(conf,'Transducers')
         
         config_temp=Transducer.Attributes;
         if isfield(config_temp,'TransducerCustomName')
-            i_trans=find(~cellfun(@isempty,strfind(cellfun(@(x) x.ChannelIdShort,config,'un',0),config_temp.TransducerCustomName)));
+            i_trans=find(~cellfun(@isempty,strfind(cellfun(@(x) x.ChannelID,config,'un',0),config_temp.TransducerCustomName)));
         else
             i_trans=[];
         end

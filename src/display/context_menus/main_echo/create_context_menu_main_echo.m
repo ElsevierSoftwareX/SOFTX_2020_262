@@ -113,7 +113,8 @@ for ifi = 1:length(layer.Filename)
                 case 'Configuration'
                     for i = 1:length(trans_obj)
                         
-                        idx = find(strcmp(deblank( trans_obj(i).Config.ChannelID),deblank(cellfun(@(x) x.ChannelIdShort,output,'un',0))));
+                        idx = find(strcmp(deblank(trans_obj(i).Config.ChannelID),deblank(cellfun(@(x) x.ChannelID,output,'un',0))));
+                        
                         if ~isempty(idx)
                             config_obj = config_obj_from_xml_struct(output(idx),t_line);
                             if~isempty(config_obj)

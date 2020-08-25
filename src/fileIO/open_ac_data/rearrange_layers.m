@@ -59,7 +59,7 @@ for uu=1:length(trans_comb)
             for ii=1:trans_nb(uu)
                 curr_trans=curr_layer.Transceivers(ii);
                 layers_grp(uu).cid{ii,jj}=curr_trans.Config.ChannelID;
-                layers_grp(uu).sample_interval(ii,jj)=ceil(curr_trans.get_params_value('SampleInterval',1)/eps)*eps;
+                layers_grp(uu).sample_interval(ii,jj)=ceil(curr_trans.get_params_value('SampleInterval',1,1)/eps)*eps;
                 
                 if ~isempty(curr_trans.get_transceiver_range())
                     layers_grp(uu).time_start(ii,jj)=curr_trans.Time(1);

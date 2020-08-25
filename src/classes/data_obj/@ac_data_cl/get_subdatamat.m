@@ -53,6 +53,7 @@ if found
             else
                 data_tmp=data_obj.SubData(idx).Memap{icell}.Data.(lower(deblank(field)))(idx_r_tmp,idx_ping_cell_red-idx_ping_cell(1)+1);
             end
+            
             switch data_obj.SubData(idx).Fmt
                 case {'int8' 'uint8' 'int16' 'uint16' 'int32' 'uint32' 'int64' 'uint164'}
                     if data_obj.SubData(idx).ConvFactor<0

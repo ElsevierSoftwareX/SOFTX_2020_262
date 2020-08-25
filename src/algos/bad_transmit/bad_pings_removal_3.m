@@ -126,11 +126,10 @@ if ~isempty(p.Results.load_bar_comp)
 end
 
 
-
 cal=trans_obj.get_cal();
 c=trans_obj.get_soundspeed(idx_r);
 f_nom = trans_obj.Config.Frequency;
-f_c=(trans_obj.get_params_value('FrequencyStart',[])+trans_obj.get_params_value('FrequencyEnd',[]))/2;
+f_c=trans_obj.get_center_frequency();
 G=cal.G0+10*log10(f_nom./f_c);
 
 % BLOCK PROCESSING

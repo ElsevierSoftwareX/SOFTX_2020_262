@@ -121,8 +121,7 @@ if ~isequal(Filename_cell, 0)
         end
         
         sv=10*log10(power_ori/p.Results.SvCorr)+10*log10(depth_factor)+corr;
-         nb_pings=numel(Time);
-         params.Time=Time;
+        nb_pings=numel(Time);
         [config,params]=config_from_ifile(FileName,nb_pings);
         
         [~,curr_filename,~]=fileparts(tempname);

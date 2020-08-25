@@ -13,7 +13,7 @@ db_res=1;
 if alg_found
     varin=trans_obj.Algo(idx_alg).input_params_to_struct();
     xl=[varin.TS_threshold varin.TS_threshold_max];
-    nb_bin=abs(diff(xl)/db_res);
+    nb_bin=2*abs(diff(xl)/db_res);
 else
     nb_bin=25;
     xl=curr_disp.getCaxField('singletarget');
@@ -117,13 +117,21 @@ if ~isempty(ax_pdf)&&~isempty(pc_pdf)
             ydir='reverse';
         case 'bottom'
             mean_range_per_track=splitapply(@(x) mean(x),tt_table.Target_range_to_bottom,uu);
+            idnan = isnan(mean_range_per_track);
+            mean_range_per_track(idnan) = [];
+            mean_TS_per_track(idnan) = [];
             ydir='normal';
     end
+    if isempty(mean_TS_per_track)
+        disp('No tracks');
+        return;
+    end
+    
     [cmap,col_ax,~,col_grid,~,~,~]=init_cmap(curr_disp.Cmap);
     set(ax_pdf,'GridColor',col_grid,'Color',col_ax);
     %figure();
     %histogram2(mean_TS_per_track,mean_range_per_track,[numel((xl(1):db_res:xl(2))) numel((0:survey_options_obj.Horizontal_slice_size:nanmax(mean_range_per_track)))],'FaceColor','flat','DisplayStyle','tile');
-    [pdf,x_mat,y_mat]=pdf_2d_perso(mean_TS_per_track,mean_range_per_track,(xl(1):db_res:xl(2))',(0:survey_options_obj.Horizontal_slice_size:nanmax(mean_range_per_track)),'gauss');
+    [pdf,x_mat,y_mat]=pdf_2d_perso(mean_TS_per_track,mean_range_per_track,(xl(1):db_res:xl(2))',(0:survey_options_obj.Horizontal_slice_size/2:nanmax(mean_range_per_track)),'gauss');
     cax=[prctile(pdf(pdf>0),5) prctile(pdf(pdf>0),95)];
     try
         set(pc_pdf,'XData',x_mat,'YData',y_mat,'CData',pdf,'ZData',zeros(size(pdf)),'AlphaData',pdf>=cax(1),'EdgeColor',col_grid);

@@ -39,7 +39,7 @@ function load_display_tab(main_figure,option_tab_panel)
 curr_disp=get_esp3_prop('curr_disp');
 display_tab_comp.display_tab=uitab(option_tab_panel,'Title','Display Option','tag','disp');
 
-nb_col=8;
+nb_col=12;
 
 size_bttn_grp=[0 0.77 1 0.23];
 
@@ -70,7 +70,8 @@ display_tab_comp.grid_y_unit=uicontrol(display_tab_comp.top_button_group,gui_fmt
 
 set([display_tab_comp.grid_x display_tab_comp.grid_y],'callback',{@change_grid_callback,main_figure})
 
-cax=[0 1];
+cax = curr_disp.Cax;
+aax = curr_disp.BeamAngularLimit;
 
 second_group_start = 4;
 gui_fmt=init_gui_fmt_struct();
@@ -78,42 +79,55 @@ gui_fmt.txt_w=gui_fmt.txt_w/2;
 
 pos=create_pos_3(2,nb_col,gui_fmt.x_sep,gui_fmt.y_sep,gui_fmt.txt_w,gui_fmt.box_w,gui_fmt.box_h);
 
-uicontrol(display_tab_comp.top_button_group,gui_fmt.txtStyle,'String','TS(dB)','Position',pos{1,second_group_start}{1});
-display_tab_comp.TS=uicontrol(display_tab_comp.top_button_group,gui_fmt.edtStyle,'position',pos{1,second_group_start}{2},...
+ii=0;
+
+uicontrol(display_tab_comp.top_button_group,gui_fmt.txtStyle,'String','TS(dB)','Position',pos{1,second_group_start+ii}{1});
+display_tab_comp.TS=uicontrol(display_tab_comp.top_button_group,gui_fmt.edtStyle,'position',pos{1,second_group_start+ii}{2},...
     'string',-50,'callback',{@set_TS_cback,main_figure},'TooltipString','TS used for Fish density estimation display');
 
-uicontrol(display_tab_comp.top_button_group,gui_fmt.txtStyle,'String','Trans.%','Position',pos{2,second_group_start}{1});
-display_tab_comp.trans_bot=uicontrol(display_tab_comp.top_button_group,gui_fmt.edtStyle,'position',pos{2,second_group_start}{2},...
-    'string',num2str(curr_disp.UnderBotTransparency,'%.0f'),'callback',{@set_bot_trans_cback,main_figure},'TooltipString','Under Bottom Data Transparency');
 
-uicontrol(display_tab_comp.top_button_group,gui_fmt.txtStyle,'String','C-Max','Position',pos{1,second_group_start+1}{1});
-uicontrol(display_tab_comp.top_button_group,gui_fmt.txtStyle,'String','C-Min','Position',pos{2,second_group_start+1}{1});
+uicontrol(display_tab_comp.top_button_group,gui_fmt.txtStyle,'String','Trans.%','Position',pos{2,second_group_start+ii}{1});
+display_tab_comp.trans_bot=uicontrol(display_tab_comp.top_button_group,gui_fmt.edtStyle,'position',pos{2,second_group_start+ii}{2},...
+    'string',num2str(curr_disp.UnderBotTransparency,'%.0f'),'callback',{@set_bot_trans_cback,main_figure},'TooltipString','Under Bottom Data Transparency');
+ii =ii+1;
+
+uicontrol(display_tab_comp.top_button_group,gui_fmt.txtStyle,'String','C-Max','Position',pos{1,second_group_start+ii}{1});
+uicontrol(display_tab_comp.top_button_group,gui_fmt.txtStyle,'String','C-Min','Position',pos{2,second_group_start+ii}{1});
 %uicontrol(display_tab_comp.top_button_group,gui_fmt.txtStyle,'String','Min','Position',[540 85 60 30],'Fontweight','bold');
 
-display_tab_comp.caxis_up=uicontrol(display_tab_comp.top_button_group,gui_fmt.edtStyle,'position',pos{1,second_group_start+1}{2},'string',cax(2));
-display_tab_comp.caxis_down=uicontrol(display_tab_comp.top_button_group,gui_fmt.edtStyle,'position',pos{2,second_group_start+1}{2},'string',cax(1));
+display_tab_comp.caxis_up=uicontrol(display_tab_comp.top_button_group,gui_fmt.edtStyle,'position',pos{1,second_group_start+ii}{2},'string',cax(2));
+display_tab_comp.caxis_down=uicontrol(display_tab_comp.top_button_group,gui_fmt.edtStyle,'position',pos{2,second_group_start+ii}{2},'string',cax(1));
+ii =ii+1;
 
-uicontrol(display_tab_comp.top_button_group,gui_fmt.txtStyle,'String','X-mov','Position',pos{1,second_group_start+2}{1});
-display_tab_comp.move_dx=uicontrol(display_tab_comp.top_button_group,gui_fmt.edtStyle,'position',pos{1,second_group_start+2}{2},...
+uicontrol(display_tab_comp.top_button_group,gui_fmt.txtStyle,'String','A-Max','Position',pos{1,second_group_start+ii}{1});
+uicontrol(display_tab_comp.top_button_group,gui_fmt.txtStyle,'String','A-Min','Position',pos{2,second_group_start+ii}{1});
+
+display_tab_comp.aaxis_up=uicontrol(display_tab_comp.top_button_group,gui_fmt.edtStyle,'position',pos{1,second_group_start+ii}{2},'string',aax(2));
+display_tab_comp.aaxis_down=uicontrol(display_tab_comp.top_button_group,gui_fmt.edtStyle,'position',pos{2,second_group_start+ii}{2},'string',aax(1));
+ii =ii+1;
+
+uicontrol(display_tab_comp.top_button_group,gui_fmt.txtStyle,'String','X-mov','Position',pos{1,second_group_start+ii}{1});
+display_tab_comp.move_dx=uicontrol(display_tab_comp.top_button_group,gui_fmt.edtStyle,'position',pos{1,second_group_start+ii}{2},...
     'string',num2str(curr_disp.Move_dy_dx(2)*100,'%.0f'),'callback',@set_move_dx_dy,'TooltipString','Percentage of echogramm being updated when moving with keyboard along X-axis','tag','dx');
 
-uicontrol(display_tab_comp.top_button_group,gui_fmt.txtStyle,'String','Y-mov','Position',pos{2,second_group_start+2}{1});
-display_tab_comp.move_dy=uicontrol(display_tab_comp.top_button_group,gui_fmt.edtStyle,'position',pos{2,second_group_start+2}{2},...
+uicontrol(display_tab_comp.top_button_group,gui_fmt.txtStyle,'String','Y-mov','Position',pos{2,second_group_start+ii}{1});
+display_tab_comp.move_dy=uicontrol(display_tab_comp.top_button_group,gui_fmt.edtStyle,'position',pos{2,second_group_start+ii}{2},...
     'string',num2str(curr_disp.Move_dy_dx(1)*100,'%.0f'),'callback',@set_move_dx_dy,'TooltipString','Percentage of echogramm being updated when moving with keyboard along Y-axis','tag','dy');
+ii =ii+1;
 
-
-uicontrol(display_tab_comp.top_button_group,gui_fmt.txtStyle,'String','X-load','Position',pos{1,second_group_start+3}{1});
-display_tab_comp.disp_dx=uicontrol(display_tab_comp.top_button_group,gui_fmt.edtStyle,'position',pos{1,second_group_start+3}{2},...
+uicontrol(display_tab_comp.top_button_group,gui_fmt.txtStyle,'String','X-load','Position',pos{1,second_group_start+ii}{1});
+display_tab_comp.disp_dx=uicontrol(display_tab_comp.top_button_group,gui_fmt.edtStyle,'position',pos{1,second_group_start+ii}{2},...
     'string',num2str(curr_disp.Disp_dy_dx(2)*100,'%.0f'),'callback',{@set_disp_dx_dy,main_figure},'TooltipString','Percentage of echogramm being loaded outside display area (X-axis)','tag','dx');
 
-uicontrol(display_tab_comp.top_button_group,gui_fmt.txtStyle,'String','Y-load','Position',pos{2,second_group_start+3}{1});
-display_tab_comp.disp_dy=uicontrol(display_tab_comp.top_button_group,gui_fmt.edtStyle,'position',pos{2,second_group_start+3}{2},...
+uicontrol(display_tab_comp.top_button_group,gui_fmt.txtStyle,'String','Y-load','Position',pos{2,second_group_start+ii}{1});
+display_tab_comp.disp_dy=uicontrol(display_tab_comp.top_button_group,gui_fmt.edtStyle,'position',pos{2,second_group_start+ii}{2},...
     'string',num2str(curr_disp.Disp_dy_dx(1)*100,'%.0f'),'callback',{@set_disp_dx_dy,main_figure},'TooltipString','Percentage of echogramm being loaded outside display area (Y-axis)','tag','dy');
-
+ii =ii+1;
 
 set([display_tab_comp.caxis_up display_tab_comp.caxis_down],'callback',{@set_caxis,main_figure});
+set([display_tab_comp.aaxis_up display_tab_comp.aaxis_down],'callback',{@set_aaxis,main_figure});
 
-p_button=pos{1,second_group_start+4}{1};
+p_button=pos{1,second_group_start+ii}{1};
 p_button(3)=gui_fmt.button_w;
 
 display_tab_comp.sec_freq_disp=uicontrol(display_tab_comp.top_button_group,gui_fmt.chckboxStyle,'Value',curr_disp.DispSecFreqs,...

@@ -23,15 +23,15 @@ end
 
 trans_obj.set_cal(struct('G0',new_cal.G0,'SACORRECT',new_cal.SACORRECT,'EQA',new_cal.EQA));
 fprintf('Applying Calibration\n');
-trans_obj.disp_calibration_env_params([]);
-f_c = trans_obj.get_center_frequency();
+trans_obj.disp_calibration_env_params();
+f_c = trans_obj.get_center_frequency(1);
 f_nom = trans_obj.Config.Frequency;
 
-old_cal.G0=old_cal.G0+10*log10(f_c(1)./f_nom);
-old_cal.EQ=old_cal.EQA+20*log10(f_nom./f_c(1));
+old_cal.G0=old_cal.G0+10*log10(f_c./f_nom);
+old_cal.EQ=old_cal.EQA+20*log10(f_nom./f_c);
 
 new_cal.G0=new_cal.G0+10*log10(f_c(1)./f_nom);
-new_cal.EQ=new_cal.EQA+20*log10(f_nom./f_c(1));
+new_cal.EQ=new_cal.EQA+20*log10(f_nom./f_c);
 
 switch trans_obj.Mode
     case 'CW'

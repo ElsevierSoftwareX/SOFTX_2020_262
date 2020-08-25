@@ -77,11 +77,11 @@ if ~isequal(Filename_cell, 0)
         
         [~,curr_filename,~]=fileparts(tempname);
         curr_data_name_t=fullfile(p.Results.PathToMemmap,curr_filename);
-        params_obj = params_cl(fileheader.numframes);
+        params_obj = params_cl(1,fileheader.numbeams);
+        time_f = nan(1,fileheader.numframes);
         config_obj = config_cl();
         config_obj.SerialNumber = num2str(fileheader.serialnumber);
         config_obj.ChannelID = sprintf('DIDSON_%d',fileheader.serialnumber);
-        config_obj.ChannelIdShort = sprintf('DIDSON_%d',fileheader.serialnumber);
         config_obj.TransceiverName= sprintf('DIDSON_%d',fileheader.serialnumber);
         config_obj.TransducerName= sprintf('DIDSON_%d',fileheader.serialnumber);
         config_obj.ChannelNumber = 1;
@@ -102,9 +102,7 @@ if ~isequal(Filename_cell, 0)
         config_obj.FrequencyMinimum = 1.1*1e6;
         config_obj.Gain = fileheader.receivergain/2;
         
-        config_obj.BeamAngleAlongship=zeros(1,fileheader.numbeams);
-        config_obj.BeamAngleAthwartship=((fileheader.numbeams-1)*beamspacing)*linspace(-1/2,1/2,fileheader.numbeams);
-        
+
         ac_data_temp = ac_data_cl('SubData',[],...
             'Nb_samples', fileheader.samplesperchannel,...
             'Nb_pings',   fileheader.numframes,...
@@ -114,8 +112,7 @@ if ~isequal(Filename_cell, 0)
         ac_data_temp.init_sub_data('img_intensity',0);
         iframe = 0;
         
-        
-        
+               
         while ~feof(fid) && iframe < fileheader.numframes
             
             if ~isempty(load_bar_comp)
@@ -128,18 +125,21 @@ if ~isequal(Filename_cell, 0)
             end
             
             iframe = frameheader.framenumber+1;
-            params_obj.PulseLength(:,iframe)=double(frameheader.pulselength);
-            params_obj.SampleInterval(:,iframe)=1/double(fileheader.samplerate);
-            params_obj.TransmitPower(:,iframe)=1e3;
-            params_obj.Frequency(:,iframe) = config_obj.Frequency;
-            params_obj.FrequencyStart(:,iframe) = config_obj.Frequency;
-            params_obj.FrequencyEnd(:,iframe) = config_obj.Frequency;
+            if iframe ==1
+                params_obj.BeamAngleAlongship(:,iframe)=zeros(1,fileheader.numbeams);
+                params_obj.BeamAngleAthwartship(:,iframe)=((fileheader.numbeams-1)*beamspacing)*linspace(-1/2,1/2,fileheader.numbeams);
+                params_obj.PulseLength(:,iframe)=double(frameheader.pulselength);
+                params_obj.SampleInterval(:,iframe)=1/double(fileheader.samplerate);
+                params_obj.TransmitPower(:,iframe)=1e3;
+                params_obj.Frequency(:,iframe) = config_obj.Frequency;
+                params_obj.FrequencyStart(:,iframe) = config_obj.Frequency;
+                params_obj.FrequencyEnd(:,iframe) = config_obj.Frequency;
+            end
             %params_obj.BeamAngle(:,iframe) = ((fileheader.numbeams-1)*beamspacing/2)*linspace(-1/2,1/2,fileheader.numbeams);
 
             t=frameheader.ymdHMSF(1:6)';
             t(6)=t(6)+frameheader.ymdHMSF(7)/1e3;
-            params_obj.Time(iframe) = datenum(t);
-            
+            time_f(iframe) = datenum(t);
 %             switch frameheader.configflags
 %                 case 0
 %                     data.configuration ='DIDSON-S Extended Windows';
@@ -158,9 +158,9 @@ if ~isequal(Filename_cell, 0)
             else
                 frame=frame'; % Assume inverted sonar
             end
-            %frame_lin = double(frame)/double(intmax('uint8'));
 
-            ac_data_temp.replace_sub_data_v2(frame,'idx_ping',iframe,'field','img_intensity')
+            ac_data_temp.replace_sub_data_v2(frame,'idx_ping',iframe,'field','img_intensity');
+            %ac_data_temp.replace_sub_data_v2(db2pow(frame),'idx_ping',iframe,'field','power');
             
         end
         
@@ -168,7 +168,7 @@ if ~isequal(Filename_cell, 0)
 
         trans_obj=transceiver_cl('Data',ac_data_temp,...
             'Range',frameheader.windowstart+c*(0:fileheader.samplesperchannel-1)'/fileheader.samplerate/2,...
-            'Time',params_obj.Time,...
+            'Time',time_f,...
             'Config',config_obj,...
             'Mode','CW',...
             'Params',params_obj);

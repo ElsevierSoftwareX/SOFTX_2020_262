@@ -29,6 +29,7 @@ classdef curr_state_disp_cl <handle
         DispColorbar = 'on';
         DispSurveyLines='on';
         CursorMode='Normal'
+        BeamAngularLimit = [-5 5];
         Grid_x=[100 10 10];
         Grid_y=10;
         CurrLayerID='';

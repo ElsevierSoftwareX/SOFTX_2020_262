@@ -32,7 +32,7 @@ c=trans_obj.get_soundspeed([]);
 FreqStart=trans_obj.get_params_value('FrequencyStart',1);
 FreqEnd=trans_obj.get_params_value('FrequencyEnd',1);
 Freq=trans_obj.Config.Frequency;
-ptx=trans_obj.get_params_value('TransmitPower',[]);
+ptx=trans_obj.get_params_value('TransmitPower');
 
 eq_beam_angle=trans_obj.Config.EquivalentBeamAngle;
 gain=trans_obj.get_current_gain();

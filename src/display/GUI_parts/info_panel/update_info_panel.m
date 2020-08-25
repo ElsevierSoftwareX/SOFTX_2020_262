@@ -248,8 +248,8 @@ try
         [~,file_curr,~]=fileparts(layer.Filename{iFile});
         
         summary_str=sprintf('%s. Mode: %s Freq: %.0f kHz Power: %.0fW Pulse: %.3fms',file_curr,trans_obj.Mode,curr_disp.Freq/1000,...
-            trans_obj.get_params_value('TransmitPower',idx_ping),...
-            trans_obj.get_params_value('PulseLength',idx_ping)*1e3);
+            trans_obj.get_params_value('TransmitPower',idx_ping,1),...
+            trans_obj.get_params_value('PulseLength',idx_ping,1)*1e3);
         
         
         set(info_panel_comp.i_str,'String',i_str);

@@ -59,6 +59,23 @@ if isappdata(main_figure,'Secondary_freq')&&curr_disp.DispSecFreqs>0
     set(secondary_freq.names,'color',col_txt); 
 end
 
+
+if isappdata(main_figure,'wc_fan')
+    wc_fan  = getappdata(main_figure,'wc_fan');
+    wc_fan.wc_axes.Color = col_ax;
+    wc_fan.wc_axes.GridColor = col_grid;
+    wc_fan.wc_axes.MinorGridColor = col_grid;
+    wc_fan.wc_axes.XColor = col_lab;
+    wc_fan.wc_axes.YColor = col_lab;
+    wc_fan.wc_fan_fig.Color = col_ax;
+    wc_fan.wc_axes_tt.BackgroundColor = col_ax;
+    wc_fan.wc_axes_tt.ForegroundColor = col_lab;
+    wc_fan.wc_fig.Colormap=cmap;
+    wc_fan.wc_axes.Colormap=cmap;
+    wc_fan.wc_cbar.Color = col_lab;
+end
+
+
 update_regions_colors(main_figure,'all');
 %format_color_gui(getappdata(main_figure,'ExternalFigures'),curr_disp.Font,curr_disp.Cmap);
 format_color_gui(main_figure,curr_disp.Font,curr_disp.Cmap);

@@ -110,9 +110,7 @@ if strcmp(trans_obj.Mode,'FM')
     %correction factor based on frequency response of targets to account for
     %positionning "error"... Not too sure though but seems to work.
     f_nom = trans_obj.Config.Frequency;
-    %f_c = trans_obj.get_center_frequency();
     f_corr=nansum((1+(f_nom-f_vec)/f_nom).*Prx_fft.^2)/nansum(Prx_fft.^2);
-    %f_corr=nansum((1+(f_c(1)-f_vec)/f_nom).*Prx_fft.^2)/nansum(Prx_fft.^2);
     
     %f_corr=1;
     if ~isempty(AlongAngle_val)

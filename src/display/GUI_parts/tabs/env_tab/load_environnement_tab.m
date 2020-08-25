@@ -162,7 +162,8 @@ set(env_tab_comp.soundspeed,'string',num2str(c,'%.2f'));
 if get(env_tab_comp.att_over,'value')==0||isempty(trans_obj)
     att_list=get(env_tab_comp.att_model,'String');
     att_model=att_list{get(env_tab_comp.att_model,'value')};
-    f_c=nanmean(trans_obj.get_center_frequency());
+    f_c = trans_obj.get_center_frequency([]);
+    f_c = nanmean(f_c,'all');
     if f_c>120000&&strcmp(att_model,'Doonan et al (2003)')
         att_model='Francois & Garrison (1982)';
         set(env_tab_comp.att_model,'value',1);

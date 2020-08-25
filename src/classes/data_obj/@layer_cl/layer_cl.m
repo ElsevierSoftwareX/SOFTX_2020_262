@@ -136,8 +136,8 @@ classdef layer_cl < matlab.mixin.Copyable
                 f_min(it)=obj.Transceivers(it).Config.FrequencyMinimum(1);
                 f_max(it)=obj.Transceivers(it).Config.FrequencyMaximum(1);
                 f_nom(it)=obj.Transceivers(it).Config.Frequency;
-                f_start(it)=obj.Transceivers(it).get_params_value('FrequencyStart',1);
-                f_end(it)=obj.Transceivers(it).get_params_value('FrequencyEnd',1);
+                f_start(it)=obj.Transceivers(it).get_params_value('FrequencyStart',1,1);
+                f_end(it)=obj.Transceivers(it).get_params_value('FrequencyEnd',1,1);
             end
             
         end
@@ -195,8 +195,8 @@ classdef layer_cl < matlab.mixin.Copyable
             fmax=-Inf;
             
             for it=1:length(layer.Frequencies)
-                fmin=nanmin(fmin,nanmin([layer.Transceivers(it).get_params_value('FrequencyStart',[]) layer.Transceivers(it).get_params_value('FrequencyEnd',[])]));
-                fmax=nanmax(fmax,nanmax([layer.Transceivers(it).get_params_value('FrequencyStart',[]) layer.Transceivers(it).get_params_value('FrequencyEnd',[])]));
+                fmin=nanmin(fmin,nanmin([layer.Transceivers(it).get_params_value('FrequencyStart') layer.Transceivers(it).get_params_value('FrequencyEnd')],[],'all'));
+                fmax=nanmax(fmax,nanmax([layer.Transceivers(it).get_params_value('FrequencyStart') layer.Transceivers(it).get_params_value('FrequencyEnd')],[],'all'));
             end
             fLim=[fmin fmax];
         end

@@ -45,12 +45,12 @@ else
     end
 end
 
-f_c=trans_obj.get_center_frequency();
+f_c=trans_obj.get_center_frequency([]);
 
 if ~isempty(cal_fm)
     [~,idx_f] = nanmin(abs(f_c-cal_fm.Frequency'),[],1);
     eq_beam_angle_c=cal_fm.eq_beam_angle(idx_f);
-    G=cal_fm.Gain(idx_f);eid
+    G=cal_fm.Gain(idx_f);
 else
     eq_beam_angle = trans_obj.Config.EquivalentBeamAngle;
     f_nom = trans_obj.Config.Frequency;
@@ -58,7 +58,7 @@ else
     eq_beam_angle_c=eq_beam_angle+20*log10(f_nom./f_c);
 end
 
-ptx = trans_obj.get_params_value('TransmitPower',[]);
+ptx = trans_obj.get_params_value('TransmitPower');
 [t_eff,~]=trans_obj.get_pulse_Teff();
 [t_eff_comp,~]=trans_obj.get_pulse_comp_Teff();
 [t_nom,~]=trans_obj.get_pulse_length();

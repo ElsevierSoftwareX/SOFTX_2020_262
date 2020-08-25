@@ -145,7 +145,6 @@ curr_data_name_t=cell(nb_trans,1);
 for itr=1:nb_trans
     data.pings(itr).number=nan(1,nb_pings(itr),array_type);
     data.pings(itr).time=nan(1,nb_pings(itr),array_type);
-    %data.pings(i).samples=(1:nb_samples(i))';
     trans_obj(itr).Params=params_cl(nb_pings(itr));
     
     if gps_only==0
@@ -176,6 +175,8 @@ prop_env=properties(env_data_cl);
 
 param_str_init=cell(1,nb_trans);
 
+i_params = zeros(1,nb_trans);
+alpha_file = nan(1,nb_trans);
 param_str_init_over=cell(1,numel(CIDs));
 param_str_init(:)={''};
 param_str_init_over(:)={''};
@@ -261,11 +262,11 @@ for idg=1:nb_dg
                 if ~isempty(idx)
                     dgTime=idx_raw_obj.time_dg(idg);
                     fread(fid, 1, 'int32', 0, 'l');
-                    
                     continue;
                 elseif ~isempty(idx_over)
                     continue;
                 end
+                
             elseif strcmpi(t_line,'')
                 continue;
             end
@@ -309,6 +310,7 @@ for idg=1:nb_dg
                     if ~isempty(idx_over)
                         param_str_init_over{idx_over}=t_line;
                     end
+                    i_params(idx) = i_params(idx)+1;
                     dgTime=idx_raw_obj.time_dg(idg);
                     fields_params=fieldnames(params_temp);
                     
@@ -330,8 +332,6 @@ for idg=1:nb_dg
                             end
                         end
                         
-                        
-                        
                         if iscell(trans_obj(idx).TransducerImpedance)
                             if i_ping(idx)==1
                                 trans_obj(idx).TransducerImpedance=cell(trans_obj(idx).Config.NbQuadrants,nb_pings(idx));
@@ -340,11 +340,8 @@ for idg=1:nb_dg
                         
                         for jj=1:length(prop_params)
                             if ~isempty(params_cl_init(idx).(prop_params{jj}))
-                                if ischar(params_cl_init(idx).(prop_params{jj}))
-                                    trans_obj(idx).Params.(prop_params{jj}){i_ping(idx)}=(params_cl_init(idx).(prop_params{jj}));
-                                else
-                                    trans_obj(idx).Params.(prop_params{jj})(i_ping(idx))=(params_cl_init(idx).(prop_params{jj}));
-                                end
+                                trans_obj(idx).Params.(prop_params{jj})(i_ping(idx))=(params_cl_init(idx).(prop_params{jj}));
+                                trans_obj(idx).Params.PingNumber(i_params(idx)) = i_ping(idx);
                             else
                                 if ~isdeployed()
                                     fprintf('Parameter not found in Parameters XML: %s for channel %s\n', prop_params{jj},params_temp.ChannelID);
@@ -436,7 +433,6 @@ for idg=1:nb_dg
                                     data_tmp{idx}.AlongPhi=zeros(nb_samples_per_block{idx}(block_nb(idx)),nanmin(block_len,nb_pings(idx)-i_ping(idx)+1));
                                 end
                             end
-                            
                             
                             
                             if data.pings(idx).datatype(2)==dec2bin(1)
@@ -537,8 +533,7 @@ for idg=1:nb_dg
                         if i_ping(idx)==1
                             mode{idx}='CW';
                             [trans_obj(idx).Config,trans_obj(idx).Params]=config_from_ek60(data.pings(idx),config_EK60(idx_freq(idx)));
-                            alpha_file = double(data.pings(idx).absorptioncoefficient);
-                            trans_obj(idx).set_absorption(alpha_file);
+                            alpha_file(idx) = double(data.pings(idx).absorptioncoefficient);
                         end
                         
                         data_tmp{idx}.power(1:numel(power_tmp),block_i(idx))=power_tmp;
@@ -568,7 +563,7 @@ for idg=1:nb_dg
                     'Nb_pings',   nb_pings(idx),...
                     'Nb_beams',ones(size(nb_samples_group{idx})),...
                     'BlockId' , block_id{idx},...
-                    'MemapName',  curr_data_name_t{idx});    
+                    'MemapName',  curr_data_name_t{idx});
             end
             
             if block_i(idx)==block_len||i_ping(idx)==nb_pings(idx)
@@ -618,12 +613,14 @@ NMEA.time(idx_rem_nmea)=[];
 %Complete Params if necessary
 
 for idx=1:nb_trans
+    nn = size(trans_obj(idx).Params.PulseLength,2);
     idx_nan=trans_obj(idx).Params.PulseLength==0;
     for jj=1:length(prop_params)
-        trans_obj(idx).Params.(prop_params{jj})(idx_nan)=[];
+        if size(trans_obj(idx).Params.(prop_params{jj}),2) == nn
+            trans_obj(idx).Params.(prop_params{jj})(idx_nan)=[];
+        end
     end
 end
-
 
 
 switch ftype
@@ -655,34 +652,40 @@ id_rem=[];
 
 for itr =1:nb_trans
     
-    trans_obj(itr).Params=trans_obj(itr).Params.reduce_params();
-    f_c = trans_obj(itr).get_center_frequency();
-    if ~any(trans_obj(itr).Params.Frequency~=0)
-        trans_obj(itr).Params.Frequency = (trans_obj(itr).Params.FrequencyStart+trans_obj(itr).Params.FrequencyEnd)/2;
-    end
-    
-    if ~any(trans_obj(itr).Params.FrequencyStart~=0)
-        trans_obj(itr).Params.FrequencyStart = trans_obj(itr).Params.Frequency;
-    end
-    
-    if ~any(trans_obj(itr).Params.FrequencyEnd~=0)
-        trans_obj(itr).Params.FrequencyEnd = trans_obj(itr).Params.Frequency;
-    end
-    
-    if isempty(trans_obj(itr).Alpha)
-        trans_obj(itr).set_absorption(envdata);
-    end
-    
-    trans_obj(itr).set_transceiver_time(data.pings(itr).time);
     if gps_only==0
         trans_obj(itr).set_transceiver_time(data.pings(itr).time);
     else
         trans_obj(itr).set_transceiver_time([data.pings(itr).time dgTime]);
     end
     
+    trans_obj(itr).TransducerDepth = zeros(size(trans_obj(itr).Time));
+    
+    f_c = trans_obj(itr).get_center_frequency([]);
+    
+    if ~any(trans_obj(itr).Params.Frequency~=0)
+        trans_obj(itr).Params.Frequency = f_c(trans_obj(itr).Params.PingNumber);
+    end
+    
+    if ~any(trans_obj(itr).Params.FrequencyStart~=0)
+        trans_obj(itr).Params.FrequencyStart = f_c(trans_obj(itr).Params.PingNumber);
+    end
+    
+    if ~any(trans_obj(itr).Params.FrequencyEnd~=0)
+        trans_obj(itr).Params.FrequencyEnd = f_c(trans_obj(itr).Params.PingNumber);
+    end
+    
+    trans_obj(itr).Params=trans_obj(itr).Params.reduce_params();
+    
+    trans_obj(itr).set_transceiver_time(data.pings(itr).time);
+    
+    
     [~,range_t]=trans_obj(itr).compute_soundspeed_and_range(envdata);
     trans_obj(itr).set_transceiver_range(range_t);
-    trans_obj(itr).set_absorption(envdata);
+    if ~isnan(alpha_file(itr))
+        trans_obj(itr).set_absorption(alpha_file(itr));
+    else
+        trans_obj(itr).set_absorption(envdata);
+    end
     % initialize bottom object, with right dimensions but no information
     trans_obj(itr).Bottom = [];
 end
@@ -715,9 +718,9 @@ if datatype(1)==dec2bin(1)
     end
     
 else
-       
+    
     if (trans_obj.Params.FrequencyStart(1)~=trans_obj.Params.FrequencyEnd(1))
-        [sim_pulse,y_tx_matched,t_pulse]=trans_obj.get_pulse();        
+        [sim_pulse,y_tx_matched,t_pulse]=trans_obj.get_pulse();
         Np=numel(y_tx_matched);
         data_tmp  = structfun(@(x) circshift(x,-Np,1),data_tmp,'un',0);
         ff=fieldnames(data_tmp);
@@ -729,9 +732,9 @@ else
         y_tx_matched = [];
         mode = 'CW';
     end
-
+    
     [~,powerunmatched]=compute_PwEK80(trans_obj.Config.Impedance,trans_obj.Config.Ztrd,datatype,data_tmp);
-    trans_obj.Config.NbQuadrants=sum(contains(fieldnames(data_tmp),'comp_sig'));    
+    trans_obj.Config.NbQuadrants=sum(contains(fieldnames(data_tmp),'comp_sig'));
     data_tmp=match_filter_data(data_tmp,y_tx_matched);
     
     if datatype(2)==dec2bin(1)||datatype(1)==dec2bin(0)&&trans_obj.Config.BeamType>0
@@ -741,7 +744,7 @@ else
             datatype,...
             trans_obj.Config.TransducerName,...
             trans_obj.Config.AngleOffsetAlongship,...
-            trans_obj.Config.AngleOffsetAthwartship);        
+            trans_obj.Config.AngleOffsetAthwartship);
     end
     
     switch mode

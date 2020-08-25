@@ -201,6 +201,9 @@ main_menu.close_all_fig=uimenu(main_menu.display,'Label','Close All External Fig
 
 main_menu.tools = uimenu(main_figure,'Label','Tools','Tag','menutools');
 
+mbes_tools=uimenu(main_menu.tools,'Label','MBES sonar tools');
+uimenu(mbes_tools,'Label','Show WC Fan Display','Callback',@init_wc_fan_plot);
+
 reg_tools=uimenu(main_menu.tools,'Label','Regions tools');
 uimenu(reg_tools,'Label','Create WC Region','Callback',{@create_reg_dlbox,main_figure});
 uimenu(reg_tools,'Label','Display Mean Depth of current region','Callback',{@plot_mean_aggregation_depth_callback,main_figure});

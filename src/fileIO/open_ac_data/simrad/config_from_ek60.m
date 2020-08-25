@@ -5,7 +5,6 @@ params_obj=params_cl();
 config_obj.EthernetAddress='';
 config_obj.IPAddress='';
 config_obj.ChannelID=deblank(config.channelid);
-config_obj.ChannelIdShort=deblank(config.channelid);
 %''GPT 200 kHz 00907205da23 5-1 ES200-7C'
 
 config_obj.SerialNumber='';
@@ -53,7 +52,6 @@ config_obj.SaCorrection=config.sacorrectiontable;
 
 if ~isempty(pings)
     params_obj=params_cl(length(pings.time));
-    params_obj.Time=pings.time;    
     params_obj.BandWidth=pings.bandwidth;
     params_obj.ChannelMode=pings.mode;
     params_obj.Frequency=pings.frequency;

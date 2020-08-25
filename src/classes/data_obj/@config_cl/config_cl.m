@@ -1,35 +1,34 @@
 classdef config_cl
     properties
         EthernetAddress='';
+        
         IPAddress='';
         SerialNumber='';
+        
         TransceiverName='';
-        TransceiverNumber=-1;
-        TransceiverSoftwareVersion=-1;
+        TransceiverNumber=0;
+        
+        TransceiverSoftwareVersion=0;
         TransceiverType='';
+        
         ChannelID='';
-        ChannelIdShort='';
-        ChannelNumber=-1;
-        HWChannelConfiguration=-1;
-        MaxTxPowerTransceiver=-1;
+        ChannelNumber=0;
+        
+        MaxTxPowerTransceiver=0;
         PulseLength=0.001;
         
         AngleOffsetAlongship=0;
         AngleOffsetAthwartship=0;
         
-        AngleSensitivityAlongship=-1;
-        AngleSensitivityAthwartship=-1;
+        AngleSensitivityAlongship=0;
+        AngleSensitivityAthwartship=0;
         
         BeamType=1;
         
         BeamWidthAlongship=7;
         BeamWidthAthwartship=7;
         
-        BeamAngleAlongship=0;
-        BeamAngleAthwartship=0;
-        
-        DirectivityDropAt2XBeamWidth=-1;
-        EquivalentBeamAngle=-1;
+        EquivalentBeamAngle=0;
         
         Frequency=0;
         FrequencyMaximum=0;
@@ -43,23 +42,25 @@ classdef config_cl
         TransducerName=''
         XML_string='';
         Cal_FM=struct.empty();
+        
         TransducerAlphaX=0;%roll
         TransducerAlphaY=0;%pitch
         TransducerAlphaZ=0;%yaw
+        
         TransducerCustomName='';
         TransducerMounting='';
+        
         TransducerOffsetX=0;%along
         TransducerOffsetY=0;%across
         TransducerOffsetZ=0;%depth
         TransducerOrientation='';
         TransducerSerialNumber='';
-        MarketSegment='';
+        
         Version='';
-        ArticleNumber=0;
         EsOffset=0;
-        RxSampleFrequency=nan;
-        Multiplexing=0;
+
         NbQuadrants=4;
+        
         RXArrayShape = 'flat';
         TXArrayShape = 'flat';
     end
@@ -67,7 +68,6 @@ classdef config_cl
     methods
         function config_str=config2str(config_obj)
             fields={'ChannelID',...
-                'ChannelIdShort',...
                 'TransducerName',...
                 'NbQuadrants',...
                 'TransceiverSoftwareVersion',...
@@ -86,12 +86,9 @@ classdef config_cl
                 'AngleOffsetAlongship',...
                 'AngleOffsetAthwartship',...
                 'AngleSensitivityAlongship',...
-                'AngleSensitivityAthwartship',...
-                'RxSampleFrequency',...
-                'Multiplexing'};
+                'AngleSensitivityAthwartship'};
             
             fields_name={'Channel ID',...
-                'Channel ID (short)',...
                 'Transducer Name',...
                 'Number of Quadrants',...
                 'Transceiver Software Version',...
@@ -110,13 +107,10 @@ classdef config_cl
                 'Angle Offset Alongship',...
                 'Angle Offset Athwartship',...
                 'Angle Sensitivity Alongship',...
-                'Angle Sensitivity Athwartship',...
-                'RxSampleFrequency',...
-                'Multiplexing'};
+                'Angle Sensitivity Athwartship'};
             
                   fact=[...
                 1,...%'Channel ID',...
-                1,...%'Channel ID (short)',...
                 1,...%'Transducer Name',...
                 1,...%'Number of Quadrants',...
                 1,...%'Transceiver Software Version',...
@@ -135,13 +129,10 @@ classdef config_cl
                 1,...%'Angle Offset Alongship',...
                 1,...%'Angle Offset Athwartship',...
                 1,...%'Angle Sensitivity Alongship',...
-                1,...%'Angle Sensitivity Athwartship',...
-                1e-3,...%'RxSampleFrequency',...
-                1,...%'Multiplexing'
+                1,...%'Angle Sensitivity Athwartship'
                 ];
             
             fields_fmt={'%s',...
-                '%s',...
                 '%s',...
                 '%d',...
                 '%.2f',...
@@ -160,9 +151,7 @@ classdef config_cl
                 '%.2f&deg',...
                 '%.2f&deg',...
                 '%.2f',...
-                '%.2f',...
-                '%d kHz',...
-                '%d'};
+                '%.2f'};
             
             
             

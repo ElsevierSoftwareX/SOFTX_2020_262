@@ -15,7 +15,8 @@ try
     if isempty(ori)||strcmp(ori,'')
         ori=env_data_obj.SVP.ori;
     end
-    if isempty(env_data_obj.SVP.depth)&&strcmpi(ori,'profile')
+    
+    if (isempty(env_data_obj.SVP.depth)&&strcmpi(ori,'profile'))
         ori='constant';
     end
     
@@ -27,6 +28,7 @@ try
             t_angle=trans_obj.get_transducer_pointing_angle();
             time_r = (trans_obj.Data.get_samples()-1) * trans_obj.get_params_value('SampleInterval',1);
             d_max=1600*time_r(end)/2+nanmax(trans_obj.get_transducer_depth());
+            
             switch ori
                 case 'theoritical'
                     dr=(1500*mode(diff(time_r)/2));
@@ -36,8 +38,7 @@ try
                     d_ref=env_data_obj.SVP.depth(:);
                     c_ref=env_data_obj.SVP.soundspeed();
             end
-            
-            
+               
             dr=(1400*mode(diff(time_r)/2));
             d_th=(0:dr:d_max)';
             
