@@ -29,8 +29,8 @@ if isempty(ax)
     grid(ax,'on');
 end
 
-for i=1:length(disp_var)
-    obj=findobj(ax,'Tag',disp_var{i});
+for iv=1:length(disp_var)
+    obj=findobj(ax,'Tag',disp_var{iv});
     delete(obj);
 end
 
@@ -41,18 +41,19 @@ if isempty(trans_obj)
 end
 ST = trans_obj.ST;
 
-alpha=[1 0.5];
+alpha=[0.5 0.5 0.5];
+nb_bins = [nb_bin nb_bin nb_bin/2];
 legend_str=cell(1,length(disp_var));
 if isempty(ST)
     return;
 else
-    for i=1:length(disp_var)
+    for iv=1:length(disp_var)
         TS=[];
-        switch disp_var{i}
+        switch disp_var{iv}
             case 'st'
                 TS = ST.TS_comp;
                 col='r';
-                legend_str{i}='Single Targets';
+                legend_str{iv}='Single Targets';
             case 'tracks'
                 tracks = trans_obj.Tracks;
                 
@@ -65,18 +66,37 @@ else
                 end
                 
                 col='b';
-                legend_str{i}='Tracked Targets';
+                legend_str{iv}='Tracked Targets';
                 for k=1:length(tracks.target_id)
                     idx_targets=tracks.target_id{k};
                     TS=[TS ST.TS_comp(idx_targets)];
                 end
+                
+            case 'track_ts_mean'
+                tracks = trans_obj.Tracks;
+                
+                if isempty(tracks)
+                    continue;
+                end
+                
+                if isempty(tracks.target_id)
+                    continue;
+                end
+                
+                col = 'g';
+                legend_str{iv}='Mean TS from Trackss';
+                
+                for k=1:length(tracks.target_id)
+                    idx_targets=tracks.target_id{k};
+                    TS=[TS pow2db_perso(nanmean(db2pow(ST.TS_comp(idx_targets))))];
+                end
         end
         try
             if ~isempty(TS)
-                [pdf_temp,x_temp]=pdf_perso(TS,'bin',nb_bin);
-                bar(ax,x_temp,pdf_temp,'Tag',disp_var{i},'FaceColor',col,'FaceAlpha',alpha(i));
+                [pdf_temp,x_temp]=pdf_perso(TS,'bin',nb_bins(iv));
+                bar(ax,x_temp,pdf_temp,'Tag',disp_var{iv},'FaceColor',col,'FaceAlpha',alpha(iv));
             else
-                legend_str{i}=[];
+                legend_str{iv}=[];
             end
             if diff(xl)>0
                 xlim(ax,xl);

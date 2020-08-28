@@ -13,6 +13,7 @@ if strcmp(trans_obj.Mode,'FM')
     Ztrd=trans_obj.Config.Ztrd;
     nb_chan=trans_obj.Config.NbQuadrants;
     
+    %f_c = trans_obj.get_center_frequency(iPing)
     f_s_sig=round(1/(trans_obj.get_params_value('SampleInterval',iPing)));
     c=(EnvData.SoundSpeed);
     FreqStart=(trans_obj.get_params_value('FrequencyStart',iPing));
@@ -110,12 +111,14 @@ if strcmp(trans_obj.Mode,'FM')
     %correction factor based on frequency response of targets to account for
     %positionning "error"... Not too sure though but seems to work.
     f_nom = trans_obj.Config.Frequency;
+    [faBW,psBW] = trans_obj.get_beamwidth_at_f_c([]);
     f_corr=nansum((1+(f_nom-f_vec)/f_nom).*Prx_fft.^2)/nansum(Prx_fft.^2);
     
     %f_corr=1;
+    
     if ~isempty(AlongAngle_val)
-        AlongAngle_val_corr=AlongAngle_val*f_corr;
-        AcrossAngle_val_corr=AcrossAngle_val*f_corr;
+        AlongAngle_val_corr=AlongAngle_val*f_corr*trans_obj.Config.BeamWidthAlongship/faBW;
+        AcrossAngle_val_corr=AcrossAngle_val*f_corr*trans_obj.Config.BeamWidthAthwartship/psBW;
         
         compensation_f =arrayfun(@(x,y)  simradBeamCompensation(x,y, AlongAngle_val_corr,AcrossAngle_val_corr),BeamWidthAlongship,BeamWidthAthwartship,'un',0);
         compensation_f=cell2mat(compensation_f);

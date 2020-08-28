@@ -61,7 +61,7 @@ cal_cw.RMS=nan(1,numel(layer.Transceivers));
 cal_fm_tot=cell(1,numel(layer.Transceivers));
 
 fields_fm_cal = get_cal_fm_fields();
-           
+
 alpha=cell(1,numel(layer.Transceivers));
 
 for uui=select
@@ -81,7 +81,7 @@ for uui=select
     t_mode_d=nanmean(trans_depth(new_region.Idx_ping));
     
     Freq=trans_obj.Config.Frequency;
-    Freq_c=(trans_obj.get_params_value('FrequencyStart',1)+trans_obj.get_params_value('FrequencyEnd',1))/2;
+    Freq_c=trans_obj.get_center_frequency(1);
     
     range_sph=mode(ceil(double(trans_obj.get_transceiver_range(new_region.Idx_r))*10/2)*2/10);
     
@@ -212,7 +212,7 @@ for uui=select
     onAxisMethod = {'mean','max','beam fitting'};
     
     [faBW,psBW] = trans_obj.get_beamwidth_at_f_c([]);
-      
+    
     % Calculate the mean_ts from echoes that are on-axis
     on_axis = onAxisFactor * mean(faBW + psBW);
     
@@ -249,23 +249,34 @@ for uui=select
         warndlg_perso(main_figure,'Not enough sphere echoes','It looks like there is no sphere here...',5);
         continue;
     end
+    
     freq_str=sprintf('%.0f_%s',Freq,layer.ChannelID{uui});
     if idx_freq==uui
         plot(ah,trans_obj.ST.Ping_number(idx_keep),trans_obj.ST.idx_r(idx_keep),'.k','linewidth',2);
     end
+    
     cax=[sphere_ts-12 sphere_ts+3];
+    
+    
     switch trans_obj.Mode
         case 'FM'
+            cal_struct=trans_obj.get_fm_cal();
             switch trans_obj.Config.BeamType
+                
                 case 0
+                    peak_ts = prctile(Sp_sph(idx_keep),95);
+                    idx_keep = idx_keep&abs(Sp_sph-peak_ts)<=maxdBDiff2/2;
+                otherwise
+%                     th_ts=arrayfun(@(x) spherets(x/c_at_sphere,sph.diameter/2, c_at_sphere, ...
+%                         sph.lont_c, sph.trans_c, density_at_sphere, sph.rho),2*pi*cal_struct.Frequency);
+%                     f_corr=nansum((1+(Freq-cal_struct.Frequency)/Freq).*db2pow(th_ts).^2)/nansum(db2pow(th_ts).^2);
+%                     
+%                     
                     fig_bp=plot_bp(AcrossAngle_sph,AlongAngle_sph,Sp_sph,idx_keep);
                     
                     if~isempty(path_out)&&~isempty(fig_bp)
                         print(fig_bp,fullfile(path_out,generate_valid_filename(['bp_contour_plot' freq_str '.png'])),'-dpng','-r300');
                     end
-                otherwise
-                    peak_ts = prctile(Sp_sph(idx_keep),95);
-                    idx_keep = idx_keep&abs(Sp_sph-peak_ts)<=maxdBDiff2/2;
             end
             
             
@@ -285,7 +296,7 @@ for uui=select
                     offset_ps = trans_obj.Config.AngleOffsetAthwartship;
                     
                     [faBW,psBW] = trans_obj.get_beamwidth_at_f_c([]);
-
+                    
                     peak_ts = nanmax(Sp_sph(idx_keep));
                     exitflag=1;
                 otherwise
@@ -319,7 +330,6 @@ for uui=select
             % Filter outliers based on the beam compensated corrected data
             
             
-            
             switch trans_obj.Config.BeamType
                 case 0
                     idx_keep = idx_keep&abs(Sp_sph+compensation-peak_ts)<=maxdBDiff2/2;
@@ -329,10 +339,18 @@ for uui=select
             
     end
     
-    
     idx_keep_sec=idx_keep&abs(phi)<=on_axis;
+    
     switch trans_obj.Config.BeamType
         case 0
+            if nansum(idx_keep_sec)<minOnAxisEchoes
+                warndlg_perso(main_figure,'','Cannot find any usable spere echoes in there for this single-beam calibration... Try changing your single target detection parameter for this frequency');
+                if~isempty(path_out)
+                    fclose(fid(2));
+                end
+                continue;
+            end
+        otherwise
             if nansum(idx_keep_sec)<minOnAxisEchoes
                 warndlg_perso(main_figure,'',sprintf('Less than %d echoes closer than %.1f degrees to the center. Looking out to %.1f degree.',minOnAxisEchoes,on_axis, onAxisFactorExpension*on_axis),5);
                 on_axis = onAxisFactorExpension*on_axis;
@@ -360,16 +378,8 @@ for uui=select
                 end
                 continue
             end
-        otherwise
-            if nansum(idx_keep_sec)<minOnAxisEchoes
-            warndlg_perso(main_figure,'','Cannot find any usable spere echoes in there for this single-beam calibration... Try changing your single target detection parameter for this frequency');
-            if~isempty(path_out)
-                fclose(fid(2));
-            end
-            continue;
-        end
-        
     end
+    
     if  nansum(idx_keep_sec)<minOnAxisEchoes
         choice=question_dialog_fig(main_figure,'Crappy calibration data detected','Do you want REALLY want to try to calibrate with those crappy data? Well, nothing I can do to stop you them...','timeout',10);
         
@@ -420,8 +430,7 @@ for uui=select
             
             idx_rem=[];
             f_corr=nan(1,numel(idx_ping));
-                       
-            cal_struct=trans_obj.get_fm_cal();
+            
             
             for kk=1:length(idx_ping)
                 [sp,cp,f,~,f_corr(kk)]=processTS_f_v2(trans_obj,layer.EnvData,idx_ping(kk),range_tot(idx_peak_tot(kk)),cal_struct,att_m);
@@ -444,6 +453,7 @@ for uui=select
             Compensation_f(idx_rem,:)=[];
             f_vec(idx_rem,:)=[];
             f_corr(idx_rem)=[];
+            
             freq_vec=f_vec(:,1)';
             
             Compensation_f(Compensation_f>6)=nan;
@@ -451,7 +461,7 @@ for uui=select
             TS_f=Sp_f+Compensation_f;
             
             TS_f_mean=10*log10(nanmean(10.^(TS_f'/10)));
-                        
+            
             th_ts=arrayfun(@(x) spherets(x/c_at_sphere,sph.diameter/2, c_at_sphere, ...
                 sph.lont_c, sph.trans_c, density_at_sphere, sph.rho),2*pi*freq_vec);
             
@@ -469,24 +479,24 @@ for uui=select
                 print(ts_fig,fullfile(path_out,generate_valid_filename(['ts_f' freq_str '.png'])),'-dpng','-r300');
             end
             
-             
+            
             [cal_path,~,~]=fileparts(layer.Filename{1});
             file_cal=fullfile(cal_path,generate_valid_filename(['Calibration_FM_' layer.ChannelID{uui} '.xml']));
             
             
             cal_ts=TS_f_mean;
-              
             
-            Gf_th=interp1(cal_struct.Frequency,cal_struct.Gain,freq_vec,'linear','extrap'); 
+            
+            Gf_th=interp1(cal_struct.Frequency,cal_struct.Gain,freq_vec,'linear','extrap');
             
             Gf=(cal_ts-th_ts)/2+Gf_th(:)';
             
             save_bool = true;
-
+            
             qstring=sprintf('Do you want to save those results for frequency %.0f kHz',Freq/1e3);
             choice=question_dialog_fig(main_figure,'Calibration',qstring,'opt',{'Yes' 'No'});
             
-        
+            
             switch choice
                 case 'No'
                     save_bool = false;
@@ -503,7 +513,7 @@ for uui=select
             else
                 cal_fm.Gain=Gf_th(:)';
             end
-           
+            
             
             switch trans_obj.Config.BeamType
                 case 0
@@ -528,7 +538,7 @@ for uui=select
             
             idx_peak_tot = trans_obj.ST.idx_r(idx_keep);
             idx_ping = trans_obj.ST.Ping_number(idx_keep);
-    
+            
             set(load_bar_comp.progress_bar, 'Minimum',0, 'Maximum',length(idx_ping), 'Value',0);
             load_bar_comp.progress_bar.setText(sprintf('Processing EQA estimation Frequency %.0fkHz',trans_obj.Config.Frequency/1e3));
             
@@ -558,29 +568,33 @@ for uui=select
             f_vec(idx_rem,:)=[];
             f_corr(idx_rem)=[];
             freq_vec_new=f_vec(:,1);
-
+            
             BeamWidthAlongship=nan(1,size(f_vec,1));
             BeamWidthAthwartship=nan(1,size(f_vec,1));
             offset_Alongship=nan(1,size(f_vec,1));
             offset_Athwartship=nan(1,size(f_vec,1));
             peak=nan(1,size(f_vec,1));
             exitflag=nan(1,size(f_vec,1));
-             
+            
             BeamWidthAlongship_th = interp1(cal_struct.Frequency,cal_struct.BeamWidthAlongship_th,freq_vec_new,int_meth,ext_meth);
             BeamWidthAthwartship_th = interp1(cal_struct.Frequency,cal_struct.BeamWidthAthwartship_th,freq_vec_new,int_meth,ext_meth);
-                       
+            
+
+            
+            
+            
             set(load_bar_comp.progress_bar, 'Minimum',0, 'Maximum',size(f_vec,1), 'Value',0);
             load_bar_comp.progress_bar.setText(sprintf('Processing BeamWidth estimation Frequency %.0fkHz',layer.Transceivers(uui).Config.Frequency/1e3));
-            
+            bw = mean([BeamWidthAlongship_th(:), BeamWidthAthwartship_th(:)],2);
             for tt=1:size(f_vec,1)
                 [offset_Alongship(tt), BeamWidthAlongship(tt), offset_Athwartship(tt), BeamWidthAthwartship(tt), ~, peak(tt), exitflag(tt)]...
-                    =fit_beampattern(Sp_f(tt,:), AcrossAngle_sph(idx_keep).*f_corr, AlongAngle_sph((idx_keep)).*f_corr,mean([BeamWidthAlongship_th(tt), BeamWidthAthwartship_th(tt)]), mean([BeamWidthAlongship_th(tt), BeamWidthAthwartship_th(tt)]));
+                    =fit_beampattern(Sp_f(tt,:), AcrossAngle_sph(idx_keep).*f_corr, AlongAngle_sph((idx_keep)).*f_corr,maxdBDiff2/2,bw(tt));
                 set(load_bar_comp.progress_bar,'Value',tt);
             end
             
             cal_fm.BeamWidthAlongship = interp1(freq_vec_new,BeamWidthAlongship(:)',cal_fm.Frequency,int_meth,ext_meth);
             cal_fm.BeamWidthAthwartship = interp1(freq_vec_new,BeamWidthAthwartship(:)',cal_fm.Frequency,int_meth,ext_meth);
-
+            
             cal_fm.AngleOffsetAlongship = interp1(freq_vec_new, offset_Alongship(:)',cal_fm.Frequency,int_meth,ext_meth);
             cal_fm.AngleOffsetAthwartship = interp1(freq_vec_new, offset_Athwartship(:)',cal_fm.Frequency,int_meth,ext_meth);
             
@@ -603,13 +617,13 @@ for uui=select
                 print(b_width_fig,fullfile(path_out,generate_valid_filename(['bw_f_' freq_str '.png'])),'-dpng','-r300');
             end
             
-
+            
             choice=question_dialog_fig(main_figure,'Calibration',sprintf('Do you want to save those results for frequency %.0f kHz',Freq/1e3));
-
+            
             % Handle response
             switch choice
                 case 'Yes'
-
+                    
                     save_bool = true;
             end
             

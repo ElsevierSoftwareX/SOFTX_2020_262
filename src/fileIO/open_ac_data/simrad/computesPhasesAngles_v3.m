@@ -86,8 +86,8 @@ else
     end
 end
 
-AlongAngle=(data_pings.AlongPhi)*k_angle/angleSensitivityAlongship-AngleOffsetAlongship;
-AcrossAngle=(data_pings.AcrossPhi)*k_angle/angleSensitivityAthwartship-AngleOffsetAthwartship;
+AlongAngle=((data_pings.AlongPhi)*k_angle/angleSensitivityAlongship-AngleOffsetAlongship);
+AcrossAngle=((data_pings.AcrossPhi)*k_angle/angleSensitivityAthwartship-AngleOffsetAthwartship);
 
 
 end

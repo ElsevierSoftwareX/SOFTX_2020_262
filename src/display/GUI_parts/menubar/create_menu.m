@@ -272,7 +272,7 @@ end
 function force_ping_db_update_cback(~,~)
 layer_obj = get_current_layer();
 layer_obj.add_ping_data_to_db([],1);
-update_map_tab
+
 end
 
 function open_file_cback(~,~,id)

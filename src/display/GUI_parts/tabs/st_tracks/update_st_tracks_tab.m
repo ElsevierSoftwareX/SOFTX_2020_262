@@ -18,7 +18,7 @@ end
 
 
 if p.Results.histo
-    display_st_or_track_hist(main_figure,st_tracks_tab_comp.ax_hist,st_tracks_tab_comp.ax_pdf,st_tracks_tab_comp.pc_pdf,{'tracks','st'});   
+    display_st_or_track_hist(main_figure,st_tracks_tab_comp.ax_hist,st_tracks_tab_comp.ax_pdf,st_tracks_tab_comp.pc_pdf,{'tracks','st','track_ts_mean'});   
 end
 
 if p.Results.st

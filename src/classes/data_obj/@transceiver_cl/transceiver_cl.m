@@ -796,6 +796,18 @@ classdef transceiver_cl < handle
             mean_depth(Sa<-90) = NaN;
             
         end
+
+%         function [BW_al,BW_at] = get_beamwidth_at_f_c(trans_obj,cal_struct)
+%             f_c = trans_obj.get_center_frequency([]);
+%             f_c = nanmean(f_c,'all');
+%             
+%             if isempty(cal_struct)
+%                 [cal_struct,~]=trans_obj.get_fm_cal('verbose',false);
+%             end
+%             [~,idx] = nanmin(abs(cal_struct.Frequency-f_c));
+%             BW_al = cal_struct.BeamWidthAlongship(idx);
+%             BW_at = cal_struct.BeamWidthAthwartship(idx);
+%         end
         
         function [BW_al,BW_at] = get_beamwidth_at_f_c(trans_obj,cal_struct)
             f_c = trans_obj.get_center_frequency([]);

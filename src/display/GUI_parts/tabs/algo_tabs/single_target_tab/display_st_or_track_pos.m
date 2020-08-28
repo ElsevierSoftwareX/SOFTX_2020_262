@@ -47,7 +47,7 @@ else
                     y=[y ST.Angle_minor_axis(idx_targets)];
                     x=[x ST.Angle_major_axis(idx_targets)];
                 end
-            end
+            end     
     end
 end
 

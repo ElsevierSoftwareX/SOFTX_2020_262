@@ -33,6 +33,7 @@ st_tracks_tab_comp.ax_pos.XRuler.Axle.LineStyle = 'solid';
 
 st_tracks_tab_comp.ax_pos.XRuler.TickLabelFormat='%.1f^\\circ';
 st_tracks_tab_comp.ax_pos.YRuler.TickLabelFormat='%.1f^\\circ';
+colorbar(st_tracks_tab_comp.ax_pos,'location','southoutside');
 
 rm_axes_interactions(st_tracks_tab_comp.ax_pos);
 rm_axes_interactions(st_tracks_tab_comp.ax_hist);

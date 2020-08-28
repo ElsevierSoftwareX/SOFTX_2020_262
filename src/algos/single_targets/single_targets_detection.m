@@ -481,8 +481,7 @@ for ui=1:num_ite
             dt=trans_obj.get_params_value('SampleInterval',idx_ping(1));
             dr=dt*nanmean(trans_obj.get_soundspeed(idx_r))/2;
             
-  
-            [T,Np_t]=trans_obj.get_pulse_length(idx_ping(1));      
+            [T,~]=trans_obj.get_pulse_comp_Teff(idx_ping(1));  
             %peak_mat(peak_mat==-999)=nan;
             
 %             tic;
@@ -501,9 +500,7 @@ for ui=1:num_ite
             [~,idx_peaks_lin,width_peaks ,~] = findpeaks(peak_mat(:),...
                 'MinPeakHeight',min_TS-p.Results.MaxBeamComp,...
                 'WidthReference','halfprom',...
-                'MinPeakDistance',(p.Results.MaxNormPL*Np_t/2),...
-                'MinPeakWidth',p.Results.MinNormPL*Np_t,...
-                'MaxPeakWidth',p.Results.MaxNormPL*Np_t);
+                'MinPeakDistance',N(1)/2);
             %toc
             %figure();plot(peak_mat(:));hold on;plot(idx_peaks_lin,peak_vals,'+');xlim([1 1e4])
 %             peak_mat(peak_mat<-80)=-80;
